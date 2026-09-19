@@ -56,6 +56,7 @@
   --ui-sidebar-active: #2A568B;
   --ui-sidebar-accent: #91BAFF;
   --ui-sidebar-focus: #B9D2FF;
+  --ui-overlay: #142F5473;
 }
 
 /* 手机网页：仅覆盖端侧映射里声明的语义变量（建议，待验证） */

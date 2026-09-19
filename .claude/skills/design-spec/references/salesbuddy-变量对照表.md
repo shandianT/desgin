@@ -58,6 +58,7 @@
 | `--ui-sidebar-active` | 导航当前项底 | `color.navy.800` | #2A568B | #2A568B | #2A568B | 建议 | V-01 |
 | `--ui-sidebar-accent` | 导航当前项亮条 | `color.navy.200` | #91BAFF | #91BAFF | #91BAFF | 建议 | V-01 |
 | `--ui-sidebar-focus` | 导航上的键盘焦点轮廓 | `color.navy.100` | #B9D2FF | #B9D2FF | #B9D2FF | 建议 | V-04 |
+| `--ui-overlay` | 弹窗与抽屉背后的遮罩（深蓝导航色 45% 透明） | 直接值 | #142F5473 | #142F5473 | #142F5473 | 建议 | C-07 |
 
 ## 端侧说明
 

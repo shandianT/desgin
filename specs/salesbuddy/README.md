@@ -74,4 +74,5 @@ specs/salesbuddy/
 cd specs/salesbuddy/02-设计变量与同步链路 && node build-tokens.mjs && node check-tokens.mjs
 cd ../03-跨端样板-客户列表到详情 && node verify.mjs && node write-report.mjs
 ```
+日常只需在仓库根运行 `node tools/check.mjs`（会顺带生成规则索引、规范站与技能引用）；产品仓库的 `app.json` 变了再运行 `node tools/sync-product.mjs` 刷新 `02-…/产品现状/` 快照。
 需要 Node 18+。验收脚本首次运行前：`npm i -D playwright@1.56 && npx playwright install chromium`（约 300MB）。

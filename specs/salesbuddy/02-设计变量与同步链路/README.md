@@ -36,7 +36,7 @@ tokens.json（唯一维护源，人改）
    └─ 校验：与 1.0.0 的 design-tokens.css 名字与值完全一致；比对小程序 app.json 是否已接入
 ```
 
-**本仓库已验证的结果（2026-09-19）：** 36 个 1.0.0 变量生成后全部一致；新增 8 个「建议」变量；小程序 app.json 有 5 项原生颜色与规范不一致（含主色 #1677FF 对 #2863CD），脚本如实列出为「待接入」。
+**本仓库已验证的结果（2026-09-19）：** 36 个 1.0.0 变量生成后全部一致；新增 17 个「建议」变量（含导航色系、遮罩 `--ui-overlay` 与布局尺寸）；小程序 app.json 有 5 项原生颜色与规范不一致（含主色 #1677FF 对 #2863CD），脚本如实列出为「待接入」。
 
 打开 `tokens.json` 会看到这样的片段（去掉了说明字段）：
 
@@ -129,5 +129,6 @@ sales-web 工程里已经有一份自己的 `design-tokens.css`（1.0.0 示例�
 ```
 cd specs/salesbuddy/02-设计变量与同步链路
 node build-tokens.mjs        # 生成 dist/
-node check-tokens.mjs        # 校验兼容与小程序接入情况
+node check-tokens.mjs        # 校验兼容与小程序接入情况（比对产品仓库的 app.json，位置由 MINIPROGRAM_DIR 指定）
+cd ../../.. && node tools/sync-product.mjs   # 把产品 app.json 的 window／tabBar 复制成仓库内快照 产品现状/miniprogram-app.json，规范站只读这份快照
 ```

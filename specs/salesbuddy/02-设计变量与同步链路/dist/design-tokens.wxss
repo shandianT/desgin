@@ -55,4 +55,5 @@ page {
   --ui-sidebar-active: #2A568B;
   --ui-sidebar-accent: #91BAFF;
   --ui-sidebar-focus: #B9D2FF;
+  --ui-overlay: #142F5473;
 }

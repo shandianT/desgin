@@ -6,7 +6,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { resolve, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -17,17 +17,19 @@ process.stdin.on('end', () => {
   let file = '';
   try { file = JSON.parse(input).tool_input?.file_path || ''; } catch { process.exit(0); }
   if (!file) process.exit(0);
-  const rel = file.replace(root + '/', '');
-  const isStyle = /\.(css|wxss|wxml|html|vue|jsx|tsx)$/.test(file) && !/\/dist\/|1\.0\.0-使用包快照|dist-artifact\.html|\/vendor\//.test(file);
-  const isTokens = /tokens\.json$/.test(file);
+  const rel = relative(root, file).split(sep).join('/'); // Windows 下也统一成正斜杠
+  const isStyle = /\.(css|wxss|wxml|html|vue|jsx|tsx)$/.test(rel) && !/\/dist\/|1\.0\.0-使用包快照|dist-artifact\.html|\/vendor\/|\/站点\//.test('/' + rel);
+  const isTokens = /(^|\/)tokens\.json$/.test(rel);
+  if (/\/dist\/.*\.json$/.test('/' + rel) || /\/产品现状\//.test('/' + rel)) { console.error(`设计规范钩子：${rel} 是生成物或快照，请改源文件（tokens.json）或重新运行 node tools/check.mjs ／ tools/sync-product.mjs`); process.exit(2); }
   if (isTokens) {
     const dir = dirname(file);
+    if (!existsSync(resolve(dir, 'build-tokens.mjs'))) process.exit(0); // 不是规范的变量源（没有配套生成脚本），放行
     for (const script of ['build-tokens.mjs', 'check-tokens.mjs']) {
       const r = spawnSync('node', [script], { cwd: dir, encoding: 'utf8' });
-      if (r.status !== 0) { console.error(`设计规范钩子：${script} 失败\n${r.stdout}${r.stderr}`); process.exit(2); }
+      if (r.status !== 0) { console.error(`设计规范钩子：${script} 失败\n${(r.stdout || '').slice(-1500)}${(r.stderr || '').split('\n').slice(0, 6).join('\n')}`); process.exit(2); }
     }
     const b = spawnSync('node', [resolve(root, 'tools', 'build-rules.mjs'), resolve(dir, '..')], { encoding: 'utf8' });
-    if (b.status !== 0) { console.error(`设计规范钩子：规则索引生成失败\n${b.stdout}${b.stderr}`); process.exit(2); }
+    if (b.status !== 0) { console.error(`设计规范钩子：规则索引生成失败\n${(b.stdout || '').slice(-1500)}${(b.stderr || '').split('\n').slice(0, 6).join('\n')}`); process.exit(2); }
     process.exit(0);
   }
   if (isStyle && existsSync(file)) {

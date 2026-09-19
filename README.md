@@ -45,7 +45,7 @@ desgin/
 
 ## 怎么用
 
-- **看规范**：`specs/salesbuddy/README.md`，或直接看 `specs/salesbuddy/规则索引.md`（38 条一张表）。
+- **看规范**：`specs/salesbuddy/README.md`，或直接看 `specs/salesbuddy/规则索引.md`（全部规则一张表，含跨端结论）。
 - **看站点**：浏览器打开 `specs/salesbuddy/站点/index.html`，七章按「原则 → 视觉基础 → 组件 → 布局 → 交互状态 → 跨端适配 → 团队怎么用」排，每章先有一个能动手的东西。汇报用它。
 - **看样板**：`specs/salesbuddy/03-跨端样板-客户列表到详情/index.html`（拖窗口看三档）或 `对照.html`（三端并排）。
 - **开发接入**：Web 引用 `specs/salesbuddy/02-设计变量与同步链路/dist/design-tokens.css`；小程序引用 `dist/design-tokens.wxss` 并按 `dist/miniprogram-app.tokens.json` 改 `app.json`；样式只写 `var(--ui-*)`。
@@ -58,11 +58,13 @@ desgin/
 ```
 node tools/check.mjs             # 唯一入口
 node tools/check.mjs --verify    # 加 Playwright 样板验收（首次：npm i -D playwright@1.56 && npx playwright install chromium）
-node tools/check.mjs --ci        # 评审前：确认生成物与源一致
+node tools/check.mjs --ci        # 评审前：确认生成物与源一致（含未跟踪的新生成物）
+node tools/sync-product.mjs      # 产品仓库 app.json 有变动时：刷新仓库内的产品现状快照，再跑 check.mjs
 ```
 需要 Node 18+。
 
 ## 版本记录
 
+- **2026-09-19（三）**：按四视角审查修正规范站与工具链：产品原则逐字引用 7 条；跨端表按 01 表结论归类（统一／适配／引用平台／不分端，划分标「建议」）并保留状态原文；变量三端表与小程序颜色表不再误用状态词；首页新增「给部门的五分钟」与六个词；状态机加箭头、标签不被遮挡、手机可横滑；生成器 CSS 自检无字面色值；站点只读仓库内的产品现状快照（`tools/sync-product.mjs`）；样式检查补 rgb／命名色／px 字号、缺产物报错、基线路径固定；钩子不再误触发 dist；check.mjs 用 cpSync 与 git status。
 - **2026-09-19（二）**：新增可视化规范站生成器 `tools/build-site.mjs`（站点是生成物，`--portable` 可导出独立发布版）；样板增加接收外部指令的接口。
 - **2026-09-19**：建立仓库；从 shandianT/xiaoshouguanli 迁入 docs/design-spec 全部内容（含 1.0.0 使用包原件与 1.1.0-draft.1 跨端草案）；新增规则索引、样式检查、统一检查入口、AI 技能与钩子、四个工具入口、规范清单。

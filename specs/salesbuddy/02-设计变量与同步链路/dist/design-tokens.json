@@ -662,6 +662,14 @@
       "description": "导航上的键盘焦点轮廓",
       "status": "建议",
       "rule": "V-04"
+    },
+    "overlay": {
+      "value": "#142F5473",
+      "type": "color",
+      "from": "",
+      "description": "弹窗与抽屉背后的遮罩（深蓝导航色 45% 透明）",
+      "status": "建议",
+      "rule": "C-07"
     }
   },
   "platforms": {
@@ -717,7 +725,8 @@
       "sidebar-hover": "#23466F",
       "sidebar-active": "#2A568B",
       "sidebar-accent": "#91BAFF",
-      "sidebar-focus": "#B9D2FF"
+      "sidebar-focus": "#B9D2FF",
+      "overlay": "#142F5473"
     },
     "mobile-web": {
       "background": "#F3F5F9",
@@ -771,7 +780,8 @@
       "sidebar-hover": "#23466F",
       "sidebar-active": "#2A568B",
       "sidebar-accent": "#91BAFF",
-      "sidebar-focus": "#B9D2FF"
+      "sidebar-focus": "#B9D2FF",
+      "overlay": "#142F5473"
     },
     "miniprogram": {
       "background": "#F3F5F9",
@@ -825,7 +835,8 @@
       "sidebar-hover": "#23466F",
       "sidebar-active": "#2A568B",
       "sidebar-accent": "#91BAFF",
-      "sidebar-focus": "#B9D2FF"
+      "sidebar-focus": "#B9D2FF",
+      "overlay": "#142F5473"
     }
   }
 }

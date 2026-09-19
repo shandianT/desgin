@@ -1,0 +1,18 @@
+{
+  "$note": "产品现状快照：由 tools/sync-product.mjs 从产品仓库复制，只保留 window 与 tabBar（不含 list）；勿手改，重新同步即可",
+  "source": "/home/user/xiaoshouguanli/frontend/miniprogram/app.json",
+  "window": {
+    "backgroundColor": "#F5F3F8",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F8F7FA",
+    "navigationBarTitleText": "销售智助",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#7A8495",
+    "selectedColor": "#1677FF",
+    "backgroundColor": "#FBFAFC",
+    "borderStyle": "white"
+  },
+  "sourceCommit": "aab2a33 2026-09-19 15:36:18 +0000"
+}

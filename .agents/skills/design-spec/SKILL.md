@@ -16,8 +16,8 @@ metadata:
 ## 先读什么（按顺序，只读需要的）
 
 1. `规范清单.json`：找到本次产品对应的规范目录（目前只有 `specs/salesbuddy`）。
-2. `references/salesbuddy-规则索引.md`：38 条规则一张表，每条有编号、要求、怎么检查、状态、相关变量、来源行号。要看原文按来源行号打开。
-3. `references/salesbuddy-变量对照表.md`：52 个 `--ui-*` 变量在电脑网页、手机网页、小程序的值与状态。
+2. `references/salesbuddy-规则索引.md`：全部规则一张表，每条有编号、要求、怎么检查、状态、相关变量、来源行号。要看原文按来源行号打开。
+3. `references/salesbuddy-变量对照表.md`：全部 `--ui-*` 变量在电脑网页、手机网页、小程序的值与状态。
 4. 涉及布局或跨端时读 `specs/salesbuddy/01-三端规则对照表.md`；涉及客户列表、详情、返回时打开样板 `specs/salesbuddy/03-跨端样板-客户列表到详情/index.html` 与 `规则映射表.md`。
 5. 涉及业务字段口径（客户、商机、象限、缺失值、权限）时读 `specs/salesbuddy/03-跨端样板-客户列表到详情/业务约束清单.md`。
 
