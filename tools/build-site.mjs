@@ -86,12 +86,17 @@ function md(text) {
     if (/^\|/.test(l)) { const rows = []; while (i < lines.length && /^\|/.test(lines[i])) { if (!/^\|\s*-/.test(lines[i])) rows.push(cells(lines[i])); i++; } out += '<div class="tbl"><table>' + rows.map((r, ri) => '<tr>' + r.map((c) => (ri ? '<td>' : '<th>') + inline(c) + (ri ? '</td>' : '</th>')).join('') + '</tr>').join('') + '</table></div>'; continue; }
     if (/^#+ /.test(l)) { const lv = l.match(/^#+/)[0].length; out += `<h${Math.min(lv + 2, 5)}>${inline(l.replace(/^#+ /, ''))}</h${Math.min(lv + 2, 5)}>`; i++; continue; }
     if (/^[-*] /.test(l)) { out += '<ul>'; while (i < lines.length && /^[-*] /.test(lines[i])) { out += '<li>' + inline(lines[i].slice(2)) + '</li>'; i++; } out += '</ul>'; continue; }
+    if (/^\d+\. /.test(l)) { out += '<ol>'; while (i < lines.length && /^(\d+\. |   )/.test(lines[i])) { if (/^\d+\. /.test(lines[i])) out += (out.endsWith('<ol>') ? '' : '</li>') + '<li>' + inline(lines[i].replace(/^\d+\. /, '')); else out += '<br>' + inline(lines[i].trim()); i++; } out += '</li></ol>'; continue; }
     if (/^> /.test(l)) { out += '<blockquote>' + inline(l.slice(2)) + '</blockquote>'; i++; continue; }
     if (l.trim() === '') { i++; continue; }
     out += '<p>' + inline(l) + '</p>'; i++;
   }
   return out;
 }
+
+// 只取一份 Markdown 里标题匹配的若干节（## 开头）
+function mdSections(text, re) { const body = text.replace(/^---\n[\s\S]*?\n---\n/, ''); const parts = body.split(/\n(?=## )/); return parts.filter((p) => re.test(p.split('\n')[0])).join('\n'); }
+const ecoDoc = existsSync(join(specDir, '05-组件生态选型.md')) ? R('05-组件生态选型.md') : '';
 
 // ---------- 片段 ----------
 const STATUS_CLASS = { '已确认': 'ok', '建议': 'warn', '业务事实': 'fact', '已验证（本地）': 'local', '未验证': 'none' };
@@ -271,6 +276,7 @@ const body = `
   <h1>组件</h1><p class="lead">同一个按钮三端三种样子、禁用了不说原因，是最常见的返工。每个组件在每个状态下长什么样都有定论。横着看：同一个组件从默认到出错的六种样子；竖着看：同一状态下所有组件长得像不像一家。「悬停」「聚焦」两列是把鼠标效果固定住给你看的。</p>
   <div class="card"><p class="note">共 ${STATES.length} 列，窄屏可左右滑动；第一列固定。</p>${matrix}<p class="note">选择器、日期等复杂控件的真实交互见 1.0.0 示例册；这里只定外观与状态。</p></div>
   <h2>规则</h2>${cards(['C-01', 'C-02', 'C-03', 'C-04', 'C-05', 'C-06', 'C-07'], true)}
+  ${ecoDoc ? `<h2>组件用哪家：成熟生态 ＋ 主题桥接 ${badge('建议')}</h2><div class="card doc">${md(mdSections(ecoDoc, /^## [012５5]/))}<p class="src">来源：05-组件生态选型.md（全文含接入步骤与待决定事项）；依据：依据/外部查证-20260919/08～11。</p></div>` : ''}
 </section>
 
 <section data-panel="layout" hidden>
@@ -356,6 +362,7 @@ button { font: inherit; cursor: pointer; }
 .lead .st { vertical-align: middle; }
 .card { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-card-padding); margin-bottom: var(--ui-space-3); }
 .card > h2:first-child { margin-top: 0; }
+.doc h3 { font-size: var(--ui-text-section); color: var(--ui-ink); margin-top: var(--ui-space-4); } .doc h4, .doc h5 { color: var(--ui-secondary); font-size: var(--ui-text-body); } .doc p, .doc ul, .doc ol { margin: 0 0 var(--ui-space-2); } .doc li { margin-bottom: 4px; } .doc td { min-width: 110px; } .doc td:first-child { min-width: 140px; font-weight: 500; }
 .brief { border-color: var(--ui-primary); box-shadow: inset 4px 0 var(--ui-primary); }
 .brief ol { margin: 0; padding-left: 1.4em; } .brief li { margin-bottom: var(--ui-space-2); } .brief ul { margin: 4px 0 0; padding-left: 1.2em; } .brief li li { margin-bottom: 2px; }
 .brief small, .card li small { color: var(--ui-muted); font-size: var(--ui-text-small); }
