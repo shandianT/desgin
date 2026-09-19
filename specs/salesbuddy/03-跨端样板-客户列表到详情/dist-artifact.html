@@ -1,0 +1,646 @@
+<title>客户列表与详情样板</title>
+<style>
+/* 部门产品设计变量 1.1.0-draft.1 · 2026-09-19
+ * 由 build-tokens.mjs 从 tokens.json 生成，请勿手工修改；改 tokens.json 后重新生成。
+ * 目标：电脑网页与手机网页（同一份文件，≤600px 覆盖）。状态：草案：基础与语义层的值来自已确认的 SalesBuddy Web V1.0（design-tokens.css）；主色 #2863CD 已于 2026-09-19 决定沿用；标注「建议」的条目与端侧映射尚未登记采用；原生 App 暂不在范围
+ */
+:root {
+  color-scheme: light;
+  --ui-background: #F3F5F9;
+  --ui-surface: #FFFFFF;
+  --ui-sidebar: #142F54;
+  --ui-ink: #192842;
+  --ui-secondary: #5B6C82;
+  --ui-muted: #617188;
+  --ui-primary: #2863CD;
+  --ui-primary-hover: #2055B5;
+  --ui-line: #E2E8F0;
+  --ui-selected: #EDF3FF;
+  --ui-focus: #5786DC;
+  --ui-danger: #A73F38;
+  --ui-danger-soft: #FBE4DF;
+  --ui-warning: #805919;
+  --ui-warning-soft: #FFF0CF;
+  --ui-success: #27694C;
+  --ui-success-soft: #E8F5EE;
+  --ui-neutral: #56677E;
+  --ui-neutral-soft: #EEF2F7;
+  --ui-font: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --ui-text-small: 12px;
+  --ui-text-body: 14px;
+  --ui-text-section: 16px;
+  --ui-text-page: 24px;
+  --ui-text-metric: 32px;
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-6: 24px;
+  --ui-space-8: 32px;
+  --ui-radius-control: 6px;
+  --ui-radius-panel: 12px;
+  --ui-control-height: 36px;
+  --ui-field-height: 40px;
+  --ui-shadow-popup: 0 8px 28px #1928421a, 0 2px 6px #19284208;
+  --ui-page-gutter: 24px;
+  --ui-card-padding: 16px;
+  --ui-block-gap: 24px;
+  --ui-touch-target: 44px;
+  --ui-nav-width: 220px;
+  --ui-nav-rail-width: 56px;
+  --ui-list-width: 360px;
+  --ui-tabbar-height: 56px;
+  --ui-on-primary: #FFFFFF;
+  --ui-sidebar-ink: #E7EFFA;
+  --ui-sidebar-nav: #C2D1E6;
+  --ui-sidebar-muted: #B4C7E1;
+  --ui-sidebar-hover: #23466F;
+  --ui-sidebar-active: #2A568B;
+  --ui-sidebar-accent: #91BAFF;
+  --ui-sidebar-focus: #B9D2FF;
+}
+
+/* 手机网页：仅覆盖端侧映射里声明的语义变量（建议，待验证） */
+@media (max-width: 600px) {
+  :root {
+    --ui-text-body: 16px;
+    --ui-page-gutter: 16px;
+  }
+}
+</style>
+<style>
+/* ============================================================
+   跨端样板：客户列表 → 详情 → 返回
+   规则引用：P-01～P-03、V-01～V-04、C-01/C-04/C-05/C-06/C-07、T-02、T-03、B-01～B-05；
+   跨端建议：X-02（桌面三段）、X-03（手机返回保留）、X-05（三档）、X-06（16px／44px）、X-07（安全区）、X-11（状态覆盖）。
+   合成数据，不连接接口，不代表权限校验。
+   ============================================================ */
+html, body { height: 100%; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--ui-background); color: var(--ui-ink);
+  font-family: var(--ui-font); font-size: var(--ui-text-body); line-height: 1.65;
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+h1, h2, h3, p { margin: 0; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+input { font: inherit; }
+:is(button, a, input, [tabindex="0"]):focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- 外层：导航 + 工作区 ---------- */
+.app { height: 100%; display: grid; grid-template-columns: var(--ui-nav-width) minmax(0, 1fr); }
+.nav { background: var(--ui-sidebar); color: var(--ui-sidebar-ink); display: flex; flex-direction: column; padding: var(--ui-space-4) var(--ui-space-3); gap: var(--ui-space-1); }
+.brand { display: flex; align-items: center; gap: var(--ui-space-2); padding: var(--ui-space-2) var(--ui-space-2) var(--ui-space-4); color: var(--ui-on-primary); font-weight: 650; font-size: var(--ui-text-section); }
+.brand .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--ui-primary); display: grid; place-items: center; font-size: 12px; letter-spacing: .02em; }
+.brand small { display: block; font-weight: 400; font-size: var(--ui-text-small); color: var(--ui-sidebar-muted); line-height: 1.4; }
+.nav-item { display: flex; align-items: center; gap: var(--ui-space-3); min-height: var(--ui-control-height); padding: 0 var(--ui-space-3); border-radius: var(--ui-radius-control); color: var(--ui-sidebar-nav); text-decoration: none; }
+.nav-item svg { width: 18px; height: 18px; flex: none; }
+.nav-item:hover { background: var(--ui-sidebar-hover); color: var(--ui-on-primary); }
+.nav-item[aria-current="page"] { background: var(--ui-sidebar-active); color: var(--ui-on-primary); box-shadow: inset 3px 0 var(--ui-sidebar-accent); font-weight: 600; }
+.nav-item:focus-visible { outline-color: var(--ui-sidebar-focus); }
+.nav-foot { margin-top: auto; padding: var(--ui-space-3) var(--ui-space-2) 0; color: var(--ui-sidebar-muted); font-size: var(--ui-text-small); line-height: 1.5; }
+.nav-foot b { display: block; color: var(--ui-on-primary); font-weight: 600; }
+
+.work { position: relative; min-width: 0; min-height: 0; display: grid; grid-template-columns: var(--ui-list-width) minmax(0, 1fr); }
+
+/* ---------- 列表栏（T-02、C-04、C-05） ---------- */
+.list-pane { display: flex; flex-direction: column; min-height: 0; background: var(--ui-surface); border-right: 1px solid var(--ui-line); }
+.list-head { padding: var(--ui-space-4) var(--ui-space-4) 0; display: flex; flex-direction: column; gap: var(--ui-space-3); }
+.title-row { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-space-3); }
+.title-row h1 { font-size: var(--ui-text-page); font-weight: 650; line-height: 1.5; }
+.scope { color: var(--ui-secondary); font-size: var(--ui-text-small); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--ui-space-1); min-height: var(--ui-control-height); padding: 0 var(--ui-space-4); border-radius: var(--ui-radius-control); border: 1px solid transparent; white-space: nowrap; }
+.btn-primary { background: var(--ui-primary); color: var(--ui-on-primary); }
+.btn-primary:hover { background: var(--ui-primary-hover); }
+.btn-secondary { background: var(--ui-surface); color: var(--ui-primary); border-color: var(--ui-line); }
+.btn-secondary:hover { background: var(--ui-selected); }
+.btn-ghost { color: var(--ui-secondary); padding: 0 var(--ui-space-2); min-width: var(--ui-control-height); }
+.btn-ghost:hover { background: var(--ui-neutral-soft); color: var(--ui-ink); }
+.btn[disabled] { opacity: .55; cursor: not-allowed; }
+.search { position: relative; }
+.search input { width: 100%; height: var(--ui-field-height); padding: 0 var(--ui-space-8) 0 var(--ui-space-4); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); color: var(--ui-ink); }
+.search input::placeholder { color: var(--ui-muted); }
+.search input:focus { border-color: var(--ui-focus); outline: 2px solid var(--ui-focus); outline-offset: 0; }
+.search .clear { position: absolute; right: 4px; top: 4px; width: 32px; height: 32px; border-radius: var(--ui-radius-control); color: var(--ui-muted); display: grid; place-items: center; }
+.search .clear:hover { background: var(--ui-neutral-soft); color: var(--ui-ink); }
+.search .clear[hidden] { display: none; }
+.chips { display: flex; gap: var(--ui-space-2); overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 32px; padding: 0 var(--ui-space-3); border-radius: 999px; border: 1px solid var(--ui-line); color: var(--ui-secondary); background: var(--ui-surface); }
+.chip:hover { border-color: var(--ui-focus); color: var(--ui-primary); }
+.chip[aria-pressed="true"] { background: var(--ui-selected); border-color: var(--ui-primary); color: var(--ui-primary); font-weight: 600; }
+.result-line { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-space-2); padding: var(--ui-space-2) var(--ui-space-4); border-top: 1px solid var(--ui-line); border-bottom: 1px solid var(--ui-line); color: var(--ui-secondary); font-size: var(--ui-text-small); margin-top: var(--ui-space-3); }
+.result-line .conds { display: flex; gap: var(--ui-space-1); flex-wrap: wrap; align-items: center; min-width: 0; }
+.result-line .cond { padding: 0 var(--ui-space-2); border-radius: 4px; background: var(--ui-neutral-soft); color: var(--ui-neutral); white-space: nowrap; }
+.link { color: var(--ui-primary); text-decoration: none; white-space: nowrap; }
+.link:hover { text-decoration: underline; }
+
+.list-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.rows { list-style: none; margin: 0; padding: 0; }
+.row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: var(--ui-space-3); align-items: center; width: 100%; text-align: left; padding: var(--ui-space-3) var(--ui-space-4); border-bottom: 1px solid var(--ui-line); min-height: 64px; }
+.row:hover { background: var(--ui-background); }
+.row[aria-current="true"] { background: var(--ui-selected); box-shadow: inset 3px 0 var(--ui-primary); }
+.row:focus-visible { outline-offset: -2px; }
+.avatar { width: 40px; height: 40px; border-radius: 10px; background: var(--ui-neutral-soft); color: var(--ui-primary); display: grid; place-items: center; font-weight: 650; }
+.row-main { min-width: 0; }
+.row-name { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.core { display: inline-block; vertical-align: 2px; margin-right: var(--ui-space-1); padding: 0 6px; border-radius: 4px; border: 1px solid var(--ui-primary); color: var(--ui-primary); font-size: var(--ui-text-small); line-height: 18px; font-weight: 600; }
+.row-meta { display: block; color: var(--ui-secondary); font-size: var(--ui-text-small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 0 var(--ui-space-2); border-radius: 4px; font-size: var(--ui-text-small); line-height: 20px; white-space: nowrap; }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge.red { background: var(--ui-danger-soft); color: var(--ui-danger); }
+.badge.yellow { background: var(--ui-warning-soft); color: var(--ui-warning); }
+.badge.green { background: var(--ui-success-soft); color: var(--ui-success); }
+.badge.gray { background: var(--ui-neutral-soft); color: var(--ui-neutral); }
+.badge.plain::before { display: none; }
+.row-time { color: var(--ui-muted); font-size: var(--ui-text-small); }
+
+/* 列表状态（C-06） */
+.state { padding: var(--ui-space-8) var(--ui-space-4); text-align: center; color: var(--ui-secondary); display: flex; flex-direction: column; align-items: center; gap: var(--ui-space-3); }
+.state b { color: var(--ui-ink); font-size: var(--ui-text-section); font-weight: 600; }
+.state p { max-width: 32em; }
+.skeleton { padding: 0 var(--ui-space-4); }
+.skeleton div { height: 64px; border-bottom: 1px solid var(--ui-line); position: relative; }
+.skeleton div::before { content: ""; position: absolute; left: 0; top: 12px; width: 40px; height: 40px; border-radius: 10px; background: var(--ui-neutral-soft); }
+.skeleton div::after { content: ""; position: absolute; left: 52px; top: 18px; width: 60%; height: 12px; border-radius: 4px; background: var(--ui-neutral-soft); box-shadow: 0 20px 0 -2px var(--ui-neutral-soft); }
+.sr-live { position: absolute; left: -9999px; }
+
+/* ---------- 详情栏（T-03、C-07） ---------- */
+.detail-pane { min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; container-type: inline-size; }
+.detail-empty { flex: 1; display: grid; place-items: center; color: var(--ui-secondary); text-align: center; padding: var(--ui-space-8); }
+.detail-empty b { display: block; color: var(--ui-ink); font-size: var(--ui-text-section); margin-bottom: var(--ui-space-1); }
+.detail-bar { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: var(--ui-space-2); min-height: 56px; padding: var(--ui-space-2) var(--ui-page-gutter); background: var(--ui-surface); border-bottom: 1px solid var(--ui-line); }
+.detail-bar .crumb { min-width: 0; flex: 1; color: var(--ui-secondary); font-size: var(--ui-text-small); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail-bar .crumb b { color: var(--ui-ink); font-size: var(--ui-text-body); font-weight: 600; }
+.back { display: none; align-items: center; gap: var(--ui-space-1); min-height: var(--ui-touch-target); min-width: var(--ui-touch-target); padding: 0 var(--ui-space-2); border-radius: var(--ui-radius-control); color: var(--ui-primary); font-weight: 600; }
+.back:hover { background: var(--ui-selected); }
+.close { display: inline-flex; }
+.detail-body { padding: var(--ui-page-gutter); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--ui-block-gap); align-content: start; }
+/* 详情栏实际宽度 ≥ 760px 时才分主栏／辅栏（T-03）；更窄时辅栏落到主栏下方。用容器查询按详情栏宽度判断，而不是按窗口宽度 */
+@container (min-width: 760px) { .detail-body { grid-template-columns: minmax(0, 1fr) 280px; } }
+.detail-main { display: flex; flex-direction: column; gap: var(--ui-block-gap); min-width: 0; }
+.detail-side { display: flex; flex-direction: column; gap: var(--ui-block-gap); min-width: 0; }
+.panel { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-card-padding); }
+.panel h2 { font-size: var(--ui-text-section); font-weight: 600; line-height: 1.5; }
+.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--ui-space-2); margin-bottom: var(--ui-space-3); }
+.panel-head small { color: var(--ui-muted); font-size: var(--ui-text-small); }
+.hero { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--ui-space-4); align-items: start; }
+.hero .avatar { width: 56px; height: 56px; font-size: var(--ui-text-page); }
+.hero h1 { font-size: var(--ui-text-page); font-weight: 650; line-height: 1.5; overflow-wrap: anywhere; }
+.hero .meta { color: var(--ui-secondary); display: flex; flex-wrap: wrap; gap: var(--ui-space-1) var(--ui-space-3); margin-top: var(--ui-space-1); }
+.hero .badges { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); margin-top: var(--ui-space-3); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); margin-top: var(--ui-space-4); }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--ui-space-2) var(--ui-space-4); }
+.kv dt { color: var(--ui-secondary); }
+.kv dd { margin: 0; overflow-wrap: anywhere; }
+.missing { color: var(--ui-muted); }
+.meter { display: grid; grid-template-columns: 1fr auto; gap: var(--ui-space-2); align-items: center; margin-top: var(--ui-space-2); }
+.meter .track { height: 8px; border-radius: 999px; background: var(--ui-neutral-soft); overflow: hidden; }
+.meter .track i { display: block; height: 100%; background: var(--ui-primary); border-radius: 999px; }
+.meter b { font-size: var(--ui-text-section); }
+.evidence { display: flex; flex-wrap: wrap; gap: var(--ui-space-1); margin-top: var(--ui-space-2); }
+.evidence span { padding: 0 var(--ui-space-2); border-radius: 4px; background: var(--ui-neutral-soft); color: var(--ui-neutral); font-size: var(--ui-text-small); line-height: 20px; }
+.note { color: var(--ui-muted); font-size: var(--ui-text-small); margin-top: var(--ui-space-3); }
+.tabs { display: flex; gap: var(--ui-space-1); border-bottom: 1px solid var(--ui-line); margin-bottom: var(--ui-space-4); overflow-x: auto; scrollbar-width: none; }
+.tab { flex: none; min-height: var(--ui-control-height); padding: 0 var(--ui-space-3); color: var(--ui-secondary); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tab:hover { color: var(--ui-ink); }
+.tab[aria-selected="true"] { color: var(--ui-primary); border-color: var(--ui-primary); font-weight: 600; }
+.card-list { display: flex; flex-direction: column; gap: var(--ui-space-3); }
+.item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--ui-space-2) var(--ui-space-3); padding: var(--ui-space-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); }
+.item .t { font-weight: 600; overflow-wrap: anywhere; }
+.item .s { color: var(--ui-secondary); font-size: var(--ui-text-small); }
+.item .amt { font-weight: 600; text-align: right; white-space: nowrap; }
+.timeline { display: flex; flex-direction: column; }
+.tl { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: var(--ui-space-3); padding: var(--ui-space-3) 0; border-bottom: 1px solid var(--ui-line); }
+.tl:last-child { border-bottom: 0; }
+.tl .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ui-primary); margin-top: 7px; }
+.tl .when { color: var(--ui-muted); font-size: var(--ui-text-small); }
+.tl summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: var(--ui-space-2); }
+.tl summary::-webkit-details-marker { display: none; }
+.tl summary::after { content: "展开"; color: var(--ui-primary); font-weight: 400; font-size: var(--ui-text-small); white-space: nowrap; }
+.tl details[open] summary::after { content: "收起"; }
+.tl .body { margin-top: var(--ui-space-2); color: var(--ui-ink); white-space: pre-line; }
+.tl .next { margin-top: var(--ui-space-2); padding: var(--ui-space-2) var(--ui-space-3); border-left: 3px solid var(--ui-success); background: var(--ui-success-soft); border-radius: 0 6px 6px 0; }
+.detail-state { padding: var(--ui-space-8) var(--ui-page-gutter); text-align: center; color: var(--ui-secondary); display: flex; flex-direction: column; align-items: center; gap: var(--ui-space-3); }
+.detail-state b { color: var(--ui-ink); font-size: var(--ui-text-section); }
+.action-bar { display: none; }
+
+/* ---------- 演示控制（仅样板，用于验收；产品中不存在） ---------- */
+.demo-toggle { position: fixed; right: var(--ui-space-3); top: var(--ui-space-3); z-index: 20; min-height: 32px; padding: 0 var(--ui-space-3); border-radius: 999px; background: var(--ui-ink); color: var(--ui-on-primary); font-size: var(--ui-text-small); box-shadow: var(--ui-shadow-popup); }
+.demo { position: fixed; right: var(--ui-space-3); top: 52px; z-index: 20; width: 280px; max-width: calc(100vw - 24px); padding: var(--ui-space-4); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); box-shadow: var(--ui-shadow-popup); font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.demo[hidden] { display: none; }
+.demo h2 { font-size: var(--ui-text-body); color: var(--ui-ink); margin-bottom: var(--ui-space-2); }
+.demo fieldset { border: 0; padding: 0; margin: 0 0 var(--ui-space-3); }
+.demo legend { font-weight: 600; color: var(--ui-ink); padding: 0; margin-bottom: 4px; }
+.demo label { display: flex; align-items: center; gap: 6px; min-height: 28px; }
+.demo .mode { padding: var(--ui-space-2); border-radius: 6px; background: var(--ui-neutral-soft); color: var(--ui-neutral); }
+.demo .mode b { color: var(--ui-ink); }
+
+/* ============================================================
+   601～900px：导航折叠为图标栏；列表与详情二选一（X-02、X-05）
+   ============================================================ */
+@media (max-width: 900px) {
+  .app { grid-template-columns: var(--ui-nav-rail-width) minmax(0, 1fr); }
+  .nav { padding: var(--ui-space-3) var(--ui-space-1); align-items: stretch; }
+  .brand { justify-content: center; padding: var(--ui-space-1) 0 var(--ui-space-3); }
+  .brand span, .nav-item span, .nav-foot { display: none; }
+  .nav-item { justify-content: center; padding: 0; min-height: var(--ui-touch-target); }
+  .nav-item[aria-current="page"] { box-shadow: inset 0 -3px var(--ui-sidebar-accent); }
+  .work { grid-template-columns: minmax(0, 1fr); overflow: hidden; }
+  .list-pane { border-right: 0; }
+  .detail-pane { position: absolute; inset: 0; z-index: 2; background: var(--ui-background); transform: translateX(100%); transition: transform .22s ease; visibility: hidden; }
+  .app.detail-open .detail-pane { transform: none; visibility: visible; }
+  .back { display: inline-flex; }
+  .close { display: none; }
+  .detail-empty { display: none; }
+  .detail-body { grid-template-columns: minmax(0, 1fr); }
+  .demo-toggle { top: auto; bottom: var(--ui-space-3); }
+  .demo { top: auto; bottom: 52px; }
+}
+
+/* ============================================================
+   ≤600px：手机。底部导航、单栏、详情整页进入、安全区（X-03、X-06、X-07）
+   ============================================================ */
+@media (max-width: 600px) {
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+  .nav { order: 2; flex-direction: row; justify-content: space-around; padding: 0 var(--ui-space-1); padding-bottom: env(safe-area-inset-bottom, 0px); min-height: calc(var(--ui-tabbar-height) + env(safe-area-inset-bottom, 0px)); background: var(--ui-surface); color: var(--ui-secondary); border-top: 1px solid var(--ui-line); }
+  .brand, .nav-foot, .nav-item.desktop-only { display: none; }
+  .nav-item { flex: 1 1 0; flex-direction: column; justify-content: center; gap: 2px; min-height: var(--ui-tabbar-height); padding: 4px 0; border-radius: 0; color: var(--ui-secondary); font-size: 11px; line-height: 1.2; }
+  .nav-item span { display: inline; }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-item:hover { background: none; color: var(--ui-ink); }
+  .nav-item[aria-current="page"] { background: none; color: var(--ui-primary); box-shadow: none; }
+  .app.detail-open .nav { display: none; }
+  .list-head { padding: var(--ui-space-3) var(--ui-page-gutter) 0; }
+  .title-row h1 { font-size: 20px; }
+  .result-line { padding-left: var(--ui-page-gutter); padding-right: var(--ui-page-gutter); }
+  .row { padding: var(--ui-space-3) var(--ui-page-gutter); min-height: 72px; }
+  .row-meta, .row-time, .badge { font-size: 13px; }
+  .detail-bar { min-height: var(--ui-touch-target); padding-top: max(var(--ui-space-1), env(safe-area-inset-top, 0px)); }
+  .detail-body { padding-bottom: calc(var(--ui-page-gutter) + 72px + env(safe-area-inset-bottom, 0px)); }
+  .actions { display: none; }
+  .action-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; gap: var(--ui-space-2); padding: var(--ui-space-2) var(--ui-page-gutter); padding-bottom: calc(var(--ui-space-2) + env(safe-area-inset-bottom, 0px)); background: var(--ui-surface); border-top: 1px solid var(--ui-line); }
+  .action-bar .btn { flex: 1; min-height: var(--ui-touch-target); }
+  .app:not(.detail-open) .action-bar { display: none; }
+  .chip, .tab, .btn { min-height: var(--ui-touch-target); }
+  .demo-toggle { top: auto; bottom: calc(var(--ui-tabbar-height) + 12px + env(safe-area-inset-bottom, 0px)); }
+  .app.detail-open ~ .demo-toggle { bottom: calc(72px + 12px + env(safe-area-inset-bottom, 0px)); }
+  .demo { top: auto; left: var(--ui-space-3); right: var(--ui-space-3); width: auto; max-height: 45vh; overflow: auto; bottom: calc(var(--ui-tabbar-height) + 52px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion: reduce) { .detail-pane { transition: none; } }
+</style>
+
+<div class="app" id="app">
+  <nav class="nav" aria-label="主导航">
+    <a class="brand" href="#" aria-label="SalesBuddy 销售管理"><span class="mark">SB</span><span>SalesBuddy<small>销售管理 · 样板</small></span></a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>总览</span></a>
+    <a class="nav-item" href="#" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.5c3 .2 5.5 2.3 5.5 5.5"/></svg><span>客户</span></a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>商机</span></a>
+    <a class="nav-item desktop-only" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H9l-5 4z"/></svg><span>拜访与跟进</span></a>
+    <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M8 12.5l3 3 5.5-6"/></svg><span>任务</span></a>
+    <a class="nav-item desktop-only" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>经营分析</span></a>
+    <a class="nav-item mobile-only" href="#" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg><span>更多</span></a>
+    <div class="nav-foot"><b>王销售 · 华北一区</b>范围：本人负责的客户</div>
+  </nav>
+
+  <div class="work">
+    <section class="list-pane" aria-labelledby="list-title">
+      <div class="list-head">
+        <div class="title-row">
+          <div><h1 id="list-title">客户</h1><div class="scope">范围：本人负责 · <span id="total-count" class="num">0</span> 家</div></div>
+          <button class="btn btn-primary" type="button" id="new-customer">新建客户</button>
+        </div>
+        <div class="search">
+          <label class="sr-only" for="q">搜索客户名称或负责人</label>
+          <input id="q" type="search" placeholder="搜索客户名称或负责人" autocomplete="off">
+          <button class="clear" type="button" id="q-clear" aria-label="清除搜索" hidden>×</button>
+        </div>
+        <div class="chips" role="group" aria-label="快捷筛选" id="chips">
+          <button class="chip" type="button" data-filter="all" aria-pressed="true">全部</button>
+          <button class="chip" type="button" data-filter="attention" aria-pressed="false">有风险</button>
+          <button class="chip" type="button" data-filter="attack" aria-pressed="false">主攻区</button>
+          <button class="chip" type="button" data-filter="asset" aria-pressed="false">客户资产</button>
+          <button class="chip" type="button" data-filter="order" aria-pressed="false">见单打单</button>
+          <button class="chip" type="button" data-filter="resource" aria-pressed="false">客户资源</button>
+        </div>
+      </div>
+      <div class="result-line">
+        <div class="conds" id="conds"><span>客户列表 · 共 <b class="num" id="result-count">0</b> 家</span></div>
+        <button class="link" type="button" id="reset" hidden>清除条件</button>
+      </div>
+      <div class="list-scroll" id="list-scroll">
+        <ul class="rows" id="rows" aria-label="客户列表"></ul>
+        <div id="list-state"></div>
+      </div>
+      <div class="sr-live" aria-live="polite" id="live"></div>
+    </section>
+
+    <section class="detail-pane" id="detail" aria-label="客户详情">
+      <div class="detail-empty" id="detail-empty"><div><b>从左侧列表选择一个客户</b>详情会在这里显示；列表的搜索和筛选保持不变。</div></div>
+      <div id="detail-content" hidden></div>
+    </section>
+  </div>
+</div>
+
+<button class="demo-toggle" type="button" id="demo-toggle" aria-expanded="false" aria-controls="demo">演示控制</button>
+<aside class="demo" id="demo" hidden aria-label="演示控制">
+  <h2>演示控制（仅样板，用于验收）</h2>
+  <div class="mode" id="mode-line">当前档位：<b id="mode-name">—</b></div>
+  <fieldset><legend>列表数据状态</legend>
+    <label><input type="radio" name="list-state" value="normal" checked> 正常</label>
+    <label><input type="radio" name="list-state" value="loading"> 加载中</label>
+    <label><input type="radio" name="list-state" value="error"> 加载失败（可重试）</label>
+  </fieldset>
+  <fieldset><legend>打开详情时</legend>
+    <label><input type="radio" name="detail-state" value="normal" checked> 正常</label>
+    <label><input type="radio" name="detail-state" value="forbidden"> 无权限（403）</label>
+    <label><input type="radio" name="detail-state" value="error"> 加载失败</label>
+  </fieldset>
+  <button class="link" type="button" id="demo-empty">填入无匹配关键词，看空数据</button>
+  <p style="margin-top:8px">合成数据，不代表真实权限与接口。</p>
+</aside>
+
+<script>
+(function () {
+  'use strict';
+  // ------------------------------------------------------------------
+  // 合成数据。字段口径：客户 ≠ 商机；关系等级 1～10；潜力看预算／台数／IT 计划；
+  // 缺失显示「未登记／未填写」，不当 0；红黄绿灰来自业务判断并附依据（B-01～B-03）。
+  // ------------------------------------------------------------------
+  var TODAY = new Date('2026-09-19T09:00:00');
+  var STAGES = { 10: '识别', 30: '验证', 50: '方案', 70: '谈判', 90: '签约' };
+  var QUAD = { attack: '主攻区', asset: '客户资产', order: '见单打单', resource: '客户资源', pending: '待评估' };
+  // 合成阈值，仅用于样板：关系 ≥6 视为深关系；潜力用「高／低」代替 0～100 潜力分。
+  // 真实阈值与量纲为租户配置（见 业务约束清单.md 拍板项 2）。关系或潜力缺失时不落入任何一格，显示「待评估」。
+  function quadrant(c) { if (c.relation == null || c.potential == null) return 'pending'; var deep = c.relation >= 6; return c.potential === '高' ? (deep ? 'asset' : 'attack') : (deep ? 'resource' : 'order'); }
+  function daysAgo(n) { var d = new Date(TODAY); d.setDate(d.getDate() - n); return d; }
+  function fmtDate(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function money(v) { return v == null ? null : '¥ ' + v.toLocaleString('zh-CN'); }
+
+  var seed = [
+    ['华宸数据科技有限公司', 'HB-01', '王销售', 8, '高', 2, ['年度 IT 预算约 600 万', '规划 120 台推理服务器', '2026 数据中台计划'], 'green', '本周完成技术交流，客户方 CTO 参与', [['数据中台二期', 70, 1800000], ['推理算力扩容', 30, null]]],
+    ['北辰智造集团', 'HB-01', '王销售', 4, '高', 9, ['集团级智能制造预算', '三地工厂改造计划'], 'yellow', '9 天无跟进，超过一周底线', [['产线视觉质检', 50, 950000]]],
+    ['金桥制造股份有限公司', 'HB-02', '王销售', 9, '高', 16, ['年度预算已批复', '20 台边缘设备'], 'red', '16 天无跟进（超一周底线），且两周内无高层或技术动作（超核心客户底线）；对手已进场', [['边缘推理一体机', 70, 2400000], ['AI 培训服务', 10, null]]],
+    ['长风物流', 'HB-02', '王销售', 3, '低', 1, ['无明确预算', '暂无 IT 计划'], 'gray', '首次接触，判断依据尚不足', [['仓储机器人试点', 10, null]]],
+    ['北京中关村软件园信息技术服务有限责任公司华北大区渠道事业部', 'HB-03', '王销售', 7, '高', 3, ['渠道年度采购框架', '预计 300 台终端'], 'green', '框架协议进入法务审核', [['渠道框架采购 2026', 90, 5200000]]],
+    ['云岭教育科技', 'HB-03', '王销售', 6, '低', 12, ['年度预算 80 万'], 'yellow', '12 天无跟进', []],
+    ['泰和银行数据中心', 'HB-01', '王销售', 5, null, 4, ['数据中心三期立项', '预算未公开'], 'gray', '潜力依据待补：预算未确认，象限暂不评定', [['智能运维平台', 30, null]]],
+    ['海岳新能源', 'HB-02', '王销售', 2, '高', null, ['储能项目 IT 配套', '预算 1200 万'], 'gray', '建档 3 天，尚无已归档跟进记录，底线未触发', [['储能站视觉巡检', 10, null]]],
+    ['恒信药业', 'HB-03', '王销售', 8, '低', 5, ['GMP 系统维护预算'], 'green', '续约意向明确', [['质量系统续约', 70, 260000]]],
+    ['星河传媒', 'HB-01', '王销售', 7, '低', 20, ['预算 30 万'], 'yellow', '20 天无跟进', []],
+    ['天工重工', 'HB-02', '王销售', 4, '高', 6, ['设备联网改造 500 万', '两年 IT 规划'], 'green', '本周提交方案', [['设备联网改造', 50, 4800000]]],
+    ['沧海航运', 'HB-03', '王销售', 3, '低', 2, ['暂无预算'], 'gray', '判断依据不足', []],
+    ['麦禾农业科技', 'HB-01', '王销售', 6, '高', 8, ['智慧农业补贴项目', '预算 900 万'], 'yellow', '8 天无跟进；补贴申报窗口临近', [['智慧大棚一期', 30, 900000]]],
+    ['锐捷安防', 'HB-02', '王销售', 9, '高', 1, ['年度预算 2000 万', '持续合作三年'], 'green', '昨日高层拜访，续签在推', [['园区安防升级', 90, 3200000], ['算法授权续期', 70, 800000]]],
+    ['青禾食品', 'HB-03', '王销售', 5, '低', 15, ['预算 50 万'], 'yellow', '15 天无跟进', [['门店客流分析', 30, 150000]]],
+    ['铁塔通信服务', 'HB-01', '王销售', 6, '高', 30, ['基站巡检预算 700 万'], 'red', '30 天无跟进，商机停滞', [['基站智能巡检', 50, 700000]]],
+    ['远景地产', 'HB-02', '王销售', 2, '低', 3, ['无 IT 计划'], 'gray', '首次接触', []],
+    ['南方水务集团', 'HB-03', '王销售', 7, '高', 2, ['管网智能监测立项', '预算 1500 万'], 'green', '进入商务谈判', [['管网智能监测', 70, 1500000]]],
+    ['启明医院', 'HB-01', '王销售', 8, '低', 6, ['信息科年度预算 120 万'], 'green', '影像辅助试用反馈良好', [['影像辅助诊断试用', 50, 120000]]],
+    ['宏图机械', 'HB-02', '王销售', 3, '高', 11, ['出口订单增长，扩产计划'], 'yellow', '11 天无跟进', [['智能仓储', 10, null]]],
+    ['蓝海保险', 'HB-03', '王销售', 4, '低', 4, ['预算 40 万'], 'gray', '判断依据待评估', []],
+    ['盛世零售', 'HB-01', '王销售', 6, '低', 9, ['门店改造预算 60 万'], 'yellow', '9 天无跟进', [['智能货架试点', 30, 60000]]],
+    ['华北职业技术学院', 'HB-02', '王销售', 5, '低', 2, ['实训室建设预算 90 万'], 'green', '实训方案已确认', [['AI 实训室', 70, 900000]]],
+    ['极光半导体', 'HB-03', '王销售', 7, '高', 5, ['封测厂 AOI 预算 800 万', '明年二期'], 'green', '技术验证通过', [['AOI 缺陷检测', 50, 800000]]],
+  ];
+  var CORE = { '金桥制造股份有限公司': true, '锐捷安防': true, '南方水务集团': true }; // 集团审定的核心客户（合成）
+  var CUSTOMERS = seed.map(function (s, i) {
+    var lastFollow = s[5] == null ? null : daysAgo(s[5]);
+    var c = { id: 'C' + String(1001 + i), name: s[0], zone: s[1], owner: s[2], relation: s[3], potential: s[4], lastFollow: lastFollow, lastDays: s[5], evidence: s[6], tone: s[7], reason: s[8], core: !!CORE[s[0]],
+      opps: s[9].map(function (o, j) { return { id: 'O' + (1001 + i) + '-' + j, name: o[0], prob: o[1], acv: o[2] }; }) };
+    c.quad = quadrant(c);
+    c.contacts = [{ name: '联系人 A', role: '决策者', title: '信息中心主任' }, { name: '联系人 B', role: '使用者', title: '运维工程师' }];
+    // 已归档的跟进记录，每条都带「明确时间＋行动」的下一步（缺一不能归档）；「下一步」归档时生成待办，不是他人下发的任务
+    var d1 = fmtDate(daysAgo((s[5] || 0) - 7)), d2 = fmtDate(daysAgo((s[5] || 0) + 7));
+    var firstContact = s[8].indexOf('首次接触') >= 0;
+    c.visits = !lastFollow ? [] : firstContact ? [
+      { date: fmtDate(lastFollow), title: '首次拜访 · 初步了解', body: '了解主营业务与 IT 现状；对方暂无明确预算与项目计划。', next: d1 + ' 前发送公司与方案介绍，并约第二次沟通' },
+    ] : [
+      { date: fmtDate(lastFollow), title: c.core && s[8].indexOf('高层') >= 0 ? '高层拜访 · 续签沟通' : '现场拜访 · 方案沟通', body: (c.core && s[8].indexOf('高层') >= 0 ? '与客户分管副总沟通续签范围与预算，对方认可现有服务。' : '与信息中心讨论上线计划与验收口径。客户关心数据安全与运维交接。') + '\n对方希望一周内收到修订版方案。', next: d1 + ' 前提交修订方案并约技术交流（归档时已生成待办，不是他人下发的任务）' },
+      { date: fmtDate(daysAgo((s[5] || 0) + 14)), title: '电话跟进 · 需求确认', body: '确认年度预算范围与采购流程；采购需走集团招标。', next: d2 + ' 前向采购部确认招标时间表并索取评标标准' },
+    ];
+    c.tasks = c.opps.length ? [{ title: '整理' + c.opps[0].name + '方案要点', due: fmtDate(daysAgo(-2)), status: '已接受，待执行', source: '来自跟进记录的下一步（待办）' }] : [];
+    if (c.tone === 'red') c.tasks.push({ title: '安排高层拜访', due: fmtDate(daysAgo(-5)), status: '待接受', source: '李主管下发（任务）' });
+    return c;
+  });
+  var TONE = { red: '转差', yellow: '需关注', green: '向好', gray: '待评估' };
+  // 「有风险」＝存在未解除的风险；合成数据以红「转差」＋黄「需关注」近似（风险等级高／中／低是另一字段，映射待定）
+  function attention(c) { return c.tone === 'red' || c.tone === 'yellow'; }
+
+  // ------------------------------------------------------------------
+  // 状态：搜索词、筛选、选中、滚动位置、页签。刷新后从 sessionStorage 恢复（可失败，静默）。
+  // ------------------------------------------------------------------
+  var KEY = 'sb-sample-' + (new URLSearchParams(location.search).get('frame') || 'main');
+  var state = { q: '', filter: 'all', selectedId: null, scroll: 0, tab: 'overview', listState: 'normal', detailState: 'normal' };
+  try { var saved = JSON.parse(sessionStorage.getItem(KEY) || '{}'); Object.assign(state, saved); } catch (e) {}
+  function save() { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var app = $('app'), rows = $('rows'), listScroll = $('list-scroll'), listStateEl = $('list-state'), q = $('q'), qClear = $('q-clear'), chips = $('chips'), reset = $('reset'), live = $('live');
+  var detail = $('detail'), detailEmpty = $('detail-empty'), detailContent = $('detail-content');
+  var mqMobile = window.matchMedia('(max-width: 600px)'), mqTablet = window.matchMedia('(max-width: 900px)');
+  var EMBEDDED = window.self !== window.top; // 被 对照.html 内嵌时，三个窗口共用一条浏览器历史，不再写入历史记录
+  function mode() { return mqMobile.matches ? 'mobile' : (mqTablet.matches ? 'tablet' : 'desktop'); }
+  function stacked() { return mode() !== 'desktop'; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]; }); }
+
+  // ---------- 列表 ----------
+  function filtered() {
+    var kw = state.q.trim();
+    return CUSTOMERS.filter(function (c) {
+      if (kw && c.name.indexOf(kw) < 0 && c.owner.indexOf(kw) < 0 && c.zone.indexOf(kw) < 0) return false;
+      if (state.filter === 'attention') return attention(c);
+      if (state.filter !== 'all') return c.quad === state.filter;
+      return true;
+    });
+  }
+  function followText(c) { return c.lastFollow ? (c.lastDays === 0 ? '今天跟进' : c.lastDays + ' 天前跟进') : '未填写跟进'; }
+  function renderList() {
+    $('total-count').textContent = CUSTOMERS.length;
+    q.value = state.q; qClear.hidden = !state.q;
+    Array.prototype.forEach.call(chips.querySelectorAll('.chip'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.filter === state.filter)); });
+    var list = filtered();
+    var conds = '<span>客户列表 · 共 <b class="num" id="result-count">' + list.length + '</b> 家</span>';
+    if (state.q) conds += '<span class="cond">搜索：' + esc(state.q) + '</span>';
+    if (state.filter !== 'all') conds += '<span class="cond">' + (state.filter === 'attention' ? '有风险' : QUAD[state.filter]) + '</span>';
+    $('conds').innerHTML = conds;
+    reset.hidden = !(state.q || state.filter !== 'all');
+    rows.innerHTML = ''; listStateEl.innerHTML = '';
+    if (state.listState === 'loading') {
+      listStateEl.innerHTML = '<div class="skeleton" aria-label="正在加载客户列表"><div></div><div></div><div></div><div></div></div><div class="state"><span>正在加载客户列表…</span></div>';
+      return;
+    }
+    if (state.listState === 'error') {
+      listStateEl.innerHTML = '<div class="state" role="alert"><b>客户列表加载失败</b><p>网络或服务暂时不可用。重试不会丢失当前搜索与筛选条件。</p><button class="btn btn-secondary" type="button" id="retry">重试</button></div>';
+      $('retry').addEventListener('click', function () { setListState('normal'); });
+      return;
+    }
+    if (!list.length) {
+      listStateEl.innerHTML = '<div class="state"><b>没有匹配的客户</b><p>当前范围「本人负责」内没有符合条件的客户。可以清除条件，或检查关键词是否正确。</p><button class="btn btn-secondary" type="button" id="empty-reset">清除条件</button></div>';
+      $('empty-reset').addEventListener('click', resetFilters);
+      return;
+    }
+    var frag = document.createDocumentFragment();
+    list.forEach(function (c) {
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'row'; b.dataset.id = c.id; b.setAttribute('aria-current', String(c.id === state.selectedId));
+      b.title = c.name;
+      b.innerHTML = '<span class="avatar" aria-hidden="true">' + esc(c.name.charAt(0)) + '</span>' +
+        '<span class="row-main"><span class="row-name">' + (c.core ? '<span class="core" title="集团审定核心客户">核心</span>' : '') + esc(c.name) + '</span><span class="row-meta">' + (c.quad === 'pending' ? '象限：待评估' : QUAD[c.quad]) + ' · 关系 ' + c.relation + '/10 · 地盘 ' + esc(c.zone) + '</span></span>' +
+        '<span class="row-side"><span class="badge ' + c.tone + '">' + TONE[c.tone] + '</span><span class="row-time num">' + followText(c) + '</span></span>';
+      b.addEventListener('click', function () { openDetail(c.id, true); });
+      li.appendChild(b); frag.appendChild(li);
+    });
+    rows.appendChild(frag);
+  }
+  function announce(t) { live.textContent = ''; setTimeout(function () { live.textContent = t; }, 50); }
+  function setListState(s) { state.listState = s; save(); renderList(); syncDemo(); }
+  function resetFilters() { state.q = ''; state.filter = 'all'; save(); renderList(); announce('已清除条件'); q.focus(); }
+
+  q.addEventListener('input', function () { state.q = q.value; save(); renderList(); });
+  qClear.addEventListener('click', function () { state.q = ''; save(); renderList(); q.focus(); });
+  chips.addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (!b) return; state.filter = b.dataset.filter; save(); renderList(); });
+  reset.addEventListener('click', resetFilters);
+  $('new-customer').addEventListener('click', function () { announce('样板未实现新建客户；产品中打开新建表单'); });
+  Array.prototype.forEach.call(document.querySelectorAll('.nav-item'), function (a) { a.addEventListener('click', function (e) { e.preventDefault(); announce(a.classList.contains('mobile-only') ? '样板未实现更多菜单；产品中展开拜访与跟进、经营分析' : '样板只实现客户模块；其他导航项不可用'); }); });
+  var scrollTimer;
+  listScroll.addEventListener('scroll', function () {
+    // 详情打开期间不记录：手机上底部导航隐藏会改变列表容器高度，浏览器可能夹紧 scrollTop，记录会被污染
+    if (app.classList.contains('detail-open')) return;
+    clearTimeout(scrollTimer); scrollTimer = setTimeout(function () { if (!app.classList.contains('detail-open')) { state.scroll = listScroll.scrollTop; save(); } }, 80);
+  });
+  rows.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    var items = Array.prototype.slice.call(rows.querySelectorAll('.row'));
+    var i = items.indexOf(document.activeElement); if (i < 0) return;
+    e.preventDefault(); var n = items[Math.max(0, Math.min(items.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)))]; n.focus();
+  });
+
+  // ---------- 详情 ----------
+  var lastTrigger = null;
+  function openDetail(id, push) {
+    var c = CUSTOMERS.filter(function (x) { return x.id === id; })[0];
+    if (!c) return;
+    lastTrigger = rows.querySelector('.row[data-id="' + id + '"]');
+    state.selectedId = id; state.tab = 'overview'; save();
+    Array.prototype.forEach.call(rows.querySelectorAll('.row'), function (r) { r.setAttribute('aria-current', String(r.dataset.id === id)); });
+    if (push && !EMBEDDED) history.pushState({ detail: id }, '', '#c=' + id);
+    app.classList.add('detail-open');
+    detailEmpty.hidden = true; detailContent.hidden = false;
+    detailContent.innerHTML = '<div class="detail-bar"><button class="back" type="button" id="back">‹ 返回列表</button><div class="crumb">客户 › <b>正在加载…</b></div></div><div class="detail-state" aria-busy="true"><span>正在加载客户…</span></div>';
+    bindBack();
+    detail.scrollTop = 0;
+    if (state.detailState === 'forbidden') { renderDetailState(c, '暂无查看权限', '该客户不在你的授权范围内，或权限已变化；不显示客户信息。列表中的搜索与筛选仍然保留。', true); return; }
+    if (state.detailState === 'error') { renderDetailState(c, '客户加载失败', '网络或服务暂时不可用。', false); return; }
+    setTimeout(function () { if (state.selectedId === id) renderDetail(c); }, 240);
+  }
+  function renderDetailState(c, title, text, forbidden) {
+    // 无权限时不显示客户名称与任何字段（B-15：不暴露敏感内容）
+    var crumb = forbidden ? '客户 › <b>客户详情</b>' : '客户 › <b>' + esc(c.name) + '</b>';
+    detailContent.innerHTML = '<div class="detail-bar"><button class="back" type="button" id="back">‹ 返回列表</button><div class="crumb">' + crumb + '</div><button class="btn btn-ghost close" type="button" id="close" aria-label="关闭详情">×</button></div>' +
+      '<div class="detail-state" role="alert"><b>' + title + '</b><p>' + text + '</p>' + (forbidden ? '<button class="btn btn-secondary" type="button" id="back2">返回列表</button>' : '<button class="btn btn-secondary" type="button" id="retry-detail">重试</button>') + '</div>';
+    bindBack();
+    if (forbidden) $('back2').addEventListener('click', closeDetail);
+    else $('retry-detail').addEventListener('click', function () { state.detailState = 'normal'; save(); syncDemo(); openDetail(c.id, false); });
+    focusDetail();
+  }
+  function renderDetail(c) {
+    var attn = attention(c);
+    var html = '<div class="detail-bar"><button class="back" type="button" id="back">‹ 返回列表</button><div class="crumb">客户 › <b>' + esc(c.name) + '</b></div><button class="btn btn-ghost close" type="button" id="close" aria-label="关闭详情（Esc）">×</button></div>' +
+      '<div class="detail-body"><div class="detail-main">' +
+      '<div class="panel"><div class="hero"><span class="avatar" aria-hidden="true">' + esc(c.name.charAt(0)) + '</span><div><h1>' + esc(c.name) + '</h1>' +
+      '<div class="meta"><span>地盘 ' + esc(c.zone) + ' · ' + esc(c.owner) + '</span><span>' + (c.lastFollow ? '最近跟进 ' + fmtDate(c.lastFollow) : '<span class="missing">最近跟进：未填写</span>') + '</span></div>' +
+      '<div class="badges"><span class="badge ' + c.tone + '">' + TONE[c.tone] + '</span>' + (c.core ? '<span class="badge gray plain">核心客户</span>' : '') + '<span class="badge gray plain">' + (c.quad === 'pending' ? '象限：待评估' : QUAD[c.quad]) + '</span><span class="badge gray plain">关系 ' + c.relation + '/10</span><span class="badge gray plain">潜力：' + (c.potential == null ? '待评估' : c.potential) + '</span></div>' +
+      '<div class="actions"><button class="btn btn-primary" type="button" data-act="visit">记录拜访</button><button class="btn btn-secondary" type="button" data-act="task">创建任务</button></div></div></div></div>' +
+      '<div class="tabs" role="tablist" aria-label="客户详情页签"><button class="tab" role="tab" data-tab="overview">经营概览</button><button class="tab" role="tab" data-tab="visits">跟进记录</button><button class="tab" role="tab" data-tab="tasks">待办与任务</button></div>' +
+      '<div id="tab-overview" role="tabpanel">' +
+        '<div class="panel"><div class="panel-head"><h2>象限判断依据</h2><small>由已确认事实重算，不可手工改分</small></div>' +
+        '<div class="meter"><div class="track"><i style="width:' + c.relation * 10 + '%"></i></div><b class="num">关系 ' + c.relation + '/10</b></div>' +
+        '<dl class="kv" style="margin-top:var(--ui-space-3)"><dt>潜力</dt><dd>' + (c.potential == null ? '<span class="missing">待评估（依据不足，不评分）</span>' : c.potential + '（看预算、台数、IT 计划，不看销量）') + '</dd></dl>' +
+        '<div class="evidence">' + c.evidence.map(function (e) { return '<span>' + esc(e) + '</span>'; }).join('') + '</div>' +
+        '<p class="note">' + (c.quad === 'pending' ? '象限：待评估。关系或潜力缺少依据时不落入任何一格。' : QUAD[c.quad] + '：' + ({ attack: '潜力高、关系浅，重点投入，建立高层与技术关系', asset: '潜力高、关系深，持续经营的客户资产', order: '潜力低、关系浅，见单打单', resource: '潜力低、关系深，交给技术人员维护，销售不必频繁拜访，观察是否长大' })[c.quad] + '。') + ' 合成阈值：关系 ≥6 视为深关系；真实阈值为租户配置。</p></div>' +
+        '<div class="panel" style="margin-top:var(--ui-block-gap)"><div class="panel-head"><h2>在推商机</h2><small>' + c.opps.length + ' 条 · 商机归属本客户</small></div>' +
+        (c.opps.length ? '<div class="card-list">' + c.opps.map(function (o) { return '<div class="item"><div><div class="t">' + esc(o.name) + '</div><div class="s">阶段：' + STAGES[o.prob] + ' · 赢单概率 ' + o.prob + '%</div></div><div class="amt num">' + (o.acv == null ? '<span class="missing">ACV 未登记</span>' : money(o.acv)) + '</div></div>'; }).join('') + '</div>' : '<p class="missing">暂无在推商机。</p>') + '</div>' +
+        '<div class="panel" style="margin-top:var(--ui-block-gap)"><div class="panel-head"><h2>关键联系人</h2><small>' + c.contacts.length + ' 人</small></div><dl class="kv">' + c.contacts.map(function (p) { return '<dt>' + esc(p.role) + '</dt><dd>' + esc(p.name) + ' · ' + esc(p.title) + '</dd>'; }).join('') + '</dl></div>' +
+      '</div>' +
+      '<div id="tab-visits" role="tabpanel" hidden><div class="panel"><div class="panel-head"><h2>跟进记录</h2><small>' + c.visits.length + ' 条</small></div>' +
+        (c.visits.length ? '<div class="timeline">' + c.visits.map(function (v) { return '<div class="tl"><span class="dot" aria-hidden="true"></span><details><summary><span>' + esc(v.title) + '</span></summary><div class="when">' + v.date + '</div><div class="body">' + esc(v.body) + '</div>' + (v.next ? '<div class="next"><b>下一步：</b>' + esc(v.next) + '</div>' : '') + '</details></div>'; }).join('') + '</div>' : '<p class="missing">尚无跟进记录。记录首次拜访后，这里会显示时间线。</p>') + '</div></div>' +
+      '<div id="tab-tasks" role="tabpanel" hidden><div class="panel"><div class="panel-head"><h2>待办与任务</h2><small>待办来自已归档跟进的下一步；任务含待接受与已接受未完成；未归档草稿的下一步不计入</small></div>' +
+        (c.tasks.length ? '<div class="card-list">' + c.tasks.map(function (t) { return '<div class="item"><div><div class="t">' + esc(t.title) + '</div><div class="s">截止 ' + t.due + ' · ' + esc(t.source) + '</div></div><span class="badge ' + (t.status === '待接受' ? 'yellow' : 'gray') + ' plain">' + t.status + '</span></div>'; }).join('') + '</div>' : '<p class="missing">暂无待办与任务。</p>') + '</div></div>' +
+      '</div>' +
+      '<aside class="detail-side"><div class="panel"><div class="panel-head"><h2>风险与关注</h2><small>' + (attn ? '存在未解除风险' : '无未解除风险') + '</small></div><p><span class="badge ' + c.tone + '">' + TONE[c.tone] + '</span></p><p style="margin-top:8px">' + esc(c.reason) + '</p><p class="note">依据：' + (c.lastFollow ? '最近已归档跟进 ' + fmtDate(c.lastFollow) + '；' : '无已归档跟进记录，建档不足一周；') + (c.core ? '核心客户：一周无跟进即异常，另加两周无高层或技术动作即异常。' : '一周无跟进即异常。') + '判断来自业务规则，不由颜色推断。</p></div>' +
+      '<div class="panel"><div class="panel-head"><h2>范围与权限</h2></div><dl class="kv"><dt>数据范围</dt><dd>本人负责</dd><dt>可执行</dt><dd>记录拜访、创建任务、维护关系自评与潜力事实（象限与风险由系统重算，不可改）</dd></dl><p class="note">按钮是否显示不等于权限；以服务端返回为准。</p></div></aside>' +
+      '</div>' +
+      '<div class="action-bar"><button class="btn btn-secondary" type="button" data-act="task">创建任务</button><button class="btn btn-primary" type="button" data-act="visit">记录拜访</button></div>';
+    detailContent.innerHTML = html;
+    bindBack();
+    var tabs = detailContent.querySelectorAll('.tab');
+    function selectTab(name, focus) {
+      state.tab = name; save();
+      Array.prototype.forEach.call(tabs, function (t) { var on = t.dataset.tab === name; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; if (on && focus) t.focus(); });
+      ['overview', 'visits', 'tasks'].forEach(function (n) { $('tab-' + n).hidden = n !== name; });
+    }
+    Array.prototype.forEach.call(tabs, function (t, i) {
+      t.addEventListener('click', function () { selectTab(t.dataset.tab, false); });
+      t.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); var n = (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length; selectTab(tabs[n].dataset.tab, true); } });
+    });
+    selectTab(state.tab || 'overview', false);
+    Array.prototype.forEach.call(detailContent.querySelectorAll('[data-act]'), function (b) {
+      b.addEventListener('click', function () { announce(b.dataset.act === 'visit' ? '样板未实现记录拜访；产品中进入语音录入' : '样板未实现创建任务；产品中打开任务表单'); });
+    });
+    focusDetail();
+  }
+  function bindBack() {
+    var back = $('back'), close = $('close');
+    if (back) back.addEventListener('click', closeDetail);
+    if (close) close.addEventListener('click', closeDetail);
+  }
+  function focusDetail() { var t = stacked() ? $('back') : detailContent.querySelector('h1, .detail-state b'); if (t) { if (!t.hasAttribute('tabindex') && t.tagName !== 'BUTTON') t.tabIndex = -1; t.focus({ preventScroll: true }); } }
+  function closeDetail() { if (!EMBEDDED && history.state && history.state.detail) history.back(); else hideDetail(); }
+  function hideDetail() {
+    app.classList.remove('detail-open');
+    detailContent.hidden = true; detailContent.innerHTML = ''; detailEmpty.hidden = false;
+    if (!EMBEDDED && location.hash) history.replaceState(null, '', location.pathname + location.search);
+    // 返回后：列表、条件与滚动位置未被清空；选中行保持高亮并接回焦点（X-03、C-07）
+    listScroll.scrollTop = state.scroll;
+    var r = state.selectedId && rows.querySelector('.row[data-id="' + state.selectedId + '"]');
+    if (r) { r.focus({ preventScroll: true }); if (r.getBoundingClientRect().bottom > listScroll.getBoundingClientRect().bottom || r.getBoundingClientRect().top < listScroll.getBoundingClientRect().top) r.scrollIntoView({ block: 'nearest' }); }
+    announce('已返回客户列表，条件与位置保留');
+  }
+  window.addEventListener('popstate', function () {
+    var m = location.hash.match(/#c=(\w+)/);
+    if (m) openDetail(m[1], false); else hideDetail();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && app.classList.contains('detail-open')) { e.preventDefault(); closeDetail(); } });
+
+  // ---------- 演示控制 ----------
+  var demo = $('demo'), demoToggle = $('demo-toggle');
+  demoToggle.addEventListener('click', function () { var open = demo.hidden; demo.hidden = !open; demoToggle.setAttribute('aria-expanded', String(open)); });
+  function syncDemo() {
+    var ls = demo.querySelector('input[name="list-state"][value="' + state.listState + '"]'); if (ls) ls.checked = true;
+    var ds = demo.querySelector('input[name="detail-state"][value="' + state.detailState + '"]'); if (ds) ds.checked = true;
+    $('mode-name').textContent = ({ desktop: '电脑 >900px（三栏并排）', tablet: '收紧 601～900px（图标导航，列表／详情二选一）', mobile: '手机 ≤600px（底部导航，详情整页进入）' })[mode()];
+    document.documentElement.dataset.mode = mode();
+  }
+  function closeDemo() { demo.hidden = true; demoToggle.setAttribute('aria-expanded', 'false'); }
+  demo.addEventListener('change', function (e) {
+    if (e.target.name === 'list-state') setListState(e.target.value);
+    if (e.target.name === 'detail-state') { state.detailState = e.target.value; save(); }
+    closeDemo(); // 选定即收起，避免面板挡住要检查的内容（尤其是小屏）
+  });
+  $('demo-empty').addEventListener('click', function () { state.q = '不存在的客户'; save(); renderList(); closeDemo(); q.focus(); });
+  [mqMobile, mqTablet].forEach(function (mq) { mq.addEventListener('change', function () { syncDemo(); if (!stacked()) { app.classList.toggle('detail-open', !!state.selectedId && !detailContent.hidden); } }); });
+
+  // ---------- 启动 ----------
+  renderList();
+  listScroll.scrollTop = state.scroll;
+  syncDemo();
+  var m0 = location.hash.match(/#c=(\w+)/);
+  if (m0) { history.replaceState({ detail: m0[1] }, '', location.hash); openDetail(m0[1], false); }
+  else if (state.selectedId && !stacked()) { openDetail(state.selectedId, false); }
+})();
+</script>

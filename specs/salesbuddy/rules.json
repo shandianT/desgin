@@ -1,0 +1,1006 @@
+{
+  "$meta": {
+    "generatedFrom": [
+      "1.0.0-使用包快照/依据/Web设计规范.md",
+      "1.0.0-使用包快照/手册正文.md",
+      "02-设计变量与同步链路/tokens.json",
+      "03-跨端样板-客户列表到详情/规则映射表.md",
+      "1.0.0-使用包快照/依据/Web验收清单.md",
+      "01-三端规则对照表.md"
+    ],
+    "note": "由 tools/build-rules.mjs 生成，勿手改；规则文字以原文为准，改规则走变更单",
+    "confirmed": 26,
+    "suggested": 12
+  },
+  "rules": [
+    {
+      "id": "P-01",
+      "group": "P",
+      "title": "所有页面",
+      "scene": "所有页面",
+      "requirement": "先呈现对象、重点状态与主要动作；摘要后可看完整事实",
+      "examples": "正：商机名称＋需关注＋变化摘要；反：所有信息同字号同权重",
+      "check": "首屏能回答“这是谁、发生什么、下一步做什么”",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "详情顶部摘要卡",
+          "mobileWeb": "同",
+          "miniprogram": "同",
+          "app": "同"
+        }
+      ],
+      "tokens": [],
+      "anchors": [
+        "详情摘要卡"
+      ],
+      "checks": [
+        "首屏重点：找到对象、重点状态和主要操作；总览与列表区分明确"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 33,
+      "crossPlatform": "统一"
+    },
+    {
+      "id": "P-02",
+      "group": "P",
+      "title": "多区域页面",
+      "scene": "多区域页面",
+      "requirement": "用标题、留白、面板边界区分总览、操作、结果；每区一个主要动作",
+      "examples": "正：首页待办与动态独立；反：一长列同质卡片",
+      "check": "隐去内容后仍能辨认分区；操作归属明确",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "标题、留白、面板边界",
+          "mobileWeb": "同，留白档位变小",
+          "miniprogram": "同",
+          "app": "同"
+        }
+      ],
+      "tokens": [],
+      "anchors": [],
+      "checks": [
+        "首屏重点：找到对象、重点状态和主要操作；总览与列表区分明确"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 34,
+      "crossPlatform": "含义统一，留白值适配"
+    },
+    {
+      "id": "P-03",
+      "group": "P",
+      "title": "连续操作",
+      "scene": "连续操作",
+      "requirement": "失败、取消或切换展示时保留有效输入；处理反馈与事实状态分别表达",
+      "examples": "正：质检失败可回到原文；反：一失败就清空",
+      "check": "填写长文本后制造校验失败，内容仍完整",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "失败重试不丢筛选",
+          "mobileWeb": "同",
+          "miniprogram": "同",
+          "app": "同"
+        }
+      ],
+      "tokens": [],
+      "anchors": [],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 35,
+      "crossPlatform": "统一"
+    },
+    {
+      "id": "V-01",
+      "group": "V",
+      "title": "配色与层级",
+      "scene": "配色与层级",
+      "requirement": "深蓝导航、浅色阅读、白色面板；蓝用于动作和选中；业务状态色配文字或图标",
+      "examples": "正：红色边线＋“转差”＋依据；反：大面积深色正文区或只显示色点",
+      "check": "颜色与标签含义一致；文字在背景上可读",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "深蓝导航、浅色阅读、白面板、蓝主操作",
+          "mobileWeb": "同；导航在底部时用白底＋蓝选中",
+          "miniprogram": "同；原生 tabBar 只能在 app.json 写十六进制",
+          "app": "同"
+        }
+      ],
+      "tokens": [
+        "--ui-background",
+        "--ui-surface",
+        "--ui-sidebar",
+        "--ui-ink",
+        "--ui-secondary",
+        "--ui-muted",
+        "--ui-primary",
+        "--ui-primary-hover",
+        "--ui-line",
+        "--ui-selected",
+        "--ui-on-primary",
+        "--ui-sidebar-ink",
+        "--ui-sidebar-nav",
+        "--ui-sidebar-muted",
+        "--ui-sidebar-hover",
+        "--ui-sidebar-active",
+        "--ui-sidebar-accent"
+      ],
+      "anchors": [
+        "深蓝导航栏（电脑）"
+      ],
+      "checks": [
+        "颜色语义：红黄绿灰带文字与依据；蓝色用于操作／选中",
+        "D-01：home-activity.css、detail-workspace.css、desktop.css 仍有独立颜色、间距、圆角字面值"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 57,
+      "crossPlatform": "色值统一；导航容器适配"
+    },
+    {
+      "id": "V-02",
+      "group": "V",
+      "title": "字体与数字",
+      "scene": "字体与数字",
+      "requirement": "系统中文字体；正文 14px、辅助 12px、分区标题 16px、页面标题 24px、关键数字 32px；正文行高 1.65，标题 1.5；数字等宽对齐",
+      "examples": "正：标题、事实、时间分三层；反：一整段任务说明加粗作大标题",
+      "check": "长中文与大金额不覆盖状态、按钮；关键内容不因截断丢失",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "正文 14、辅助 12、分区 16、页面 24、数字 32",
+          "mobileWeb": "正文 16（建议），其余同",
+          "miniprogram": "正文 16（建议）；小程序 px 按 WeUI 做法视为逻辑像素（待复核）",
+          "app": "iOS 可映射系统正文 17pt 并支持动态字体"
+        }
+      ],
+      "tokens": [
+        "--ui-font",
+        "--ui-text-small",
+        "--ui-text-body",
+        "--ui-text-section",
+        "--ui-text-page",
+        "--ui-text-metric"
+      ],
+      "anchors": [
+        "手机正文 16px",
+        "手机说明文字 13px"
+      ],
+      "checks": [
+        "信息层级：标题、正文、辅助文字分级，间距体现归属",
+        "D-02：home-activity.css 与 desktop.css 存在 10～11px 辅助文字"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 58,
+      "crossPlatform": "档位统一；正文值适配"
+    },
+    {
+      "id": "V-03",
+      "group": "V",
+      "title": "间距与形状",
+      "scene": "间距与形状",
+      "requirement": "间距 4/8/12/16/24/32px；控件圆角 6px、面板 12px；普通控件高 36px、表单 40px；同组紧密、分区疏朗",
+      "examples": "正：列表条件与结果间 12～16px，独立面板间 24px；反：所有空隙等宽",
+      "check": "对照示例册；偏离时记录具体理由",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "4/8/12/16/24/32；圆角 6/12；控件高 36/40",
+          "mobileWeb": "同档位；留白取 16",
+          "miniprogram": "同；只有随屏宽缩放的量用 rpx（小程序等比单位，详见 02 章）",
+          "app": "同"
+        }
+      ],
+      "tokens": [
+        "--ui-space-1",
+        "--ui-space-2",
+        "--ui-space-3",
+        "--ui-space-4",
+        "--ui-space-6",
+        "--ui-space-8",
+        "--ui-radius-control",
+        "--ui-radius-panel",
+        "--ui-control-height",
+        "--ui-field-height"
+      ],
+      "anchors": [],
+      "checks": [
+        "信息层级：标题、正文、辅助文字分级，间距体现归属",
+        "窄屏：390 与 320px；页面无横向溢出，宽表可局部横滚",
+        "D-01：home-activity.css、detail-workspace.css、desktop.css 仍有独立颜色、间距、圆角字面值"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 59,
+      "crossPlatform": "档位统一；用途→档位的选择适配"
+    },
+    {
+      "id": "V-04",
+      "group": "V",
+      "title": "图标与焦点",
+      "scene": "图标与焦点",
+      "requirement": "图标延用产品已有风格；常用图标 16px；纯图标按钮提供可读名称；键盘焦点轮廓至少 2px；正文正常状态对比度目标 ≥4.5:1",
+      "examples": "正：刷新图标有“刷新”名称；反：依靠颜色猜按钮",
+      "check": "Tab 可见，读屏名称明确；检查常用文字与状态标签对比度",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "16px 图标；焦点轮廓 2px；对比度 ≥4.5:1",
+          "mobileWeb": "同；触控目标 ≥44px（建议）",
+          "miniprogram": "同",
+          "app": "Apple 默认 44pt、Android 48dp"
+        }
+      ],
+      "tokens": [
+        "--ui-focus",
+        "--ui-sidebar-focus"
+      ],
+      "anchors": [
+        "详情页签",
+        "键盘焦点 2px 轮廓"
+      ],
+      "checks": [
+        "键盘与读屏：Tab 焦点可见；按钮名称明确；弹窗焦点循环及恢复",
+        "D-02：home-activity.css 与 desktop.css 存在 10～11px 辅助文字"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 60,
+      "crossPlatform": "含义统一；目标尺寸适配"
+    },
+    {
+      "id": "C-01",
+      "group": "C",
+      "title": "按钮",
+      "scene": "按钮",
+      "requirement": "同一区域突出一个主操作，次操作描边或文字；默认、悬停、聚焦、禁用、处理中均有表达；禁用说明原因",
+      "examples": "正：“保存中”并阻止重复提交；反：三个同样抢眼的主按钮",
+      "check": "鼠标、Tab、Enter 操作；处理中不可重复提交",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "一区一主操作；处理中防重复",
+          "mobileWeb": "同；主动作固定在底部操作条",
+          "miniprogram": "同",
+          "app": "同"
+        }
+      ],
+      "tokens": [],
+      "anchors": [
+        "底部主动作条（手机）"
+      ],
+      "checks": [
+        "状态反馈：正常、悬停、聚焦、禁用、加载、空数据、异常有区分"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 68,
+      "crossPlatform": "统一；位置适配"
+    },
+    {
+      "id": "C-02",
+      "group": "C",
+      "title": "输入与校验",
+      "scene": "输入与校验",
+      "requirement": "标签常显，必填项明确；错误就地提示并关联字段；错误时保留输入；仅对应处理阶段只读",
+      "examples": "正：沟通内容缺失时提示且保留下一步计划；反：用 placeholder 代替标签",
+      "check": "中文输入、长文、粘贴、失败重填；不可覆盖正在编辑的值",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "标签常显、错误就地、保留输入",
+          "mobileWeb": "同；键盘弹起后操作可达",
+          "miniprogram": "同；用平台 adjust-position（属性说明来自文档镜像，待复核）",
+          "app": "同"
+        }
+      ],
+      "tokens": [],
+      "anchors": [
+        "搜索框"
+      ],
+      "checks": [
+        "表单连续性：校验失败保留输入；长文滚动；主要操作可达"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 69,
+      "crossPlatform": "统一；键盘处理引用平台"
+    },
+    {
+      "id": "C-03",
+      "group": "C",
+      "title": "选择器",
+      "scene": "选择器",
+      "requirement": "使用现有 SalesSelect、SalesDatePicker；搜索、多选与清空可用；单选选中即生效，多选点击应用；Esc 取消，焦点回触发点",
+      "examples": "正：季度多选显示已选数量；反：四个季度用庞大双栏弹窗",
+      "check": "搜索无结果、取消、多选应用、日期合法性、窄屏位置",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "SalesSelect／SalesDatePicker",
+          "mobileWeb": "同组件的窄屏位置",
+          "miniprogram": "需小程序对应组件",
+          "app": "需原生组件"
+        }
+      ],
+      "tokens": [],
+      "anchors": [],
+      "checks": [
+        "组合筛选：搜索＋多选、无结果、移除单条件和清除全部",
+        "选择器：中文搜索、Esc、取消、清空、应用；日期合法性"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 70,
+      "crossPlatform": "行为统一；实现各端"
+    },
+    {
+      "id": "C-04",
+      "group": "C",
+      "title": "筛选栏",
+      "scene": "筛选栏",
+      "requirement": "紧邻所属结果区，注明作用范围，显示已选条件、结果数和清除入口；总览与列表分别命名",
+      "examples": "正：“商机列表·阶段”，上方总览保持不变；反：无标题下拉放在两个区域之间",
+      "check": "改列表条件核对总览；改统计周期核对列表；清除恢复",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "紧邻结果、显示已选与数量、可清除",
+          "mobileWeb": "同，筛选片横向滚动",
+          "miniprogram": "同",
+          "app": "同"
+        }
+      ],
+      "tokens": [],
+      "anchors": [
+        "筛选片",
+        "结果行"
+      ],
+      "checks": [
+        "筛选归属：改总览周期不改列表；改列表条件不改总览",
+        "组合筛选：搜索＋多选、无结果、移除单条件和清除全部"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 71,
+      "crossPlatform": "统一"
+    },
+    {
+      "id": "C-05",
+      "group": "C",
+      "title": "列表与表格",
+      "scene": "列表与表格",
+      "requirement": "名称、状态、负责人、时间、金额、操作位置稳定；长文可展开完整内容；不以卡片堆叠替代桌面列表",
+      "examples": "正：首行对象、次行摘要、末列操作；反：长标题把状态推离屏幕",
+      "check": "长名称、20 行以上、空列表、窄屏；操作可达且关联对象正确",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "桌面用列表／表格，不以卡片堆叠替代",
+          "mobileWeb": "手机用列表行（名称／摘要／状态／时间）",
+          "miniprogram": "同手机",
+          "app": "同手机"
+        }
+      ],
+      "tokens": [],
+      "anchors": [
+        "列表行"
+      ],
+      "checks": [
+        "长内容：长中文名、长任务、长金额不压缩操作；可查完整内容",
+        "窄屏：390 与 320px；页面无横向溢出，宽表可局部横滚"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 72,
+      "crossPlatform": "字段与顺序统一；表格↔列表行适配"
+    },
+    {
+      "id": "C-06",
+      "group": "C",
+      "title": "数据与反馈状态",
+      "scene": "数据与反馈状态",
+      "requirement": "加载有文案；空数据说明原因及下一步；异常可重试；部分缺失应显示已有数据并说明覆盖范围",
+      "examples": "正：未登记回款；反：加载失败显示 0",
+      "check": "切换正常、加载、空数据、异常；重试不丢筛选",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "加载有文案、空数据说原因、异常可重试",
+          "mobileWeb": "同",
+          "miniprogram": "同（现状：三态外观相同）",
+          "app": "同"
+        }
+      ],
+      "tokens": [],
+      "anchors": [
+        "空数据／加载中／失败／无权限"
+      ],
+      "checks": [
+        "状态反馈：正常、悬停、聚焦、禁用、加载、空数据、异常有区分"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 73,
+      "crossPlatform": "统一"
+    },
+    {
+      "id": "C-07",
+      "group": "C",
+      "title": "弹窗与展开",
+      "scene": "弹窗与展开",
+      "requirement": "标题清楚；弹窗有关闭与取消；Esc 可关，焦点不逃逸且关闭回到触发点；次要详情优先就地展开",
+      "examples": "正：摘要后展开完整判断依据；反：看一行备注也跳新页面",
+      "check": "Tab/Shift+Tab、Esc；展开不改变记录、顺序、业务状态",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "Esc 可关、焦点回触发点、次要详情就地展开",
+          "mobileWeb": "详情整页进入而不是弹窗；系统返回可关",
+          "miniprogram": "同手机；浮层不得替代页面级返回",
+          "app": "同"
+        }
+      ],
+      "tokens": [
+        "--ui-shadow-popup"
+      ],
+      "anchors": [
+        "关闭（电脑）／返回（其他）",
+        "返回后保留"
+      ],
+      "checks": [
+        "键盘与读屏：Tab 焦点可见；按钮名称明确；弹窗焦点循环及恢复"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 74,
+      "crossPlatform": "行为统一；容器适配"
+    },
+    {
+      "id": "T-01",
+      "group": "T",
+      "title": "首页工作台",
+      "scene": "首页工作台",
+      "requirement": "待办、常用操作、业务动态独立；动态按对象、摘要、状态、时间、动作组织；红黄业务判断进入“需关注”",
+      "examples": "正：需关注来自业务判断；反：橙色任务“待接受”当作商机风险",
+      "check": "全部／需关注切换、展开依据、完整标题可读；[#template-home](../示例册/design-system/index.html#template-home)",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "待办／常用操作／动态分区",
+          "mobileWeb": "单栏顺序排列",
+          "miniprogram": "同手机",
+          "app": "同手机"
+        }
+      ],
+      "tokens": [],
+      "anchors": [],
+      "checks": [
+        "桌面：1440×900 与 1366×768；无覆盖、错位、操作遮挡",
+        "D-04：示例模板使用原生语义 HTML，产品仍通过小程序源构建适配；部分布局已改造"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 89,
+      "crossPlatform": "统一"
+    },
+    {
+      "id": "T-02",
+      "group": "T",
+      "title": "业务列表",
+      "scene": "业务列表",
+      "requirement": "总览独立面板；列表标题、工具栏、条件、数量和结果同区；局部筛选不污染其他区域",
+      "examples": "正：列表无匹配时总览仍显示原统计；反：全页一个含糊的时间选择器",
+      "check": "搜索＋多选组合、单条件移除、清除；[#template-list](../示例册/design-system/index.html#template-list)",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "总览独立；列表标题、工具栏、条件、数量、结果同区",
+          "mobileWeb": "同，总览可折叠",
+          "miniprogram": "同",
+          "app": "同"
+        }
+      ],
+      "tokens": [],
+      "anchors": [
+        "列表标题 + 范围 + 总数",
+        "结果行"
+      ],
+      "checks": [
+        "筛选归属：改总览周期不改列表；改列表条件不改总览"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 90,
+      "crossPlatform": "统一"
+    },
+    {
+      "id": "T-03",
+      "group": "T",
+      "title": "经营详情",
+      "scene": "经营详情",
+      "requirement": "对象摘要与主要操作在顶部；页签组织摘要、跟进、任务；主栏事实、辅栏关注与依据；客户与商机分开",
+      "examples": "正：商机注明所属客户；反：把客户整体与某商机状态混为一谈",
+      "check": "两种对象切换、页签键盘操作、完整记录；[#template-detail](../示例册/design-system/index.html#template-detail)",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "顶部摘要＋主操作；页签；主栏事实、辅栏关注",
+          "mobileWeb": "辅栏落到主栏下方",
+          "miniprogram": "同手机",
+          "app": "同手机"
+        }
+      ],
+      "tokens": [],
+      "anchors": [
+        "详情摘要卡",
+        "详情页签",
+        "辅栏「风险与关注」与「范围与权限」",
+        "辅栏何时并排"
+      ],
+      "checks": [
+        "对象关联：客户／商机详情边界明确，原关联及完整记录仍可访问"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 91,
+      "crossPlatform": "统一；分栏按详情栏自身宽度 ≥760px 决定（容器查询）"
+    },
+    {
+      "id": "T-04",
+      "group": "T",
+      "title": "拜访录入",
+      "scene": "拜访录入",
+      "requirement": "桌面左右分栏，关联对象与编辑内容同屏；长文本内部滚动，操作区固定在表单底部；窄屏上下排列",
+      "examples": "正：失败保留下一步计划；反：长页面滚到底才能提交或静默失去草稿",
+      "check": "1024×600、长文本、必填缺失、返回修改；[#template-visit](../示例册/design-system/index.html#template-visit)",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "左右分栏",
+          "mobileWeb": "上下排列",
+          "miniprogram": "同手机；textarea 在固定层需 fixed（来自文档镜像，待复核）",
+          "app": "同手机"
+        }
+      ],
+      "tokens": [],
+      "anchors": [],
+      "checks": [
+        "表单连续性：校验失败保留输入；长文滚动；主要操作可达",
+        "短屏：1024×600；填写与操作可达，长文本内部滚动"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 92,
+      "crossPlatform": "统一；分栏适配"
+    },
+    {
+      "id": "T-05",
+      "group": "T",
+      "title": "经营分析",
+      "scene": "经营分析",
+      "requirement": "范围／周期紧邻指标；金额、数量分别标单位；图表配数据表、空值与统计口径说明",
+      "examples": "正：缺关单日期的条目明确标注未纳入；反：缺数据的指标算 0",
+      "check": "切季度图表与合计一致，缺失仍缺失；[#template-analytics](../示例册/design-system/index.html#template-analytics)",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [
+        {
+          "web": "范围周期紧邻指标；图表配数据表",
+          "mobileWeb": "同",
+          "miniprogram": "同",
+          "app": "同"
+        }
+      ],
+      "tokens": [],
+      "anchors": [],
+      "checks": [
+        "零与缺失：0、未填写／未登记、加载和错误分别表达",
+        "图表：标明周期、单位、口径、缺失；图表与数据表一致",
+        "桌面：1440×900 与 1366×768；无覆盖、错位、操作遮挡",
+        "D-04：示例模板使用原生语义 HTML，产品仍通过小程序源构建适配；部分布局已改造"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 93,
+      "crossPlatform": "统一"
+    },
+    {
+      "id": "B-01",
+      "group": "B",
+      "title": "红黄绿灰灯",
+      "scene": "红黄绿灰灯",
+      "requirement": "业务变化使用红“转差”、黄“需关注”、绿“向好”、灰“待评估”，同时呈现判断依据；沿用业务来源结果，不从颜色、关键词或缺失字段推断",
+      "examples": "正：更新成功但判断未返回显示待评估；反：所有保存成功一律绿色向好",
+      "check": "使用四类业务返回检查标签、摘要、依据及关注计数；技术保存成功不冒充业务判断",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [],
+      "tokens": [
+        "--ui-danger",
+        "--ui-danger-soft",
+        "--ui-warning",
+        "--ui-warning-soft",
+        "--ui-success",
+        "--ui-success-soft",
+        "--ui-neutral",
+        "--ui-neutral-soft"
+      ],
+      "anchors": [
+        "列表行",
+        "红黄绿灰标签"
+      ],
+      "checks": [
+        "颜色语义：红黄绿灰带文字与依据；蓝色用于操作／选中",
+        "D-05：示例册只演示状态，不接真实任务、判断服务、AI 或权限 API"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 101
+    },
+    {
+      "id": "B-02",
+      "group": "B",
+      "title": "对象与状态",
+      "scene": "对象与状态",
+      "requirement": "客户、商机、拜访、任务各自有事实来源；任务已接受仍未完成；下一步计划未创建任务前不计入任务",
+      "examples": "正：“已接受，待执行”；反：“接收方已确认”配已完成",
+      "check": "查看实际状态字段与持久化记录；不能仅凭展示推断完成",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [
+        "列表行",
+        "象限判断依据",
+        "在推商机",
+        "待办与任务页签"
+      ],
+      "checks": [
+        "任务语义：已接受未标为已完成；下一步计划不自动算任务",
+        "对象关联：客户／商机详情边界明确，原关联及完整记录仍可访问"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 102
+    },
+    {
+      "id": "B-03",
+      "group": "B",
+      "title": "金额、时间与缺失",
+      "scene": "金额、时间与缺失",
+      "requirement": "ACV、确收、回款分别标注；0 仅用于明确零值；缺失显示未填写／未登记，处理中显示加载；金额有币种单位，完整日期带年份，动态时间展开可查",
+      "examples": "正：¥ 0 与未登记并列；反：用导入当天补齐所有关单日期",
+      "check": "对照源数据；大金额和跨年日期无歧义；缺失不得臆造",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [
+        "「未填写跟进」「ACV 未登记」「象限：待评估」",
+        "在推商机"
+      ],
+      "checks": [
+        "零与缺失：0、未填写／未登记、加载和错误分别表达"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 103
+    },
+    {
+      "id": "B-04",
+      "group": "B",
+      "title": "AI 流程",
+      "scene": "AI 流程",
+      "requirement": "核对内容→质检→人工确认→归档；处理中可见阶段；失败保留输入且可重试或返回；超时走已有恢复机制；质检完成不等于归档",
+      "examples": "正：“已生成建议，待人工确认”；反：“AI 正在分析”时让用户误以为还能填写被锁字段",
+      "check": "草稿、处理中、失败、待确认、归档各自回读；仅真实归档回执可显示已归档",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [],
+      "checks": [
+        "AI 过程：编辑、处理中、失败、重试、人工确认、归档状态一致"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 104
+    },
+    {
+      "id": "B-05",
+      "group": "B",
+      "title": "范围与权限",
+      "scene": "范围与权限",
+      "requirement": "范围名邻近数据；权限与 capability 以服务端契约为准；前端隐藏按钮不等同于权限校验",
+      "examples": "正：“本人／团队”对应同一授权范围；反：依靠角色名称猜写权限",
+      "check": "核对列表、详情和操作返回的权限；示例册合成数据不算权限验证",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [
+        "列表标题 + 范围 + 总数",
+        "空数据／加载中／失败／无权限",
+        "辅栏「风险与关注」与「范围与权限」"
+      ],
+      "checks": [
+        "范围与权限：列表、详情、操作与后端授权一致；范围提示可见",
+        "D-05：示例册只演示状态，不接真实任务、判断服务、AI 或权限 API"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 105
+    },
+    {
+      "id": "G-01",
+      "group": "G",
+      "title": "需求与开发",
+      "scene": "需求与开发",
+      "requirement": "每次变更引用规则编号、示例锚点和验收项；新业务语义先对齐契约，展示改造不发明第二套规则",
+      "examples": "正：“按 T-02＋C-04 改商机列表”；反：“照截图画一下”",
+      "check": "评审能追溯规则与原始业务处理",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [],
+      "checks": [
+        "维护：规则、示例、代码、验证结果与偏差表同步"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 111
+    },
+    {
+      "id": "G-02",
+      "group": "G",
+      "title": "版本与偏差",
+      "scene": "版本与偏差",
+      "requirement": "主规范、示例册、验收清单一起更新；有效规范每类一份；偏差写清页面、影响、状态和证据",
+      "examples": "正：某旧页仍有硬编码颜色，列待整改；反：构建绿灯就声称全系统遵循",
+      "check": "按偏差表复核；新证据覆盖旧结论时保留有效信息",
+      "status": "已确认",
+      "scope": "SalesBuddy Web",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [],
+      "checks": [
+        "维护：规则、示例、代码、验证结果与偏差表同步",
+        "D-03：desktop.css、visual-theme.css、theme.css 与各页面 CSS 仍有层叠覆盖和 !important"
+      ],
+      "sourceFile": "1.0.0-使用包快照/依据/Web设计规范.md",
+      "sourceLine": 112
+    },
+    {
+      "id": "X-01",
+      "group": "X",
+      "title": "三端共同内容",
+      "scene": "三端共同内容",
+      "requirement": "对象名称、字段含义、状态含义和权限规则保持一致；由同一业务契约确定",
+      "examples": "",
+      "check": "同一测试账号与记录，在已接入各端核对；记录缺失端",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 151
+    },
+    {
+      "id": "X-02",
+      "group": "X",
+      "title": "桌面频繁切换对象",
+      "scene": "桌面频繁切换对象",
+      "requirement": "客户、任务等可采用“功能导航＋对象列表＋详情”；窗口不够时折叠导航或将详情独立打开",
+      "examples": "",
+      "check": "连续查看多条、关闭详情、长标题与键盘操作",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [
+        "--ui-nav-width",
+        "--ui-nav-rail-width",
+        "--ui-list-width"
+      ],
+      "anchors": [
+        "导航折叠成图标栏（收紧）"
+      ],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 152
+    },
+    {
+      "id": "X-03",
+      "group": "X",
+      "title": "手机导航",
+      "scene": "手机导航",
+      "requirement": "常用一级功能可放底部；列表点进详情；返回时保留允许保留的条件、选中项和位置",
+      "examples": "",
+      "check": "列表→详情→返回；导航栏与系统返回的结果一致",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [
+        "--ui-tabbar-height"
+      ],
+      "anchors": [
+        "底部导航（手机）",
+        "关闭（电脑）／返回（其他）",
+        "返回后保留"
+      ],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 153
+    },
+    {
+      "id": "X-04",
+      "group": "X",
+      "title": "复杂编辑",
+      "scene": "复杂编辑",
+      "requirement": "拜访录入等需要完整编辑空间；退出时说明未保存内容如何处理",
+      "examples": "",
+      "check": "长文、输入法弹起、取消和失败恢复",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 154
+    },
+    {
+      "id": "X-05",
+      "group": "X",
+      "title": "响应式",
+      "scene": "响应式",
+      "requirement": "沿用 Web V1 的大于 900、601～900、不大于 600px 三档；根据内容决定是否分栏，不强行把所有页面做三栏",
+      "examples": "",
+      "check": "1440、1366、1024、900、600、390、320 宽度与短屏",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 155
+    },
+    {
+      "id": "X-06",
+      "group": "X",
+      "title": "手机可读可点",
+      "scene": "手机可读可点",
+      "requirement": "手机正文建议从 16 个逻辑像素起评估；交互目标建议至少 44×44 个逻辑像素，可扩大无形点击区域",
+      "examples": "",
+      "check": "真机阅读、误触、长中文和系统字号放大；项目登记最终值",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [
+        "--ui-touch-target"
+      ],
+      "anchors": [
+        "底部主动作条（手机）",
+        "手机正文 16px",
+        "触控目标 ≥44px"
+      ],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 156
+    },
+    {
+      "id": "X-07",
+      "group": "X",
+      "title": "安全区与键盘",
+      "scene": "安全区与键盘",
+      "requirement": "底部操作避开系统安全区；键盘弹起后当前输入和关键操作可到达",
+      "examples": "",
+      "check": "真机键盘、横竖屏及带底部手势区域设备",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [
+        "底部导航（手机）",
+        "底部主动作条（手机）"
+      ],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 157
+    },
+    {
+      "id": "X-08",
+      "group": "X",
+      "title": "共享间距",
+      "scene": "共享间距",
+      "requirement": "使用相同间距档位和语义名称，端侧允许选择不同档位；具体值进入统一配置及采用记录",
+      "examples": "",
+      "check": "调整一个公共配置，核对依赖它的各端组件",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [
+        "--ui-page-gutter",
+        "--ui-card-padding",
+        "--ui-block-gap"
+      ],
+      "anchors": [],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 158
+    },
+    {
+      "id": "X-09",
+      "group": "X",
+      "title": "单位适配",
+      "scene": "单位适配",
+      "requirement": "Web 使用 CSS px；小程序按布局策略选择 px/rpx；原生 App 按平台逻辑单位实现。相同数字不代表相同实际尺寸",
+      "examples": "",
+      "check": "在基准和非基准宽度设备测量，避免直接机械替换单位",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 159
+    },
+    {
+      "id": "X-10",
+      "group": "X",
+      "title": "同步发布",
+      "scene": "同步发布",
+      "requirement": "配置变化经生成、组件接入、回归检查和各端构建发布后生效；已安装或已发布客户端按各自机制升级",
+      "examples": "",
+      "check": "记录配置版本、客户端版本、截图和接入日期",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 160
+    },
+    {
+      "id": "X-11",
+      "group": "X",
+      "title": "状态覆盖",
+      "scene": "状态覆盖",
+      "requirement": "同一业务动作在各端都考虑加载、空数据、失败、无权限、成功和重复提交",
+      "examples": "",
+      "check": "同一组异常案例逐端检查",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [
+        "空数据／加载中／失败／无权限"
+      ],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 161
+    },
+    {
+      "id": "X-12",
+      "group": "X",
+      "title": "例外管理",
+      "scene": "例外管理",
+      "requirement": "平台限制或业务特性允许差异；记录原因、影响、负责人和复查时机",
+      "examples": "",
+      "check": "差异可查到具体页面，不以“移动端特殊”笼统解释",
+      "status": "建议",
+      "scope": "跨端（待样板验证与登记采用）",
+      "platforms": [],
+      "tokens": [],
+      "anchors": [],
+      "checks": [],
+      "sourceFile": "1.0.0-使用包快照/手册正文.md",
+      "sourceLine": 162
+    }
+  ]
+}

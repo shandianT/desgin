@@ -1,0 +1,292 @@
+{
+  "checkedAt": "2026-09-19T07:45:37.421Z",
+  "scope": "本次离线阅读、链接入口、示例基本操作和布局检查；未验证真实业务或三端接入",
+  "browser": "Chrome headless / 本机 file 协议",
+  "checks": [
+    {
+      "name": "完整手册含全部 26 个已确认规则",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "完整手册含 10 章",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "无匹配有提示",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "章节查找定位跨端补充",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "目录恢复完整内容",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "大字阅读生效",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "手册无整页横向溢出 1440",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "手册无整页横向溢出 1024",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "手册无整页横向溢出 768",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "手册无整页横向溢出 390",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "手册无整页横向溢出 320",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "模板可离线阅读 01-任务单",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "模板可离线阅读 02-规则变更单",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "模板可离线阅读 03-页面验收单",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "模板可离线阅读 04-产品采用登记表",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "依据可离线阅读 Web设计规范",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "依据可离线阅读 Web验收清单",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "依据可离线阅读 Web历史验证",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "依据可离线阅读 飞书对齐方案",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "依据可离线阅读 Web交互重构建议",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1440 foundations",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1440 components",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1440 template-home",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1440 template-list",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1440 template-detail",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1440 template-visit",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1440 template-analytics",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1024 foundations",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1024 components",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1024 template-home",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1024 template-list",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1024 template-detail",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1024 template-visit",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 1024 template-analytics",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 390 foundations",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 390 components",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 390 template-home",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 390 template-list",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 390 template-detail",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 390 template-visit",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 390 template-analytics",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 320 foundations",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 320 components",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 320 template-home",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 320 template-list",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 320 template-detail",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 320 template-visit",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例路由与适配 320 template-analytics",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "校验错误保留备注",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "选择器打开并可取消",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "示例弹窗可关闭",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "列表无结果反馈",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "清除筛选恢复列表",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "无需联网加载资源",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "浏览器脚本无错误",
+      "pass": true,
+      "details": ""
+    }
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "passed": 55,
+  "failed": 0,
+  "deliveryStructure": {
+    "localLinksChecked": 155,
+    "dynamicHashLinksCoveredByBrowser": 22,
+    "confirmedRulesUnchanged": 26,
+    "documents": "完整手册、四种模板、依据阅读副本、离线示例与许可"
+  }
+}

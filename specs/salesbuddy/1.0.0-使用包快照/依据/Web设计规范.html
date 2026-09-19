@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>SalesBuddy Web 设计规范 V1</title>
+<style>
+:root{--ink:#192842;--muted:#53647c;--blue:#2863cd;--line:#dce3ed;--paper:#fff;--canvas:#f3f5f9;--size:15px;color-scheme:light}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--canvas);color:var(--ink);font:var(--size)/1.8 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}a{color:#2055b5;text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #5786dc;outline-offset:3px}.skip{position:absolute;top:8px;left:8px;transform:translateY(-150%);background:#fff;padding:8px;z-index:20}.skip:focus{transform:none}.shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}.sidebar{background:#142f54;color:#edf3ff;padding:28px 20px;position:sticky;top:0;height:100vh;overflow:auto}.brand{font-size:21px;font-weight:650;line-height:1.5;margin:0 0 6px}.edition{font-size:12px;color:#c0cee0}.sidebar details{margin-top:26px}.sidebar summary{font-size:14px;cursor:pointer;padding:8px 0}.sidebar nav{display:grid;gap:5px;margin-top:10px}.sidebar a{color:#dce8f7;text-decoration:none;padding:9px 10px;border-radius:6px;font-size:13px;line-height:1.5}.sidebar a:hover{background:#274c79;color:#fff}.sidebar .home{display:block;border-top:1px solid #456080;margin-top:22px;padding-top:16px}.body{min-width:0}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 32px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.toolbar label{display:flex;align-items:center;gap:8px;flex:1;min-width:180px;font-size:13px}.toolbar input{background:#f8fafc;border:1px solid #bdcadd;border-radius:6px;padding:6px 10px;width:100%;min-width:0;color:var(--ink);font-size:16px}.toolbar button{border:1px solid #bdcadd;background:#fff;color:var(--ink);border-radius:6px;padding:6px 12px;min-height:36px}.toolbar button[aria-pressed=true]{background:#eaf1ff;border-color:#2863cd}.reading{max-width:1180px;margin:auto;padding:36px 40px 70px}.meta{font-size:12px;letter-spacing:.04em;color:var(--muted);margin-bottom:20px}.intro{margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:24px}.intro h1{font-size:32px;line-height:1.4;letter-spacing:-.02em;margin:0 0 14px}.intro p{margin:10px 0}.section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px 30px;margin:20px 0;scroll-margin-top:92px}.section[hidden]{display:none}h2{font-size:24px;line-height:1.5;margin:0 0 20px}h3{font-size:18px;line-height:1.6;margin:30px 0 12px}h4{font-size:16px;margin:24px 0 10px}p{margin:12px 0}ul,ol{padding-left:24px}li{margin:6px 0}strong{font-weight:650}.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.7;text-align:left}th{background:#eef3fa;font-weight:600}th,td{border-bottom:1px solid var(--line);padding:12px 14px;vertical-align:top;min-width:110px;overflow-wrap:anywhere}tr:last-child td{border-bottom:0}table th:first-child,table td:first-child{min-width:125px}blockquote{border-left:4px solid #6f94d4;background:#f2f6fc;padding:8px 18px;margin:18px 0;color:#344861}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf2f8;border:1px solid var(--line);padding:18px;border-radius:8px;font:13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;overflow-wrap:anywhere}p code,li code,td code{background:#edf2f8;padding:2px 4px;border-radius:3px}img{max-width:100%;height:auto}.status{color:var(--muted);font-size:13px;min-height:24px}.foot{color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:18px}.link-actions{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.link-actions a{display:inline-block;padding:8px 14px;border:1px solid #2863cd;background:#fff;border-radius:6px;text-decoration:none}.link-actions a:first-child{background:#2863cd;color:#fff}.no-match{padding:24px;background:#fff;border:1px solid var(--line);border-radius:8px}.scope-note{padding:12px 16px;border-left:4px solid #b37a1c;background:#fff5df;color:#654715;font-size:14px;margin:18px 0}
+.reading{overflow-wrap:anywhere}.toolbar label{white-space:nowrap}table{font-size:calc(var(--size) - 1px)}
+@media(max-width:1050px){.shell{grid-template-columns:220px minmax(0,1fr)}.reading{padding:28px 24px 50px}.section{padding:24px}.toolbar{padding:12px 24px}h2{font-size:22px}}
+@media(max-width:760px){.shell{display:block}.sidebar{position:static;height:auto;overflow:visible;padding:18px 20px}.brand{font-size:20px}.sidebar details{margin-top:10px}.sidebar nav{grid-template-columns:1fr}.sidebar .home{margin-top:10px;padding-top:10px}.toolbar{position:static;padding:12px 16px}.toolbar label{flex-basis:100%}.toolbar button{min-height:44px}.reading{padding:22px 16px 40px}.intro h1{font-size:27px}.section{padding:20px 16px;border-radius:9px;scroll-margin-top:12px}h2{font-size:21px}h3{font-size:18px}th,td{padding:10px 12px}html{scroll-padding-top:16px}}
+@media print{body{background:#fff;font-size:10pt;line-height:1.6}.shell{display:block}.sidebar,.toolbar,.link-actions,.status,.no-match,.skip{display:none!important}.reading{max-width:none;padding:0}.section,.section[hidden]{display:block!important;border:0;padding:0;margin:22pt 0;break-before:auto}.intro{margin-bottom:12pt}h1{font-size:24pt!important}h2{font-size:17pt!important;break-after:avoid}h3{font-size:13pt!important;break-after:avoid}table{font-size:9pt}.table-wrap{overflow:visible;border:0}th,td{padding:5pt;min-width:0!important}thead{display:table-header-group}tr{break-inside:avoid}pre,blockquote{break-inside:avoid}a{color:#192842;text-decoration:none}.foot{font-size:8pt}@page{size:A4;margin:16mm}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#reading">跳到正文</a>
+<div class="shell">
+<aside class="sidebar"><div class="brand">部门产品<br>设计规范</div><div class="edition">中文使用版 · 2026.09.19</div><details id="toc" open><summary>阅读目录</summary><nav aria-label="章节目录"><a href="#chapter-1">从这里开始</a>
+<a href="#chapter-2">1. 设计原则</a>
+<a href="#chapter-3">2. 视觉基础</a>
+<a href="#chapter-4">3. 通用组件</a>
+<a href="#chapter-5">4. 页面模板</a>
+<a href="#chapter-6">5. 业务表达</a>
+<a href="#chapter-7">6. 验收、维护与采用</a></nav></details><a class="home" href="../index.html">回到完整手册</a></aside>
+<div class="body"><div class="toolbar"><label for="search">查找章节<input id="search" type="search" placeholder="输入间距、三端、协作或规则编号"></label><button id="font-size" type="button" aria-pressed="false">大字阅读</button><button id="print" type="button">打印 / 存为 PDF</button></div><main id="reading" class="reading"><div class="meta">部门共同入口 / 规范、示例、协作与验收</div><div class="intro"><h1>SalesBuddy Web 设计规范 V1</h1>
+<p><strong>目标：让销售一眼看清重点、找到下一步；让产品、前端与 AI 用同一套规则交付。</strong></p>
+<p>本版依据用户批准的《SalesBuddy Web 设计规范 V1 整理计划》，适用于销售 Web。小程序共享业务术语、事实、权限和状态含义，分别采用适合端侧的布局。当前页面截图是验证资料，规则以本规范为准。</p>
+</div><div id="search-status" class="status" aria-live="polite"></div><div id="no-match" class="no-match" hidden>没有匹配章节。请清除关键词，或使用浏览器的查找功能。</div><section class="section" id="chapter-1"><h2>从这里开始</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>你要做什么</th>
+<th>使用方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>设计新页面</td>
+<td>先选择 T-01～T-05 模板，再引用组件与业务规则</td>
+</tr>
+<tr>
+<td>开发页面</td>
+<td>复用共享样式变量和现有选择器；用示例册确认反馈</td>
+</tr>
+<tr>
+<td>验收页面</td>
+<td>按 <a href="../%E4%BE%9D%E6%8D%AE/Web%E9%AA%8C%E6%94%B6%E6%B8%85%E5%8D%95.html">验收清单</a> 逐项检查并记录证据</td>
+</tr>
+<tr>
+<td>看实际效果</td>
+<td><a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-system/index.html">可交互示例册</a>；普通 Web 本地服务也支持 5186 端口</td>
+</tr>
+<tr>
+<td>查本轮结果</td>
+<td><a href="../%E4%BE%9D%E6%8D%AE/Web%E5%8E%86%E5%8F%B2%E9%AA%8C%E8%AF%81.html">实现与验证</a></td>
+</tr>
+</tbody></table></div>
+<p>示例册是合成数据交互演示，未连接登录、业务 API、真实 AI 或数据库；其中页面模板用于说明布局，不能作为可直接接入后端的完整业务页面。Tom Select 和 Flatpickr 使用与产品相同的适配器，ECharts 使用同一份库。</p>
+<p><strong>状态分层：</strong> 已确认 = 本版批准的规则；已实现 = 本地代码具备；已验证 = 有对应检查证据；待整改 = 现有产品页面尚未完全遵循。建议规则须标明“建议”，不能覆盖已确认规则。本版下表均为已确认规则，实现覆盖见验收清单。</p>
+</section>
+<section class="section" id="chapter-2"><h2>1. 设计原则</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>编号／场景</th>
+<th>具体要求</th>
+<th>正确示例／反例</th>
+<th>验收方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>P-01 所有页面</td>
+<td>先呈现对象、重点状态与主要动作；摘要后可看完整事实</td>
+<td>正：商机名称＋需关注＋变化摘要；反：所有信息同字号同权重</td>
+<td>首屏能回答“这是谁、发生什么、下一步做什么”</td>
+</tr>
+<tr>
+<td>P-02 多区域页面</td>
+<td>用标题、留白、面板边界区分总览、操作、结果；每区一个主要动作</td>
+<td>正：首页待办与动态独立；反：一长列同质卡片</td>
+<td>隐去内容后仍能辨认分区；操作归属明确</td>
+</tr>
+<tr>
+<td>P-03 连续操作</td>
+<td>失败、取消或切换展示时保留有效输入；处理反馈与事实状态分别表达</td>
+<td>正：质检失败可回到原文；反：一失败就清空</td>
+<td>填写长文本后制造校验失败，内容仍完整</td>
+</tr>
+</tbody></table></div>
+</section>
+<section class="section" id="chapter-3"><h2>2. 视觉基础</h2>
+<h3>2.1 共享变量（唯一代码定义）</h3>
+<p>源码：<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-tokens.css">design-tokens.css</a>。产品和示例册均在组件样式前加载。现有 <code>--ui-*</code> 变量名与生效色值保持兼容；不得在页面内重新定义整套全局主题。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>用途</th>
+<th>变量</th>
+<th>V1 值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>深蓝导航</td>
+<td><code>--ui-sidebar</code></td>
+<td><code>#142F54</code></td>
+</tr>
+<tr>
+<td>工作区背景／内容面板</td>
+<td><code>--ui-background</code> / <code>--ui-surface</code></td>
+<td><code>#F3F5F9</code> / <code>#FFFFFF</code></td>
+</tr>
+<tr>
+<td>主要操作／悬停</td>
+<td><code>--ui-primary</code> / <code>--ui-primary-hover</code></td>
+<td><code>#2863CD</code> / <code>#2055B5</code></td>
+</tr>
+<tr>
+<td>正文／次要文字／辅助文字</td>
+<td><code>--ui-ink</code> / <code>--ui-secondary</code> / <code>--ui-muted</code></td>
+<td><code>#192842</code> / <code>#5B6C82</code> / <code>#617188</code></td>
+</tr>
+<tr>
+<td>边界／选中／焦点</td>
+<td><code>--ui-line</code> / <code>--ui-selected</code> / <code>--ui-focus</code></td>
+<td><code>#E2E8F0</code> / <code>#EDF3FF</code> / <code>#5786DC</code></td>
+</tr>
+<tr>
+<td>红色文字／底色</td>
+<td><code>--ui-danger</code> / <code>--ui-danger-soft</code></td>
+<td><code>#A73F38</code> / <code>#FBE4DF</code></td>
+</tr>
+<tr>
+<td>黄色文字／底色</td>
+<td><code>--ui-warning</code> / <code>--ui-warning-soft</code></td>
+<td><code>#805919</code> / <code>#FFF0CF</code></td>
+</tr>
+<tr>
+<td>绿色文字／底色</td>
+<td><code>--ui-success</code> / <code>--ui-success-soft</code></td>
+<td><code>#27694C</code> / <code>#E8F5EE</code></td>
+</tr>
+<tr>
+<td>灰色文字／底色</td>
+<td><code>--ui-neutral</code> / <code>--ui-neutral-soft</code></td>
+<td><code>#56677E</code> / <code>#EEF2F7</code></td>
+</tr>
+</tbody></table></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>编号／场景</th>
+<th>具体要求</th>
+<th>正确示例／反例</th>
+<th>验收方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>V-01 配色与层级</td>
+<td>深蓝导航、浅色阅读、白色面板；蓝用于动作和选中；业务状态色配文字或图标</td>
+<td>正：红色边线＋“转差”＋依据；反：大面积深色正文区或只显示色点</td>
+<td>颜色与标签含义一致；文字在背景上可读</td>
+</tr>
+<tr>
+<td>V-02 字体与数字</td>
+<td>系统中文字体；正文 14px、辅助 12px、分区标题 16px、页面标题 24px、关键数字 32px；正文行高 1.65，标题 1.5；数字等宽对齐</td>
+<td>正：标题、事实、时间分三层；反：一整段任务说明加粗作大标题</td>
+<td>长中文与大金额不覆盖状态、按钮；关键内容不因截断丢失</td>
+</tr>
+<tr>
+<td>V-03 间距与形状</td>
+<td>间距 4/8/12/16/24/32px；控件圆角 6px、面板 12px；普通控件高 36px、表单 40px；同组紧密、分区疏朗</td>
+<td>正：列表条件与结果间 12～16px，独立面板间 24px；反：所有空隙等宽</td>
+<td>对照示例册；偏离时记录具体理由</td>
+</tr>
+<tr>
+<td>V-04 图标与焦点</td>
+<td>图标延用产品已有风格；常用图标 16px；纯图标按钮提供可读名称；键盘焦点轮廓至少 2px；正文正常状态对比度目标 ≥4.5:1</td>
+<td>正：刷新图标有“刷新”名称；反：依靠颜色猜按钮</td>
+<td>Tab 可见，读屏名称明确；检查常用文字与状态标签对比度</td>
+</tr>
+</tbody></table></div>
+<p>间距变量：<code>--ui-space-1/2/3/4/6/8</code>；尺寸变量：<code>--ui-control-height</code>、<code>--ui-field-height</code>、<code>--ui-radius-control</code>、<code>--ui-radius-panel</code>。新组件优先使用变量，旧页面按整改项渐进迁移，不批量替换所有业务样式。</p>
+</section>
+<section class="section" id="chapter-4"><h2>3. 通用组件</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>编号／场景</th>
+<th>具体要求</th>
+<th>正确示例／反例</th>
+<th>验收方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>C-01 按钮</td>
+<td>同一区域突出一个主操作，次操作描边或文字；默认、悬停、聚焦、禁用、处理中均有表达；禁用说明原因</td>
+<td>正：“保存中”并阻止重复提交；反：三个同样抢眼的主按钮</td>
+<td>鼠标、Tab、Enter 操作；处理中不可重复提交</td>
+</tr>
+<tr>
+<td>C-02 输入与校验</td>
+<td>标签常显，必填项明确；错误就地提示并关联字段；错误时保留输入；仅对应处理阶段只读</td>
+<td>正：沟通内容缺失时提示且保留下一步计划；反：用 placeholder 代替标签</td>
+<td>中文输入、长文、粘贴、失败重填；不可覆盖正在编辑的值</td>
+</tr>
+<tr>
+<td>C-03 选择器</td>
+<td>使用现有 SalesSelect、SalesDatePicker；搜索、多选与清空可用；单选选中即生效，多选点击应用；Esc 取消，焦点回触发点</td>
+<td>正：季度多选显示已选数量；反：四个季度用庞大双栏弹窗</td>
+<td>搜索无结果、取消、多选应用、日期合法性、窄屏位置</td>
+</tr>
+<tr>
+<td>C-04 筛选栏</td>
+<td>紧邻所属结果区，注明作用范围，显示已选条件、结果数和清除入口；总览与列表分别命名</td>
+<td>正：“商机列表·阶段”，上方总览保持不变；反：无标题下拉放在两个区域之间</td>
+<td>改列表条件核对总览；改统计周期核对列表；清除恢复</td>
+</tr>
+<tr>
+<td>C-05 列表与表格</td>
+<td>名称、状态、负责人、时间、金额、操作位置稳定；长文可展开完整内容；不以卡片堆叠替代桌面列表</td>
+<td>正：首行对象、次行摘要、末列操作；反：长标题把状态推离屏幕</td>
+<td>长名称、20 行以上、空列表、窄屏；操作可达且关联对象正确</td>
+</tr>
+<tr>
+<td>C-06 数据与反馈状态</td>
+<td>加载有文案；空数据说明原因及下一步；异常可重试；部分缺失应显示已有数据并说明覆盖范围</td>
+<td>正：未登记回款；反：加载失败显示 0</td>
+<td>切换正常、加载、空数据、异常；重试不丢筛选</td>
+</tr>
+<tr>
+<td>C-07 弹窗与展开</td>
+<td>标题清楚；弹窗有关闭与取消；Esc 可关，焦点不逃逸且关闭回到触发点；次要详情优先就地展开</td>
+<td>正：摘要后展开完整判断依据；反：看一行备注也跳新页面</td>
+<td>Tab/Shift+Tab、Esc；展开不改变记录、顺序、业务状态</td>
+</tr>
+</tbody></table></div>
+<h3>复用入口</h3>
+<ul>
+<li>选择器：<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/select-components.js">select-components.js</a>，<code>SalesSelect.open({anchor,title,description,options,selected,multiple,commit})</code>。产品页面延用已有 <code>owner</code> 与业务回调。</li>
+<li>日期：<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/date-picker.js">date-picker.js</a>，<code>SalesDatePicker.open({anchor,mode:&#39;date&#39;,value,onCommit})</code>。取消不回写。</li>
+<li>图表：现有 ECharts 6.1.0 与产品图表适配器；新图表读取共享配色、明示单位，并提供文字／表格数据。</li>
+<li>示例源码：<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-system/index.html">design-system</a>。只复用展示与交互模式，不复制合成数据或用示例替代后端权限校验。</li>
+</ul>
+</section>
+<section class="section" id="chapter-5"><h2>4. 页面模板</h2>
+<p>示例入口使用固定锚点，便于在需求与验收中直接引用。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>编号／场景</th>
+<th>具体要求</th>
+<th>正确示例／反例</th>
+<th>验收方法／示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>T-01 首页工作台</td>
+<td>待办、常用操作、业务动态独立；动态按对象、摘要、状态、时间、动作组织；红黄业务判断进入“需关注”</td>
+<td>正：需关注来自业务判断；反：橙色任务“待接受”当作商机风险</td>
+<td>全部／需关注切换、展开依据、完整标题可读；<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-system/index.html#template-home">#template-home</a></td>
+</tr>
+<tr>
+<td>T-02 业务列表</td>
+<td>总览独立面板；列表标题、工具栏、条件、数量和结果同区；局部筛选不污染其他区域</td>
+<td>正：列表无匹配时总览仍显示原统计；反：全页一个含糊的时间选择器</td>
+<td>搜索＋多选组合、单条件移除、清除；<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-system/index.html#template-list">#template-list</a></td>
+</tr>
+<tr>
+<td>T-03 经营详情</td>
+<td>对象摘要与主要操作在顶部；页签组织摘要、跟进、任务；主栏事实、辅栏关注与依据；客户与商机分开</td>
+<td>正：商机注明所属客户；反：把客户整体与某商机状态混为一谈</td>
+<td>两种对象切换、页签键盘操作、完整记录；<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-system/index.html#template-detail">#template-detail</a></td>
+</tr>
+<tr>
+<td>T-04 拜访录入</td>
+<td>桌面左右分栏，关联对象与编辑内容同屏；长文本内部滚动，操作区固定在表单底部；窄屏上下排列</td>
+<td>正：失败保留下一步计划；反：长页面滚到底才能提交或静默失去草稿</td>
+<td>1024×600、长文本、必填缺失、返回修改；<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-system/index.html#template-visit">#template-visit</a></td>
+</tr>
+<tr>
+<td>T-05 经营分析</td>
+<td>范围／周期紧邻指标；金额、数量分别标单位；图表配数据表、空值与统计口径说明</td>
+<td>正：缺关单日期的条目明确标注未纳入；反：缺数据的指标算 0</td>
+<td>切季度图表与合计一致，缺失仍缺失；<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-system/index.html#template-analytics">#template-analytics</a></td>
+</tr>
+</tbody></table></div>
+<p>适配：&gt;900px 优先桌面布局；601～900px 收紧布局，保持操作可达；≤600px 改单栏，必要的宽表仅在表格内横向滚动。完整页面不得水平溢出。示例册本身允许自然纵向阅读，不把文档页强制压成一屏。</p>
+</section>
+<section class="section" id="chapter-6"><h2>5. 业务表达</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>编号／场景</th>
+<th>具体要求</th>
+<th>正确示例／反例</th>
+<th>验收方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>B-01 红黄绿灰灯</td>
+<td>业务变化使用红“转差”、黄“需关注”、绿“向好”、灰“待评估”，同时呈现判断依据；沿用业务来源结果，不从颜色、关键词或缺失字段推断</td>
+<td>正：更新成功但判断未返回显示待评估；反：所有保存成功一律绿色向好</td>
+<td>使用四类业务返回检查标签、摘要、依据及关注计数；技术保存成功不冒充业务判断</td>
+</tr>
+<tr>
+<td>B-02 对象与状态</td>
+<td>客户、商机、拜访、任务各自有事实来源；任务已接受仍未完成；下一步计划未创建任务前不计入任务</td>
+<td>正：“已接受，待执行”；反：“接收方已确认”配已完成</td>
+<td>查看实际状态字段与持久化记录；不能仅凭展示推断完成</td>
+</tr>
+<tr>
+<td>B-03 金额、时间与缺失</td>
+<td>ACV、确收、回款分别标注；0 仅用于明确零值；缺失显示未填写／未登记，处理中显示加载；金额有币种单位，完整日期带年份，动态时间展开可查</td>
+<td>正：¥ 0 与未登记并列；反：用导入当天补齐所有关单日期</td>
+<td>对照源数据；大金额和跨年日期无歧义；缺失不得臆造</td>
+</tr>
+<tr>
+<td>B-04 AI 流程</td>
+<td>核对内容→质检→人工确认→归档；处理中可见阶段；失败保留输入且可重试或返回；超时走已有恢复机制；质检完成不等于归档</td>
+<td>正：“已生成建议，待人工确认”；反：“AI 正在分析”时让用户误以为还能填写被锁字段</td>
+<td>草稿、处理中、失败、待确认、归档各自回读；仅真实归档回执可显示已归档</td>
+</tr>
+<tr>
+<td>B-05 范围与权限</td>
+<td>范围名邻近数据；权限与 capability 以服务端契约为准；前端隐藏按钮不等同于权限校验</td>
+<td>正：“本人／团队”对应同一授权范围；反：依靠角色名称猜写权限</td>
+<td>核对列表、详情和操作返回的权限；示例册合成数据不算权限验证</td>
+</tr>
+</tbody></table></div>
+</section>
+<section class="section" id="chapter-7"><h2>6. 验收、维护与采用</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>编号／场景</th>
+<th>具体要求</th>
+<th>正确示例／反例</th>
+<th>验收方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>G-01 需求与开发</td>
+<td>每次变更引用规则编号、示例锚点和验收项；新业务语义先对齐契约，展示改造不发明第二套规则</td>
+<td>正：“按 T-02＋C-04 改商机列表”；反：“照截图画一下”</td>
+<td>评审能追溯规则与原始业务处理</td>
+</tr>
+<tr>
+<td>G-02 版本与偏差</td>
+<td>主规范、示例册、验收清单一起更新；有效规范每类一份；偏差写清页面、影响、状态和证据</td>
+<td>正：某旧页仍有硬编码颜色，列待整改；反：构建绿灯就声称全系统遵循</td>
+<td>按偏差表复核；新证据覆盖旧结论时保留有效信息</td>
+</tr>
+</tbody></table></div>
+<h3>后续可直接使用的任务模板</h3>
+<blockquote>
+<p>改造页面：<strong><strong>。角色与对象：</strong></strong>。目标：<strong><strong>。采用规则：T-</strong>、C-<strong>、B-</strong>。示例：__</strong>。保留现有接口／权限／校验。验收：<strong><strong>。偏离规范之处与原因：</strong></strong>。证据等级：本地合成／真实接口／生产。</p>
+</blockquote>
+<h3>版本记录</h3>
+<ul>
+<li><strong>1.0.0 / 2026-09-17：</strong> 固化已批准的 Web 视觉、组件、页面与业务表达规则；新增独立示例册；共享主题变量归并。未新增业务接口、数据表或权限规则。</li>
+<li>规则变更由产品负责人确认，实施者同步示例与检查项。适用场景明确的实现细节沿用已有授权，不为常规修复重复引入审批步骤。</li>
+</ul>
+</section><div class="foot">使用包 1.0.0 · 已确认规则与新增建议按正文标注。文档、代码接入和实际验收分别记录。</div></main></div></div>
+<script>
+const input=document.getElementById('search');
+const sections=Array.from(document.querySelectorAll('.section'));
+function filterSections(){const query=input.value.trim().toLowerCase();let count=0;for(const section of sections){const match=!query||section.textContent.toLowerCase().includes(query);section.hidden=!match;if(match)count++;}document.getElementById('search-status').textContent=query?'找到 '+count+' 个相关章节':'';document.getElementById('no-match').hidden=count>0;}
+input.addEventListener('input',filterSections);
+document.querySelectorAll('.sidebar nav a').forEach(link=>link.addEventListener('click',()=>{input.value='';filterSections();}));
+document.getElementById('font-size').addEventListener('click',event=>{const button=event.currentTarget;const on=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(on));document.documentElement.style.setProperty('--size',on?'18px':'15px');button.textContent=on?'标准字号':'大字阅读';});
+document.getElementById('print').addEventListener('click',()=>window.print());
+if(window.matchMedia('(max-width:760px)').matches)document.getElementById('toc').open=false;
+</script>
+</body></html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Web 设计规范 V1：实现与验证</title>
+<style>
+:root{--ink:#192842;--muted:#53647c;--blue:#2863cd;--line:#dce3ed;--paper:#fff;--canvas:#f3f5f9;--size:15px;color-scheme:light}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--canvas);color:var(--ink);font:var(--size)/1.8 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}a{color:#2055b5;text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #5786dc;outline-offset:3px}.skip{position:absolute;top:8px;left:8px;transform:translateY(-150%);background:#fff;padding:8px;z-index:20}.skip:focus{transform:none}.shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}.sidebar{background:#142f54;color:#edf3ff;padding:28px 20px;position:sticky;top:0;height:100vh;overflow:auto}.brand{font-size:21px;font-weight:650;line-height:1.5;margin:0 0 6px}.edition{font-size:12px;color:#c0cee0}.sidebar details{margin-top:26px}.sidebar summary{font-size:14px;cursor:pointer;padding:8px 0}.sidebar nav{display:grid;gap:5px;margin-top:10px}.sidebar a{color:#dce8f7;text-decoration:none;padding:9px 10px;border-radius:6px;font-size:13px;line-height:1.5}.sidebar a:hover{background:#274c79;color:#fff}.sidebar .home{display:block;border-top:1px solid #456080;margin-top:22px;padding-top:16px}.body{min-width:0}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 32px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.toolbar label{display:flex;align-items:center;gap:8px;flex:1;min-width:180px;font-size:13px}.toolbar input{background:#f8fafc;border:1px solid #bdcadd;border-radius:6px;padding:6px 10px;width:100%;min-width:0;color:var(--ink);font-size:16px}.toolbar button{border:1px solid #bdcadd;background:#fff;color:var(--ink);border-radius:6px;padding:6px 12px;min-height:36px}.toolbar button[aria-pressed=true]{background:#eaf1ff;border-color:#2863cd}.reading{max-width:1180px;margin:auto;padding:36px 40px 70px}.meta{font-size:12px;letter-spacing:.04em;color:var(--muted);margin-bottom:20px}.intro{margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:24px}.intro h1{font-size:32px;line-height:1.4;letter-spacing:-.02em;margin:0 0 14px}.intro p{margin:10px 0}.section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px 30px;margin:20px 0;scroll-margin-top:92px}.section[hidden]{display:none}h2{font-size:24px;line-height:1.5;margin:0 0 20px}h3{font-size:18px;line-height:1.6;margin:30px 0 12px}h4{font-size:16px;margin:24px 0 10px}p{margin:12px 0}ul,ol{padding-left:24px}li{margin:6px 0}strong{font-weight:650}.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.7;text-align:left}th{background:#eef3fa;font-weight:600}th,td{border-bottom:1px solid var(--line);padding:12px 14px;vertical-align:top;min-width:110px;overflow-wrap:anywhere}tr:last-child td{border-bottom:0}table th:first-child,table td:first-child{min-width:125px}blockquote{border-left:4px solid #6f94d4;background:#f2f6fc;padding:8px 18px;margin:18px 0;color:#344861}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf2f8;border:1px solid var(--line);padding:18px;border-radius:8px;font:13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;overflow-wrap:anywhere}p code,li code,td code{background:#edf2f8;padding:2px 4px;border-radius:3px}img{max-width:100%;height:auto}.status{color:var(--muted);font-size:13px;min-height:24px}.foot{color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:18px}.link-actions{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.link-actions a{display:inline-block;padding:8px 14px;border:1px solid #2863cd;background:#fff;border-radius:6px;text-decoration:none}.link-actions a:first-child{background:#2863cd;color:#fff}.no-match{padding:24px;background:#fff;border:1px solid var(--line);border-radius:8px}.scope-note{padding:12px 16px;border-left:4px solid #b37a1c;background:#fff5df;color:#654715;font-size:14px;margin:18px 0}
+.reading{overflow-wrap:anywhere}.toolbar label{white-space:nowrap}table{font-size:calc(var(--size) - 1px)}
+@media(max-width:1050px){.shell{grid-template-columns:220px minmax(0,1fr)}.reading{padding:28px 24px 50px}.section{padding:24px}.toolbar{padding:12px 24px}h2{font-size:22px}}
+@media(max-width:760px){.shell{display:block}.sidebar{position:static;height:auto;overflow:visible;padding:18px 20px}.brand{font-size:20px}.sidebar details{margin-top:10px}.sidebar nav{grid-template-columns:1fr}.sidebar .home{margin-top:10px;padding-top:10px}.toolbar{position:static;padding:12px 16px}.toolbar label{flex-basis:100%}.toolbar button{min-height:44px}.reading{padding:22px 16px 40px}.intro h1{font-size:27px}.section{padding:20px 16px;border-radius:9px;scroll-margin-top:12px}h2{font-size:21px}h3{font-size:18px}th,td{padding:10px 12px}html{scroll-padding-top:16px}}
+@media print{body{background:#fff;font-size:10pt;line-height:1.6}.shell{display:block}.sidebar,.toolbar,.link-actions,.status,.no-match,.skip{display:none!important}.reading{max-width:none;padding:0}.section,.section[hidden]{display:block!important;border:0;padding:0;margin:22pt 0;break-before:auto}.intro{margin-bottom:12pt}h1{font-size:24pt!important}h2{font-size:17pt!important;break-after:avoid}h3{font-size:13pt!important;break-after:avoid}table{font-size:9pt}.table-wrap{overflow:visible;border:0}th,td{padding:5pt;min-width:0!important}thead{display:table-header-group}tr{break-inside:avoid}pre,blockquote{break-inside:avoid}a{color:#192842;text-decoration:none}.foot{font-size:8pt}@page{size:A4;margin:16mm}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#reading">跳到正文</a>
+<div class="shell">
+<aside class="sidebar"><div class="brand">部门产品<br>设计规范</div><div class="edition">中文使用版 · 2026.09.19</div><details id="toc" open><summary>阅读目录</summary><nav aria-label="章节目录"><a href="#chapter-1">完成内容</a>
+<a href="#chapter-2">修复的交互问题</a>
+<a href="#chapter-3">验证结果</a>
+<a href="#chapter-4">当前截图</a>
+<a href="#chapter-5">复现与维护</a></nav></details><a class="home" href="../index.html">回到完整手册</a></aside>
+<div class="body"><div class="toolbar"><label for="search">查找章节<input id="search" type="search" placeholder="输入间距、三端、协作或规则编号"></label><button id="font-size" type="button" aria-pressed="false">大字阅读</button><button id="print" type="button">打印 / 存为 PDF</button></div><main id="reading" class="reading"><div class="meta">部门共同入口 / 规范、示例、协作与验收</div><div class="intro"><h1>Web 设计规范 V1：实现与验证</h1>
+<p><strong>已完成：26 条规则、一套可交互示例册、一张验收清单；34 项检查通过。</strong></p>
+<ul>
+<li><a href="../%E4%BE%9D%E6%8D%AE/Web%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83.html">主规范</a> · <a href="../%E4%BE%9D%E6%8D%AE/Web%E9%AA%8C%E6%94%B6%E6%B8%85%E5%8D%95.html">验收清单与偏差</a></li>
+<li><a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-system/index.html">打开可交互示例册</a></li>
+<li>普通本地 Web 服务：<a href="../%E7%A4%BA%E4%BE%8B%E5%86%8C/design-system/index.html">5186 同路径</a></li>
+<li><a href="verification.json">机器可读验证记录</a> · <a href="%E9%AA%8C%E8%AF%81%E6%97%A5%E5%BF%97.txt">最终测试日志</a></li>
+</ul>
+</div><div id="search-status" class="status" aria-live="polite"></div><div id="no-match" class="no-match" hidden>没有匹配章节。请清除关键词，或使用浏览器的查找功能。</div><section class="section" id="chapter-1"><h2>完成内容</h2>
+<ol>
+<li><strong>规则整理：</strong> 设计原则、视觉基础、通用组件、五类页面模板、业务表达、验收维护六部分。每条有场景、要求、正反例、验收方法和编号。</li>
+<li><strong>共享样式：</strong> 新增 <code>design-tokens.css</code>，产品与示例共用。归并 <code>theme.css</code> 和 <code>visual-theme.css</code> 重复定义，保持已有变量名及实际生效色值；增加字体、间距、尺寸和语义色变量供逐步采用。</li>
+<li><strong>交互示例：</strong> 搜索、多选、清空、日期校验、弹窗、状态切换、AI 处理与失败恢复；首页红黄绿灰、商机双区筛选、客户／商机详情、拜访表单、季度图表。</li>
+<li><strong>组件复用：</strong> 下拉复用现有 SalesSelect／Tom Select 2.6.2；日期复用 SalesDatePicker／Flatpickr 4.6.13；图表复用 ECharts 6.1.0。未引入新依赖或改写第三方库。</li>
+<li><strong>构建入口：</strong> <code>npm run build</code> 输出 <code>dist/design-system/</code> 与共享变量；打包资源清单和独立构建测试已更新。源码与 README 提供维护入口，资产导航链接当前规范。</li>
+</ol>
+<p>未新增业务 API、数据库表或权限规则。本轮未重新发布业务 ZIP、未部署外网。示例册模板不是现有 26 个业务页面全部达标的证明；旧页面偏差单列在验收清单。</p>
+</section>
+<section class="section" id="chapter-2"><h2>修复的交互问题</h2>
+<ul>
+<li>原生说明弹窗在最后一个控件继续按 Tab 会经过页面外部焦点：示例弹窗补齐首尾焦点循环，Esc 关闭后回到原触发按钮。</li>
+<li>共享下拉在首次自动聚焦前按 Esc，事件可能没有到达浮层：将活跃浮层的 Esc 处理放到文档捕获阶段，关闭时移除监听；新增立即取消的回归检查。</li>
+<li>下拉先打开再异步填充选项，初始定位使用较小高度，内容填充后会短暂越出窗口：先准备选项再打开、定位。诊断逐帧记录到修复前短屏底部越界，单变量验证修复后无越界；正式测试逐帧检查窗口边界。</li>
+</ul>
+</section>
+<section class="section" id="chapter-3"><h2>验证结果</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>结果</th>
+<th>覆盖</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>示例册浏览器检查</td>
+<td>19 / 19 通过</td>
+<td>独立资源、无业务请求、无会话存储写入；选择器、日期、焦点、输入保留、AI 状态、双区筛选、红黄关注、页签、图表和截图</td>
+</tr>
+<tr>
+<td>现有成熟组件回归</td>
+<td>6 / 6 通过</td>
+<td>原有筛选、季度／团队、伙伴与 FDE 回调、多选限制、取消与页面切换；真实 API 请求被拦截</td>
+</tr>
+<tr>
+<td>现有主题回归</td>
+<td>8 / 8 通过</td>
+<td>深蓝导航＋浅内容、旧 dark 参数、切换保留草稿、窄屏与控件可读性</td>
+</tr>
+<tr>
+<td>独立构建检查</td>
+<td>1 / 1 通过</td>
+<td>新资源随构建输出；原有共享源码漂移保护与过期产物清除</td>
+</tr>
+<tr>
+<td>本地运行资源检查</td>
+<td>10 / 10 一致</td>
+<td>5186／5196 上 HTML、示例 CSS／JS、共享变量、共享选择器字节与源码一致</td>
+</tr>
+<tr>
+<td>源码与数据保护</td>
+<td>通过</td>
+<td>构建确认 251 个共享小程序文件未改变；CRM 本地 JSON 哈希保持原值</td>
+</tr>
+</tbody></table></div>
+<p>适配检查覆盖 <strong>1440×900、1366×768、1024×600、390×844、320×740</strong>，每种尺寸遍历视觉基础、组件和五类页面模板，核对整页横向溢出及两类选择器边界。必要的宽表在自身区域横向滚动。</p>
+<p>证据等级：本地构建＋隔离浏览器＋合成数据／原有本地 CRM 预览数据。没有验证真实身份认证、服务端组织权限、真实 AI 质检归档或跨端读回。</p>
+</section>
+<section class="section" id="chapter-4"><h2>当前截图</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>内容</th>
+<th>截图</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>视觉基础</td>
+<td><a href="%E6%88%AA%E5%9B%BE/foundations.png">颜色、文字与间距</a></td>
+</tr>
+<tr>
+<td>组件与状态</td>
+<td><a href="%E6%88%AA%E5%9B%BE/components.png">输入、选择器、状态和 AI 流程</a></td>
+</tr>
+<tr>
+<td>首页工作台</td>
+<td><a href="%E6%88%AA%E5%9B%BE/template-home.png">重点动态与红黄绿灰</a></td>
+</tr>
+<tr>
+<td>商机列表</td>
+<td><a href="%E6%88%AA%E5%9B%BE/template-list.png">总览与列表筛选分区</a></td>
+</tr>
+<tr>
+<td>经营详情</td>
+<td><a href="%E6%88%AA%E5%9B%BE/template-detail.png">对象摘要、页签与主辅栏</a></td>
+</tr>
+<tr>
+<td>拜访录入</td>
+<td><a href="%E6%88%AA%E5%9B%BE/template-visit.png">桌面双栏</a> · <a href="%E6%88%AA%E5%9B%BE/short-visit.png">1024×600 短屏</a></td>
+</tr>
+<tr>
+<td>经营分析</td>
+<td><a href="%E6%88%AA%E5%9B%BE/template-analytics.png">季度与图表</a></td>
+</tr>
+<tr>
+<td>窄屏</td>
+<td><a href="%E6%88%AA%E5%9B%BE/mobile-home.png">390px 首页</a></td>
+</tr>
+</tbody></table></div>
+<p>已目视检查视觉基础、商机列表、经营详情、短屏录入和手机首页；其余截图作为可回看资料。</p>
+</section>
+<section class="section" id="chapter-5"><h2>复现与维护</h2>
+<p>在 <code>sales-web</code> 工程目录运行：</p>
+<pre><code class="language-sh">npm run build
+PLAYWRIGHT_MODULE=&#39;&lt;本机 Playwright 模块路径&gt;&#39; node --test tests/design-system.browser.mjs tests/mature-components.browser.mjs tests/theme.browser.mjs tests/build.test.mjs
+</code></pre>
+<p>成熟组件中的 CRM 回归依赖本地 5196 服务与既有 <code>.runtime/crm-preview.json</code>；先用 <code>node scripts/start_crm_preview.mjs</code> 启动。其他检查自建临时本机服务。示例册自身不依赖 CRM 数据。更换电脑时将 <code>PLAYWRIGHT_MODULE</code> 指向当地 Playwright 安装路径。</p>
+<p>本轮协作中心只读状态为 revision 2；当前会话未登记，不冒用其他任务发布记录或写回执。未发现影响本轮范围的新协作事件。</p>
+</section><div class="foot">使用包 1.0.0 · 已确认规则与新增建议按正文标注。文档、代码接入和实际验收分别记录。</div></main></div></div>
+<script>
+const input=document.getElementById('search');
+const sections=Array.from(document.querySelectorAll('.section'));
+function filterSections(){const query=input.value.trim().toLowerCase();let count=0;for(const section of sections){const match=!query||section.textContent.toLowerCase().includes(query);section.hidden=!match;if(match)count++;}document.getElementById('search-status').textContent=query?'找到 '+count+' 个相关章节':'';document.getElementById('no-match').hidden=count>0;}
+input.addEventListener('input',filterSections);
+document.querySelectorAll('.sidebar nav a').forEach(link=>link.addEventListener('click',()=>{input.value='';filterSections();}));
+document.getElementById('font-size').addEventListener('click',event=>{const button=event.currentTarget;const on=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(on));document.documentElement.style.setProperty('--size',on?'18px':'15px');button.textContent=on?'标准字号':'大字阅读';});
+document.getElementById('print').addEventListener('click',()=>window.print());
+if(window.matchMedia('(max-width:760px)').matches)document.getElementById('toc').open=false;
+</script>
+</body></html>

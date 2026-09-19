@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>部门产品设计规范｜从这里开始</title>
+<style>
+:root{--ink:#192842;--muted:#53647c;--blue:#2863cd;--line:#dce3ed;--paper:#fff;--canvas:#f3f5f9;--size:15px;color-scheme:light}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--canvas);color:var(--ink);font:var(--size)/1.8 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}a{color:#2055b5;text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #5786dc;outline-offset:3px}.skip{position:absolute;top:8px;left:8px;transform:translateY(-150%);background:#fff;padding:8px;z-index:20}.skip:focus{transform:none}.shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}.sidebar{background:#142f54;color:#edf3ff;padding:28px 20px;position:sticky;top:0;height:100vh;overflow:auto}.brand{font-size:21px;font-weight:650;line-height:1.5;margin:0 0 6px}.edition{font-size:12px;color:#c0cee0}.sidebar details{margin-top:26px}.sidebar summary{font-size:14px;cursor:pointer;padding:8px 0}.sidebar nav{display:grid;gap:5px;margin-top:10px}.sidebar a{color:#dce8f7;text-decoration:none;padding:9px 10px;border-radius:6px;font-size:13px;line-height:1.5}.sidebar a:hover{background:#274c79;color:#fff}.sidebar .home{display:block;border-top:1px solid #456080;margin-top:22px;padding-top:16px}.body{min-width:0}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 32px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.toolbar label{display:flex;align-items:center;gap:8px;flex:1;min-width:180px;font-size:13px}.toolbar input{background:#f8fafc;border:1px solid #bdcadd;border-radius:6px;padding:6px 10px;width:100%;min-width:0;color:var(--ink);font-size:16px}.toolbar button{border:1px solid #bdcadd;background:#fff;color:var(--ink);border-radius:6px;padding:6px 12px;min-height:36px}.toolbar button[aria-pressed=true]{background:#eaf1ff;border-color:#2863cd}.reading{max-width:1180px;margin:auto;padding:36px 40px 70px}.meta{font-size:12px;letter-spacing:.04em;color:var(--muted);margin-bottom:20px}.intro{margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:24px}.intro h1{font-size:32px;line-height:1.4;letter-spacing:-.02em;margin:0 0 14px}.intro p{margin:10px 0}.section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px 30px;margin:20px 0;scroll-margin-top:92px}.section[hidden]{display:none}h2{font-size:24px;line-height:1.5;margin:0 0 20px}h3{font-size:18px;line-height:1.6;margin:30px 0 12px}h4{font-size:16px;margin:24px 0 10px}p{margin:12px 0}ul,ol{padding-left:24px}li{margin:6px 0}strong{font-weight:650}.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.7;text-align:left}th{background:#eef3fa;font-weight:600}th,td{border-bottom:1px solid var(--line);padding:12px 14px;vertical-align:top;min-width:110px;overflow-wrap:anywhere}tr:last-child td{border-bottom:0}table th:first-child,table td:first-child{min-width:125px}blockquote{border-left:4px solid #6f94d4;background:#f2f6fc;padding:8px 18px;margin:18px 0;color:#344861}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf2f8;border:1px solid var(--line);padding:18px;border-radius:8px;font:13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;overflow-wrap:anywhere}p code,li code,td code{background:#edf2f8;padding:2px 4px;border-radius:3px}img{max-width:100%;height:auto}.status{color:var(--muted);font-size:13px;min-height:24px}.foot{color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:18px}.link-actions{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.link-actions a{display:inline-block;padding:8px 14px;border:1px solid #2863cd;background:#fff;border-radius:6px;text-decoration:none}.link-actions a:first-child{background:#2863cd;color:#fff}.no-match{padding:24px;background:#fff;border:1px solid var(--line);border-radius:8px}.scope-note{padding:12px 16px;border-left:4px solid #b37a1c;background:#fff5df;color:#654715;font-size:14px;margin:18px 0}
+.reading{overflow-wrap:anywhere}.toolbar label{white-space:nowrap}table{font-size:calc(var(--size) - 1px)}
+@media(max-width:1050px){.shell{grid-template-columns:220px minmax(0,1fr)}.reading{padding:28px 24px 50px}.section{padding:24px}.toolbar{padding:12px 24px}h2{font-size:22px}}
+@media(max-width:760px){.shell{display:block}.sidebar{position:static;height:auto;overflow:visible;padding:18px 20px}.brand{font-size:20px}.sidebar details{margin-top:10px}.sidebar nav{grid-template-columns:1fr}.sidebar .home{margin-top:10px;padding-top:10px}.toolbar{position:static;padding:12px 16px}.toolbar label{flex-basis:100%}.toolbar button{min-height:44px}.reading{padding:22px 16px 40px}.intro h1{font-size:27px}.section{padding:20px 16px;border-radius:9px;scroll-margin-top:12px}h2{font-size:21px}h3{font-size:18px}th,td{padding:10px 12px}html{scroll-padding-top:16px}}
+@media print{body{background:#fff;font-size:10pt;line-height:1.6}.shell{display:block}.sidebar,.toolbar,.link-actions,.status,.no-match,.skip{display:none!important}.reading{max-width:none;padding:0}.section,.section[hidden]{display:block!important;border:0;padding:0;margin:22pt 0;break-before:auto}.intro{margin-bottom:12pt}h1{font-size:24pt!important}h2{font-size:17pt!important;break-after:avoid}h3{font-size:13pt!important;break-after:avoid}table{font-size:9pt}.table-wrap{overflow:visible;border:0}th,td{padding:5pt;min-width:0!important}thead{display:table-header-group}tr{break-inside:avoid}pre,blockquote{break-inside:avoid}a{color:#192842;text-decoration:none}.foot{font-size:8pt}@page{size:A4;margin:16mm}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#reading">跳到正文</a>
+<div class="shell">
+<aside class="sidebar"><div class="brand">部门产品<br>设计规范</div><div class="edition">中文使用版 · 2026.09.19</div><details id="toc" open><summary>阅读目录</summary><nav aria-label="章节目录"><a href="#chapter-1">给同事的转发说明（可直接复制）</a>
+<a href="#chapter-2">维护说明</a></nav></details><a class="home" href="index.html">回到完整手册</a></aside>
+<div class="body"><div class="toolbar"><label for="search">查找章节<input id="search" type="search" placeholder="输入间距、三端、协作或规则编号"></label><button id="font-size" type="button" aria-pressed="false">大字阅读</button><button id="print" type="button">打印 / 存为 PDF</button></div><main id="reading" class="reading"><div class="meta">部门共同入口 / 规范、示例、协作与验收</div><div class="intro"><h1>部门产品设计规范｜从这里开始</h1>
+<p>版本 1.0.0 · 2026-09-19</p>
+<p><strong>解压完整文件夹，双击 <code>index.html</code>。</strong> 它包含完整中文规范、三端建议、分工、变更和验收方法。浏览器阅读无需启动业务服务。</p>
+<ul>
+<li>看实际效果：打开 <code>示例册/design-system/index.html</code>，或从阅读首页点击示例。</li>
+<li>开始一项工作：复制 <code>模板/01-任务单.md</code>，填写页面、角色、规则编号与预期结果。</li>
+<li>验收：填写 <code>模板/03-页面验收单.md</code>，记录实测结果和证据。</li>
+<li>改规则：填写 <code>模板/02-规则变更单.md</code>，同步更新规则、示例、代码说明和验收项。</li>
+<li>团队接入：由实际负责人维护 <code>模板/04-产品采用登记表.md</code>。</li>
+</ul>
+<p><strong>已确认部分：SalesBuddy Web V1 的 26 条规则。</strong> 跨端补充和部门协作方式为采用建议，相关负责人及其他产品范围待登记。文件完整不表示所有产品已完成实施。</p>
+<p>转发时发送整个 ZIP，附上版本和日期。阅读稿和 ZIP 是分发快照；后续由规范维护人从同一维护源更新，避免产生多份“最终版”。手机系统若限制本地 HTML，需在允许的内部静态服务上打开后实测。</p>
+</div><div id="search-status" class="status" aria-live="polite"></div><div id="no-match" class="no-match" hidden>没有匹配章节。请清除关键词，或使用浏览器的查找功能。</div><section class="section" id="chapter-1"><h2>给同事的转发说明（可直接复制）</h2>
+<blockquote>
+<p>这是部门产品设计规范与协作手册 V1.0，整理日期 2026-09-19。请解压后打开 index.html。做页面先选模板、引用规则编号、复用组件；交付时填写验收单并附证据。现行销售 Web 规则已收录完整；跨端建议、其他产品及实际负责人请在采用表中登记。需要修改规则时填写变更单，统一维护，避免另建不同口径的版本。</p>
+</blockquote>
+</section>
+<section class="section" id="chapter-2"><h2>维护说明</h2>
+<p><code>手册正文.md</code> 是本使用包说明与补充建议的维护源；第 05 章从上一级现行 Web 规范导入。<code>部门产品设计规范.md</code> 与 <code>index.html</code> 为生成结果，请先修改对应维护源再重新生成。</p>
+<p>生成脚本在 <code>工具/生成使用包.mjs</code>。它只整理本包内容，不修改业务工程。使用时以 Node 执行，按本机安装路径设置 <code>MARKED_MODULE</code>，<code>WEB_SOURCE</code> 指向 sales-web 工程。规则、页面和资源检查完成后，再更新分发 ZIP 与校验清单。</p>
+<p>第三方组件许可保留在 <code>示例册/assets/vendor/</code>；本包示例为合成数据，不连接业务接口或真实 AI。</p>
+</section><div class="foot">使用包 1.0.0 · 已确认规则与新增建议按正文标注。文档、代码接入和实际验收分别记录。</div></main></div></div>
+<script>
+const input=document.getElementById('search');
+const sections=Array.from(document.querySelectorAll('.section'));
+function filterSections(){const query=input.value.trim().toLowerCase();let count=0;for(const section of sections){const match=!query||section.textContent.toLowerCase().includes(query);section.hidden=!match;if(match)count++;}document.getElementById('search-status').textContent=query?'找到 '+count+' 个相关章节':'';document.getElementById('no-match').hidden=count>0;}
+input.addEventListener('input',filterSections);
+document.querySelectorAll('.sidebar nav a').forEach(link=>link.addEventListener('click',()=>{input.value='';filterSections();}));
+document.getElementById('font-size').addEventListener('click',event=>{const button=event.currentTarget;const on=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(on));document.documentElement.style.setProperty('--size',on?'18px':'15px');button.textContent=on?'标准字号':'大字阅读';});
+document.getElementById('print').addEventListener('click',()=>window.print());
+if(window.matchMedia('(max-width:760px)').matches)document.getElementById('toc').open=false;
+</script>
+</body></html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>飞书对齐方案</title>
+<style>
+:root{--ink:#192842;--muted:#53647c;--blue:#2863cd;--line:#dce3ed;--paper:#fff;--canvas:#f3f5f9;--size:15px;color-scheme:light}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--canvas);color:var(--ink);font:var(--size)/1.8 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}a{color:#2055b5;text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #5786dc;outline-offset:3px}.skip{position:absolute;top:8px;left:8px;transform:translateY(-150%);background:#fff;padding:8px;z-index:20}.skip:focus{transform:none}.shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}.sidebar{background:#142f54;color:#edf3ff;padding:28px 20px;position:sticky;top:0;height:100vh;overflow:auto}.brand{font-size:21px;font-weight:650;line-height:1.5;margin:0 0 6px}.edition{font-size:12px;color:#c0cee0}.sidebar details{margin-top:26px}.sidebar summary{font-size:14px;cursor:pointer;padding:8px 0}.sidebar nav{display:grid;gap:5px;margin-top:10px}.sidebar a{color:#dce8f7;text-decoration:none;padding:9px 10px;border-radius:6px;font-size:13px;line-height:1.5}.sidebar a:hover{background:#274c79;color:#fff}.sidebar .home{display:block;border-top:1px solid #456080;margin-top:22px;padding-top:16px}.body{min-width:0}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 32px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.toolbar label{display:flex;align-items:center;gap:8px;flex:1;min-width:180px;font-size:13px}.toolbar input{background:#f8fafc;border:1px solid #bdcadd;border-radius:6px;padding:6px 10px;width:100%;min-width:0;color:var(--ink);font-size:16px}.toolbar button{border:1px solid #bdcadd;background:#fff;color:var(--ink);border-radius:6px;padding:6px 12px;min-height:36px}.toolbar button[aria-pressed=true]{background:#eaf1ff;border-color:#2863cd}.reading{max-width:1180px;margin:auto;padding:36px 40px 70px}.meta{font-size:12px;letter-spacing:.04em;color:var(--muted);margin-bottom:20px}.intro{margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:24px}.intro h1{font-size:32px;line-height:1.4;letter-spacing:-.02em;margin:0 0 14px}.intro p{margin:10px 0}.section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px 30px;margin:20px 0;scroll-margin-top:92px}.section[hidden]{display:none}h2{font-size:24px;line-height:1.5;margin:0 0 20px}h3{font-size:18px;line-height:1.6;margin:30px 0 12px}h4{font-size:16px;margin:24px 0 10px}p{margin:12px 0}ul,ol{padding-left:24px}li{margin:6px 0}strong{font-weight:650}.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.7;text-align:left}th{background:#eef3fa;font-weight:600}th,td{border-bottom:1px solid var(--line);padding:12px 14px;vertical-align:top;min-width:110px;overflow-wrap:anywhere}tr:last-child td{border-bottom:0}table th:first-child,table td:first-child{min-width:125px}blockquote{border-left:4px solid #6f94d4;background:#f2f6fc;padding:8px 18px;margin:18px 0;color:#344861}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf2f8;border:1px solid var(--line);padding:18px;border-radius:8px;font:13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;overflow-wrap:anywhere}p code,li code,td code{background:#edf2f8;padding:2px 4px;border-radius:3px}img{max-width:100%;height:auto}.status{color:var(--muted);font-size:13px;min-height:24px}.foot{color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:18px}.link-actions{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.link-actions a{display:inline-block;padding:8px 14px;border:1px solid #2863cd;background:#fff;border-radius:6px;text-decoration:none}.link-actions a:first-child{background:#2863cd;color:#fff}.no-match{padding:24px;background:#fff;border:1px solid var(--line);border-radius:8px}.scope-note{padding:12px 16px;border-left:4px solid #b37a1c;background:#fff5df;color:#654715;font-size:14px;margin:18px 0}
+.reading{overflow-wrap:anywhere}.toolbar label{white-space:nowrap}table{font-size:calc(var(--size) - 1px)}
+@media(max-width:1050px){.shell{grid-template-columns:220px minmax(0,1fr)}.reading{padding:28px 24px 50px}.section{padding:24px}.toolbar{padding:12px 24px}h2{font-size:22px}}
+@media(max-width:760px){.shell{display:block}.sidebar{position:static;height:auto;overflow:visible;padding:18px 20px}.brand{font-size:20px}.sidebar details{margin-top:10px}.sidebar nav{grid-template-columns:1fr}.sidebar .home{margin-top:10px;padding-top:10px}.toolbar{position:static;padding:12px 16px}.toolbar label{flex-basis:100%}.toolbar button{min-height:44px}.reading{padding:22px 16px 40px}.intro h1{font-size:27px}.section{padding:20px 16px;border-radius:9px;scroll-margin-top:12px}h2{font-size:21px}h3{font-size:18px}th,td{padding:10px 12px}html{scroll-padding-top:16px}}
+@media print{body{background:#fff;font-size:10pt;line-height:1.6}.shell{display:block}.sidebar,.toolbar,.link-actions,.status,.no-match,.skip{display:none!important}.reading{max-width:none;padding:0}.section,.section[hidden]{display:block!important;border:0;padding:0;margin:22pt 0;break-before:auto}.intro{margin-bottom:12pt}h1{font-size:24pt!important}h2{font-size:17pt!important;break-after:avoid}h3{font-size:13pt!important;break-after:avoid}table{font-size:9pt}.table-wrap{overflow:visible;border:0}th,td{padding:5pt;min-width:0!important}thead{display:table-header-group}tr{break-inside:avoid}pre,blockquote{break-inside:avoid}a{color:#192842;text-decoration:none}.foot{font-size:8pt}@page{size:A4;margin:16mm}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#reading">跳到正文</a>
+<div class="shell">
+<aside class="sidebar"><div class="brand">部门产品<br>设计规范</div><div class="edition">中文使用版 · 2026.09.19</div><details id="toc" open><summary>阅读目录</summary><nav aria-label="章节目录"><a href="#chapter-1">目标</a>
+<a href="#chapter-2">参考对象与输出</a>
+<a href="#chapter-3">项目设计原则建议</a>
+<a href="#chapter-4">先做三个样板页</a>
+<a href="#chapter-5">与现有业务保持一致</a>
+<a href="#chapter-6">规范的记录格式</a>
+<a href="#chapter-7">已查阅的公开来源</a></nav></details><a class="home" href="../index.html">回到完整手册</a></aside>
+<div class="body"><div class="toolbar"><label for="search">查找章节<input id="search" type="search" placeholder="输入间距、三端、协作或规则编号"></label><button id="font-size" type="button" aria-pressed="false">大字阅读</button><button id="print" type="button">打印 / 存为 PDF</button></div><main id="reading" class="reading"><div class="meta">部门共同入口 / 规范、示例、协作与验收</div><div class="intro"><h1>飞书对齐方案</h1>
+<p><strong>状态：方案草案。</strong> 本文整理当前讨论方向，尚未完成整套页面与交互对齐，不替代 <a href="../%E4%BE%9D%E6%8D%AE/Web%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83.html">SalesBuddy Web 设计规范 V1</a>。本轮授权为集中整理交付目录。</p>
+</div><div id="search-status" class="status" aria-live="polite"></div><div id="no-match" class="no-match" hidden>没有匹配章节。请清除关键词，或使用浏览器的查找功能。</div><section class="section" id="chapter-1"><h2>目标</h2>
+<p>让用户能够快速定位信息、理解状态并连续处理业务。以飞书的业务操作方式作为主要参考，结合销售管理自己的对象、流程、权限与品牌表达形成规范。</p>
+</section>
+<section class="section" id="chapter-2"><h2>参考对象与输出</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>参考对象</th>
+<th>要明确的项目规则</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>客户、商机、拜访列表</td>
+<td>飞书多维表格</td>
+<td>搜索、筛选、排序、分组、展示列及视图关系</td>
+</tr>
+<tr>
+<td>任务工作台</td>
+<td>飞书任务</td>
+<td>我负责的、我发起的、负责人、期限与处理入口</td>
+</tr>
+<tr>
+<td>对象详情与连续处理</td>
+<td>飞书项目</td>
+<td>列表和详情关系、半屏/全屏、关联信息、返回位置</td>
+</tr>
+<tr>
+<td>规范文档阅读</td>
+<td>飞书文档</td>
+<td>目录、标题层级、内容分块、中文阅读</td>
+</tr>
+<tr>
+<td>基础视觉与组件</td>
+<td>Semi 官方列出的飞书 Universe Design 主题</td>
+<td>配色、字级、边界、控件尺寸和交互状态；映射到现有组件</td>
+</tr>
+</tbody></table></div>
+</section>
+<section class="section" id="chapter-3"><h2>项目设计原则建议</h2>
+<p>以下为本项目拟采用的规则，不是飞书官方原则原文。</p>
+<ol>
+<li><strong>找得到：</strong> 导航名称稳定，搜索和筛选紧邻结果，授权范围与当前条件可见。</li>
+<li><strong>看得懂：</strong> 对象、状态、负责人、时间位置稳定；中文文案说明动作与结果。</li>
+<li><strong>少跳转：</strong> 简短详情就地查看；关闭后保留筛选、选中对象和滚动位置。</li>
+<li><strong>可恢复：</strong> 失败保留输入，重试防止重复提交，未保存修改得到保护。</li>
+<li><strong>可追溯：</strong> 任务能找到来源，状态变化有依据，关联客户与商机按权限访问。</li>
+</ol>
+</section>
+<section class="section" id="chapter-4"><h2>先做三个样板页</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>样板</th>
+<th>关键路径</th>
+<th>关键异常与检查点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>商机列表</td>
+<td>搜索 → 筛选 → 查看详情 → 返回列表</td>
+<td>无匹配结果；返回后条件与位置保留</td>
+</tr>
+<tr>
+<td>任务工作台</td>
+<td>我负责的 → 今天到期 → 查看详情 → 处理 → 下一条</td>
+<td>处理失败保留内容，不重复创建或提交</td>
+</tr>
+<tr>
+<td>拜访录入与核对</td>
+<td>关联对象 → 填写 → 核对质检 → 人工确认 → 保存</td>
+<td>缺字段或质检失败能定位问题，原输入保留</td>
+</tr>
+</tbody></table></div>
+<p>详细业务方案继续引用原有 <a href="../%E4%BE%9D%E6%8D%AE/Web%E4%BA%A4%E4%BA%92%E9%87%8D%E6%9E%84%E5%BB%BA%E8%AE%AE.html">Web 交互重构建议</a>，其中的建议、已实现部分与接口待确认项按原文分别说明。</p>
+</section>
+<section class="section" id="chapter-5"><h2>与现有业务保持一致</h2>
+<ul>
+<li>客户、商机、拜访和任务分别表达；拜访中的“下一步计划”只有正式创建成功后才成为任务。</li>
+<li>接受任务不等于完成任务。权限与状态转换沿用真实业务契约，不能因为参考其他产品而增加不存在的动作。</li>
+<li>简短任务信息可用侧栏；复杂拜访核对需要完整编辑空间。</li>
+<li>Web 和小程序共享业务含义与接口规则，各自使用适合屏幕的布局。</li>
+</ul>
+</section>
+<section class="section" id="chapter-6"><h2>规范的记录格式</h2>
+<p>每项按“参考来源 → 适用场景 → 具体规则 → 可交互示例 → 验收方法”记录。来自官方文档、实际页面观察及本项目新增建议应分别标明。</p>
+<p>先完成样板体验核对，再把采用的规则合入现行主规范；同步样式变量、组件状态、页面模板和验收清单。Apple 手册继续作为视觉参考资料保留。</p>
+</section>
+<section class="section" id="chapter-7"><h2>已查阅的公开来源</h2>
+<p>本会话于 2026-09-17 查阅以下公开页面。本文只引用已看到的描述，不将官方产品说明视作本项目实现证据。</p>
+<ul>
+<li><a href="https://www.feishu.cn/content/article/7574713887522639055">飞书多维表格入门</a>：同一份记录的多视图与视图内筛选、排序、分组。</li>
+<li><a href="https://www.feishu.cn/content/project-task-innov-strategy-team">飞书任务管理说明</a>：任务关系、筛选、排序、分组与视图。</li>
+<li><a href="https://www.feishu.cn/content/coph100h">飞书项目偏好设置</a>：详情半屏/全屏及个人主题偏好。</li>
+<li><a href="https://www.feishu.cn/content/40gyakm8">飞书项目任务管理</a>：任务视图、关联信息与详情展现。</li>
+<li><a href="https://docs.feishu.cn/docs">飞书文档</a>：内容块、评论、协作和文档编辑。</li>
+<li><a href="https://semi.design/zh-CN/start/web-components">Semi 官方页面</a>：列有飞书 Universe Design 主题，提供基础组件与主题能力参考。</li>
+</ul>
+</section><div class="foot">使用包 1.0.0 · 已确认规则与新增建议按正文标注。文档、代码接入和实际验收分别记录。</div></main></div></div>
+<script>
+const input=document.getElementById('search');
+const sections=Array.from(document.querySelectorAll('.section'));
+function filterSections(){const query=input.value.trim().toLowerCase();let count=0;for(const section of sections){const match=!query||section.textContent.toLowerCase().includes(query);section.hidden=!match;if(match)count++;}document.getElementById('search-status').textContent=query?'找到 '+count+' 个相关章节':'';document.getElementById('no-match').hidden=count>0;}
+input.addEventListener('input',filterSections);
+document.querySelectorAll('.sidebar nav a').forEach(link=>link.addEventListener('click',()=>{input.value='';filterSections();}));
+document.getElementById('font-size').addEventListener('click',event=>{const button=event.currentTarget;const on=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(on));document.documentElement.style.setProperty('--size',on?'18px':'15px');button.textContent=on?'标准字号':'大字阅读';});
+document.getElementById('print').addEventListener('click',()=>window.print());
+if(window.matchMedia('(max-width:760px)').matches)document.getElementById('toc').open=false;
+</script>
+</body></html>

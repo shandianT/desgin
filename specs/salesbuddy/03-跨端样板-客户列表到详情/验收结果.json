@@ -1,0 +1,1774 @@
+{
+  "checkedAt": "2026-09-19T15:32:59.228Z",
+  "scope": "本地合成数据，Chromium 模拟视口；未验证真机、真实接口、权限与 AI 归档",
+  "browser": "Playwright Chromium",
+  "total": 252,
+  "passed": 252,
+  "failed": 0,
+  "results": [
+    {
+      "group": "视口 1440",
+      "name": "档位判定正确",
+      "pass": true,
+      "detail": "期望 desktop，实际 desktop",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "整页无横向溢出（列表）",
+      "pass": true,
+      "detail": "scrollWidth 1440 / innerWidth 1440",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "搜索与筛选后结果数已更新",
+      "pass": true,
+      "detail": "结果 2 家",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "点击第三行后详情显示同一客户",
+      "pass": true,
+      "detail": "详情标题「云岭教育科技」",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "详情已打开（detail-open）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "地址含客户标识（可刷新／复制定位）",
+      "pass": true,
+      "detail": "#c=C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "整页无横向溢出（详情）",
+      "pass": true,
+      "detail": "scrollWidth 1440 / innerWidth 1440",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "电脑：详情打开时列表仍可见（三栏并排）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "电脑：有关闭按钮，无返回按钮",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "详情标题长中文不横向溢出",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "返回后详情已关闭",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "返回后筛选条件保留",
+      "pass": true,
+      "detail": "筛选 attention",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "返回后滚动位置保留",
+      "pass": true,
+      "detail": "返回前 0，返回后 0",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "返回后选中行仍高亮",
+      "pass": true,
+      "detail": "C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "返回后焦点回到原行（C-07）",
+      "pass": true,
+      "detail": "焦点 C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "返回后地址已清除客户标识",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "浏览器返回键关闭详情且回到列表",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "刷新后筛选条件与详情地址保留",
+      "pass": true,
+      "detail": "筛选 attention，hash #c=C1006，详情 开",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "无匹配：说明原因并可清除条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "清除条件后恢复全部",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "加载中：有文案与骨架",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "加载失败：可重试并说明不丢条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "重试后搜索与筛选未丢失",
+      "pass": true,
+      "detail": "搜索「科」、筛选「客户资产」均保留",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "无权限：详情说明权限并可返回，列表条件仍在",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "无权限：不暴露客户名称（业务约束 约-15）",
+      "pass": true,
+      "detail": "名称「华宸数据科技有限公司」未出现",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "核心客户在列表行有文字标识（业务约束 约-23）",
+      "pass": true,
+      "detail": "核心标识 3 处",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "潜力缺失的客户象限显示「待评估」且不落入任何一格",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "键盘 ↑↓ 在列表行间移动焦点",
+      "pass": true,
+      "detail": "焦点在第 3 行",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "Enter 打开焦点行的详情",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1440",
+      "name": "页面无脚本错误",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "档位判定正确",
+      "pass": true,
+      "detail": "期望 desktop，实际 desktop",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "整页无横向溢出（列表）",
+      "pass": true,
+      "detail": "scrollWidth 1366 / innerWidth 1366",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "搜索与筛选后结果数已更新",
+      "pass": true,
+      "detail": "结果 2 家",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "点击第三行后详情显示同一客户",
+      "pass": true,
+      "detail": "详情标题「云岭教育科技」",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "详情已打开（detail-open）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "地址含客户标识（可刷新／复制定位）",
+      "pass": true,
+      "detail": "#c=C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "整页无横向溢出（详情）",
+      "pass": true,
+      "detail": "scrollWidth 1366 / innerWidth 1366",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "电脑：详情打开时列表仍可见（三栏并排）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "电脑：有关闭按钮，无返回按钮",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "详情标题长中文不横向溢出",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "返回后详情已关闭",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "返回后筛选条件保留",
+      "pass": true,
+      "detail": "筛选 attention",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "返回后滚动位置保留",
+      "pass": true,
+      "detail": "返回前 71，返回后 71",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "返回后选中行仍高亮",
+      "pass": true,
+      "detail": "C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "返回后焦点回到原行（C-07）",
+      "pass": true,
+      "detail": "焦点 C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "返回后地址已清除客户标识",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "浏览器返回键关闭详情且回到列表",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "刷新后筛选条件与详情地址保留",
+      "pass": true,
+      "detail": "筛选 attention，hash #c=C1006，详情 开",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "无匹配：说明原因并可清除条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "清除条件后恢复全部",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "加载中：有文案与骨架",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "加载失败：可重试并说明不丢条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "重试后搜索与筛选未丢失",
+      "pass": true,
+      "detail": "搜索「科」、筛选「客户资产」均保留",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "无权限：详情说明权限并可返回，列表条件仍在",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "无权限：不暴露客户名称（业务约束 约-15）",
+      "pass": true,
+      "detail": "名称「华宸数据科技有限公司」未出现",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "核心客户在列表行有文字标识（业务约束 约-23）",
+      "pass": true,
+      "detail": "核心标识 3 处",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "潜力缺失的客户象限显示「待评估」且不落入任何一格",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "键盘 ↑↓ 在列表行间移动焦点",
+      "pass": true,
+      "detail": "焦点在第 3 行",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "Enter 打开焦点行的详情",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1366",
+      "name": "页面无脚本错误",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "档位判定正确",
+      "pass": true,
+      "detail": "期望 desktop，实际 desktop",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "整页无横向溢出（列表）",
+      "pass": true,
+      "detail": "scrollWidth 1024 / innerWidth 1024",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "搜索与筛选后结果数已更新",
+      "pass": true,
+      "detail": "结果 2 家",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "点击第三行后详情显示同一客户",
+      "pass": true,
+      "detail": "详情标题「云岭教育科技」",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "详情已打开（detail-open）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "地址含客户标识（可刷新／复制定位）",
+      "pass": true,
+      "detail": "#c=C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "整页无横向溢出（详情）",
+      "pass": true,
+      "detail": "scrollWidth 1024 / innerWidth 1024",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "电脑：详情打开时列表仍可见（三栏并排）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "电脑：有关闭按钮，无返回按钮",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "详情标题长中文不横向溢出",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "返回后详情已关闭",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "返回后筛选条件保留",
+      "pass": true,
+      "detail": "筛选 attention",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "返回后滚动位置保留",
+      "pass": true,
+      "detail": "返回前 120，返回后 120",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "返回后选中行仍高亮",
+      "pass": true,
+      "detail": "C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "返回后焦点回到原行（C-07）",
+      "pass": true,
+      "detail": "焦点 C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "返回后地址已清除客户标识",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "浏览器返回键关闭详情且回到列表",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "刷新后筛选条件与详情地址保留",
+      "pass": true,
+      "detail": "筛选 attention，hash #c=C1006，详情 开",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "无匹配：说明原因并可清除条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "清除条件后恢复全部",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "加载中：有文案与骨架",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "加载失败：可重试并说明不丢条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "重试后搜索与筛选未丢失",
+      "pass": true,
+      "detail": "搜索「科」、筛选「客户资产」均保留",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "无权限：详情说明权限并可返回，列表条件仍在",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "无权限：不暴露客户名称（业务约束 约-15）",
+      "pass": true,
+      "detail": "名称「华宸数据科技有限公司」未出现",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "核心客户在列表行有文字标识（业务约束 约-23）",
+      "pass": true,
+      "detail": "核心标识 3 处",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "潜力缺失的客户象限显示「待评估」且不落入任何一格",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "键盘 ↑↓ 在列表行间移动焦点",
+      "pass": true,
+      "detail": "焦点在第 3 行",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "Enter 打开焦点行的详情",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 1024",
+      "name": "页面无脚本错误",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "档位判定正确",
+      "pass": true,
+      "detail": "期望 tablet，实际 tablet",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "整页无横向溢出（列表）",
+      "pass": true,
+      "detail": "scrollWidth 900 / innerWidth 900",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "搜索与筛选后结果数已更新",
+      "pass": true,
+      "detail": "结果 2 家",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "点击第三行后详情显示同一客户",
+      "pass": true,
+      "detail": "详情标题「云岭教育科技」",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "详情已打开（detail-open）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "地址含客户标识（可刷新／复制定位）",
+      "pass": true,
+      "detail": "#c=C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "整页无横向溢出（详情）",
+      "pass": true,
+      "detail": "scrollWidth 900 / innerWidth 900",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "收紧／手机：详情有「返回列表」按钮",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "收紧／手机：详情覆盖列表区域",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "详情标题长中文不横向溢出",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "返回后详情已关闭",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "返回后筛选条件保留",
+      "pass": true,
+      "detail": "筛选 attention",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "返回后滚动位置保留",
+      "pass": true,
+      "detail": "返回前 120，返回后 120",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "返回后选中行仍高亮",
+      "pass": true,
+      "detail": "C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "返回后焦点回到原行（C-07）",
+      "pass": true,
+      "detail": "焦点 C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "返回后地址已清除客户标识",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "浏览器返回键关闭详情且回到列表",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "刷新后筛选条件与详情地址保留",
+      "pass": true,
+      "detail": "筛选 attention，hash #c=C1006，详情 开",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "无匹配：说明原因并可清除条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "清除条件后恢复全部",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "加载中：有文案与骨架",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "加载失败：可重试并说明不丢条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "重试后搜索与筛选未丢失",
+      "pass": true,
+      "detail": "搜索「科」、筛选「客户资产」均保留",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "无权限：详情说明权限并可返回，列表条件仍在",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "无权限：不暴露客户名称（业务约束 约-15）",
+      "pass": true,
+      "detail": "名称「华宸数据科技有限公司」未出现",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "核心客户在列表行有文字标识（业务约束 约-23）",
+      "pass": true,
+      "detail": "核心标识 3 处",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "潜力缺失的客户象限显示「待评估」且不落入任何一格",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "键盘 ↑↓ 在列表行间移动焦点",
+      "pass": true,
+      "detail": "焦点在第 3 行",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "Enter 打开焦点行的详情",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 900",
+      "name": "页面无脚本错误",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "档位判定正确",
+      "pass": true,
+      "detail": "期望 tablet，实际 tablet",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "整页无横向溢出（列表）",
+      "pass": true,
+      "detail": "scrollWidth 760 / innerWidth 760",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "搜索与筛选后结果数已更新",
+      "pass": true,
+      "detail": "结果 2 家",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "点击第三行后详情显示同一客户",
+      "pass": true,
+      "detail": "详情标题「云岭教育科技」",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "详情已打开（detail-open）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "地址含客户标识（可刷新／复制定位）",
+      "pass": true,
+      "detail": "#c=C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "整页无横向溢出（详情）",
+      "pass": true,
+      "detail": "scrollWidth 760 / innerWidth 760",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "收紧／手机：详情有「返回列表」按钮",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "收紧／手机：详情覆盖列表区域",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "详情标题长中文不横向溢出",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "返回后详情已关闭",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "返回后筛选条件保留",
+      "pass": true,
+      "detail": "筛选 attention",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "返回后滚动位置保留",
+      "pass": true,
+      "detail": "返回前 0，返回后 0",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "返回后选中行仍高亮",
+      "pass": true,
+      "detail": "C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "返回后焦点回到原行（C-07）",
+      "pass": true,
+      "detail": "焦点 C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "返回后地址已清除客户标识",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "浏览器返回键关闭详情且回到列表",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "刷新后筛选条件与详情地址保留",
+      "pass": true,
+      "detail": "筛选 attention，hash #c=C1006，详情 开",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "无匹配：说明原因并可清除条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "清除条件后恢复全部",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "加载中：有文案与骨架",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "加载失败：可重试并说明不丢条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "重试后搜索与筛选未丢失",
+      "pass": true,
+      "detail": "搜索「科」、筛选「客户资产」均保留",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "无权限：详情说明权限并可返回，列表条件仍在",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "无权限：不暴露客户名称（业务约束 约-15）",
+      "pass": true,
+      "detail": "名称「华宸数据科技有限公司」未出现",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "核心客户在列表行有文字标识（业务约束 约-23）",
+      "pass": true,
+      "detail": "核心标识 3 处",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "潜力缺失的客户象限显示「待评估」且不落入任何一格",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "键盘 ↑↓ 在列表行间移动焦点",
+      "pass": true,
+      "detail": "焦点在第 3 行",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "Enter 打开焦点行的详情",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 760",
+      "name": "页面无脚本错误",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "档位判定正确",
+      "pass": true,
+      "detail": "期望 mobile，实际 mobile",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "整页无横向溢出（列表）",
+      "pass": true,
+      "detail": "scrollWidth 600 / innerWidth 600",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "搜索与筛选后结果数已更新",
+      "pass": true,
+      "detail": "结果 2 家",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "点击第三行后详情显示同一客户",
+      "pass": true,
+      "detail": "详情标题「云岭教育科技」",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "详情已打开（detail-open）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "地址含客户标识（可刷新／复制定位）",
+      "pass": true,
+      "detail": "#c=C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "整页无横向溢出（详情）",
+      "pass": true,
+      "detail": "scrollWidth 600 / innerWidth 600",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "收紧／手机：详情有「返回列表」按钮",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "收紧／手机：详情覆盖列表区域",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "详情标题长中文不横向溢出",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "返回后详情已关闭",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "返回后筛选条件保留",
+      "pass": true,
+      "detail": "筛选 attention",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "返回后滚动位置保留",
+      "pass": true,
+      "detail": "返回前 120，返回后 120",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "返回后选中行仍高亮",
+      "pass": true,
+      "detail": "C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "返回后焦点回到原行（C-07）",
+      "pass": true,
+      "detail": "焦点 C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "返回后地址已清除客户标识",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "浏览器返回键关闭详情且回到列表",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "刷新后筛选条件与详情地址保留",
+      "pass": true,
+      "detail": "筛选 attention，hash #c=C1006，详情 开",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "无匹配：说明原因并可清除条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "清除条件后恢复全部",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "加载中：有文案与骨架",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "加载失败：可重试并说明不丢条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "重试后搜索与筛选未丢失",
+      "pass": true,
+      "detail": "搜索「科」、筛选「客户资产」均保留",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "无权限：详情说明权限并可返回，列表条件仍在",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "无权限：不暴露客户名称（业务约束 约-15）",
+      "pass": true,
+      "detail": "名称「华宸数据科技有限公司」未出现",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "手机正文字号 ≥ 16px（X-06 建议）",
+      "pass": true,
+      "detail": "行主文字 16px",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "手机说明文字 ≥ 12px（V-02 底线）",
+      "pass": true,
+      "detail": "行说明 13px",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "底部导航、按钮与筛选片高度均 ≥ 44px",
+      "pass": true,
+      "detail": "导航栏高 57px；最小目标 44px",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "手机详情主动作固定在底部且 ≥ 44px",
+      "pass": true,
+      "detail": "距底 0px，按钮高 44px",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "核心客户在列表行有文字标识（业务约束 约-23）",
+      "pass": true,
+      "detail": "核心标识 3 处",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "潜力缺失的客户象限显示「待评估」且不落入任何一格",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "键盘 ↑↓ 在列表行间移动焦点",
+      "pass": true,
+      "detail": "焦点在第 3 行",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "Enter 打开焦点行的详情",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 600",
+      "name": "页面无脚本错误",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "档位判定正确",
+      "pass": true,
+      "detail": "期望 mobile，实际 mobile",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "整页无横向溢出（列表）",
+      "pass": true,
+      "detail": "scrollWidth 390 / innerWidth 390",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "搜索与筛选后结果数已更新",
+      "pass": true,
+      "detail": "结果 2 家",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "点击第三行后详情显示同一客户",
+      "pass": true,
+      "detail": "详情标题「云岭教育科技」",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "详情已打开（detail-open）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "地址含客户标识（可刷新／复制定位）",
+      "pass": true,
+      "detail": "#c=C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "整页无横向溢出（详情）",
+      "pass": true,
+      "detail": "scrollWidth 390 / innerWidth 390",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "收紧／手机：详情有「返回列表」按钮",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "收紧／手机：详情覆盖列表区域",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "详情标题长中文不横向溢出",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "返回后详情已关闭",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "返回后筛选条件保留",
+      "pass": true,
+      "detail": "筛选 attention",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "返回后滚动位置保留",
+      "pass": true,
+      "detail": "返回前 90，返回后 90",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "返回后选中行仍高亮",
+      "pass": true,
+      "detail": "C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "返回后焦点回到原行（C-07）",
+      "pass": true,
+      "detail": "焦点 C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "返回后地址已清除客户标识",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "浏览器返回键关闭详情且回到列表",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "刷新后筛选条件与详情地址保留",
+      "pass": true,
+      "detail": "筛选 attention，hash #c=C1006，详情 开",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "无匹配：说明原因并可清除条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "清除条件后恢复全部",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "加载中：有文案与骨架",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "加载失败：可重试并说明不丢条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "重试后搜索与筛选未丢失",
+      "pass": true,
+      "detail": "搜索「科」、筛选「客户资产」均保留",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "无权限：详情说明权限并可返回，列表条件仍在",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "无权限：不暴露客户名称（业务约束 约-15）",
+      "pass": true,
+      "detail": "名称「华宸数据科技有限公司」未出现",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "手机正文字号 ≥ 16px（X-06 建议）",
+      "pass": true,
+      "detail": "行主文字 16px",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "手机说明文字 ≥ 12px（V-02 底线）",
+      "pass": true,
+      "detail": "行说明 13px",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "底部导航、按钮与筛选片高度均 ≥ 44px",
+      "pass": true,
+      "detail": "导航栏高 57px；最小目标 44px",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "手机详情主动作固定在底部且 ≥ 44px",
+      "pass": true,
+      "detail": "距底 0px，按钮高 44px",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "核心客户在列表行有文字标识（业务约束 约-23）",
+      "pass": true,
+      "detail": "核心标识 3 处",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "潜力缺失的客户象限显示「待评估」且不落入任何一格",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "键盘 ↑↓ 在列表行间移动焦点",
+      "pass": true,
+      "detail": "焦点在第 3 行",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "Enter 打开焦点行的详情",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 390",
+      "name": "页面无脚本错误",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "档位判定正确",
+      "pass": true,
+      "detail": "期望 mobile，实际 mobile",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "整页无横向溢出（列表）",
+      "pass": true,
+      "detail": "scrollWidth 320 / innerWidth 320",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "搜索与筛选后结果数已更新",
+      "pass": true,
+      "detail": "结果 2 家",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "点击第三行后详情显示同一客户",
+      "pass": true,
+      "detail": "详情标题「云岭教育科技」",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "详情已打开（detail-open）",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "地址含客户标识（可刷新／复制定位）",
+      "pass": true,
+      "detail": "#c=C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "整页无横向溢出（详情）",
+      "pass": true,
+      "detail": "scrollWidth 320 / innerWidth 320",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "收紧／手机：详情有「返回列表」按钮",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "收紧／手机：详情覆盖列表区域",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "详情标题长中文不横向溢出",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "返回后详情已关闭",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "返回后筛选条件保留",
+      "pass": true,
+      "detail": "筛选 attention",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "返回后滚动位置保留",
+      "pass": true,
+      "detail": "返回前 120，返回后 120",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "返回后选中行仍高亮",
+      "pass": true,
+      "detail": "C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "返回后焦点回到原行（C-07）",
+      "pass": true,
+      "detail": "焦点 C1006",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "返回后地址已清除客户标识",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "浏览器返回键关闭详情且回到列表",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "刷新后筛选条件与详情地址保留",
+      "pass": true,
+      "detail": "筛选 attention，hash #c=C1006，详情 开",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "无匹配：说明原因并可清除条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "清除条件后恢复全部",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "加载中：有文案与骨架",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "加载失败：可重试并说明不丢条件",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "重试后搜索与筛选未丢失",
+      "pass": true,
+      "detail": "搜索「科」、筛选「客户资产」均保留",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "无权限：详情说明权限并可返回，列表条件仍在",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "无权限：不暴露客户名称（业务约束 约-15）",
+      "pass": true,
+      "detail": "名称「华宸数据科技有限公司」未出现",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "手机正文字号 ≥ 16px（X-06 建议）",
+      "pass": true,
+      "detail": "行主文字 16px",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "手机说明文字 ≥ 12px（V-02 底线）",
+      "pass": true,
+      "detail": "行说明 13px",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "底部导航、按钮与筛选片高度均 ≥ 44px",
+      "pass": true,
+      "detail": "导航栏高 57px；最小目标 44px",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "手机详情主动作固定在底部且 ≥ 44px",
+      "pass": true,
+      "detail": "距底 0px，按钮高 44px",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "核心客户在列表行有文字标识（业务约束 约-23）",
+      "pass": true,
+      "detail": "核心标识 3 处",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "潜力缺失的客户象限显示「待评估」且不落入任何一格",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "键盘 ↑↓ 在列表行间移动焦点",
+      "pass": true,
+      "detail": "焦点在第 3 行",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "Enter 打开焦点行的详情",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    },
+    {
+      "group": "视口 320",
+      "name": "页面无脚本错误",
+      "pass": true,
+      "detail": "",
+      "shot": ""
+    }
+  ]
+}

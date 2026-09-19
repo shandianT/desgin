@@ -1,0 +1,134 @@
+{
+  "version": "1.0.0",
+  "date": "2026-09-17",
+  "result": "PASS",
+  "evidence_level": "local build and isolated browsers; no live API acceptance",
+  "test_count": 34,
+  "test_breakdown": {
+    "catalog": 19,
+    "mature_components": 6,
+    "theme": 8,
+    "build": 1
+  },
+  "viewports": [
+    [
+      1440,
+      900
+    ],
+    [
+      1366,
+      768
+    ],
+    [
+      1024,
+      600
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      320,
+      740
+    ]
+  ],
+  "shared_source_files_verified_unchanged": 251,
+  "crm_preview_sha256": "724851c7f41d71cccacbb8d2253eec1ae8650c349aa53256ccd16cdbf9468049",
+  "source_hashes": {
+    "design-tokens.css": "802e68f1d00ae60998dbcd2a6b0b4e64062f7d6864e1bdd05ea1a570500c3a84",
+    "theme.css": "a20fe2355b305956c8d5c9775fe5f4af213e57e4e5aa553fab6ea65fbb131875",
+    "visual-theme.css": "b16e8071ba5d0019041c88b1e901a13152d92684fe06d4218614a016d28fb13c",
+    "select-components.js": "5c996a155e99d212d79624cb381688869210024e4d2ab2738bccb0e02576fe58",
+    "index.html": "412c2c49d3965f5b147dfc2fe3f29b4760ff31145bcba6395bd1a4f50b4f3710",
+    "README.md": "80fa817b80b267d82ef2df145656cd58d7781a4200a1b64761fd9e438ee0ad1c",
+    "design-system/index.html": "52122ae60c2ba3330f4afaa591a82d44e29149a27e90cb0ec986e8cd4d4e514f",
+    "design-system/catalog.css": "d1126f17736f97455544e98b3b2631688223b783b2adecd2801783a5c20e44db",
+    "design-system/catalog.js": "224452c3bc1d7b552c1c637f663bb0d0dea4459190d1d7b70f9fd4566715b6db",
+    "scripts/build.py": "6f3d1c4a67c3f49c33de2d4372215041548b876d41dc9253c498ae92139b40bc",
+    "scripts/package_web.py": "04bb338079a4d4170b4e8608751c7ea8acc354b00fa6c05a8381dff609e6db7b",
+    "tests/build.test.mjs": "14137004ee89d564e6200224567d3c4ad6c3265b4fe671191a174cbff6401832",
+    "tests/design-system.browser.mjs": "388f4ce651a97d0f742f38ffce06c2bf845db5faa4dcb180d8ff780a182d0a7f"
+  },
+  "document_hashes": {
+    "设计规范.md": "d95b3ad9be1b6df5eddd80ed880203ce5a268166bc16e9d0c0cba31cfeec739d",
+    "验收清单.md": "589e04f5381366d89a719d63c05e315b18518e34559fd8ebb229baf09c353e3f",
+    "实现与验证.md": "e3e30f253acbc2db89f849d0d08c0ba00081139573cfcf723d5a2e7acc01484b"
+  },
+  "served_checks": [
+    {
+      "port": 5186,
+      "file": "design-system/index.html",
+      "served_matches_source": true,
+      "sha256": "52122ae60c2ba3330f4afaa591a82d44e29149a27e90cb0ec986e8cd4d4e514f"
+    },
+    {
+      "port": 5186,
+      "file": "design-system/catalog.css",
+      "served_matches_source": true,
+      "sha256": "d1126f17736f97455544e98b3b2631688223b783b2adecd2801783a5c20e44db"
+    },
+    {
+      "port": 5186,
+      "file": "design-system/catalog.js",
+      "served_matches_source": true,
+      "sha256": "224452c3bc1d7b552c1c637f663bb0d0dea4459190d1d7b70f9fd4566715b6db"
+    },
+    {
+      "port": 5186,
+      "file": "design-tokens.css",
+      "served_matches_source": true,
+      "sha256": "802e68f1d00ae60998dbcd2a6b0b4e64062f7d6864e1bdd05ea1a570500c3a84"
+    },
+    {
+      "port": 5186,
+      "file": "select-components.js",
+      "served_matches_source": true,
+      "sha256": "5c996a155e99d212d79624cb381688869210024e4d2ab2738bccb0e02576fe58"
+    },
+    {
+      "port": 5196,
+      "file": "design-system/index.html",
+      "served_matches_source": true,
+      "sha256": "52122ae60c2ba3330f4afaa591a82d44e29149a27e90cb0ec986e8cd4d4e514f"
+    },
+    {
+      "port": 5196,
+      "file": "design-system/catalog.css",
+      "served_matches_source": true,
+      "sha256": "d1126f17736f97455544e98b3b2631688223b783b2adecd2801783a5c20e44db"
+    },
+    {
+      "port": 5196,
+      "file": "design-system/catalog.js",
+      "served_matches_source": true,
+      "sha256": "224452c3bc1d7b552c1c637f663bb0d0dea4459190d1d7b70f9fd4566715b6db"
+    },
+    {
+      "port": 5196,
+      "file": "design-tokens.css",
+      "served_matches_source": true,
+      "sha256": "802e68f1d00ae60998dbcd2a6b0b4e64062f7d6864e1bdd05ea1a570500c3a84"
+    },
+    {
+      "port": 5196,
+      "file": "select-components.js",
+      "served_matches_source": true,
+      "sha256": "5c996a155e99d212d79624cb381688869210024e4d2ab2738bccb0e02576fe58"
+    }
+  ],
+  "screenshots": [
+    "components.png",
+    "foundations.png",
+    "mobile-home.png",
+    "short-visit.png",
+    "template-analytics.png",
+    "template-detail.png",
+    "template-home.png",
+    "template-list.png",
+    "template-visit.png"
+  ],
+  "live_api_verified": false,
+  "production_verified": false,
+  "all_product_pages_migrated": false,
+  "business_api_or_schema_changes": false
+}

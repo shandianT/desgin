@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>三端并排对照</title>
+<link rel="stylesheet" href="../02-设计变量与同步链路/dist/design-tokens.css">
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ui-background); color: var(--ui-ink); font-family: var(--ui-font); font-size: var(--ui-text-body); line-height: 1.65; padding: var(--ui-space-6) var(--ui-page-gutter) var(--ui-space-8); }
+h1 { font-size: var(--ui-text-page); font-weight: 650; margin: 0 0 var(--ui-space-1); }
+.lead { color: var(--ui-secondary); max-width: 64em; margin: 0 0 var(--ui-space-6); }
+.frames { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--ui-space-6); align-items: start; }
+.frame { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-space-4); }
+.frame h2 { font-size: var(--ui-text-section); font-weight: 600; margin: 0 0 var(--ui-space-1); }
+.frame p { color: var(--ui-secondary); font-size: var(--ui-text-small); margin: 0 0 var(--ui-space-3); }
+.frame ul { margin: 0 0 var(--ui-space-3); padding-left: 1.2em; color: var(--ui-secondary); font-size: var(--ui-text-small); }
+.stage { position: relative; width: 100%; overflow: hidden; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); }
+.stage iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; }
+.tag { display: inline-block; padding: 0 var(--ui-space-2); border-radius: 4px; background: var(--ui-selected); color: var(--ui-primary); font-size: var(--ui-text-small); line-height: 20px; margin-left: var(--ui-space-1); }
+.note { margin-top: var(--ui-space-6); padding: var(--ui-space-4); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); color: var(--ui-secondary); font-size: var(--ui-text-small); max-width: 64em; }
+.note b { color: var(--ui-ink); }
+</style>
+</head>
+<body>
+<h1>客户列表 → 详情 → 返回：三端并排对照</h1>
+<p class="lead">同一份样板页面，按窗口宽度自动切换三种布局。三个窗口可以分别操作：搜索、筛选、点开客户、返回。每个窗口的搜索、筛选、选中各自保存，互不影响；内嵌时不写浏览器历史，所以浏览器返回键在本页无效，真机返回行为请直接打开 index.html 看。手机浏览器打开本页会挤成一列，建议在电脑上看对照；真机效果请直接打开 <a href="index.html">index.html</a>。</p>
+<div class="frames">
+  <div class="frame">
+    <h2>电脑网页 <span class="tag">&gt;900px · 1200 宽</span></h2>
+    <p>导航栏（文字）＋客户列表＋详情三栏并排。点开详情时列表不消失；Esc 或 × 关闭。</p>
+    <ul><li>规则：T-02、T-03、X-02（建议）</li><li>页面左右留白 24px；正文 14px</li></ul>
+    <div class="stage" data-w="1200" data-h="760"><iframe title="电脑网页样板" src="index.html?frame=desktop"></iframe></div>
+  </div>
+  <div class="frame">
+    <h2>收紧窗口 <span class="tag">601～900px · 800 宽</span></h2>
+    <p>导航折叠成图标栏；列表和详情二选一显示，详情顶部出现「返回列表」。</p>
+    <ul><li>规则：X-02、X-05（建议）</li><li>页面左右留白 24px；正文 14px</li></ul>
+    <div class="stage" data-w="800" data-h="760"><iframe title="收紧窗口样板" src="index.html?frame=tablet"></iframe></div>
+  </div>
+  <div class="frame">
+    <h2>手机 <span class="tag">≤600px · 390 宽</span></h2>
+    <p>底部导航；详情整页进入，「返回列表」或系统返回都回到原位置，筛选与选中保留。主动作固定在底部并避开安全区。</p>
+    <ul><li>规则：X-03、X-06、X-07（建议）</li><li>页面左右留白 16px；正文 16px；目标 ≥44px</li></ul>
+    <div class="stage" data-w="390" data-h="760"><iframe title="手机样板" src="index.html?frame=mobile"></iframe></div>
+  </div>
+</div>
+<div class="note"><b>怎么读这三个窗口。</b> 变的只有「导航放哪里」「列表和详情是并排还是前后」「留白和字号用哪一档」；不变的是客户对象、字段含义、红黄绿灰的判断依据、筛选归属、缺失值的表达和权限提示。这就是「共享业务含义与设计变量，布局按端适配」的具体样子。合成数据，不连接接口。</div>
+<script>
+(function () {
+  function fit() {
+    document.querySelectorAll('.stage').forEach(function (s) {
+      var w = Number(s.dataset.w), h = Number(s.dataset.h), f = s.firstElementChild;
+      var scale = Math.min(1, s.clientWidth / w);
+      f.style.width = w + 'px'; f.style.height = h + 'px'; f.style.transform = 'scale(' + scale + ')';
+      s.style.height = Math.round(h * scale) + 'px';
+    });
+  }
+  fit(); window.addEventListener('resize', fit);
+})();
+</script>
+</body>
+</html>

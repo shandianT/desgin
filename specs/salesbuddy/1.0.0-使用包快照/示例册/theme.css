@@ -1,0 +1,45 @@
+/* Navy navigation, light workspace. Shared Mini Program styles stay intact. */
+.web-theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:32px;padding:5px 9px;border:1px solid #dce4ef;border-radius:7px;background:#fff;color:#566a85;font-size:12px;line-height:20px;white-space:nowrap;flex-shrink:0}
+.web-theme-toggle:hover{border-color:#8dacdf;color:#2863cd;background:#f4f7fd}.web-theme-toggle svg{flex:none}.web-auth-theme{position:absolute;right:150px;top:4px}
+body:not(.web-login),body:not(.web-login) .web-main{background:var(--ui-background);color:var(--ui-ink)}
+.web-topbar{background:#fff;border-bottom-color:var(--ui-line)}
+:root[data-theme=navy] .web-sidebar{background:var(--ui-sidebar)!important;border-right-color:#203e65!important;color:#e7effa;--nav-muted:#b4c7e1}
+:root[data-theme=navy] .web-sidebar :is(.web-nav-label,.web-nav-group,.web-admin-link){color:var(--nav-muted)!important}
+:root[data-theme=navy] .web-sidebar :is(.web-workspace,.web-account){background:#1c3b63!important;border-color:#355277!important;box-shadow:none!important;color:#dbe7f8!important}
+:root[data-theme=navy] .web-sidebar :is(.web-workspace,.web-account):hover{background:#254a77!important;border-color:#6b8bb5!important}
+:root[data-theme=navy] .web-sidebar :is(.web-workspace b,.web-account b){color:#f0f5fc!important}
+:root[data-theme=navy] .web-sidebar :is(.web-workspace small,.web-account small){color:var(--nav-muted)!important}
+:root[data-theme=navy] .web-sidebar :is(.web-workspace-icon,#account-avatar){background:#2c507e!important;color:#e1edff!important}
+:root[data-theme=navy] #desktop-nav .web-nav-item{color:#c2d1e6!important}
+:root[data-theme=navy] #desktop-nav .web-nav-item:hover{background:#23466f!important;color:#fff!important}
+:root[data-theme=navy] #desktop-nav .web-nav-item.active{background:#2a568b!important;color:#fff!important;box-shadow:inset 3px 0 #91baff!important;font-weight:600}
+:root[data-theme=navy] .web-sidebar :is(button,a):focus-visible{outline:2px solid #b9d2ff;outline-offset:3px}
+/* Main content and all floating controls share the light palette. */
+#page-root :is(.primary,.btn-primary,.primary-button,.submit-button,.capture-primary,.login-button,.action-primary,.save-button,.accept-button,.complete-button,.retry-button){background:var(--ui-primary);color:white}
+:is(.web-create-button,.web-select-dialog .web-select-apply,.wx-date-apply,.web-primary-choice){background:var(--ui-primary);color:white;border-color:var(--ui-primary)}
+#page-root :is(.primary,.btn-primary,.primary-button,.submit-button,.capture-primary,.login-button,.action-primary,.save-button,.accept-button,.complete-button,.retry-button):not(:disabled):hover,:is(.web-create-button,.web-select-dialog .web-select-apply,.wx-date-apply,.web-primary-choice):not(:disabled):hover{background:#2055b5;color:white}
+#page-root .recording .capture-primary{background:#b84b46;color:white}
+#page-root .recording .capture-primary:hover{background:#a33f3b}
+#page-root :is(.web-task-action,.web-task-sort,.quarter-picker,.picker-trigger){color:#385675}
+#page-root .web-task-tab{color:#596b84}
+#page-root .web-task-tab.active{color:var(--ui-primary)}
+#page-root :is(.web-task-priority,.state-confirm,.state-handover){background:#fff0d7;color:#7c571a}
+#page-root .web-task-title .web-task-priority{background:#fff0d7;color:#7c571a}
+#page-root .web-task-state>.state-confirm,#page-root .web-task-state>.state-handover{background:#fff0d7;color:#7c571a}
+#page-root .web-task-state>.state-complete{background:#e6f4ed;color:#27684b}
+.web-select-dialog .option.selected{color:#2557a1}
+.web-select-period .web-select-main .option.selected small{color:#4b6894}
+.web-select-period .web-select-main .option.selected.active{background:#e2ecff;border-color:#709ce4}
+.web-select-period .web-select-main .option small{color:#617188}
+.web-select-period .web-select-main .option.active{border-color:#709ce4}
+.web-select-dialog .option.selected:after{color:#2557a1}
+.wx-date-cancel{color:#53677f}
+.web-primary-choice :is(b,small,span),.web-secondary-choice :is(b,small,span){color:inherit;opacity:1}
+.web-primary-choice{color:white}.web-secondary-choice{color:#3d608b}
+.web-primary-choice:hover{background:#2055b5}.web-secondary-choice:hover{background:#eaf1fd;border-color:#9ab7e6}
+.web-chart-coverage{background:#fff8eb;border-color:#eeddbb;color:#735b32}
+.web-chart-coverage strong{color:#755019;font-weight:600}
+:is(button,a,[role=button],[tabindex="0"],input,textarea,select):focus-visible{outline:2px solid #5786dc;outline-offset:3px}
+.wx-date-dialog .flatpickr-day:focus-visible{outline-offset:-2px}
+@media(max-width:900px){.web-theme-toggle{padding:5px;min-width:30px}.web-theme-toggle>span{display:none}.web-auth-theme{right:125px}.web-topbar-actions{flex-shrink:0;gap:6px!important}.web-breadcrumb{min-width:0}}
+@media(max-width:380px){.web-topbar{padding-left:10px;padding-right:10px}.web-breadcrumb{gap:4px}.web-breadcrumb>#breadcrumb-group,.web-breadcrumb>.web-crumb-divider{display:none}}

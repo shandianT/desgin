@@ -1,0 +1,210 @@
+{
+  "version": "1.0.0",
+  "assembled": "2026-09-19",
+  "confirmedScope": "SalesBuddy Web V1.0",
+  "confirmedRuleIds": [
+    "P-01",
+    "P-02",
+    "P-03",
+    "V-01",
+    "V-02",
+    "V-03",
+    "V-04",
+    "C-01",
+    "C-02",
+    "C-03",
+    "C-04",
+    "C-05",
+    "C-06",
+    "C-07",
+    "T-01",
+    "T-02",
+    "T-03",
+    "T-04",
+    "T-05",
+    "B-01",
+    "B-02",
+    "B-03",
+    "B-04",
+    "B-05",
+    "G-01",
+    "G-02"
+  ],
+  "departmentExtensions": "proposed",
+  "sources": [
+    {
+      "source": "design-system/catalog.css",
+      "output": "示例册/design-system/catalog.css",
+      "sha256": "d1126f17736f97455544e98b3b2631688223b783b2adecd2801783a5c20e44db",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "design-system/catalog.js",
+      "output": "示例册/design-system/catalog.js",
+      "sha256": "224452c3bc1d7b552c1c637f663bb0d0dea4459190d1d7b70f9fd4566715b6db",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "design-system/index.html",
+      "output": "示例册/design-system/index.html",
+      "sha256": "52122ae60c2ba3330f4afaa591a82d44e29149a27e90cb0ec986e8cd4d4e514f",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "design-tokens.css",
+      "output": "示例册/design-tokens.css",
+      "sha256": "802e68f1d00ae60998dbcd2a6b0b4e64062f7d6864e1bdd05ea1a570500c3a84",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "select-components.js",
+      "output": "示例册/select-components.js",
+      "sha256": "5c996a155e99d212d79624cb381688869210024e4d2ab2738bccb0e02576fe58",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "select-components.css",
+      "output": "示例册/select-components.css",
+      "sha256": "19608eb16d7315ed6c6b58c024b97b4fbd3b938077b44b605d9984123025e9f3",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "date-picker.js",
+      "output": "示例册/date-picker.js",
+      "sha256": "7050d9407fad85e9d9e68f24130c48e5afb54c1b8c4d9f3d871e2723b0fb6a1b",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "date-picker.css",
+      "output": "示例册/date-picker.css",
+      "sha256": "14bc46257ae1c774b261e165c07b9901c9548f7974817df6139caadc9fefa8f1",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "theme.css",
+      "output": "示例册/theme.css",
+      "sha256": "a20fe2355b305956c8d5c9775fe5f4af213e57e4e5aa553fab6ea65fbb131875",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/tom-select-2.6.2/LICENSE",
+      "output": "示例册/assets/vendor/tom-select-2.6.2/LICENSE",
+      "sha256": "f15dc64ea1f373c8af0ee7c020064360497addf335c9c2bcf27c3a6f56a6f0bd",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/tom-select-2.6.2/SOURCE.json",
+      "output": "示例册/assets/vendor/tom-select-2.6.2/SOURCE.json",
+      "sha256": "cc468590625ccf3fac63c5147abd7e58bb42e8bc3715a1986431180fb31b1448",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/tom-select-2.6.2/tom-select.complete.min.js",
+      "output": "示例册/assets/vendor/tom-select-2.6.2/tom-select.complete.min.js",
+      "sha256": "8f9d7d3420e938c2c9817818b56df43ea46feae5bf1f5a2e828863c034df0e37",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/tom-select-2.6.2/tom-select.default.min.css",
+      "output": "示例册/assets/vendor/tom-select-2.6.2/tom-select.default.min.css",
+      "sha256": "f1d39d120d83e42f08a4f0fbc33f99e92333079e05fecfecd3c22da37b8427c8",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/flatpickr-4.6.13/LICENSE.md",
+      "output": "示例册/assets/vendor/flatpickr-4.6.13/LICENSE.md",
+      "sha256": "5fd57afc3905651175947ae44818e91ffcf5b605e4c88fac42d9700243bd9095",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/flatpickr-4.6.13/SOURCE.json",
+      "output": "示例册/assets/vendor/flatpickr-4.6.13/SOURCE.json",
+      "sha256": "ce00fe4b8d39a702c7710bd4d910062198b63c435f9a666f1d1ce47f071dd3d7",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/flatpickr-4.6.13/flatpickr.min.css",
+      "output": "示例册/assets/vendor/flatpickr-4.6.13/flatpickr.min.css",
+      "sha256": "1b34a42552c96f10e4dfaaa4a367276b03868aacff63c1ac42ffe331352bc754",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/flatpickr-4.6.13/flatpickr.min.js",
+      "output": "示例册/assets/vendor/flatpickr-4.6.13/flatpickr.min.js",
+      "sha256": "1eeab1cb779471a0b0aaa93dd91c2eb1aa537d696f01ab05ea9dabc55e8525a1",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/flatpickr-4.6.13/zh.js",
+      "output": "示例册/assets/vendor/flatpickr-4.6.13/zh.js",
+      "sha256": "8629568c4e6c9536864189e9434195416ab5b2d63c9793a3779f12a5b34d9955",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/echarts-6.1.0/LICENSE",
+      "output": "示例册/assets/vendor/echarts-6.1.0/LICENSE",
+      "sha256": "634293835b43a6dd2094fa39182a3d9a6b9ca43b7fdb9ac354e8037af2a3093a",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/echarts-6.1.0/NOTICE",
+      "output": "示例册/assets/vendor/echarts-6.1.0/NOTICE",
+      "sha256": "d491d358344f842685c1b1585970999db65fe30ecf7ef3867af8814f4016c016",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/echarts-6.1.0/SOURCE.json",
+      "output": "示例册/assets/vendor/echarts-6.1.0/SOURCE.json",
+      "sha256": "b88d0c33a8f9e8fc281cd19b2e1165bb814322fe107b583f1f97ea3a55f4276b",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/vendor/echarts-6.1.0/echarts.min.js",
+      "output": "示例册/assets/vendor/echarts-6.1.0/echarts.min.js",
+      "sha256": "b66b25aeb4df84e33199dc21694014d336d222cbd9deb0e5a7c14bd6aa0d0fd0",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/brand/favicon.svg",
+      "output": "示例册/assets/brand/favicon.svg",
+      "sha256": "8205158fbdec790e318324d15a4f9627985edd1890453a19c60c4e356db3d4ed",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "assets/brand/raccoon-salesbuddy-horizontal-white-sidebar.svg",
+      "output": "示例册/assets/brand/raccoon-salesbuddy-horizontal-white-sidebar.svg",
+      "sha256": "ce7fecda7074c2cfd95b21134997ded4913516afdb2ef88bb665f796aaf0b11b",
+      "kind": "工程分发快照"
+    },
+    {
+      "source": "01-SalesBuddy-Web规范/设计规范.md",
+      "output": "依据/Web设计规范.md",
+      "sha256": "d95b3ad9be1b6df5eddd80ed880203ce5a268166bc16e9d0c0cba31cfeec739d",
+      "kind": "文档阅读副本；相对链接适配，规则不改写"
+    },
+    {
+      "source": "01-SalesBuddy-Web规范/验收清单.md",
+      "output": "依据/Web验收清单.md",
+      "sha256": "589e04f5381366d89a719d63c05e315b18518e34559fd8ebb229baf09c353e3f",
+      "kind": "文档阅读副本；相对链接适配，规则不改写"
+    },
+    {
+      "source": "01-SalesBuddy-Web规范/实现与验证.md",
+      "output": "依据/Web历史验证.md",
+      "sha256": "e3e30f253acbc2db89f849d0d08c0ba00081139573cfcf723d5a2e7acc01484b",
+      "kind": "文档阅读副本；相对链接适配，规则不改写"
+    },
+    {
+      "source": "02-飞书对齐方案/对齐方案.md",
+      "output": "依据/飞书对齐方案.md",
+      "sha256": "e034c8c39895502ec62d0f65078019d92b09724ecf6a73a75c77fafc831227a5",
+      "kind": "文档阅读副本；相对链接适配，规则不改写"
+    },
+    {
+      "source": "交付/Web交互重构建议-20260915/Web交互重构建议.md",
+      "output": "依据/Web交互重构建议.md",
+      "sha256": "4da4055afa02a7571bacee4e13258cb2a204204348741e9c8bd981098c556ef2",
+      "kind": "建议原文；本机证据链接转为文字来源标注"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$note": "部门设计规范清单：每套规范一个目录，自包含规则、变量、样板、模板与验收；tools/ 与 .claude/ 为共享。新增规范加一行即可被 check.mjs 与 AI 技能识别",
+  "entry": "README.md",
+  "specs": [
+    {
+      "id": "salesbuddy",
+      "name": "SalesBuddy 销售管理",
+      "dir": "specs/salesbuddy",
+      "version": "规则 1.0.0；跨端草案 1.1.0-draft.1",
+      "status": "26 条 Web 规则已确认；跨端建议待登记采用",
+      "owner": "待填",
+      "tokensDir": "02-设计变量与同步链路",
+      "sampleDir": "03-跨端样板-客户列表到详情",
+      "lintTargets": ["03-跨端样板-客户列表到详情"],
+      "consumers": [
+        { "product": "SalesBuddy 电脑与手机网页（sales-web）", "repo": "不在仓库", "status": "待接入" },
+        { "product": "SalesBuddy 微信小程序", "repo": "shandianT/xiaoshouguanli frontend/miniprogram", "status": "待接入" }
+      ]
+    }
+  ]
+}

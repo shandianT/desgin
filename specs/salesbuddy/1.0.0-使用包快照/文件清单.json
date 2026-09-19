@@ -1,0 +1,337 @@
+{
+  "version": "1.0.0",
+  "date": "2026-09-19",
+  "note": "文件清单自身不参与自校验",
+  "files": [
+    {
+      "path": "README.html",
+      "bytes": 11469,
+      "sha256": "ebdcee6c7bd2bfdfc260e21b1109d50ca25eab74a77659bcaf04af6675af6f05"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2345,
+      "sha256": "3d88ed3401180ddbb4c740c51a354096b3cb091295e32bafcc59b1746f8999ff"
+    },
+    {
+      "path": "index.html",
+      "bytes": 52596,
+      "sha256": "ac1b68a7d21391ffc575b3fea8bba5b3e392ada8ec11be83d30aaabf884cc40b"
+    },
+    {
+      "path": "交付检查.json",
+      "bytes": 6398,
+      "sha256": "e5f6df88c472c1b648516df7dd502e9dec770e438b7f07f6e866a9fbdb71adfa"
+    },
+    {
+      "path": "依据/Web交互重构建议.html",
+      "bytes": 40748,
+      "sha256": "80a2370cab417c1cc8cca49f69bcac0199ac11dd2cada6d7d171c288544af504"
+    },
+    {
+      "path": "依据/Web交互重构建议.md",
+      "bytes": 28255,
+      "sha256": "9bdef1eb538d2f971892ed574269d442b271452bd100c96caba59a6a9bc41c58"
+    },
+    {
+      "path": "依据/Web历史验证.html",
+      "bytes": 15816,
+      "sha256": "7ef7645765b840dccc72ceaaf55a5c86d0660d93aafea802a93a2e727b7da39e"
+    },
+    {
+      "path": "依据/Web历史验证.md",
+      "bytes": 5464,
+      "sha256": "0146bb282cb23c858af5f1b7579bbdc84c82a24f52e2cd45b328050ad94aed6d"
+    },
+    {
+      "path": "依据/Web设计规范.html",
+      "bytes": 26546,
+      "sha256": "fcb9781e0971e1f9f8360c4a817830ac5cbcd518f47a937b6b82e6589e680828"
+    },
+    {
+      "path": "依据/Web设计规范.md",
+      "bytes": 14037,
+      "sha256": "c17be66422dc9732929895c63169824964dbc58a3aade8aec526fc1fd3929246"
+    },
+    {
+      "path": "依据/Web验收清单.html",
+      "bytes": 16331,
+      "sha256": "294ac7aa0cdfeb5a4ff57bcbafd80c0e1f91214a682960c2d69433304a2158b7"
+    },
+    {
+      "path": "依据/Web验收清单.md",
+      "bytes": 5674,
+      "sha256": "b6f64bea64c1aad0e9e64c843fbf15b1a8a0cd04319515e2a434cfb54ccf83de"
+    },
+    {
+      "path": "依据/verification.json",
+      "bytes": 4515,
+      "sha256": "905a2c2e954c04c4dbb4fb0e441c5ba1286902cae6f8b7d6a78a4d037c07486c"
+    },
+    {
+      "path": "依据/截图/components.png",
+      "bytes": 249617,
+      "sha256": "df512384e2e1deb442791590e954cead39e162c45ede14df007dc4421ab8e40e"
+    },
+    {
+      "path": "依据/截图/foundations.png",
+      "bytes": 221326,
+      "sha256": "6fd6263c62b019bc85730eb1fecacd910ea3dc8a3331162ad442a2362facaa72"
+    },
+    {
+      "path": "依据/截图/mobile-home.png",
+      "bytes": 153693,
+      "sha256": "a0785bc3668d929f712295c8633c176148e18ea71a7027dd52c1ab7e1abbae30"
+    },
+    {
+      "path": "依据/截图/short-visit.png",
+      "bytes": 93105,
+      "sha256": "8f7b0d3d8fd70959c2bbe56cddc1dedbfb1d300732c6c91937b4bd38c30762a4"
+    },
+    {
+      "path": "依据/截图/template-analytics.png",
+      "bytes": 141718,
+      "sha256": "0347c728649a538c0f49757628ab1a66ab6fc4dd7e8984fd356d5d0e17905640"
+    },
+    {
+      "path": "依据/截图/template-detail.png",
+      "bytes": 170456,
+      "sha256": "2db9a15f4fc29c3f3171a7ca612599d53dc72700dc91ec58a69f2eaf26265330"
+    },
+    {
+      "path": "依据/截图/template-home.png",
+      "bytes": 193527,
+      "sha256": "287452176327560668f525c19e8f5fa94c8e69f9c9dc36e4fc93609395556167"
+    },
+    {
+      "path": "依据/截图/template-list.png",
+      "bytes": 205545,
+      "sha256": "2c48288120b991056a34766ac0e301a3ee33a1aee3d3c00b93e39c1885b5a588"
+    },
+    {
+      "path": "依据/截图/template-visit.png",
+      "bytes": 147245,
+      "sha256": "42e281edbcf362559bb917977f0939ffabb6b1d0abb7b7b863a87db9800c5e5b"
+    },
+    {
+      "path": "依据/飞书对齐方案.html",
+      "bytes": 14487,
+      "sha256": "e9bfe512bf969cf5576b114a3b9df47f5efb7ecca214821e3cfc8769cd0a8706"
+    },
+    {
+      "path": "依据/飞书对齐方案.md",
+      "bytes": 4422,
+      "sha256": "ca7c02b21ece71a2830c15618bd7732b34fdef15989d4f76d68d599072bd790a"
+    },
+    {
+      "path": "依据/验证日志.txt",
+      "bytes": 3370,
+      "sha256": "546b2354aadfb18d4de8e13c53bec2337c1e61e1a2216c5d095b61d79765937c"
+    },
+    {
+      "path": "工具/打包使用包.py",
+      "bytes": 4386,
+      "sha256": "b492cae23501f55131df537729cb14ad55efae29e8aa235f658943a88a89e8e0"
+    },
+    {
+      "path": "工具/检查使用包.mjs",
+      "bytes": 5801,
+      "sha256": "12f8923c289ef2ce84714a1b7b932e5777c86111b6d8d5d0859d19f402350cf9"
+    },
+    {
+      "path": "工具/生成使用包.mjs",
+      "bytes": 7971,
+      "sha256": "6bba937307fad5303bd1d60009f34d780be83d4dabb912267d088305c2701eea"
+    },
+    {
+      "path": "工具/阅读模板.html",
+      "bytes": 8615,
+      "sha256": "94c479eafa21e0d0fef341e13445e7ec375b1c98d6c3f5ec8304e321221bb477"
+    },
+    {
+      "path": "手册正文.md",
+      "bytes": 22583,
+      "sha256": "bd7d92ec83e01d90dbd98107f40936908b5e02652ad498e99a0afab950733b15"
+    },
+    {
+      "path": "来源清单.json",
+      "bytes": 7892,
+      "sha256": "efb2a1935a1d2db6264faf41401e87209e9af7edbbf67f37eb9fd8c01dae4b7f"
+    },
+    {
+      "path": "检查截图-手册.png",
+      "bytes": 231685,
+      "sha256": "328f7be5026728266f284d2f18c7bc0a11d27d0959f90d33658e7b6de37968ee"
+    },
+    {
+      "path": "检查截图-手机阅读.png",
+      "bytes": 94186,
+      "sha256": "57dc97710ca899440f7d994989484b211b5a29a98a249e44c3d94a766271d6d5"
+    },
+    {
+      "path": "模板/01-任务单.html",
+      "bytes": 10579,
+      "sha256": "ed1afafe86293f70dfb40e06cf794ae8394ece0b0c4f5bfb091d89e057c499e9"
+    },
+    {
+      "path": "模板/01-任务单.md",
+      "bytes": 1265,
+      "sha256": "1b886069994b2c6c17b117458ede492c9f0b91a435e89cb0ee86f02e38e6e290"
+    },
+    {
+      "path": "模板/02-规则变更单.html",
+      "bytes": 10138,
+      "sha256": "26e4b746949f799a11dcddcd11397b6b5053adec03ea1ae1d855c2516d680264"
+    },
+    {
+      "path": "模板/02-规则变更单.md",
+      "bytes": 963,
+      "sha256": "eb31ad895446346092ebf5a3ef76a7873456ef755b3a4507f082d1693ef95be3"
+    },
+    {
+      "path": "模板/03-页面验收单.html",
+      "bytes": 11365,
+      "sha256": "acbbea26b0e748199620fbefcc9b492e6bfae155618421e358e06a010f4be6ee"
+    },
+    {
+      "path": "模板/03-页面验收单.md",
+      "bytes": 1745,
+      "sha256": "5a46c4cc29c1b434bf2e5df981ec17fad12c0c1fb00ab549f193b0acc1cb90fd"
+    },
+    {
+      "path": "模板/04-产品采用登记表.html",
+      "bytes": 10511,
+      "sha256": "d3d32002f0206ce1587000275599a2f4131c366f8c15f2f0f89171d4813f9658"
+    },
+    {
+      "path": "模板/04-产品采用登记表.md",
+      "bytes": 1293,
+      "sha256": "1efc4956d7630cf8676884ddedfc459d7c23bdfe5b9f9ebe46c9bfb783d765b1"
+    },
+    {
+      "path": "示例册/assets/brand/favicon.svg",
+      "bytes": 826,
+      "sha256": "8205158fbdec790e318324d15a4f9627985edd1890453a19c60c4e356db3d4ed"
+    },
+    {
+      "path": "示例册/assets/brand/raccoon-salesbuddy-horizontal-white-sidebar.svg",
+      "bytes": 41209,
+      "sha256": "ce7fecda7074c2cfd95b21134997ded4913516afdb2ef88bb665f796aaf0b11b"
+    },
+    {
+      "path": "示例册/assets/vendor/echarts-6.1.0/LICENSE",
+      "bytes": 11990,
+      "sha256": "634293835b43a6dd2094fa39182a3d9a6b9ca43b7fdb9ac354e8037af2a3093a"
+    },
+    {
+      "path": "示例册/assets/vendor/echarts-6.1.0/NOTICE",
+      "bytes": 168,
+      "sha256": "d491d358344f842685c1b1585970999db65fe30ecf7ef3867af8814f4016c016"
+    },
+    {
+      "path": "示例册/assets/vendor/echarts-6.1.0/SOURCE.json",
+      "bytes": 510,
+      "sha256": "b88d0c33a8f9e8fc281cd19b2e1165bb814322fe107b583f1f97ea3a55f4276b"
+    },
+    {
+      "path": "示例册/assets/vendor/echarts-6.1.0/echarts.min.js",
+      "bytes": 1121883,
+      "sha256": "b66b25aeb4df84e33199dc21694014d336d222cbd9deb0e5a7c14bd6aa0d0fd0"
+    },
+    {
+      "path": "示例册/assets/vendor/flatpickr-4.6.13/LICENSE.md",
+      "bytes": 1084,
+      "sha256": "5fd57afc3905651175947ae44818e91ffcf5b605e4c88fac42d9700243bd9095"
+    },
+    {
+      "path": "示例册/assets/vendor/flatpickr-4.6.13/SOURCE.json",
+      "bytes": 627,
+      "sha256": "ce00fe4b8d39a702c7710bd4d910062198b63c435f9a666f1d1ce47f071dd3d7"
+    },
+    {
+      "path": "示例册/assets/vendor/flatpickr-4.6.13/flatpickr.min.css",
+      "bytes": 16166,
+      "sha256": "1b34a42552c96f10e4dfaaa4a367276b03868aacff63c1ac42ffe331352bc754"
+    },
+    {
+      "path": "示例册/assets/vendor/flatpickr-4.6.13/flatpickr.min.js",
+      "bytes": 50679,
+      "sha256": "1eeab1cb779471a0b0aaa93dd91c2eb1aa537d696f01ab05ea9dabc55e8525a1"
+    },
+    {
+      "path": "示例册/assets/vendor/flatpickr-4.6.13/zh.js",
+      "bytes": 1859,
+      "sha256": "8629568c4e6c9536864189e9434195416ab5b2d63c9793a3779f12a5b34d9955"
+    },
+    {
+      "path": "示例册/assets/vendor/tom-select-2.6.2/LICENSE",
+      "bytes": 11350,
+      "sha256": "f15dc64ea1f373c8af0ee7c020064360497addf335c9c2bcf27c3a6f56a6f0bd"
+    },
+    {
+      "path": "示例册/assets/vendor/tom-select-2.6.2/SOURCE.json",
+      "bytes": 551,
+      "sha256": "cc468590625ccf3fac63c5147abd7e58bb42e8bc3715a1986431180fb31b1448"
+    },
+    {
+      "path": "示例册/assets/vendor/tom-select-2.6.2/tom-select.complete.min.js",
+      "bytes": 51804,
+      "sha256": "8f9d7d3420e938c2c9817818b56df43ea46feae5bf1f5a2e828863c034df0e37"
+    },
+    {
+      "path": "示例册/assets/vendor/tom-select-2.6.2/tom-select.default.min.css",
+      "bytes": 9817,
+      "sha256": "f1d39d120d83e42f08a4f0fbc33f99e92333079e05fecfecd3c22da37b8427c8"
+    },
+    {
+      "path": "示例册/date-picker.css",
+      "bytes": 4102,
+      "sha256": "14bc46257ae1c774b261e165c07b9901c9548f7974817df6139caadc9fefa8f1"
+    },
+    {
+      "path": "示例册/date-picker.js",
+      "bytes": 13659,
+      "sha256": "7050d9407fad85e9d9e68f24130c48e5afb54c1b8c4d9f3d871e2723b0fb6a1b"
+    },
+    {
+      "path": "示例册/design-system/catalog.css",
+      "bytes": 17253,
+      "sha256": "d1126f17736f97455544e98b3b2631688223b783b2adecd2801783a5c20e44db"
+    },
+    {
+      "path": "示例册/design-system/catalog.js",
+      "bytes": 22333,
+      "sha256": "224452c3bc1d7b552c1c637f663bb0d0dea4459190d1d7b70f9fd4566715b6db"
+    },
+    {
+      "path": "示例册/design-system/index.html",
+      "bytes": 20608,
+      "sha256": "52122ae60c2ba3330f4afaa591a82d44e29149a27e90cb0ec986e8cd4d4e514f"
+    },
+    {
+      "path": "示例册/design-tokens.css",
+      "bytes": 1292,
+      "sha256": "802e68f1d00ae60998dbcd2a6b0b4e64062f7d6864e1bdd05ea1a570500c3a84"
+    },
+    {
+      "path": "示例册/select-components.css",
+      "bytes": 7370,
+      "sha256": "19608eb16d7315ed6c6b58c024b97b4fbd3b938077b44b605d9984123025e9f3"
+    },
+    {
+      "path": "示例册/select-components.js",
+      "bytes": 18702,
+      "sha256": "5c996a155e99d212d79624cb381688869210024e4d2ab2738bccb0e02576fe58"
+    },
+    {
+      "path": "示例册/theme.css",
+      "bytes": 5021,
+      "sha256": "a20fe2355b305956c8d5c9775fe5f4af213e57e4e5aa553fab6ea65fbb131875"
+    },
+    {
+      "path": "部门产品设计规范.md",
+      "bytes": 34939,
+      "sha256": "23b96fad967b13088391b17b4605f4155ba5c6720a74ea5eff7787dc8ad80382"
+    }
+  ]
+}

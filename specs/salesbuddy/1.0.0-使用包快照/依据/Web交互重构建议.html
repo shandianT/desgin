@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Web 交互重构建议</title>
+<style>
+:root{--ink:#192842;--muted:#53647c;--blue:#2863cd;--line:#dce3ed;--paper:#fff;--canvas:#f3f5f9;--size:15px;color-scheme:light}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--canvas);color:var(--ink);font:var(--size)/1.8 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}a{color:#2055b5;text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #5786dc;outline-offset:3px}.skip{position:absolute;top:8px;left:8px;transform:translateY(-150%);background:#fff;padding:8px;z-index:20}.skip:focus{transform:none}.shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}.sidebar{background:#142f54;color:#edf3ff;padding:28px 20px;position:sticky;top:0;height:100vh;overflow:auto}.brand{font-size:21px;font-weight:650;line-height:1.5;margin:0 0 6px}.edition{font-size:12px;color:#c0cee0}.sidebar details{margin-top:26px}.sidebar summary{font-size:14px;cursor:pointer;padding:8px 0}.sidebar nav{display:grid;gap:5px;margin-top:10px}.sidebar a{color:#dce8f7;text-decoration:none;padding:9px 10px;border-radius:6px;font-size:13px;line-height:1.5}.sidebar a:hover{background:#274c79;color:#fff}.sidebar .home{display:block;border-top:1px solid #456080;margin-top:22px;padding-top:16px}.body{min-width:0}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 32px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.toolbar label{display:flex;align-items:center;gap:8px;flex:1;min-width:180px;font-size:13px}.toolbar input{background:#f8fafc;border:1px solid #bdcadd;border-radius:6px;padding:6px 10px;width:100%;min-width:0;color:var(--ink);font-size:16px}.toolbar button{border:1px solid #bdcadd;background:#fff;color:var(--ink);border-radius:6px;padding:6px 12px;min-height:36px}.toolbar button[aria-pressed=true]{background:#eaf1ff;border-color:#2863cd}.reading{max-width:1180px;margin:auto;padding:36px 40px 70px}.meta{font-size:12px;letter-spacing:.04em;color:var(--muted);margin-bottom:20px}.intro{margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:24px}.intro h1{font-size:32px;line-height:1.4;letter-spacing:-.02em;margin:0 0 14px}.intro p{margin:10px 0}.section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px 30px;margin:20px 0;scroll-margin-top:92px}.section[hidden]{display:none}h2{font-size:24px;line-height:1.5;margin:0 0 20px}h3{font-size:18px;line-height:1.6;margin:30px 0 12px}h4{font-size:16px;margin:24px 0 10px}p{margin:12px 0}ul,ol{padding-left:24px}li{margin:6px 0}strong{font-weight:650}.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.7;text-align:left}th{background:#eef3fa;font-weight:600}th,td{border-bottom:1px solid var(--line);padding:12px 14px;vertical-align:top;min-width:110px;overflow-wrap:anywhere}tr:last-child td{border-bottom:0}table th:first-child,table td:first-child{min-width:125px}blockquote{border-left:4px solid #6f94d4;background:#f2f6fc;padding:8px 18px;margin:18px 0;color:#344861}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf2f8;border:1px solid var(--line);padding:18px;border-radius:8px;font:13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;overflow-wrap:anywhere}p code,li code,td code{background:#edf2f8;padding:2px 4px;border-radius:3px}img{max-width:100%;height:auto}.status{color:var(--muted);font-size:13px;min-height:24px}.foot{color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:18px}.link-actions{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.link-actions a{display:inline-block;padding:8px 14px;border:1px solid #2863cd;background:#fff;border-radius:6px;text-decoration:none}.link-actions a:first-child{background:#2863cd;color:#fff}.no-match{padding:24px;background:#fff;border:1px solid var(--line);border-radius:8px}.scope-note{padding:12px 16px;border-left:4px solid #b37a1c;background:#fff5df;color:#654715;font-size:14px;margin:18px 0}
+.reading{overflow-wrap:anywhere}.toolbar label{white-space:nowrap}table{font-size:calc(var(--size) - 1px)}
+@media(max-width:1050px){.shell{grid-template-columns:220px minmax(0,1fr)}.reading{padding:28px 24px 50px}.section{padding:24px}.toolbar{padding:12px 24px}h2{font-size:22px}}
+@media(max-width:760px){.shell{display:block}.sidebar{position:static;height:auto;overflow:visible;padding:18px 20px}.brand{font-size:20px}.sidebar details{margin-top:10px}.sidebar nav{grid-template-columns:1fr}.sidebar .home{margin-top:10px;padding-top:10px}.toolbar{position:static;padding:12px 16px}.toolbar label{flex-basis:100%}.toolbar button{min-height:44px}.reading{padding:22px 16px 40px}.intro h1{font-size:27px}.section{padding:20px 16px;border-radius:9px;scroll-margin-top:12px}h2{font-size:21px}h3{font-size:18px}th,td{padding:10px 12px}html{scroll-padding-top:16px}}
+@media print{body{background:#fff;font-size:10pt;line-height:1.6}.shell{display:block}.sidebar,.toolbar,.link-actions,.status,.no-match,.skip{display:none!important}.reading{max-width:none;padding:0}.section,.section[hidden]{display:block!important;border:0;padding:0;margin:22pt 0;break-before:auto}.intro{margin-bottom:12pt}h1{font-size:24pt!important}h2{font-size:17pt!important;break-after:avoid}h3{font-size:13pt!important;break-after:avoid}table{font-size:9pt}.table-wrap{overflow:visible;border:0}th,td{padding:5pt;min-width:0!important}thead{display:table-header-group}tr{break-inside:avoid}pre,blockquote{break-inside:avoid}a{color:#192842;text-decoration:none}.foot{font-size:8pt}@page{size:A4;margin:16mm}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#reading">跳到正文</a>
+<div class="shell">
+<aside class="sidebar"><div class="brand">部门产品<br>设计规范</div><div class="edition">中文使用版 · 2026.09.19</div><details id="toc" open><summary>阅读目录</summary><nav aria-label="章节目录"><a href="#chapter-1">当前重点：拜访与跟进、任务的 Web 工作区</a>
+<a href="#chapter-2">既有全局设计与调研依据（2026-09-15 快照）</a>
+<a href="#chapter-3">当前最影响使用的五个结构问题</a>
+<a href="#chapter-4">推荐的导航与页面分工</a>
+<a href="#chapter-5">一个销售的连续操作应该怎么走</a>
+<a href="#chapter-6">交互约定与视觉方向</a>
+<a href="#chapter-7">实施顺序和验收方式</a>
+<a href="#chapter-8">接口与实现边界</a>
+<a href="#chapter-9">Salesforce与飞书的补充案例</a>
+<a href="#chapter-10">公开文档案例研究：Microsoft Dynamics 365 Sales 与 Ant Design</a></nav></details><a class="home" href="../index.html">回到完整手册</a></aside>
+<div class="body"><div class="toolbar"><label for="search">查找章节<input id="search" type="search" placeholder="输入间距、三端、协作或规则编号"></label><button id="font-size" type="button" aria-pressed="false">大字阅读</button><button id="print" type="button">打印 / 存为 PDF</button></div><main id="reading" class="reading"><div class="meta">部门共同入口 / 规范、示例、协作与验收</div><div class="intro"><h1>Web 交互重构建议</h1>
+</div><div id="search-status" class="status" aria-live="polite"></div><div id="no-match" class="no-match" hidden>没有匹配章节。请清除关键词，或使用浏览器的查找功能。</div><section class="section" id="chapter-1"><h2>当前重点：拜访与跟进、任务的 Web 工作区</h2>
+<p>更新：2026-09-16。<strong>以下为本轮整体改造建议，供用户对齐；尚未完成整体实施。</strong> 用户明确要求参考飞书的展示和交互，降低销售的学习与操作成本。目标是让销售快速回答：我现在先做什么、上次谈了什么、接下来由谁跟进。</p>
+<p>当前本地已完成任务清单的第一步：单列、最早到期优先、时间分段、明确状态和处理入口。验收见 任务清单实施与验收（原工程参考：../Web任务工作台-20260916/实施与验收.md）。拜访工作区、任务侧栏、新建流程与下列新增筛选均仍为方案。</p>
+<h3>1. 先分清业务对象和使用角色</h3>
+<p><strong>拜访与跟进记录发生过的事实；任务记录要完成的行动。</strong> 客户和商机是它们的关联对象。下一步计划、AI 建议只有在用户确认创建并得到成功回执后，才显示为正式任务。</p>
+<p>连续流程：客户/商机 → 记录拜访 → 核对与质检 → 确认保存 → 选择下一步建议并确认负责人和期限 → 正式任务 → 接受/执行/反馈 → 回看来源记录与关联客户/商机。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>角色</th>
+<th>默认关注</th>
+<th>展示与操作边界</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一线销售</td>
+<td>我负责的任务、我的跟进记录</td>
+<td>自己发给他人的任务进入“我发起的”；能看一条任务不等于能看完整客户</td>
+</tr>
+<tr>
+<td>销售主管</td>
+<td>本人事项与授权团队进展</td>
+<td>团队范围明确，可按成员定位，协调动作由权限决定</td>
+</tr>
+<tr>
+<td>销售总经理</td>
+<td>本人事项与公司授权范围</td>
+<td>与主管使用同一种操作方式，范围不同</td>
+</tr>
+<tr>
+<td>FDE</td>
+<td>参与商机的跟进和本人任务</td>
+<td>继续遵守参与关系与业务字段限制</td>
+</tr>
+<tr>
+<td>FDE 主管</td>
+<td>本人及授权 FDE 团队</td>
+<td>不能因为切换为 Web 就扩大数据范围</td>
+</tr>
+</tbody></table></div>
+<p>“我负责 / 我发起”是建议拆分的浏览范围；当前 self 在本地预览中包含接收/候选/自己创建的任务，真实 API 的关系语义需联调确认。</p>
+<h3>2. 任务：以处理队列为中心</h3>
+<p>推荐结构：<strong>范围视图 → 快捷筛选 → 紧凑清单 → 右侧详情与处理</strong>。</p>
+<ul>
+<li>范围：我负责的、我发起的；有权限时显示团队任务。</li>
+<li>常用筛选：全部待办、今天到期、已逾期、待接受、已完成。它们是查询条件，今天到期与逾期可能重叠，计数不能相加充当总数。</li>
+<li>默认顺序：逾期 → 今天 → 后续 → 未设期限，具体按截止时间从早到晚。高优先级单独标识；同期限按优先级排序可作为接口扩展，不能只重排当前页。</li>
+<li>一行显示：任务标题、客户/商机、截止时间、当前状态、负责人；优先级显著时显示标记。来源、长描述和事件记录放详情。</li>
+<li>主显示状态建议归并为待接受、进行中、已完成、已结束；保留原始业务状态。“逾期”是期限提示，“待交接”是协作异常，单独标识。</li>
+<li>点任务打开右侧面板；左侧队列、筛选、滚动位置保留。支持上/下一项、关闭、独立详情地址和浏览器返回。</li>
+<li>待接受展示接受/拒绝；拒绝输入原因。执行中的任务展示完成反馈；用轻量反馈区确认提交，得到成功回执后更新列表。转交/取消只向有权限的人开放。</li>
+<li>当前接口没有重新打开已完成任务的事件定义，不能做一个会误导用户的可逆完成复选框。多人协作不等于任意人能完成。</li>
+<li>新建任务用侧栏短表单：做什么、谁负责、何时截止、关联对象；其余信息按需展开。从客户、商机、拜访进入时预填已有上下文。当前任务创建要求内容和未来截止时间，不能照搬“只输入标题就立即创建”的竞品行为。</li>
+</ul>
+<p>默认用列表。管理者需要按人员或状态过进度时，再开放看板视图。拖拽不应绕过接受、反馈、版本与权限校验。</p>
+<h3>3. 拜访与跟进：先查记录，再新建</h3>
+<p>当前导航直接进入 <code>visit-entry</code> 录入页。推荐首页改为记录工作区，右上角“记录拜访”，旁边提供“继续本机草稿”。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>区域</th>
+<th>建议内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>顶部视图</td>
+<td>我的记录；有权限时显示团队记录。历史导入标记来源</td>
+</tr>
+<tr>
+<td>查找工具</td>
+<td>客户/商机关键词、跟进人、跟进日期、跟进类型；当前条件清楚展示，可一键清除</td>
+</tr>
+<tr>
+<td>默认表格</td>
+<td>跟进日期、客户、商机、内容摘要、跟进人、记录状态；支持选择显示列</td>
+</tr>
+<tr>
+<td>跟进类型</td>
+<td>“客户跟进 / 伙伴跟进 / 未填写”与“客户类型”分开，保留 CRM 原字段含义</td>
+</tr>
+<tr>
+<td>记录详情</td>
+<td>正文先展示沟通内容、结果、下一步；属性区展示客户/商机、人员、时间等</td>
+</tr>
+<tr>
+<td>附件与原文</td>
+<td>在详情内按需展开；不能把缺少的原始附件显示成已导入</td>
+</tr>
+<tr>
+<td>处理入口</td>
+<td>按实际状态展示继续核对、完善内容或查看归档。已归档正文按现有规则只读</td>
+</tr>
+</tbody></table></div>
+<p>记录的状态来源要准确：本机草稿与服务端记录分别标识；CRM 历史记录缺少审核信息时写“审核状态未记录”，不能假设均已质检通过。当前草稿使用按账号隔离的本地存储键，不能展示成跨端同步的多草稿箱。</p>
+<p>列表默认最近跟进在前，日期缺失单独说明。表格用于查找和比较；单个客户/商机的详情里继续用时间线阅读连续沟通，二者共用同一份记录。</p>
+<h3>4. 录入与核对：充分利用桌面空间</h3>
+<p>建议将现有跳转式录入整理为三段用户流程，原业务校验顺序保持完整：</p>
+<ol>
+<li><strong>填写拜访</strong>：顶部集中客户/商机关联；正文主区输入内容，文件拖入/选择与录音作为辅助入口。来自客户/商机时预填，避免重复选。</li>
+<li><strong>核对与质检</strong>：宽屏左右对照原文与整理结果；缺失字段、质检意见定位到对应内容。查看原文、修改结果、重新检查在同一工作区内完成。</li>
+<li><strong>确认保存</strong>：清楚展示哪些条件尚未满足。提交成功后查看记录与下一步建议，用户确认后再创建任务。</li>
+</ol>
+<p>复杂拜访核对允许展开成完整页面；短任务表单使用侧栏。统一行为不意味着把所有长表单塞进窄抽屉。</p>
+<p>文案使用用户熟悉的动作，例如“整理拜访内容”“检查并继续”“确认保存”。AI 处理中显示进度与可恢复入口；失败时保留输入与已有运行引用，重试不能重复创建。修改影响审核的内容后，按原规则重新质检。无真实 Agent 或历史评分时，准确展示缺失状态。</p>
+<h3>5. 两个模块统一的 Web 交互</h3>
+<ul>
+<li>列表上方使用同一套搜索、筛选、排序、分组控件；筛选器显示已选条件与清除入口。</li>
+<li>日期、人员、关联对象、上传、表格、侧栏采用成熟组件和统一视觉规范。优先复用现有组件能力，按需要补齐；组件库不替代业务状态判断。</li>
+<li>详情侧栏保持统一标题、返回、关闭、主要操作位置；支持键盘焦点与 Esc，未保存修改需保护。</li>
+<li>点击客户/商机先显示可访问的关联摘要，完整查看使用唯一对象地址；限制侧栏嵌套层数。</li>
+<li>新建与处理结果得到后端成功回执后就地刷新，出错保留输入；页面计数、当前行、对象详情同步核对。</li>
+<li>返回列表保留筛选、选中记录与位置。视图偏好按账号和工作区隔离，不存成全员配置。</li>
+<li>桌面主视图和手机布局分别设计：桌面清单/表格与详情同屏，手机单列逐层进入；对象和业务语义保持一致。</li>
+</ul>
+<h3>6. 哪些能先改，哪些需要后端配合</h3>
+<p>以下依据当前前端代码和 <strong>2026-09-15 保存的 OpenAPI 快照</strong>，不是本轮线上接口验证。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>内容</th>
+<th>当前依据与改造要求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>任务默认排序/分页/现有状态</td>
+<td>已有 <code>order=due_asc</code>、tab/status、self/team、offset/page_size、summary，可复用；全量由服务端排序后分页</td>
+</tr>
+<tr>
+<td>任务接受、拒绝、完成、转交、取消</td>
+<td>已有事件 API；复用权限、版本和幂等语义，调整呈现容器</td>
+</tr>
+<tr>
+<td>我负责/我发起、逾期筛选、关键词、优先级、各视图计数</td>
+<td>快照没有完整对应的一组参数；<code>inbox</code> 只有布尔定义，不能直接认定其等于“我负责”。需澄清/补齐查询语义与汇总</td>
+</tr>
+<tr>
+<td>拜访记录列表与详情</td>
+<td>已有 <code>/visits</code> 和详情读取；列表快照仅声明客户、商机与分页查询参数</td>
+</tr>
+<tr>
+<td>全量拜访搜索、日期/成员/类型筛选、排序与总数</td>
+<td>需要补齐或验证服务端能力，不能只筛选当前已加载的 20 条</td>
+</tr>
+<tr>
+<td>草稿</td>
+<td>已有本机草稿恢复。跨端多草稿、统一待处理记录箱是新增后端能力</td>
+</tr>
+<tr>
+<td>拜访到任务的来源追溯</td>
+<td>现有建议采纳和创建入口可以复用；来源拜访 ID、建议 ID、返回任务 ID及重复提交去重需要逐项核对</td>
+</tr>
+<tr>
+<td>行内编辑、批量操作、拖拽、重开任务</td>
+<td>只有业务接口与权限支持时开放；第一批优先读、查、接受和反馈，不为视觉效果新增状态变化</td>
+</tr>
+</tbody></table></div>
+<p>实现上为这两个模块建立独立 Web 页面与组件，共享身份、权限、字段和 API 规则。避免继续依赖把小程序长页面缩小、加宽或不断叠 CSS 来承载桌面工作流。保留现有入口兼容，逐步接入侧栏详情和独立地址。</p>
+<h3>7. 推荐实施顺序与验收</h3>
+<p><strong>第一批：找得到、看得懂。</strong> 拜访记录首页、任务范围视图、清单/表格、全量查询契约。已有任务时间清单作为基础。</p>
+<p><strong>第二批：处理时少跳转。</strong> 右侧详情、新建任务侧栏、拜访原文/结果对照、列表状态与计数同步更新。</p>
+<p><strong>第三批：连续业务串起来。</strong> 从客户/商机发起并预填、拜访建议确认生成任务、来源记录回看、跨模块返回保持上下文。</p>
+<p>验收以销售实际操作为准：</p>
+<ol>
+<li>50 条以上任务跨页时，逾期和今天事项排序/计数仍正确；我负责的与我发起的能区分。</li>
+<li>CRM 975 条跟进记录按全量范围搜索与筛选，摘要计数不来自当前页；缺日期/未关联对象明确显示。</li>
+<li>连续处理 3 个任务无需反复回列表，处理后选中位置和筛选保留，错误不消失、不重复提交。</li>
+<li>从商机记录拜访不用重新选择已知客户和商机；质检失败和字段遗漏能定位到具体内容。</li>
+<li>“下一步计划”在正式创建成功前不增加任务数；创建成功后可回看来源，刷新与跨端读回一致。</li>
+<li>一线销售、主管、总经理、FDE、FDE 主管分别验证可见范围与动作；本地预览通过不代表企业 API/生产通过。</li>
+</ol>
+<h3>8. 飞书参考依据</h3>
+<p>参考重点是熟悉的浏览和协作方式，具体采用的页面结构为本项目建议：</p>
+<ul>
+<li>飞书任务公开说明按“我负责、我创建/分配”等关系组织任务，并支持筛选、排序、分组和多视图。<a href="https://www.feishu.cn/content/project-task-innov-strategy-team">飞书任务管理说明</a></li>
+<li>飞书项目任务说明提供列表/看板/甘特视图、关联事项信息及半屏/全屏详情。<a href="https://www.feishu.cn/content/40gyakm8">飞书项目任务管理</a></li>
+<li>飞书多维表格说明同一份记录可以通过不同视图呈现，筛选和分组配置按视图生效。<a href="https://www.feishu.cn/content/article/7574713887522639055">飞书多维表格入门</a></li>
+</ul>
+<hr>
+</section>
+<section class="section" id="chapter-2"><h2>既有全局设计与调研依据（2026-09-15 快照）</h2>
+<p>下文保留仍有效的全局导航、对象与权限约定及调研依据。拜访和任务的当前改造范围、进度与交互优先以上文为准。</p>
+<p>日期：2026-09-15。状态：<strong>模块命名与顺序已在Web0.5.2实施；完整交互重构尚未实施</strong>。用户确认按销售工作流排列：<strong>总览→客户→商机→拜访与跟进→任务→经营分析</strong>，其余设计建议保留。本文以 Web 0.5.1 / 小程序001cd83 为业务基线；统一对象详情、任务处理页等完整重构仍是待实施方案，不能以导航命名或排序调整代替完成验收。当前角色、权限、字段和状态规则不变。本轮已同步Web导航命名、顺序及本设计文档；未调用真实业务接口或登录竞品账号。</p>
+<p>建议把下一版设计成围绕客户、商机和任务工作的桌面系统。0.5.1已经解决密度和滚动适配，但仍由小程序页面树生成Web，页面组织和跳转方式尚未独立设计。这是当前“看起来像Web、用起来仍有小程序感”的主要判断依据。双端应共享对象、字段、权限和状态转换，Web另行设计列表、详情和操作路径。</p>
+</section>
+<section class="section" id="chapter-3"><h2>当前最影响使用的五个结构问题</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>当前问题</th>
+<th>对工作的影响</th>
+<th>目标设计</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>总览主区仍是按时间排列的通知/回执卡片</td>
+<td>用户需要自己从消息中判断现在该处理什么</td>
+<td>总览突出真实待办队列；动态放次级区域，已读与已处理分开</td>
+</tr>
+<tr>
+<td>“客户与地图”把业务对象和分析方式写在同一级</td>
+<td>客户列表、象限和详情缺少统一理解</td>
+<td>一级叫“客户”，列表/潜力关系图是同一授权范围的不同视图；当前地图是潜力×关系象限，不能误改成地理地图</td>
+</tr>
+<tr>
+<td>任务详情与关联商机跳往不同页面/弹层</td>
+<td>连续处理任务时丢失当前队列和对象上下文</td>
+<td>任务队列与处理面板同屏，关联对象支持快速查看，再进入完整详情</td>
+</tr>
+<tr>
+<td>“拜访录入”仅提供新建动作</td>
+<td>已有记录和未完成草稿不容易找到</td>
+<td>建立拜访与跟进工作区；新建、继续本机草稿、查历史分别有入口</td>
+</tr>
+<tr>
+<td>同一个商机从列表、任务、客户进入时走不同路径</td>
+<td>查看、编辑及关联任务/跟进难以连续操作</td>
+<td>客户和商机分别拥有唯一详情地址和工作区，任何入口抵达同一对象</td>
+</tr>
+</tbody></table></div>
+<p>代码依据：总览消息合并（原工程参考：sales-web/source/miniprogram/pages/index/index.js:551）、Web总览生成（原工程参考：sales-web/scripts/build.py:98）、导航（原工程参考：sales-web/shell.js:28）、客户详情入口（原工程参考：sales-web/source/miniprogram/pages/customers/index.js:375）、任务跳转（原工程参考：sales-web/source/miniprogram/pages/tasks/index.js:153）、拜访草稿（原工程参考：sales-web/source/miniprogram/pages/visit-entry/index.js:46）、商机查看和编辑（原工程参考：sales-web/source/miniprogram/pages/workbench/index.js:319）。这些是当前实现事实；右栏是本轮建议。</p>
+</section>
+<section class="section" id="chapter-4"><h2>推荐的导航与页面分工</h2>
+<p>用户已确认一级导航名称与顺序：<strong>总览→客户→商机→拜访与跟进→任务→经营分析</strong>，按销售工作流排列。不是每个账号都必须看到全部入口；数据范围和可执行操作继续由实际角色及服务端能力控制。“新建”属于操作按钮，“地图/列表”属于视图，“设置/账号”放在工具区。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>工作区</th>
+<th>默认展示</th>
+<th>主要操作方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>总览</td>
+<td>今日需要处理的真实事项、近期客户/商机；少量摘要</td>
+<td>点击事项进入对应对象与合法处理动作，动态作为补充</td>
+</tr>
+<tr>
+<td>客户</td>
+<td>可搜索、筛选、排序的表格，列为客户名称、负责人、已有等级/关系、最近跟进等已提供字段</td>
+<td>行内快速查看；完整详情包含基本资料、商机、任务、拜访；认领作为客户范围内的申请入口</td>
+</tr>
+<tr>
+<td>商机</td>
+<td>默认表格，阶段视图作为后续可选能力</td>
+<td>统一商机详情头、阶段、负责人、客户、相关任务/跟进/实绩；FDE Demo在所属商机内</td>
+</tr>
+<tr>
+<td>拜访与跟进</td>
+<td>已归档记录、继续本机草稿和新建入口</td>
+<td>录入与结构化结果对照；人工核对、质检、确认归档分步执行</td>
+</tr>
+<tr>
+<td>任务</td>
+<td>按已有状态与授权范围组织的工作队列</td>
+<td>左侧保留队列，右侧查看背景并接受、拒绝、反馈或交接；动作随真实状态出现</td>
+</tr>
+<tr>
+<td>经营分析</td>
+<td>当前授权范围与周期的统计，个人和团队口径明确</td>
+<td>选择口径后查看指标、风险与明细，点击指标下钻到相同筛选范围</td>
+</tr>
+</tbody></table></div>
+<p>客户、商机需要对比多个字段，默认适合表格；任务适合队列与详情同屏。卡片保留给少量摘要和提示。这里借鉴的是Ant Design对表格、多字段比较、双栏连续处理及独立详情的区分。<a href="https://ant.design/docs/spec/data-list/">Ant Design列表规范</a></p>
+</section>
+<section class="section" id="chapter-5"><h2>一个销售的连续操作应该怎么走</h2>
+<ol>
+<li>在客户列表筛选并选中某客户，打开统一客户详情。查看其商机、最近拜访及任务，能明确当前负责人和自己可做的操作。</li>
+<li>在该客户内打开一条商机；客户上下文保留。所有入口打开的是同一商机详情，浏览器刷新、返回、复制链接都能定位同一对象（仍需鉴权）。</li>
+<li>在商机里记录拜访，自动带入已确定的客户和商机。人工核对前仍可校正关联对象；进入质检后如改动关键内容，按原规则重新质检。</li>
+<li>确认归档后回到该商机的跟进记录，看到新记录的真实状态。若有下一步建议，用户明确创建任务后才成为任务；客户任务仍必须绑定匹配的客户与商机。</li>
+<li>在任务队列处理任务时，右侧能查看关联摘要；处理后保留筛选和选中位置，继续处理下一项。收到任务并不因此取得关联客户/商机全文权限。</li>
+</ol>
+<p>可认领客户仍需“提交申请→运营审批→获得归属”；一线销售、主管、总经理、FDE和FDE主管不合并为泛化经理身份。FDE仍仅在参与商机与授权团队范围工作。对象与权限依据：access.js（原工程参考：sales-web/source/miniprogram/utils/access.js）。</p>
+</section>
+<section class="section" id="chapter-6"><h2>交互约定与视觉方向</h2>
+<ul>
+<li>固定导航与工作区工具栏，主体中保持一个明确的滚动区域。列表可分页；详情长文本允许滚动；连续任务使用双栏；不要把“Web”误解为所有内容都必须塞进一屏。</li>
+<li>快速查看和轻量编辑适合侧边面板；完整客户/商机详情、长拜访核对适合独立页面。避免抽屉里面再开多层抽屉。</li>
+<li>标题说明当前对象；主要按钮说明下一步动作，例如“新建商机”“记录拜访”，不要让所有页面都依赖一个不带上下文的“新建”。</li>
+<li>列表保留筛选、排序、选中对象和返回位置；不要因为完成一项操作就回总览或清空用户当前工作范围。</li>
+<li>保留小浣熊品牌，减少大面积渐变与装饰卡片。统一标题、工具栏、表格、详情标签、状态标记的层级。颜色重点用于选中、状态和异常。</li>
+<li>AI放在具体客户/商机/拜访的上下文中，说明依据、当前状态和可采纳动作。建议、待执行任务、已归档记录用不同语义表达；不能把消息回执当作业务完成。</li>
+</ul>
+</section>
+<section class="section" id="chapter-7"><h2>实施顺序和验收方式</h2>
+<p><strong>第一阶段：统一客户、商机详情与对象路由。</strong> 同一对象从客户、任务、通知或地图进入，抵达同一详情。整理可比较字段和上下文操作；复用现有接口与权限。</p>
+<p><strong>第二阶段：建立任务队列与右侧处理面板。</strong> 连续处理三条任务，筛选与位置保持；相关摘要可查看，完整对象访问仍受授权限制。复杂表单使用独立工作页。</p>
+<p><strong>第三阶段：重组总览与拜访工作区。</strong> 总览由真实待办及对象入口组织；通知降为辅助。拜访继续沿用原核对/质检/归档流程。</p>
+<p>先评审前三张关键样稿：客户列表、统一对象详情（以商机为例）、任务处理页；用“找客户→看商机→记录拜访→处理任务”实际操作核对。样稿验证操作入口和顺序后，再逐页实现，而不是一次重画所有页面。</p>
+<p>验收关注：同一对象入口是否统一、关联是否自动带入且可核对、连续处理是否丢位置、下一步与阻断原因是否清楚、不同身份是否只见授权操作。测试通过和截图好看仍不能替代真实业务闭环验证。</p>
+</section>
+<section class="section" id="chapter-8"><h2>接口与实现边界</h2>
+<ul>
+<li>当前客户、商机、任务的基础列表与详情接口可以作为首轮重组起点；不应继续依赖小程序页面跳转或临时存储串联对象。Web应有自己的列表/详情呈现层，复用共享请求、校验和状态规则；本轮尚未决定更换技术栈。</li>
+<li>001cd83公开契约中 <code>GET /api/v1/visits</code> 的 <code>customer_id</code> 为必填。要做销售跨客户的“全部拜访记录”，须先补齐对应服务端查询和权限契约；不能逐个抓客户记录在前端凑全量。第一版可先提供按客户查询和本机草稿入口。</li>
+<li>单独的“我的认领申请”全集视图、待交接/逾期的独立全量筛选、跨设备保存个人视图、批量处理等，须逐项核对服务端支持。现有任务接口有 <code>status/tab/overview/order</code> 等查询，但不能对某一页结果过滤后冒充全量统计。</li>
+<li>本机拜访草稿目前属于本地存储，不能承诺小程序与Web共享草稿。客户任务和归档记录跨端一致仍须共享对象ID与真实读回验证。</li>
+</ul>
+<p>接口依据：当前契约快照（原工程参考：sales-web/tests/fixtures/v3-contract.json）。此处是静态契约审查，未调用线上接口或新增数据。</p>
+</section>
+<section class="section" id="chapter-9"><h2>Salesforce与飞书的补充案例</h2>
+<p><strong>Salesforce：围绕业务记录组织页面。</strong> 官方Lightning案例将关键摘要置顶，详细字段、关联记录和活动按区域/标签组织；Console的分栏让列表与记录同时保留。借鉴到本项目是统一客户和商机详情，并把新建关联任务、拜访等操作放在对象上下文内。<a href="https://trailhead.salesforce.com/content/learn/modules/lightning-experience-for-salesforce-classic-users/work-with-your-data">Salesforce记录工作区</a></p>
+<p><strong>Salesforce：列表与阶段视图服务于同一批商机。</strong> 官方列表教程提供筛选、选择显示字段，以及表格与按阶段分组的看板切换。本项目可以借鉴显示方式，是否开放拖拽改阶段仍须服从已有阶段变更规则。<a href="https://trailhead.salesforce.com/content/learn/modules/opportunities-list-view-step-by-step/work-with-opportunity-list-views">Salesforce商机列表</a></p>
+<p><strong>飞书：区分数据对象与展示视图。</strong> 官方多维表格文档说明，同一数据表可以有多个展示视图，共享记录数据，而筛选/分组等视图配置可以不同。本项目可以把客户列表和潜力关系图放在同一客户模块；该案例不意味着前端视图筛选可以代替权限控制。<a href="https://www.feishu.cn/hc/zh-CN/articles/472603853615-%E5%A4%9A%E7%BB%B4%E8%A1%A8%E6%A0%BC%E7%9A%84%E6%95%B0%E6%8D%AE%E8%A1%A8%E5%92%8C%E8%A7%86%E5%9B%BE">飞书数据表与视图</a></p>
+</section>
+<section class="section" id="chapter-10"><h2>公开文档案例研究：Microsoft Dynamics 365 Sales 与 Ant Design</h2>
+<p>研究日期：2026-09-15。本节依据官方公开文档，不包含竞品账号登录或实机流程验收。“官方事实”说明资料中的做法；“设计推论”是供本项目评审的借鉴方向，不表示已经实现或确认采用。</p>
+<h3>1. 列表与详情同屏，连续处理时保留当前对象</h3>
+<p><strong>官方事实。</strong> Dynamics 365 Sales 的 Focused view 将记录列表与详情放在同一页面；从详情打开关联记录时仍保留列表。创建记录等操作可以进入完整页面，再返回原列表。刷新后，原记录仍在结果中时继续选中它。<a href="https://learn.microsoft.com/en-us/dynamics365/sales/focused-view">Microsoft：Focused view</a></p>
+<p><strong>设计推论。</strong> 连续查看客户、商机或任务时，可以采用“紧凑列表＋所选对象详情”。选中态、筛选条件和返回位置共同构成上下文；长拜访确认等需要专注核对的工作，仍应有完整页面。这比要求所有操作都留在同一个面板更符合任务差异。</p>
+<h3>2. 行动队列先帮助用户确定处理对象，再展开完整信息</h3>
+<p><strong>官方事实。</strong> Sales accelerator 的工作列表提供搜索、筛选、排序和分组；可按到期时间、记录类型、活动类型等定位对象。列表卡片显示记录名称、联系人和下一项行动，关联信息与行动入口集中在同一工作区。<a href="https://learn.microsoft.com/en-us/dynamics365/sales/prioritize-sales-pipeline-through-work-list">Microsoft：Work lists</a></p>
+<p><strong>设计推论。</strong> 总览与任务处理页应区分“查看经营概况”和“处理具体事项”。行动区优先呈现对象、截止时间、当前状态和可执行动作，完整背景按需展开。是否逾期、归谁处理、是否可以完成，必须取自现有业务对象与权限，不能通过页面文案或排序自行创造规则。</p>
+<h3>3. 当前行动、后续计划和完成历史应有不同的操作方式</h3>
+<p><strong>官方事实。</strong> Up next 将活动分为当前、后续和已完成：当前活动可执行，后续与完成历史用于查看；标记完成后，活动进入完成区并出现在记录时间线上。<a href="https://learn.microsoft.com/en-us/dynamics365/sales/understand-the-up-next-widget">Microsoft：Up next</a></p>
+<p>微软另有处于 <strong>preview</strong> 的 seller insights：建议可接受、拒绝或指派；接受后可继续创建活动，创建并保存后才形成关联记录中的活动。这是建议与执行记录分开的公开案例。<a href="https://learn.microsoft.com/en-us/dynamics365/sales/view-understand-insights">Microsoft：Seller insights（预览）</a></p>
+<p><strong>设计推论。</strong> 建议、待执行任务和已归档结果应有明确的视觉与状态区别。建议旁说明依据和适用对象；采纳后的真实任务、负责人和处理结果再进入执行区。可以借鉴状态呈现，不能因此引入本项目尚未确认的自动评分、审批或任务分配规则。</p>
+<h3>4. 根据阅读方式选择表格、列表、抽屉或独立详情页</h3>
+<p><strong>官方事实。</strong> Ant Design 将表格用于多字段比较，将列表用于快速扫描。其详情导航规范支持连续处理对象时使用双栏，复杂任务或需要独立分享时使用独立页面，并要求返回列表时保留浏览位置。<a href="https://ant.design/docs/spec/data-list/">Ant Design：Data List</a></p>
+<p>Drawer 适合在当前任务中打开附加内容、处理临时任务或创建、预览关联对象；详情页规范则强调按相关性分组，避免不必要的折叠和复杂结构。<a href="https://ant.design/components/drawer-cn/">Ant Design：Drawer</a>；<a href="https://ant.design/docs/spec/detail-page/">Ant Design：Detail Page</a></p>
+<p><strong>设计推论。</strong> 客户、商机与任务的桌面列表可优先呈现少量可比较字段；从商机临时查看任务可用侧栏或抽屉。信息很多、需要长文本核对或独立链接时进入详情页。容器的选择应服务于阅读和操作，不改变对象关系、权限或提交结果。</p>
+<h3>5. 复杂表单按任务分组；有先后约束的流程才使用步骤</h3>
+<p><strong>官方事实。</strong> Ant Design 的 Form Page 建议把复杂任务按相关性分组；对于有明确线性逻辑的任务，用步骤条展示完整流程与当前位置，在最终提交前确认信息，并给出结束反馈。同类内容应保持一致的组件与表达方式。<a href="https://ant.design/docs/spec/research-form/">Ant Design：Form Page</a></p>
+<p><strong>设计推论。</strong> 拜访录入、整理、质量检查与人工确认可以按现有业务顺序展示进度和阻断原因；任务的关联对象、接收人及截止时间集中组织。桌面优化应提高有效信息密度，让用户看清下一步及其影响，而不是把关键字段隐藏起来。普通短表单无须为统一外观而拆成多个步骤。</p>
+<h3>借鉴边界</h3>
+<ul>
+<li>上述案例提供交互组织方式，不是本项目业务规则的来源；当前字段、权限、接口及状态仍需按双端共同契约设计。</li>
+<li>微软明确说明 Sales accelerator 不支持手机和平板，因此它的工作区布局只能作为桌面案例，不能作为本项目双端体验已成立的证据。<a href="https://learn.microsoft.com/en-us/dynamics365/sales/sales-accelerator-intro">Microsoft：Sales accelerator 概述</a></li>
+<li>Ant Design 在本节作为设计规范参考；采用这些模式并不等于决定替换技术栈或引入整套组件库。</li>
+</ul>
+</section><div class="foot">使用包 1.0.0 · 已确认规则与新增建议按正文标注。文档、代码接入和实际验收分别记录。</div></main></div></div>
+<script>
+const input=document.getElementById('search');
+const sections=Array.from(document.querySelectorAll('.section'));
+function filterSections(){const query=input.value.trim().toLowerCase();let count=0;for(const section of sections){const match=!query||section.textContent.toLowerCase().includes(query);section.hidden=!match;if(match)count++;}document.getElementById('search-status').textContent=query?'找到 '+count+' 个相关章节':'';document.getElementById('no-match').hidden=count>0;}
+input.addEventListener('input',filterSections);
+document.querySelectorAll('.sidebar nav a').forEach(link=>link.addEventListener('click',()=>{input.value='';filterSections();}));
+document.getElementById('font-size').addEventListener('click',event=>{const button=event.currentTarget;const on=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(on));document.documentElement.style.setProperty('--size',on?'18px':'15px');button.textContent=on?'标准字号':'大字阅读';});
+document.getElementById('print').addEventListener('click',()=>window.print());
+if(window.matchMedia('(max-width:760px)').matches)document.getElementById('toc').open=false;
+</script>
+</body></html>

@@ -1,0 +1,6 @@
+---
+description: 部门产品设计规范：改页面、样式、小程序、设计变量时先按技能做
+globs: ["specs/**", "**/*.css", "**/*.wxss", "**/*.wxml", "**/*.html", "**/app.json", "**/tokens.json"]
+alwaysApply: false
+---
+先读 `.agents/skills/design-spec/SKILL.md` 并照做：只写 `var(--ui-*)`，数值只改 tokens.json，改完运行 `node tools/check.mjs`，按技能里的固定格式交回。

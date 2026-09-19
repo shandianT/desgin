@@ -1,0 +1,42 @@
+✔ build verifies shared source, rejects untracked code/config drift and removes stale output (1396.326208ms)
+✔ catalog uses product tokens and mature picker assets without auth, API or storage writes (1815.748333ms)
+✔ shared multi-select searches, applies, cancels with Esc and clears selections (2259.564334ms)
+✔ immediate Escape cancels before popup autofocus without an orphaned portal (447.332083ms)
+✔ opening a populated popup stays inside a short viewport on every rendered frame (1124.299375ms)
+✔ shared date picker validates manual input, commits a date and cancels without changes (942.532792ms)
+✔ result and AI states distinguish missing from zero and preserve input on retry and edit (4573.832125ms)
+✔ validation preserves notes and modal focus is contained and restored (700.687334ms)
+✔ overview and list filters are independent, chips removable and empty results recoverable (707.1535ms)
+✔ home attention contains only red and yellow judgments and exposes original reasons (354.387416ms)
+✔ detail switches object and keyboard tabs without interpreting accepted tasks as completed (373.29675ms)
+✔ visit validation keeps long text, review is explicitly unarchived and action stays reachable (723.758ms)
+✔ analytics quarters change actual chart data and total but retain missing amounts (512.421709ms)
+✔ 1440x900 catalog fits all seven sections and popovers (966.8715ms)
+✔ 1366x768 catalog fits all seven sections and popovers (979.014458ms)
+✔ 1024x600 catalog fits all seven sections and popovers (574.888958ms)
+✔ 390x844 catalog fits all seven sections and popovers (836.045167ms)
+✔ 320x740 catalog fits all seven sections and popovers (884.87975ms)
+✔ primary text and four status labels retain readable contrast and keyboard focus (276.21075ms)
+✔ capture current catalog examples for visual review (832.682084ms)
+✔ mature native and multi-select controls preserve filters, cancellation and keyboard interaction (3798.144459ms)
+✔ CRM dashboard uses ECharts, honest missing-date values and mature team/quarter selectors (2900.40475ms)
+✔ synthetic sales and FDE charts retain source values and dispose on navigation (1715.29225ms)
+✔ mobile selector fits viewport and keeps multi-selection confirmation reachable (1739.159792ms)
+✔ partner and FDE selectors retain form callbacks, remote options and cancellation (2380.1575ms)
+✔ multi-select limits, outside cancellation and page changes discard uncommitted selections (2053.251083ms)
+✔ navy navigation and light workspace preserve route, chart data and instances across theme changes (2606.524959ms)
+✔ switching themes retains a typed visit draft and keeps the transparent date trigger readable (983.327292ms)
+✔ 1440px light workspace and theme switch fit without horizontal overflow (894.274416ms)
+✔ 390px light workspace and theme switch fit without horizontal overflow (952.157958ms)
+✔ 320px light workspace and theme switch fit without horizontal overflow (886.640583ms)
+✔ light controls distinguish selection, hover and keyboard focus with readable text (1045.478834ms)
+✔ legacy dark url opens navy navigation with light content (811.342667ms)
+✔ legacy dark saved opens navy navigation with light content (779.93725ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20353.850458

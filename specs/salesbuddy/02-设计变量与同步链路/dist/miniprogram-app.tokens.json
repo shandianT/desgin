@@ -1,0 +1,14 @@
+{
+  "$comment": "由 build-tokens.mjs 生成：把这些值同步进 frontend/miniprogram/app.json 的 window 与 tabBar。原生组件不支持 var()，所以这里是十六进制字面值；check-tokens.mjs 会比对 app.json 是否一致",
+  "window": {
+    "backgroundColor": "#F3F5F9",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#5B6C82",
+    "selectedColor": "#2863CD",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white"
+  }
+}

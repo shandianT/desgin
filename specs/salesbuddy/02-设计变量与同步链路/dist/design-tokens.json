@@ -1,0 +1,831 @@
+{
+  "$meta": {
+    "name": "部门产品设计变量",
+    "version": "1.1.0-draft.1",
+    "updated": "2026-09-19",
+    "status": "草案：基础与语义层的值来自已确认的 SalesBuddy Web V1.0（design-tokens.css）；主色 #2863CD 已于 2026-09-19 决定沿用；标注「建议」的条目与端侧映射尚未登记采用；原生 App 暂不在范围",
+    "format": "W3C Design Tokens 社区组格式（DTCG 2025.10）的 Style Dictionary v5 兼容子集：颜色写 #RRGGBB 字符串，尺寸写 \"16px\" 字符串，阴影写 CSS 字符串，用 {路径} 引用另一个变量；每个变量有 $value、$type、$description。顶部 $schema 仅作格式标识：按 2025.10 严格校验，字符串形式的尺寸与阴影不通过，待工具链完整支持后迁移为对象形式",
+    "layers": {
+      "base": "基础档位：只有数字和色值，不带用途。例如 color.blue.600、space.4",
+      "semantic": "语义（用途）：带含义的名字，引用基础档位。生成后就是现有的 --ui-* 变量名",
+      "platform": "端侧映射：platforms.<端>.ui 里只放与语义默认值不同的变量；不改基础档位"
+    },
+    "compat": "生成的 Web CSS 变量名与 1.0.0 的 design-tokens.css 完全一致，由 check-tokens.mjs 校验",
+    "extensions": "唯一允许的扩展键：cn.sensetime.sales-design，内含 status（已确认／建议）与 rule（规则编号）",
+    "generatedFrom": "tokens.json"
+  },
+  "base": {
+    "color.blue.50": {
+      "value": "#EDF3FF",
+      "type": "color",
+      "description": "选中底色"
+    },
+    "color.blue.400": {
+      "value": "#5786DC",
+      "type": "color",
+      "description": "焦点轮廓"
+    },
+    "color.blue.600": {
+      "value": "#2863CD",
+      "type": "color",
+      "description": "品牌蓝，主操作来源"
+    },
+    "color.blue.700": {
+      "value": "#2055B5",
+      "type": "color",
+      "description": "主操作悬停"
+    },
+    "color.navy.100": {
+      "value": "#B9D2FF",
+      "type": "color",
+      "description": "导航焦点轮廓"
+    },
+    "color.navy.200": {
+      "value": "#91BAFF",
+      "type": "color",
+      "description": "导航当前项亮条"
+    },
+    "color.navy.700": {
+      "value": "#23466F",
+      "type": "color",
+      "description": "导航悬停底"
+    },
+    "color.navy.800": {
+      "value": "#2A568B",
+      "type": "color",
+      "description": "导航当前项底"
+    },
+    "color.navy.900": {
+      "value": "#142F54",
+      "type": "color",
+      "description": "深蓝导航"
+    },
+    "color.ink.500": {
+      "value": "#617188",
+      "type": "color",
+      "description": "辅助文字"
+    },
+    "color.ink.550": {
+      "value": "#56677E",
+      "type": "color",
+      "description": "中性状态文字"
+    },
+    "color.ink.600": {
+      "value": "#5B6C82",
+      "type": "color",
+      "description": "次要文字"
+    },
+    "color.ink.900": {
+      "value": "#192842",
+      "type": "color",
+      "description": "正文墨色"
+    },
+    "color.gray.0": {
+      "value": "#FFFFFF",
+      "type": "color",
+      "description": "白"
+    },
+    "color.gray.50": {
+      "value": "#F3F5F9",
+      "type": "color",
+      "description": "工作区底"
+    },
+    "color.gray.100": {
+      "value": "#EEF2F7",
+      "type": "color",
+      "description": "中性状态底"
+    },
+    "color.gray.200": {
+      "value": "#E2E8F0",
+      "type": "color",
+      "description": "边线"
+    },
+    "color.red.50": {
+      "value": "#FBE4DF",
+      "type": "color",
+      "description": "危险底"
+    },
+    "color.red.700": {
+      "value": "#A73F38",
+      "type": "color",
+      "description": "危险／转差文字"
+    },
+    "color.yellow.50": {
+      "value": "#FFF0CF",
+      "type": "color",
+      "description": "警告底"
+    },
+    "color.yellow.700": {
+      "value": "#805919",
+      "type": "color",
+      "description": "警告／需关注文字"
+    },
+    "color.green.50": {
+      "value": "#E8F5EE",
+      "type": "color",
+      "description": "成功底"
+    },
+    "color.green.700": {
+      "value": "#27694C",
+      "type": "color",
+      "description": "成功／向好文字"
+    },
+    "color.sky.50": {
+      "value": "#E7EFFA",
+      "type": "color",
+      "description": "导航主文字"
+    },
+    "color.sky.200": {
+      "value": "#C2D1E6",
+      "type": "color",
+      "description": "导航项文字"
+    },
+    "color.sky.300": {
+      "value": "#B4C7E1",
+      "type": "color",
+      "description": "导航次要文字"
+    },
+    "space.1": {
+      "value": "4px",
+      "type": "dimension",
+      "description": ""
+    },
+    "space.2": {
+      "value": "8px",
+      "type": "dimension",
+      "description": ""
+    },
+    "space.3": {
+      "value": "12px",
+      "type": "dimension",
+      "description": ""
+    },
+    "space.4": {
+      "value": "16px",
+      "type": "dimension",
+      "description": ""
+    },
+    "space.6": {
+      "value": "24px",
+      "type": "dimension",
+      "description": ""
+    },
+    "space.8": {
+      "value": "32px",
+      "type": "dimension",
+      "description": ""
+    },
+    "font.size.12": {
+      "value": "12px",
+      "type": "dimension",
+      "description": ""
+    },
+    "font.size.14": {
+      "value": "14px",
+      "type": "dimension",
+      "description": ""
+    },
+    "font.size.16": {
+      "value": "16px",
+      "type": "dimension",
+      "description": ""
+    },
+    "font.size.24": {
+      "value": "24px",
+      "type": "dimension",
+      "description": ""
+    },
+    "font.size.32": {
+      "value": "32px",
+      "type": "dimension",
+      "description": ""
+    },
+    "font.family.system": {
+      "value": "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      "type": "fontFamily",
+      "description": "系统中文字体（V-02）"
+    },
+    "radius.6": {
+      "value": "6px",
+      "type": "dimension",
+      "description": ""
+    },
+    "radius.12": {
+      "value": "12px",
+      "type": "dimension",
+      "description": ""
+    },
+    "size.36": {
+      "value": "36px",
+      "type": "dimension",
+      "description": ""
+    },
+    "size.40": {
+      "value": "40px",
+      "type": "dimension",
+      "description": ""
+    },
+    "size.44": {
+      "value": "44px",
+      "type": "dimension",
+      "description": ""
+    },
+    "size.56": {
+      "value": "56px",
+      "type": "dimension",
+      "description": ""
+    },
+    "size.220": {
+      "value": "220px",
+      "type": "dimension",
+      "description": ""
+    },
+    "size.360": {
+      "value": "360px",
+      "type": "dimension",
+      "description": ""
+    }
+  },
+  "semantic": {
+    "background": {
+      "value": "#F3F5F9",
+      "type": "color",
+      "from": "color.gray.50",
+      "description": "工作区背景",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "surface": {
+      "value": "#FFFFFF",
+      "type": "color",
+      "from": "color.gray.0",
+      "description": "内容面板",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "sidebar": {
+      "value": "#142F54",
+      "type": "color",
+      "from": "color.navy.900",
+      "description": "深蓝导航",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "ink": {
+      "value": "#192842",
+      "type": "color",
+      "from": "color.ink.900",
+      "description": "正文文字",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "secondary": {
+      "value": "#5B6C82",
+      "type": "color",
+      "from": "color.ink.600",
+      "description": "次要文字",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "muted": {
+      "value": "#617188",
+      "type": "color",
+      "from": "color.ink.500",
+      "description": "辅助文字",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "primary": {
+      "value": "#2863CD",
+      "type": "color",
+      "from": "color.blue.600",
+      "description": "主要操作、选中",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "primary-hover": {
+      "value": "#2055B5",
+      "type": "color",
+      "from": "color.blue.700",
+      "description": "主要操作悬停",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "line": {
+      "value": "#E2E8F0",
+      "type": "color",
+      "from": "color.gray.200",
+      "description": "边线",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "selected": {
+      "value": "#EDF3FF",
+      "type": "color",
+      "from": "color.blue.50",
+      "description": "选中底色",
+      "status": "已确认",
+      "rule": "V-01"
+    },
+    "focus": {
+      "value": "#5786DC",
+      "type": "color",
+      "from": "color.blue.400",
+      "description": "键盘焦点轮廓",
+      "status": "已确认",
+      "rule": "V-04"
+    },
+    "danger": {
+      "value": "#A73F38",
+      "type": "color",
+      "from": "color.red.700",
+      "description": "红：转差／错误文字",
+      "status": "已确认",
+      "rule": "B-01"
+    },
+    "danger-soft": {
+      "value": "#FBE4DF",
+      "type": "color",
+      "from": "color.red.50",
+      "description": "红底",
+      "status": "已确认",
+      "rule": "B-01"
+    },
+    "warning": {
+      "value": "#805919",
+      "type": "color",
+      "from": "color.yellow.700",
+      "description": "黄：需关注文字",
+      "status": "已确认",
+      "rule": "B-01"
+    },
+    "warning-soft": {
+      "value": "#FFF0CF",
+      "type": "color",
+      "from": "color.yellow.50",
+      "description": "黄底",
+      "status": "已确认",
+      "rule": "B-01"
+    },
+    "success": {
+      "value": "#27694C",
+      "type": "color",
+      "from": "color.green.700",
+      "description": "绿：向好文字",
+      "status": "已确认",
+      "rule": "B-01"
+    },
+    "success-soft": {
+      "value": "#E8F5EE",
+      "type": "color",
+      "from": "color.green.50",
+      "description": "绿底",
+      "status": "已确认",
+      "rule": "B-01"
+    },
+    "neutral": {
+      "value": "#56677E",
+      "type": "color",
+      "from": "color.ink.550",
+      "description": "灰：待评估文字",
+      "status": "已确认",
+      "rule": "B-01"
+    },
+    "neutral-soft": {
+      "value": "#EEF2F7",
+      "type": "color",
+      "from": "color.gray.100",
+      "description": "灰底",
+      "status": "已确认",
+      "rule": "B-01"
+    },
+    "font": {
+      "value": "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      "type": "fontFamily",
+      "from": "font.family.system",
+      "description": "系统中文字体",
+      "status": "已确认",
+      "rule": "V-02"
+    },
+    "text-small": {
+      "value": "12px",
+      "type": "dimension",
+      "from": "font.size.12",
+      "description": "辅助信息",
+      "status": "已确认",
+      "rule": "V-02"
+    },
+    "text-body": {
+      "value": "14px",
+      "type": "dimension",
+      "from": "font.size.14",
+      "description": "正文",
+      "status": "已确认",
+      "rule": "V-02"
+    },
+    "text-section": {
+      "value": "16px",
+      "type": "dimension",
+      "from": "font.size.16",
+      "description": "分区标题",
+      "status": "已确认",
+      "rule": "V-02"
+    },
+    "text-page": {
+      "value": "24px",
+      "type": "dimension",
+      "from": "font.size.24",
+      "description": "页面标题",
+      "status": "已确认",
+      "rule": "V-02"
+    },
+    "text-metric": {
+      "value": "32px",
+      "type": "dimension",
+      "from": "font.size.32",
+      "description": "关键数字",
+      "status": "已确认",
+      "rule": "V-02"
+    },
+    "space-1": {
+      "value": "4px",
+      "type": "dimension",
+      "from": "space.1",
+      "description": "4：图标与文字",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "space-2": {
+      "value": "8px",
+      "type": "dimension",
+      "from": "space.2",
+      "description": "8：同组控件",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "space-3": {
+      "value": "12px",
+      "type": "dimension",
+      "from": "space.3",
+      "description": "12：行内区域",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "space-4": {
+      "value": "16px",
+      "type": "dimension",
+      "from": "space.4",
+      "description": "16：内容块",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "space-6": {
+      "value": "24px",
+      "type": "dimension",
+      "from": "space.6",
+      "description": "24：面板内边距",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "space-8": {
+      "value": "32px",
+      "type": "dimension",
+      "from": "space.8",
+      "description": "32：大分区",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "radius-control": {
+      "value": "6px",
+      "type": "dimension",
+      "from": "radius.6",
+      "description": "控件圆角",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "radius-panel": {
+      "value": "12px",
+      "type": "dimension",
+      "from": "radius.12",
+      "description": "面板圆角",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "control-height": {
+      "value": "36px",
+      "type": "dimension",
+      "from": "size.36",
+      "description": "普通控件高",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "field-height": {
+      "value": "40px",
+      "type": "dimension",
+      "from": "size.40",
+      "description": "表单控件高",
+      "status": "已确认",
+      "rule": "V-03"
+    },
+    "shadow-popup": {
+      "value": "0 8px 28px #1928421a, 0 2px 6px #19284208",
+      "type": "shadow",
+      "from": "",
+      "description": "弹出层阴影（当前为 CSS 字符串形式，Style Dictionary 可直接输出；待工具链完整支持 2025.10 后迁移为对象形式）",
+      "status": "已确认",
+      "rule": "C-07"
+    },
+    "page-gutter": {
+      "value": "24px",
+      "type": "dimension",
+      "from": "space.6",
+      "description": "页面左右留白（第 06 章间距映射示例：电脑 24，手机 16）",
+      "status": "建议",
+      "rule": "X-08"
+    },
+    "card-padding": {
+      "value": "16px",
+      "type": "dimension",
+      "from": "space.4",
+      "description": "普通卡片内边距（第 06 章示例：16）",
+      "status": "建议",
+      "rule": "X-08"
+    },
+    "block-gap": {
+      "value": "24px",
+      "type": "dimension",
+      "from": "space.6",
+      "description": "独立区块间隔（第 06 章示例：24）",
+      "status": "建议",
+      "rule": "X-08"
+    },
+    "touch-target": {
+      "value": "44px",
+      "type": "dimension",
+      "from": "size.44",
+      "description": "手机最小交互目标（X-06 建议 44×44 逻辑像素）",
+      "status": "建议",
+      "rule": "X-06"
+    },
+    "nav-width": {
+      "value": "220px",
+      "type": "dimension",
+      "from": "size.220",
+      "description": "桌面导航栏宽度（三段布局样板）",
+      "status": "建议",
+      "rule": "X-02"
+    },
+    "nav-rail-width": {
+      "value": "56px",
+      "type": "dimension",
+      "from": "size.56",
+      "description": "折叠后的图标导航宽度（601～900px）",
+      "status": "建议",
+      "rule": "X-02"
+    },
+    "list-width": {
+      "value": "360px",
+      "type": "dimension",
+      "from": "size.360",
+      "description": "桌面对象列表栏宽度（三段布局样板）",
+      "status": "建议",
+      "rule": "X-02"
+    },
+    "tabbar-height": {
+      "value": "56px",
+      "type": "dimension",
+      "from": "size.56",
+      "description": "手机底部导航高度（不含安全区）",
+      "status": "建议",
+      "rule": "X-03"
+    },
+    "on-primary": {
+      "value": "#FFFFFF",
+      "type": "color",
+      "from": "color.gray.0",
+      "description": "主操作按钮上的文字",
+      "status": "建议",
+      "rule": "V-01"
+    },
+    "sidebar-ink": {
+      "value": "#E7EFFA",
+      "type": "color",
+      "from": "color.sky.50",
+      "description": "深蓝导航主文字（theme.css 已有实现）",
+      "status": "建议",
+      "rule": "V-01"
+    },
+    "sidebar-nav": {
+      "value": "#C2D1E6",
+      "type": "color",
+      "from": "color.sky.200",
+      "description": "导航项文字",
+      "status": "建议",
+      "rule": "V-01"
+    },
+    "sidebar-muted": {
+      "value": "#B4C7E1",
+      "type": "color",
+      "from": "color.sky.300",
+      "description": "导航次要文字",
+      "status": "建议",
+      "rule": "V-01"
+    },
+    "sidebar-hover": {
+      "value": "#23466F",
+      "type": "color",
+      "from": "color.navy.700",
+      "description": "导航悬停底",
+      "status": "建议",
+      "rule": "V-01"
+    },
+    "sidebar-active": {
+      "value": "#2A568B",
+      "type": "color",
+      "from": "color.navy.800",
+      "description": "导航当前项底",
+      "status": "建议",
+      "rule": "V-01"
+    },
+    "sidebar-accent": {
+      "value": "#91BAFF",
+      "type": "color",
+      "from": "color.navy.200",
+      "description": "导航当前项亮条",
+      "status": "建议",
+      "rule": "V-01"
+    },
+    "sidebar-focus": {
+      "value": "#B9D2FF",
+      "type": "color",
+      "from": "color.navy.100",
+      "description": "导航上的键盘焦点轮廓",
+      "status": "建议",
+      "rule": "V-04"
+    }
+  },
+  "platforms": {
+    "web": {
+      "background": "#F3F5F9",
+      "surface": "#FFFFFF",
+      "sidebar": "#142F54",
+      "ink": "#192842",
+      "secondary": "#5B6C82",
+      "muted": "#617188",
+      "primary": "#2863CD",
+      "primary-hover": "#2055B5",
+      "line": "#E2E8F0",
+      "selected": "#EDF3FF",
+      "focus": "#5786DC",
+      "danger": "#A73F38",
+      "danger-soft": "#FBE4DF",
+      "warning": "#805919",
+      "warning-soft": "#FFF0CF",
+      "success": "#27694C",
+      "success-soft": "#E8F5EE",
+      "neutral": "#56677E",
+      "neutral-soft": "#EEF2F7",
+      "font": "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      "text-small": "12px",
+      "text-body": "14px",
+      "text-section": "16px",
+      "text-page": "24px",
+      "text-metric": "32px",
+      "space-1": "4px",
+      "space-2": "8px",
+      "space-3": "12px",
+      "space-4": "16px",
+      "space-6": "24px",
+      "space-8": "32px",
+      "radius-control": "6px",
+      "radius-panel": "12px",
+      "control-height": "36px",
+      "field-height": "40px",
+      "shadow-popup": "0 8px 28px #1928421a, 0 2px 6px #19284208",
+      "page-gutter": "24px",
+      "card-padding": "16px",
+      "block-gap": "24px",
+      "touch-target": "44px",
+      "nav-width": "220px",
+      "nav-rail-width": "56px",
+      "list-width": "360px",
+      "tabbar-height": "56px",
+      "on-primary": "#FFFFFF",
+      "sidebar-ink": "#E7EFFA",
+      "sidebar-nav": "#C2D1E6",
+      "sidebar-muted": "#B4C7E1",
+      "sidebar-hover": "#23466F",
+      "sidebar-active": "#2A568B",
+      "sidebar-accent": "#91BAFF",
+      "sidebar-focus": "#B9D2FF"
+    },
+    "mobile-web": {
+      "background": "#F3F5F9",
+      "surface": "#FFFFFF",
+      "sidebar": "#142F54",
+      "ink": "#192842",
+      "secondary": "#5B6C82",
+      "muted": "#617188",
+      "primary": "#2863CD",
+      "primary-hover": "#2055B5",
+      "line": "#E2E8F0",
+      "selected": "#EDF3FF",
+      "focus": "#5786DC",
+      "danger": "#A73F38",
+      "danger-soft": "#FBE4DF",
+      "warning": "#805919",
+      "warning-soft": "#FFF0CF",
+      "success": "#27694C",
+      "success-soft": "#E8F5EE",
+      "neutral": "#56677E",
+      "neutral-soft": "#EEF2F7",
+      "font": "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      "text-small": "12px",
+      "text-body": "16px",
+      "text-section": "16px",
+      "text-page": "24px",
+      "text-metric": "32px",
+      "space-1": "4px",
+      "space-2": "8px",
+      "space-3": "12px",
+      "space-4": "16px",
+      "space-6": "24px",
+      "space-8": "32px",
+      "radius-control": "6px",
+      "radius-panel": "12px",
+      "control-height": "36px",
+      "field-height": "40px",
+      "shadow-popup": "0 8px 28px #1928421a, 0 2px 6px #19284208",
+      "page-gutter": "16px",
+      "card-padding": "16px",
+      "block-gap": "24px",
+      "touch-target": "44px",
+      "nav-width": "220px",
+      "nav-rail-width": "56px",
+      "list-width": "360px",
+      "tabbar-height": "56px",
+      "on-primary": "#FFFFFF",
+      "sidebar-ink": "#E7EFFA",
+      "sidebar-nav": "#C2D1E6",
+      "sidebar-muted": "#B4C7E1",
+      "sidebar-hover": "#23466F",
+      "sidebar-active": "#2A568B",
+      "sidebar-accent": "#91BAFF",
+      "sidebar-focus": "#B9D2FF"
+    },
+    "miniprogram": {
+      "background": "#F3F5F9",
+      "surface": "#FFFFFF",
+      "sidebar": "#142F54",
+      "ink": "#192842",
+      "secondary": "#5B6C82",
+      "muted": "#617188",
+      "primary": "#2863CD",
+      "primary-hover": "#2055B5",
+      "line": "#E2E8F0",
+      "selected": "#EDF3FF",
+      "focus": "#5786DC",
+      "danger": "#A73F38",
+      "danger-soft": "#FBE4DF",
+      "warning": "#805919",
+      "warning-soft": "#FFF0CF",
+      "success": "#27694C",
+      "success-soft": "#E8F5EE",
+      "neutral": "#56677E",
+      "neutral-soft": "#EEF2F7",
+      "font": "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      "text-small": "12px",
+      "text-body": "16px",
+      "text-section": "16px",
+      "text-page": "24px",
+      "text-metric": "32px",
+      "space-1": "4px",
+      "space-2": "8px",
+      "space-3": "12px",
+      "space-4": "16px",
+      "space-6": "24px",
+      "space-8": "32px",
+      "radius-control": "6px",
+      "radius-panel": "12px",
+      "control-height": "36px",
+      "field-height": "40px",
+      "shadow-popup": "0 8px 28px #1928421a, 0 2px 6px #19284208",
+      "page-gutter": "16px",
+      "card-padding": "16px",
+      "block-gap": "24px",
+      "touch-target": "44px",
+      "nav-width": "220px",
+      "nav-rail-width": "56px",
+      "list-width": "360px",
+      "tabbar-height": "56px",
+      "on-primary": "#FFFFFF",
+      "sidebar-ink": "#E7EFFA",
+      "sidebar-nav": "#C2D1E6",
+      "sidebar-muted": "#B4C7E1",
+      "sidebar-hover": "#23466F",
+      "sidebar-active": "#2A568B",
+      "sidebar-accent": "#91BAFF",
+      "sidebar-focus": "#B9D2FF"
+    }
+  }
+}
