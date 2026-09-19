@@ -58,7 +58,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认（Web）；样板三档均已验证（本地）",
       "crossKind": "统一",
-      "crossSourceLine": 56
+      "crossSourceLine": 55
     },
     {
       "id": "P-02",
@@ -88,7 +88,7 @@
       "crossPlatform": "含义统一，留白值适配",
       "crossStatus": "已确认（Web）；留白 16px 为建议",
       "crossKind": "适配",
-      "crossSourceLine": 57
+      "crossSourceLine": 56
     },
     {
       "id": "P-03",
@@ -116,7 +116,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认（Web）；样板已验证（本地）",
       "crossKind": "统一",
-      "crossSourceLine": 58
+      "crossSourceLine": 57
     },
     {
       "id": "V-01",
@@ -167,7 +167,7 @@
       "crossPlatform": "色值统一；导航容器适配",
       "crossStatus": "已确认（Web）；小程序现为 #1677FF，待接入",
       "crossKind": "适配",
-      "crossSourceLine": 64
+      "crossSourceLine": 63
     },
     {
       "id": "V-02",
@@ -208,7 +208,7 @@
       "crossPlatform": "档位统一；正文值适配",
       "crossStatus": "已确认（Web）；16px 为建议（X-06）；小程序现状 88% 声明 <14px",
       "crossKind": "适配",
-      "crossSourceLine": 65
+      "crossSourceLine": 64
     },
     {
       "id": "V-03",
@@ -251,7 +251,7 @@
       "crossPlatform": "档位统一；用途→档位的选择适配",
       "crossStatus": "已确认（Web）；映射为建议（X-08）",
       "crossKind": "适配",
-      "crossSourceLine": 66
+      "crossSourceLine": 65
     },
     {
       "id": "V-04",
@@ -288,7 +288,7 @@
       "crossPlatform": "含义统一；目标尺寸适配",
       "crossStatus": "已确认（Web）；44px 为建议（X-06），样板按钮、导航、筛选片、页签均已验证（本地）",
       "crossKind": "适配",
-      "crossSourceLine": 67
+      "crossSourceLine": 66
     },
     {
       "id": "C-01",
@@ -320,7 +320,7 @@
       "crossPlatform": "统一；位置适配",
       "crossStatus": "已确认；底部操作条为建议，样板已验证（本地）",
       "crossKind": "适配",
-      "crossSourceLine": 73
+      "crossSourceLine": 72
     },
     {
       "id": "C-02",
@@ -352,7 +352,7 @@
       "crossPlatform": "统一；键盘处理引用平台",
       "crossStatus": "已确认；键盘未验证（需真机）",
       "crossKind": "引用平台",
-      "crossSourceLine": 74
+      "crossSourceLine": 73
     },
     {
       "id": "C-03",
@@ -383,7 +383,7 @@
       "crossPlatform": "行为统一；实现各端",
       "crossStatus": "已确认（Web）；其他端未接入",
       "crossKind": "适配",
-      "crossSourceLine": 75
+      "crossSourceLine": 74
     },
     {
       "id": "C-04",
@@ -417,7 +417,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认；样板三档已验证（本地）",
       "crossKind": "统一",
-      "crossSourceLine": 76
+      "crossSourceLine": 75
     },
     {
       "id": "C-05",
@@ -450,7 +450,7 @@
       "crossPlatform": "字段与顺序统一；表格↔列表行适配",
       "crossStatus": "已确认（Web）；手机列表行为建议",
       "crossKind": "适配",
-      "crossSourceLine": 77
+      "crossSourceLine": 76
     },
     {
       "id": "C-06",
@@ -482,7 +482,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认；样板三档已验证；小程序现状不达标",
       "crossKind": "统一",
-      "crossSourceLine": 78
+      "crossSourceLine": 77
     },
     {
       "id": "C-07",
@@ -518,7 +518,7 @@
       "crossPlatform": "行为统一；容器适配",
       "crossStatus": "已确认（Web）；手机整页进入为建议（X-03）",
       "crossKind": "适配",
-      "crossSourceLine": 79
+      "crossSourceLine": 78
     },
     {
       "id": "T-01",
@@ -549,7 +549,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认（Web）；未做样板",
       "crossKind": "统一",
-      "crossSourceLine": 85
+      "crossSourceLine": 84
     },
     {
       "id": "T-02",
@@ -582,7 +582,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认；样板已验证（本地）",
       "crossKind": "统一",
-      "crossSourceLine": 86
+      "crossSourceLine": 85
     },
     {
       "id": "T-03",
@@ -617,7 +617,7 @@
       "crossPlatform": "统一；分栏按详情栏自身宽度 ≥760px 决定（容器查询）",
       "crossStatus": "已确认（Web）；分栏阈值为建议，样板已验证（本地）",
       "crossKind": "适配",
-      "crossSourceLine": 87
+      "crossSourceLine": 86
     },
     {
       "id": "T-04",
@@ -648,7 +648,7 @@
       "crossPlatform": "统一；分栏适配",
       "crossStatus": "已确认（Web）；未做样板",
       "crossKind": "适配",
-      "crossSourceLine": 88
+      "crossSourceLine": 87
     },
     {
       "id": "T-05",
@@ -681,7 +681,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认（Web）；未做样板",
       "crossKind": "统一",
-      "crossSourceLine": 89
+      "crossSourceLine": 88
     },
     {
       "id": "B-01",
@@ -717,7 +717,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认；样板三档已验证（本地）",
       "crossKind": "不分端",
-      "crossSourceLine": 95
+      "crossSourceLine": 94
     },
     {
       "id": "B-02",
@@ -746,7 +746,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认；样板体现（任务页签说明）",
       "crossKind": "不分端",
-      "crossSourceLine": 96
+      "crossSourceLine": 95
     },
     {
       "id": "B-03",
@@ -772,7 +772,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认；样板体现「ACV 未登记」",
       "crossKind": "不分端",
-      "crossSourceLine": 97
+      "crossSourceLine": 96
     },
     {
       "id": "B-04",
@@ -795,7 +795,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认；样板未涉及",
       "crossKind": "不分端",
-      "crossSourceLine": 98
+      "crossSourceLine": 97
     },
     {
       "id": "B-05",
@@ -823,7 +823,7 @@
       "crossPlatform": "统一",
       "crossStatus": "已确认；样板体现「范围：本人负责」与 403 状态（演示）",
       "crossKind": "不分端",
-      "crossSourceLine": 99
+      "crossSourceLine": 98
     },
     {
       "id": "G-01",
@@ -846,7 +846,7 @@
       "crossPlatform": "三端统一；需求与 PR 都引用规则编号，落地见 04 章第 2 节",
       "crossStatus": "已确认（Web）；流程为建议",
       "crossKind": "不分端",
-      "crossSourceLine": 105
+      "crossSourceLine": 104
     },
     {
       "id": "G-02",
@@ -870,7 +870,7 @@
       "crossPlatform": "三端统一；偏差按端登记，落地见 `采用登记表.md`",
       "crossStatus": "已确认（Web）；流程为建议",
       "crossKind": "不分端",
-      "crossSourceLine": 106
+      "crossSourceLine": 105
     },
     {
       "id": "X-01",
