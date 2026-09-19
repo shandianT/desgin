@@ -170,12 +170,12 @@ const spaceScale = sem.filter((t) => /^space-\d/.test(t.name)).map((t) => `<div 
 
 // 流程图（团队）：内容来自 04 章（建议）
 const FLOW = [
-  { k: 'issue', t: '发现问题', d: '规则不够用、页面有偏差、要换颜色或间距。先看规则索引里有没有现成规则。', tpl: '01-任务单' },
+  { k: 'issue', t: '发现问题', d: '规则不够用、页面有偏差、要换颜色或间距。先查规则索引里有没有现成规则。', tpl: '01-任务单' },
   { k: 'change', t: '填变更单', d: '当前规则 → 实际问题 → 候选改法 → 受影响页面 → 如何验证。', tpl: '02-规则变更单' },
-  { k: 'pr', t: '开 PR 改四样', d: 'PR 是在 Git 上提交一次修改申请。规则条目、样例／变量、代码或接入说明、验收项一起改；第五样（规则索引与 AI 技能引用）由 node tools/check.mjs 自动刷新。' },
-  { k: 'review', t: '评审', d: '设计负责人＋产品负责人各一人；check.mjs --ci 必须通过。' },
-  { k: 'tag', t: '合并 · 打标签', d: '语义化版本：只改值→修订号；新增兼容规则或变量→次版本；改含义、默认样式、导航约定→主版本并附迁移说明。' },
-  { k: 'adopt', t: '登记采用', d: '每个产品 × 终端一行：收到 ≠ 采用 ≠ 已验证。', tpl: '04-产品采用登记表' },
+  { k: 'pr', t: '开 PR 改四样', d: 'PR 就是在 Git 上提交一次修改申请。规则条目、样例或变量、代码或接入说明、验收项一起改。规则索引和 AI 技能引用由 node tools/check.mjs 自动刷新。' },
+  { k: 'review', t: '评审', d: '设计负责人和产品负责人各一人。check.mjs --ci 必须通过。' },
+  { k: 'tag', t: '合并 · 打标签', d: '语义化版本。只改值升修订号。新增兼容规则或变量升次版本。改含义、默认样式、导航约定升主版本，附迁移说明。' },
+  { k: 'adopt', t: '登记采用', d: '每个产品的每个终端一行。收到、采用、已验证是三件事，分开写。', tpl: '04-产品采用登记表' },
 ];
 const ARROW = (id) => `<defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5 0 10z" class="ahead"/></marker></defs>`; // 每张图一个 marker id，页面内不重复
 const flowSvg = `<svg viewBox="0 0 ${FLOW.length * 150} 90" class="flow" role="img" aria-label="变更流程">${ARROW('ah-flow')}<g>${FLOW.map((f, i) => `<g class="node" data-step="${f.k}" tabindex="0" role="button"><rect x="${i * 150 + 8}" y="16" width="130" height="52" rx="10"/><text x="${i * 150 + 73}" y="47">${f.t}</text><text x="${i * 150 + 132}" y="30" class="hint">▸</text></g>${i < FLOW.length - 1 ? `<path d="M${i * 150 + 138} 42 L${i * 150 + 156} 42" class="arrow" marker-end="url(#ah-flow)"/>` : ''}`).join('')}</g></svg>`;
@@ -210,7 +210,7 @@ const ROLES = [['产品／业务负责人', '变更单业务影响；PR 评审']
 
 // ---------- 页面 ----------
 const NAV = [['home', '首页'], ['principles', '原则'], ['visual', '视觉基础'], ['components', '组件'], ['layout', '布局'], ['states', '交互状态'], ['cross', '跨端适配'], ['team', '团队怎么用']];
-const acceptTile = accept.total ? `<b>${accept.passed}/${accept.total}</b><span>项样板验收通过</span><small>${badge('已验证（本地）')} 合成数据 · 8 个视口 · 未真机</small>` : `<b>—</b><span>样板验收</span><small>${badge('未验证')} 尚未运行验收脚本</small>`;
+const acceptTile = accept.total ? `<b>${accept.passed}/${accept.total}</b><span>项样板验收通过</span><small>${badge('已验证（本地）')} 合成数据，8 个视口，未上真机</small>` : `<b>—</b><span>样板验收</span><small>${badge('未验证')} 尚未运行验收脚本</small>`;
 const problemLine = appDiff ? `小程序原生颜色 ${appMismatch}/${appDiff.length} 项与规范不一致${mpProduct ? `，${esc(firstClause(mpProduct.gaps))}` : ''}` : '小程序原生颜色尚未同步快照（node tools/sync-product.mjs）';
 const body = `
 <a class="skip" href="#main">跳到内容</a>
@@ -221,49 +221,49 @@ const body = `
   <div class="navfoot"><b>状态词</b>${['已确认', '建议', '业务事实', '已验证（本地）', '未验证'].map(badge).join(' ')}</div>
 </nav>
 <main class="main" id="main">
-<header class="top"><label class="find"><span class="sr">查规则编号或变量名</span><input id="find" type="search" placeholder="查编号或变量，如 T-02、--ui-primary"></label><span class="topnote">由 rules.json 与 dist 产物生成 · 本站不含任何手写规则</span></header>
+<header class="top"><label class="find"><span class="sr">查规则编号或变量名</span><input id="find" type="search" placeholder="查编号或变量，如 T-02、--ui-primary"></label><span class="topnote">内容由规范源文件生成，改源文件后重新生成即可</span></header>
 
 <section data-panel="home">
   <h1>让用户看清信息、完成操作；让产品、设计、开发、测试和 AI 用同一套规则</h1>
-  <p class="lead">现在三端各画各的：${problemLine}，颜色字号靠截图口口相传，改一处要改三处。这个站把规则、颜色、样板放在一处：规则来自规则索引，颜色和间距来自变量文件，样板与验收来自 03 章；改源文件、跑一条命令，站点随之更新，站点本身不是第二份规范。覆盖产品：SalesBuddy 销售管理的电脑网页、手机网页与微信小程序「销售智助」。</p>
-  <div class="card brief"><h2>给部门的五分钟</h2>
+  <p class="lead">三端现在各画各的。${problemLine}，颜色和字号靠截图口口相传，改一处要改三处。这个站把规则、颜色、样板放在一处，都由规范源文件生成。改源文件、跑一条命令，站点跟着更新。覆盖 SalesBuddy 销售管理的电脑网页、手机网页和微信小程序「销售智助」。</p>
+  <div class="card brief"><h2>汇报用这一页</h2>
     <ol>
-      <li><b>问题</b>　${problemLine}；哪些必须一样、哪些允许不一样，以前没人拍板。</li>
-      <li><b>做了什么</b>　${rules.$meta.confirmed} 条 Web 规则 ${badge('已确认')}、${byGroup('X').length} 条跨端规则 ${badge('建议')}${byGroup('D').length + byGroup('A').length ? `、${byGroup('D').length + byGroup('A').length} 条候选原则（多家之长与 AI 时代）${badge('建议')}` : ''}、${sem.length} 个设计变量（${confirmedTokens} ${badge('已确认')}，${suggestedTokens} ${badge('建议')}）、一页「客户列表→详情→返回」样板 ${accept.total ? `${accept.passed}/${accept.total} 项 ${badge('已验证（本地）')}` : badge('未验证')}。</li>
-      <li><b>证据到什么程度</b>　看每张卡片右上角的状态词，含义见下面「五个状态词」。真机、真实工程接入都还没做。</li>
+      <li><b>问题</b>　${problemLine}。哪些必须一样、哪些允许不一样，以前没人拍板。</li>
+      <li><b>做了什么</b>　${rules.$meta.confirmed} 条 Web 规则 ${badge('已确认')}，${byGroup('X').length} 条跨端规则 ${badge('建议')}${byGroup('D').length + byGroup('A').length ? `，${byGroup('D').length + byGroup('A').length} 条候选原则 ${badge('建议')}` : ''}，${sem.length} 个设计变量，一页「客户列表到详情再返回」的样板 ${accept.total ? `${accept.passed}/${accept.total} 项 ${badge('已验证（本地）')}` : badge('未验证')}。</li>
+      <li><b>证据到什么程度</b>　看每张卡片右上角的状态词。真机和真实工程接入都还没做。</li>
       <li><b>今天要决定的事</b>　${pending.length ? `<ul>${pending.map((d) => `<li>${inline(d.item)}　<small>谁决定：${inline(d.who)} · ${inline(d.status)}</small></li>`).join('')}</ul>` : '暂无'}</li>
-      <li><b>要认领的角色</b>　${ROLES.map((r) => r[0]).join('、')}（目前全部待填，见「团队怎么用」）。</li>
+      <li><b>要认领的角色</b>　${ROLES.map((r) => r[0]).join('、')}。目前都还没填人，见「团队怎么用」。</li>
       <li><b>下一步</b>　${nextSteps.length ? `<ul>${nextSteps.map((s) => `<li>${inline(s)}</li>`).join('')}</ul>` : '见采用登记表'}</li>
     </ol>
-    <p class="note">建议汇报顺序（15 分钟）：本页 3 分 → 视觉基础改一个颜色 3 分 → 布局拖宽 2 分 → 交互状态点节点 2 分 → 跨端对照点「适配」2 分 → 回到本页要决策 3 分。</p></div>
+    <p class="note">15 分钟汇报可以这样走：这一页 3 分钟，视觉基础改一个颜色 3 分钟，布局拖宽 2 分钟，交互状态点节点 2 分钟，跨端对照点「适配」2 分钟，回到这一页要决策 3 分钟。</p></div>
   <div class="tiles">
-    <div class="tile"><b>${rules.$meta.confirmed}</b><span>条 Web 规则已确认</span><small>P／V／C／T／B／G · 规范 1.0.0＝已确认的 Web 规则</small></div>
-    <div class="tile"><b>${rules.$meta.suggested}</b><span>条建议规则</span><small>跨端 X ${byGroup('X').length} 条${byGroup('D').length + byGroup('A').length ? `、候选原则 D／A ${byGroup('D').length + byGroup('A').length} 条` : ''} · ${esc(specVersion)}＝草稿，登记采用后转正</small></div>
-    <div class="tile"><b>${sem.length}</b><span>个设计变量</span><small>${confirmedTokens} 已确认 · ${suggestedTokens} 建议 · ${overrideCount} 个有端侧覆盖值（建议）</small></div>
+    <div class="tile"><b>${rules.$meta.confirmed}</b><span>条 Web 规则已确认</span><small>P、V、C、T、B、G 六组，规范 1.0.0</small></div>
+    <div class="tile"><b>${rules.$meta.suggested}</b><span>条建议规则</span><small>跨端 X ${byGroup('X').length} 条${byGroup('D').length + byGroup('A').length ? `，候选原则 D 与 A ${byGroup('D').length + byGroup('A').length} 条` : ''}。草稿版本 ${esc(specVersion)}，登记采用后转正</small></div>
+    <div class="tile"><b>${sem.length}</b><span>个设计变量</span><small>${confirmedTokens} 个已确认，${suggestedTokens} 个建议，${overrideCount} 个有端侧覆盖值</small></div>
     <div class="tile">${acceptTile}</div>
   </div>
-  <div class="card"><h2>先认识六个词</h2><div class="tbl"><table><tr><th>词</th><th>意思</th></tr><tr><td>设计变量</td><td>颜色、字号、间距的统一名字（如 <code>--ui-primary</code>）；改名字对应的值，各端一起变</td></tr><tr><td>样板</td><td>03 章那页可点的「客户列表→详情→返回」演示页，用来验证规则，不是真实产品</td></tr><tr><td>变更单</td><td>改规则前填的一页表：当前规则、实际问题、候选改法、受影响页面、怎么验证</td></tr><tr><td>登记采用</td><td>某产品的某个端在采用登记表写下「已采用」；收到 ≠ 采用 ≠ 已验证</td></tr><tr><td>视口</td><td>浏览器窗口的宽度；本规范按 >900、601～900、≤600 三档</td></tr><tr><td>PR</td><td>在 Git 上提交一次修改申请，评审通过后合并</td></tr></table></div></div>
-  <div class="card"><h2>五个状态词，别混</h2><div class="tbl"><table><tr><th>词</th><th>含义</th></tr><tr><td>${badge('已确认')}</td><td>Web V1 的 ${rules.$meta.confirmed} 条正式规则及其 1.0.0 已定值的 ${confirmedTokens} 个变量，改它要走变更单</td></tr><tr><td>${badge('建议')}</td><td>跨端 X 规则、候选原则 D／A、新增变量、端侧覆盖值与流程，尚未登记采用</td></tr><tr><td>${badge('业务事实')}</td><td>产品原则与业务口径，不是设计规则</td></tr><tr><td>${badge('已验证（本地）')}</td><td>样板自动验收通过：合成数据、模拟视口，未真机</td></tr><tr><td>${badge('未验证')}</td><td>还没有任何证据</td></tr></table></div></div>
-  <div class="card"><h2>已经决定的事</h2>${decided.length ? `<ul>${decided.map((d) => `<li>${inline(d.item)}：${inline(d.impact)}　<small>${inline(d.status)}</small></li>`).join('')}</ul>` : '<p class="note">暂无</p>'}<p class="note">来源：采用登记表.md「待决定事项」；全表见「团队怎么用」。</p></div>
-  <div class="card"><h2>怎么看这个站</h2><ol><li>按左侧七章顺序看。原则章是读的；其余六章每章先有一个能动手的东西，再是对应规则卡片。</li><li>每张卡片折叠时显示编号、场景和要求的第一句，右上角是状态词；点开看完整要求、正反例、怎么检查、来源行号。</li><li>顶部搜索框输入编号或变量名可直接跳到。</li></ol></div>
+  <div class="card"><h2>几个词</h2><div class="tbl"><table><tr><th>词</th><th>意思</th></tr><tr><td>设计变量</td><td>颜色、字号、间距的统一名字（如 <code>--ui-primary</code>）；改名字对应的值，各端一起变</td></tr><tr><td>样板</td><td>03 章那页可点的「客户列表→详情→返回」演示页，用来验证规则，不是真实产品</td></tr><tr><td>变更单</td><td>改规则前填的一页表：当前规则、实际问题、候选改法、受影响页面、怎么验证</td></tr><tr><td>登记采用</td><td>某产品的某个端在采用登记表写下「已采用」；收到 ≠ 采用 ≠ 已验证</td></tr><tr><td>视口</td><td>浏览器窗口的宽度；本规范按 >900、601～900、≤600 三档</td></tr><tr><td>PR</td><td>在 Git 上提交一次修改申请，评审通过后合并</td></tr></table></div></div>
+  <div class="card"><h2>状态词</h2><div class="tbl"><table><tr><th>词</th><th>含义</th></tr><tr><td>${badge('已确认')}</td><td>Web 1.0 的 ${rules.$meta.confirmed} 条正式规则，和 1.0.0 已定值的 ${confirmedTokens} 个变量。改它要走变更单</td></tr><tr><td>${badge('建议')}</td><td>跨端 X 规则、候选原则 D 与 A、新增变量、端侧覆盖值、流程。还没登记采用</td></tr><tr><td>${badge('业务事实')}</td><td>产品原则和业务口径，不是设计规则</td></tr><tr><td>${badge('已验证（本地）')}</td><td>样板自动验收通过。合成数据，模拟视口，没上真机</td></tr><tr><td>${badge('未验证')}</td><td>还没有任何证据</td></tr></table></div></div>
+  <div class="card"><h2>已经决定的事</h2>${decided.length ? `<ul>${decided.map((d) => `<li>${inline(d.item)}：${inline(d.impact)}　<small>${inline(d.status)}</small></li>`).join('')}</ul>` : '<p class="note">暂无</p>'}<p class="note">来自采用登记表的待决定事项表，全表在「团队怎么用」。</p></div>
+  <div class="card"><h2>怎么看</h2><ol><li>按左侧七章顺序看。原则章是读的，其余六章每章先有一个能动手的东西，后面是规则卡片。</li><li>卡片折叠时显示编号、场景和要求的第一句，右上角是状态词。点开看完整要求、正反例、怎么检查、来源行号。</li><li>顶部搜索框输入编号或变量名能直接跳过去。</li></ol></div>
 </section>
 
 <section data-panel="principles" hidden>
-  <h1>原则</h1><p class="lead">遇到取舍时没有共同标准，每个页面都会重新争论一遍。先定「优先解决谁的什么问题，遇到取舍怎么判」。设计原则 P 是已确认规则；产品原则是业务事实，逐字引自产品仓库；业务表达 B 规定客户、商机、缺失值、红黄绿灰怎么说。先点开 P-01，看它的正例和反例。</p>
+  <h1>原则</h1><p class="lead">没有共同标准，每个页面都要重新争一遍取舍。原则回答的是：优先解决谁的什么问题，取舍时怎么判。设计原则 P 是已确认规则。产品原则是业务事实，逐字引自产品仓库。业务表达 B 规定客户、商机、缺失值、红黄绿灰怎么说。可以先点开 P-01 看正例和反例。</p>
   <h2>设计原则（已确认）</h2>${cards(['P-01', 'P-02', 'P-03'], true)}
   <h2>产品原则（业务事实，共 ${PRINCIPLES.length} 条）</h2>${principleCards}
   <h2>业务表达（已确认）</h2>${cards(['B-01', 'B-02', 'B-03', 'B-04', 'B-05'])}
-  ${byGroup('D').length ? `<h2>候选原则：多家之长 ${badge('建议')}</h2><p class="note">从 Apple、Material、Ant Design、Semi、TDesign、Arco、Fluent、Atlassian、Polaris、GOV.UK、Salesforce、Nielsen 等提炼，来源见 06 章与依据 12～14；待评审后走变更单登记。</p>${cards(byGroup('D').map((r) => r.id))}` : ''}
-  ${byGroup('A').length ? `<h2>候选原则：AI 时代 ${badge('建议')}</h2><p class="note">AI 出草稿、人拍板；标识、依据、可撤销、可追溯、行动前授权。来源见 06 章。</p>${cards(byGroup('A').map((r) => r.id))}` : ''}
+  ${byGroup('D').length ? `<h2>候选原则：多家之长 ${badge('建议')}</h2><p class="note">从 Apple、Material、Ant Design、Semi、TDesign、Arco、Fluent、Atlassian、Polaris、GOV.UK、Salesforce、Nielsen 提炼。来源见 06 章和依据 13。评审通过后走变更单登记。</p>${cards(byGroup('D').map((r) => r.id))}` : ''}
+  ${byGroup('A').length ? `<h2>候选原则：AI 时代 ${badge('建议')}</h2><p class="note">AI 出草稿，人拍板。标识、依据、可撤销、可追溯、行动前授权。来源见 06 章和依据 14、15。</p>${cards(byGroup('A').map((r) => r.id))}` : ''}
 </section>
 
 <section data-panel="visual" hidden>
-  <h1>视觉基础</h1><p class="lead">换个主色要改三端几十处，现在改一个变量。颜色、字号、间距、圆角都是变量：左边改一个值，右边的预览和下面的样板会一起变，这就是「改一处、各端同步」在浏览器里的样子。改完可以一键生成变更单草稿；这里的修改只在你的浏览器里，不会写回仓库。</p>
+  <h1>视觉基础</h1><p class="lead">换个主色以前要改三端几十处，现在改一个变量。颜色、字号、间距、圆角都是变量。左边改一个值，右边的预览和下面的样板一起变。改完可以生成变更单草稿。这里的修改只在你的浏览器里，不会写回仓库。</p>
   <div class="two">
     <div class="card panel"><div class="ph"><h2>变量面板</h2><div><button class="btn sec" id="tk-reset">重置</button><button class="btn pri" id="tk-copy">复制为变更单草稿</button></div></div>
       <h3>颜色（共 ${colorTokens.length} 个，列表可滚动）</h3><div class="tks">${panelRows}</div>
       <h3>字号、间距、尺寸（px）</h3><div class="tks">${dimRows}</div>
-      <p class="note">面板只显示电脑网页的值；端侧覆盖值见「跨端适配」章的高亮行。所有 ${badge('建议')} 变量与端侧覆盖值尚未登记采用；${confirmedTokens} 个已确认变量与 1.0.0 一致，由脚本自动校验。</p></div>
+      <p class="note">面板只显示电脑网页的值，端侧覆盖值在「跨端适配」章的高亮行。标 ${badge('建议')} 的变量和端侧覆盖值还没登记采用。${confirmedTokens} 个已确认变量与 1.0.0 一致，脚本每次自动校验。</p></div>
     <div class="card preview"><h2>预览</h2>
       <div class="pv-nav"><span class="mark">SB</span><a class="on">客户</a><a>商机</a><a>任务</a></div>
       <div class="pv-work"><div class="pv-surface"><div class="pv-title">客户 <small>范围：本人负责 · 24 家</small></div><div class="pv-btns"><button class="ui-btn ui-primary">记录拜访</button><button class="ui-btn ui-secondary">创建任务</button><span class="ui-chip on">有风险</span></div><div class="ui-row on"><b>云岭教育科技</b><small>客户资源 · 关系 6/10 · 地盘 HB-03</small>${tag('tag-warn', '● 需关注')}</div><div class="ui-row"><b>金桥制造股份有限公司</b><small>客户资产 · 关系 9/10</small>${tag('tag-err', '● 转差')}</div><div class="ui-row"><b>华宸数据科技有限公司</b><small>客户资产 · 关系 8/10</small>${tag('tag-ok', '● 向好')}</div><div class="ui-row"><b>泰和银行数据中心</b><small>象限：待评估</small>${tag('tag-none', '● 待评估')}</div></div></div>
@@ -276,14 +276,14 @@ const body = `
 </section>
 
 <section data-panel="components" hidden>
-  <h1>组件</h1><p class="lead">同一个按钮三端三种样子、禁用了不说原因，是最常见的返工。每个组件在每个状态下长什么样都有定论。横着看：同一个组件从默认到出错的六种样子；竖着看：同一状态下所有组件长得像不像一家。「悬停」「聚焦」两列是把鼠标效果固定住给你看的。</p>
-  <div class="card"><p class="note">共 ${STATES.length} 列，窄屏可左右滑动；第一列固定。</p>${matrix}<p class="note">选择器、日期等复杂控件的真实交互见 1.0.0 示例册；这里只定外观与状态。</p></div>
+  <h1>组件</h1><p class="lead">同一个按钮三端三种样子，禁用了不说原因，这是最常见的返工。每个组件在每个状态下长什么样都有定论。横着看是同一个组件从默认到出错的六种样子，竖着看是同一状态下所有组件像不像一家。悬停和聚焦两列是把鼠标效果固定住给你看。</p>
+  <div class="card"><p class="note">共 ${STATES.length} 列，窄屏可以左右滑，第一列固定。</p>${matrix}<p class="note">选择器、日期这类复杂控件的真实交互见 1.0.0 示例册，这里只定外观和状态。</p></div>
   <h2>规则</h2>${cards(['C-01', 'C-02', 'C-03', 'C-04', 'C-05', 'C-06', 'C-07'], true)}
-  ${ecoDoc ? `<h2>组件用哪家：成熟生态 ＋ 主题桥接 ${badge('建议')}</h2><div class="card doc">${md(mdSections(ecoDoc, /^## [012５5]/))}<p class="src">来源：05-组件生态选型.md（全文含接入步骤与待决定事项）；依据：依据/外部查证-20260919/08～11。</p></div>` : ''}
+  ${ecoDoc ? `<h2>组件用哪家 ${badge('建议')}</h2><div class="card doc">${md(mdSections(ecoDoc, /^## [012５5]/))}<p class="src">来源：05-组件生态选型.md，全文还有接入步骤和待决定事项。依据在 依据/外部查证-20260919/ 的 08 到 12。</p></div>` : ''}
 </section>
 
 <section data-panel="layout" hidden>
-  <h1>布局</h1><p class="lead">电脑三栏到手机单页怎么折，每个开发理解不同。规范定死：电脑上的「导航—列表—详情」三段，到手机变成「列表页 → 详情页 → 返回」。电脑上拖预览框右下角的小三角把预览拉窄，看它在 900 与 600 两个门槛怎么折叠；手机上点上方的宽度按钮。</p>
+  <h1>布局</h1><p class="lead">电脑三栏到手机单页怎么折，每个开发理解不一样。规范定死：电脑上是导航、列表、详情三段，到手机变成列表页进详情页再返回。电脑上拖预览框右下角的小三角把预览拉窄，看它在 900 和 600 两个门槛怎么折。手机上点上方的宽度按钮。</p>
   <div class="card"><div class="ph"><h2>拖宽看三档</h2><div class="presets">${['1200', '900', '760', '600', '390', '320'].map((w) => `<button class="btn sec" data-w="${w}">${w}</button>`).join('')}</div></div>
     <div class="readout" id="readout">当前宽度 — · —</div>
     <div class="resizer" id="resizer"><iframe class="frame tall" data-sample title="样板（布局）" src="${P.sample}?frame=layout" loading="lazy"></iframe></div>
@@ -296,29 +296,29 @@ const body = `
 </section>
 
 <section data-panel="states" hidden>
-  <h1>交互状态</h1><p class="lead">加载、空数据、失败、无权限是规范的一部分，不是开发自由发挥。点状态机的节点，下面的样板会真的切到那个画面，而且搜索与筛选条件不丢。「返回，保留条件」按 X-03（建议）。</p>
-  <div class="card"><div class="ph"><h2>状态机</h2><small>点节点驱动样板；手机上图可左右滑动</small></div><div class="tbl">${smSvg}</div></div>
+  <h1>交互状态</h1><p class="lead">加载、空数据、失败、无权限也是规范的一部分，不由开发自由发挥。点状态机的节点，下面的样板会真的切到那个画面，搜索和筛选条件不丢。返回时保留条件这条按 X-03，还是建议。</p>
+  <div class="card"><div class="ph"><h2>状态机</h2><small>点节点，样板跟着切。手机上图可以左右滑</small></div><div class="tbl">${smSvg}</div></div>
   <div class="card"><iframe class="frame tall" data-sample data-states title="样板（交互状态）" src="${P.sample}?frame=states" loading="lazy"></iframe></div>
   <h2>规则</h2>${cards(['C-06', 'C-07', 'B-04', 'P-03', 'X-03', 'X-11'], true)}
 </section>
 
 <section data-panel="cross" hidden>
-  <h1>跨端适配</h1><p class="lead">哪些必须一样、哪些允许不一样，以前没人拍板。本轮的划分是：「含义」统一，「尺寸和摆放」适配，「平台自带的东西」直接引用平台。点右上「适配」只剩三端做法不同的条目；点「跨端建议」只看还没转正的 X 规则。</p>
+  <h1>跨端适配</h1><p class="lead">哪些必须一样、哪些允许不一样，以前没人拍板。现在的划分是：含义统一，尺寸和摆放适配，平台自带的东西直接引用平台。点右上「适配」只剩三端做法不同的条目，点「跨端建议」只看还没转正的 X 规则。</p>
   <div class="card"><div class="ph"><h2>规则逐条对照 ${badge('建议')}</h2><div class="presets" id="cross-filter"><button class="btn sec on" data-kind="">全部</button>${KINDS.map((k) => `<button class="btn sec" data-kind="${k}">${k}</button>`).join('')}<button class="btn sec" data-kind="建议">跨端建议</button></div></div>
-    <p class="note">「统一／适配」的划分是本轮建议（01 章标为草案）；每行状态列保留 01 表原文，电脑网页列为已确认，手机网页与小程序列为建议。</p>
+    <p class="note">统一还是适配的划分还是建议，01 章标为草案。每行状态列保留 01 表原文。电脑网页列是已确认，手机网页和小程序列是建议。</p>
     <div class="tbl"><table class="cross"><tr><th>规则</th><th>电脑网页 <small>已确认</small></th><th>手机网页 <small>建议</small></th><th>小程序 <small>建议</small></th><th>结论／样板验证</th><th>状态</th></tr>${crossRows}${xRows}</table></div></div>
-  <div class="card"><h2>变量在三端的值</h2><p class="note">高亮行是有端侧覆盖值的变量：电脑网页值按其状态词，手机网页与小程序的覆盖值均为 ${badge('建议')}，尚未登记采用。原生 App 暂不在范围。</p><div class="tbl"><table class="vars"><tr><th>变量</th><th>电脑网页</th><th>手机网页</th><th>小程序</th><th>状态</th></tr>${varRows}</table></div></div>
-  <div class="card"><h2>小程序原生颜色接入情况</h2>${appDiff ? `<div class="tbl"><table><tr><th>app.json 项</th><th>产品现状</th><th>规范</th><th>比对</th></tr>${appDiff.map((d) => `<tr><td><code>${esc(d.key)}</code></td><td><i class="sw" style="background:${esc(d.cur)}"></i>${esc(d.cur)}</td><td><i class="sw" style="background:${esc(d.spec)}"></i>${esc(d.spec)}</td><td>${d.same ? tag('tag-ok', '一致') : tag('tag-err', '不一致')}</td></tr>`).join('')}</table></div><p class="note">${appMismatch} 项不一致，是第一张待办变更（改产品仓库需授权）。原生 tabBar 与导航栏不认 CSS 变量，只能写十六进制；规范值由 tokens.json 生成到 miniprogram-app.tokens.json。产品现状来自快照 ${esc(appSnap.source || '')}${appSnap.sourceCommit ? `（提交 ${esc(appSnap.sourceCommit)}）` : ''}，重新同步：node tools/sync-product.mjs。</p>` : '<p class="note">尚未同步产品现状快照：运行 node tools/sync-product.mjs 后重新生成。</p>'}</div>
+  <div class="card"><h2>变量在三端的值</h2><p class="note">高亮行是有端侧覆盖值的变量。电脑网页值按它自己的状态词，手机网页和小程序的覆盖值都是 ${badge('建议')}，还没登记采用。原生 App 暂不在范围。</p><div class="tbl"><table class="vars"><tr><th>变量</th><th>电脑网页</th><th>手机网页</th><th>小程序</th><th>状态</th></tr>${varRows}</table></div></div>
+  <div class="card"><h2>小程序原生颜色接入情况</h2>${appDiff ? `<div class="tbl"><table><tr><th>app.json 项</th><th>产品现状</th><th>规范</th><th>比对</th></tr>${appDiff.map((d) => `<tr><td><code>${esc(d.key)}</code></td><td><i class="sw" style="background:${esc(d.cur)}"></i>${esc(d.cur)}</td><td><i class="sw" style="background:${esc(d.spec)}"></i>${esc(d.spec)}</td><td>${d.same ? tag('tag-ok', '一致') : tag('tag-err', '不一致')}</td></tr>`).join('')}</table></div><p class="note">${appMismatch} 项不一致，这是第一张待办变更，改产品仓库要先授权。原生 tabBar 和导航栏不认 CSS 变量，只能写十六进制，规范值由 tokens.json 生成到 miniprogram-app.tokens.json。产品现状来自快照 ${esc(appSnap.source || '')}${appSnap.sourceCommit ? `，提交 ${esc(appSnap.sourceCommit)}` : ''}。重新同步用 node tools/sync-product.mjs。</p>` : '<p class="note">还没同步产品现状快照。运行 node tools/sync-product.mjs 后重新生成。</p>'}</div>
   <h2>跨端建议全文</h2>${cards(byGroup('X').map((r) => r.id))}
 </section>
 
 <section data-panel="team" hidden>
-  <h1>团队怎么用</h1><p class="lead">规则改了谁知道、谁批、谁接入，以前没有流程。本章的流程与角色为 ${badge('建议')}，待部门指定负责人后生效（04 章）。一份来源、四个入口、一道闸门：改规则走变更单和 PR，版本打标签，各产品登记采用。点流程里的一步，看对应模板。</p>
-  <div class="card"><h2>变更流程 ${badge('建议')}</h2><p class="note">点每一步查看说明与模板；手机上图可左右滑动。</p><div class="tbl">${flowSvg}</div></div>
-  <div class="card"><h2>一份来源、四个入口、一道闸门 ${badge('建议')}</h2><div class="arch"><div class="src"><b>一份来源</b><span>specs/salesbuddy/</span><small>规则原文 · tokens.json · 样板 · 模板 · 验收</small></div><div class="arrows">→</div><div class="entries"><div><b>人看</b><span>README、各章、本站</span></div><div><b>开发用</b><span>dist/ 变量产物、rules.json</span></div><div><b>AI 用</b><span>.claude/skills/design-spec 技能 + 按路径规则</span></div><div><b>其他工具</b><span>AGENTS.md、.agents、.cursor、.github</span></div></div><div class="arrows">→</div><div class="gate"><b>一道闸门</b><span>node tools/check.mjs（一条命令）</span><small>生成变量 → 兼容校验 → 规则索引 → 规范站 → 样式检查（报规则编号）→ 技能引用；Claude Code 钩子每次写文件后自动跑</small></div></div></div>
-  <div class="card"><h2>怎么引用 ${badge('建议')}</h2><div class="tbl"><table><tr><th>谁</th><th>怎么写</th></tr><tr><td>产品写需求</td><td>规则编号 + 页面模板 + 样板锚点（样板里可定位的部件名），如「客户列表按 T-02、C-04；返回保留按 X-03（建议）」</td></tr><tr><td>设计出稿</td><td>标注变量名不标数值，如「按钮底色 --ui-primary」</td></tr><tr><td>开发写代码</td><td>只写 var(--ui-*)；PR 描述写规则编号；改完 node tools/check.mjs</td></tr><tr><td>测试验收</td><td>页面验收单逐项填实际结果与证据；空白不算通过</td></tr><tr><td>AI</td><td>技能自动触发；手动 /design-spec；交回规则编号、改动文件、新增变量数、检查输出、证据等级</td></tr></table></div></div>
+  <h1>团队怎么用</h1><p class="lead">规则改了谁知道、谁批、谁接入，以前没有流程。这章的流程和角色还是 ${badge('建议')}，部门指定负责人后生效，见 04 章。一份来源、四个入口、一道闸门。改规则走变更单和 PR，版本打标签，各产品登记采用。点流程里的一步能看到对应模板。</p>
+  <div class="card"><h2>变更流程 ${badge('建议')}</h2><p class="note">点每一步看说明和模板。手机上图可以左右滑。</p><div class="tbl">${flowSvg}</div></div>
+  <div class="card"><h2>一份来源、四个入口、一道闸门 ${badge('建议')}</h2><div class="arch"><div class="src"><b>一份来源</b><span>specs/salesbuddy/</span><small>规则原文 · tokens.json · 样板 · 模板 · 验收</small></div><div class="arrows">→</div><div class="entries"><div><b>人看</b><span>README、各章、本站</span></div><div><b>开发用</b><span>dist/ 变量产物、rules.json</span></div><div><b>AI 用</b><span>.claude/skills/design-spec 技能 + 按路径规则</span></div><div><b>其他工具</b><span>AGENTS.md、.agents、.cursor、.github</span></div></div><div class="arrows">→</div><div class="gate"><b>一道闸门</b><span>node tools/check.mjs（一条命令）</span><small>生成变量、兼容校验、规则索引、规范站、样式检查、技能引用，一次跑完。Claude Code 钩子每次写文件后自动跑</small></div></div></div>
+  <div class="card"><h2>怎么引用 ${badge('建议')}</h2><div class="tbl"><table><tr><th>谁</th><th>怎么写</th></tr><tr><td>产品写需求</td><td>写规则编号、页面模板和样板部件名。比如「客户列表按 T-02、C-04，返回保留按 X-03（建议）」</td></tr><tr><td>设计出稿</td><td>标注变量名不标数值，如「按钮底色 --ui-primary」</td></tr><tr><td>开发写代码</td><td>颜色和尺寸只写 var(--ui-*)。PR 描述写规则编号。改完跑 node tools/check.mjs</td></tr><tr><td>测试验收</td><td>页面验收单逐项填实际结果和证据。空白不算通过</td></tr><tr><td>AI</td><td>技能自动触发，也可以手动输入 /design-spec。交回时说清规则编号、改动文件、新增变量数、检查输出、证据等级</td></tr></table></div></div>
   <div class="card"><h2>角色（人名待填） ${badge('建议')}</h2><div class="tbl"><table><tr><th>角色</th><th>负责</th><th>实际负责人</th></tr>${ROLES.map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>待填</td></tr>`).join('')}</table></div></div>
-  <div class="card"><h2>待决定与已决定</h2><div class="tbl"><table><tr><th>事项</th><th>谁决定</th><th>影响</th><th>状态</th></tr>${decisionRows}</table></div><p class="note">来源：采用登记表.md「待决定事项」。</p></div>
+  <div class="card"><h2>待决定与已决定</h2><div class="tbl"><table><tr><th>事项</th><th>谁决定</th><th>影响</th><th>状态</th></tr>${decisionRows}</table></div><p class="note">来自采用登记表的待决定事项表。</p></div>
   <h2>验收与维护规则（已确认）</h2>${cards(['G-01', 'G-02'], true)}
 </section>
 </main>
