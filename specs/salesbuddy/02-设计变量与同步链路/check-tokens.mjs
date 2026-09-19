@@ -46,4 +46,23 @@ try {
   }
   console.log(`小程序 app.json 原生颜色：${diff === 0 ? '与规范一致' : `${diff} 项与规范不一致（待接入，记录为差距，不算本脚本失败）`}`);
 } catch (e) { console.log('未找到小程序 app.json（设置 MINIPROGRAM_DIR 指向产品仓库的 frontend/miniprogram），跳过原生颜色比对'); }
-process.exit(bad ? 1 : 0);
+
+// 第三段：桥接文件（bridges.json → dist/bridge-*）——引用的 --ui-* 必须存在（build 已保证）；上游变量名只有在产品仓库装了该库时才校验，否则如实说跳过
+try {
+  const bridgesFile = join(here, 'bridges.json');
+  if (existsSync(bridgesFile)) {
+    const bridges = JSON.parse(readFileSync(bridgesFile, 'utf8'));
+    const mpDir = process.env.MINIPROGRAM_DIR || join(here, '..', '..', '..', '..', 'xiaoshouguanli', 'frontend', 'miniprogram');
+    const tdDirs = [join(mpDir, 'miniprogram_npm', 'tdesign-miniprogram'), join(mpDir, 'node_modules', 'tdesign-miniprogram', 'miniprogram_dist')].filter((d) => existsSync(d));
+    if (bridges.tdesign && tdDirs.length) {
+      const { readdirSync, statSync } = await import('node:fs');
+      const walk = (d, out = []) => { for (const n of readdirSync(d)) { const f = join(d, n); if (statSync(f).isDirectory()) walk(f, out); else if (/\.wxss$/.test(n)) out.push(readFileSync(f, 'utf8')); } return out; };
+      const all = walk(tdDirs[0]).join('\n');
+      const missing = Object.keys(bridges.tdesign.map).filter((k) => !all.includes(k));
+      console.log(missing.length ? `桥接校验：tdesign 有 ${missing.length} 个变量名在已安装版本里找不到：${missing.join('、')}（请核对版本）` : '桥接校验：tdesign 变量名在已安装版本里全部存在');
+    } else console.log('桥接校验：产品仓库未安装 tdesign-miniprogram，跳过上游变量名校验（安装后重跑本脚本）');
+    console.log(`桥接映射：${Object.keys(bridges).filter((k) => !k.startsWith('$')).map((k) => `${k} ${Object.keys(bridges[k].map || {}).length} 条`).join('、')}（建议，未在真机与真实工程验证）`);
+  }
+} catch (e) { console.log(`桥接校验出错：${e.message}`); process.exitCode = 1; }
+
+process.exit(bad || process.exitCode ? 1 : 0);

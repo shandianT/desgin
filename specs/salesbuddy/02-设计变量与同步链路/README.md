@@ -30,6 +30,8 @@ tokens.json（唯一维护源，人改）
    ├─ dist/design-tokens.css               电脑网页 + 手机网页（≤600px 用媒体查询覆盖）
    ├─ dist/design-tokens.wxss              微信小程序（page{} 根节点，px 逻辑像素）
    ├─ dist/miniprogram-app.tokens.json     小程序 app.json 的 tabBar／window 颜色片段（原生组件不认 CSS 变量）
+   ├─ dist/bridge-tdesign.wxss／.css、bridge-semi.css、bridge-antd.theme.json、桥接说明.md
+   │                                        上游组件库主题桥接（由 bridges.json 生成；建议，见 ../05-组件生态选型.md）
    ├─ dist/design-tokens.json              原生 App 或其他工具读取的扁平表
    └─ dist/变量对照表.md                    给人看的中文表：每个变量在四端的值、状态、规则编号
    │  node check-tokens.mjs
@@ -128,7 +130,7 @@ sales-web 工程里已经有一份自己的 `design-tokens.css`（1.0.0 示例�
 
 ```
 cd specs/salesbuddy/02-设计变量与同步链路
-node build-tokens.mjs        # 生成 dist/
+node build-tokens.mjs        # 生成 dist/（含 bridges.json 定义的上游组件库桥接文件与主色十档派生）
 node check-tokens.mjs        # 校验兼容与小程序接入情况（比对产品仓库的 app.json，位置由 MINIPROGRAM_DIR 指定）
 cd ../../.. && node tools/sync-product.mjs   # 把产品 app.json 的 window／tabBar 复制成仓库内快照 产品现状/miniprogram-app.json，规范站只读这份快照
 ```

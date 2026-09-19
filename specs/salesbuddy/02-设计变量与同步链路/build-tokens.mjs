@@ -8,13 +8,15 @@
  *   dist/design-tokens.json   其他工具读取的已解析扁平表（原生 App 暂不在范围）
  *   dist/miniprogram-app.tokens.json  小程序 app.json 的 window／tabBar 颜色片段（原生组件不支持 CSS 变量）
  *   dist/变量对照表.md         给人看的中文对照表
+ *   dist/bridge-<库>.css／.wxss／.theme.json  上游组件库主题桥接（bridges.json 定义；建议）＋ dist/桥接说明.md
  *
  * 用法：node build-tokens.mjs        （在本目录执行）
  *       node build-tokens.mjs --check 只校验，不写文件
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { palette, hexToRgb } from './palette.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const src = JSON.parse(readFileSync(join(here, 'tokens.json'), 'utf8'));
@@ -150,6 +152,56 @@ for (const t of semantic) {
 md += `\n## 端侧说明\n\n`;
 for (const p of platforms) md += `- **${pLabel[p]}**：${src.platforms[p].$description}${src.platforms[p].$extensions?.['cn.sensetime.sales-design']?.status ? `（${src.platforms[p].$extensions['cn.sensetime.sales-design'].status}）` : ''}\n`;
 
+// ---------- 6b. 上游组件库主题桥接（bridges.json；建议） ----------
+// 值写法：{ui.名字} → var(--ui-名字)（css／wxss）或已解析字面值（json）；{ui.名字|rgb} → r,g,b；{palette.primary.N} → 主色派生十档（N=1 最浅，6 为主色，10 最深）
+const bridgesFile = join(here, 'bridges.json');
+const bridges = existsSync(bridgesFile) ? JSON.parse(readFileSync(bridgesFile, 'utf8')) : null;
+const bridgeOut = []; // {file, text}
+let bridgeMd = '';
+const primaryScale = palette(platformValue('web', sv('primary')));
+if (bridges) {
+  const toRgb = (hex) => { const { r, g, b } = hexToRgb(hex); return `${r},${g},${b}`; };
+  const resolveBridge = (expr, fmt, platform) => {
+    const m = String(expr).match(/^\{(ui|palette)\.([^|}]+)(?:\|(rgb))?\}$/);
+    if (!m) return { text: String(expr), literal: expr };
+    const [, kind, path, mod] = m;
+    let hex, token;
+    if (kind === 'ui') { token = sv(path); if (!token) throw new Error(`bridges.json 引用了不存在的变量 --ui-${path}`); hex = platformValue(platform, token); }
+    else { const [name, n] = path.split('.'); if (name !== 'primary' || !(n >= 1 && n <= 10)) throw new Error(`bridges.json 派生色阶写法错误：${expr}`); hex = primaryScale[n - 1]; }
+    if (mod === 'rgb') return { text: toRgb(hex), literal: toRgb(hex) };
+    if (kind === 'ui' && fmt !== 'json') return { text: `var(${token.css})`, literal: unit(token.type, hex) };
+    if (fmt === 'json' && token && token.type === 'dimension') return { text: String(hex), literal: px(hex) };
+    return { text: unit(token ? token.type : 'color', hex), literal: unit(token ? token.type : 'color', hex) };
+  };
+  bridgeMd = `# 上游组件库主题桥接说明（自动生成）\n\n由 build-tokens.mjs 从 bridges.json 生成；改映射请改 bridges.json。状态：**建议**（${bridges.$meta.status}）。\n\n原则：${bridges.$meta.principle}。\n\n主色派生十档（按 palette.mjs，建议，待官方生成器复核）：${primaryScale.map((h, i) => `${i + 1}=${h}`).join('、')}。\n\n`;
+  for (const [lib, def] of Object.entries(bridges)) {
+    if (lib.startsWith('$')) continue;
+    const outputs = def.outputs || {};
+    bridgeMd += `## ${lib}\n\n库：${def.library}\n\n`;
+    if (!Object.keys(outputs).length) { bridgeMd += `本轮不生成产物。${def.notes?.todo ? `原因：${def.notes.todo}` : ''}\n\n`; continue; }
+    for (const [fmt, o] of Object.entries(outputs)) {
+      const platform = o.platform || 'web';
+      if (fmt === 'json') {
+        const obj = {};
+        for (const [k, v] of Object.entries(def.map)) { const r = resolveBridge(v, 'json', platform); const parts = k.split('.'); let cur = obj; for (const p of parts.slice(0, -1)) cur = cur[p] ??= {}; cur[parts.at(-1)] = r.literal; }
+        obj.$comment = `由 build-tokens.mjs 从 bridges.json 生成（建议）；${o.include || ''}`;
+        bridgeOut.push({ file: o.file, text: JSON.stringify(obj, null, 2) + '\n' });
+      } else {
+        let text = banner(`${lib} 主题桥接（${platform}；建议，未在真机与真实工程验证）。引入方式：${o.include || ''}`);
+        text += `${o.selector} {\n`;
+        for (const [k, v] of Object.entries(def.map)) text += `  ${k}: ${resolveBridge(v, fmt, platform).text};\n`;
+        text += '}\n';
+        bridgeOut.push({ file: o.file, text });
+      }
+      bridgeMd += `- \`dist/${o.file}\`（${fmt}，${platform}）：${o.include || ''}\n`;
+    }
+    bridgeMd += `\n| 上游变量 | 指向 | 说明 |\n|---|---|---|\n`;
+    for (const [k, v] of Object.entries(def.map)) bridgeMd += `| \`${k}\` | \`${v}\` | ${def.notes?.[k] || ''} |\n`;
+    if (def.notes?.unmapped) bridgeMd += `\n未映射（页面样式直接用 --ui-*）：${def.notes.unmapped}\n`;
+    bridgeMd += '\n';
+  }
+}
+
 // ---------- 7. 写文件 ----------
 if (!checkOnly) {
   mkdirSync(join(here, 'dist'), { recursive: true });
@@ -158,7 +210,9 @@ if (!checkOnly) {
   writeFileSync(join(here, 'dist', 'design-tokens.json'), JSON.stringify(flat, null, 2) + '\n');
   writeFileSync(join(here, 'dist', '变量对照表.md'), md);
   writeFileSync(join(here, 'dist', 'miniprogram-app.tokens.json'), JSON.stringify(appJsonFragment, null, 2) + '\n');
-  console.log(`已生成 ${semantic.length} 个语义变量 → dist/design-tokens.css、design-tokens.wxss、design-tokens.json、miniprogram-app.tokens.json、变量对照表.md`);
+  for (const b of bridgeOut) writeFileSync(join(here, 'dist', b.file), b.text);
+  if (bridges) writeFileSync(join(here, 'dist', '桥接说明.md'), bridgeMd);
+  console.log(`已生成 ${semantic.length} 个语义变量 → dist/design-tokens.css、design-tokens.wxss、design-tokens.json、miniprogram-app.tokens.json、变量对照表.md${bridgeOut.length ? `；桥接 ${bridgeOut.map((b) => b.file).join('、')}、桥接说明.md` : ''}`);
 } else {
   console.log(`校验通过：${semantic.length} 个语义变量，引用均可解析`);
 }

@@ -19,7 +19,7 @@ process.stdin.on('end', () => {
   if (!file) process.exit(0);
   const rel = relative(root, file).split(sep).join('/'); // Windows 下也统一成正斜杠
   const isStyle = /\.(css|wxss|wxml|html|vue|jsx|tsx)$/.test(rel) && !/\/dist\/|1\.0\.0-使用包快照|dist-artifact\.html|\/vendor\/|\/站点\//.test('/' + rel);
-  const isTokens = /(^|\/)tokens\.json$/.test(rel);
+  const isTokens = /(^|\/)(tokens|bridges)\.json$/.test(rel);
   if (/\/dist\/.*\.json$/.test('/' + rel) || /\/产品现状\//.test('/' + rel)) { console.error(`设计规范钩子：${rel} 是生成物或快照，请改源文件（tokens.json）或重新运行 node tools/check.mjs ／ tools/sync-product.mjs`); process.exit(2); }
   if (isTokens) {
     const dir = dirname(file);

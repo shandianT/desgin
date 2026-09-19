@@ -1,0 +1,33 @@
+{
+  "token": {
+    "colorPrimary": "#2863CD",
+    "colorInfo": "#2863CD",
+    "colorLink": "#2863CD",
+    "colorSuccess": "#27694C",
+    "colorWarning": "#805919",
+    "colorError": "#A73F38",
+    "colorText": "#192842",
+    "colorTextSecondary": "#5B6C82",
+    "colorTextTertiary": "#617188",
+    "colorBgLayout": "#F3F5F9",
+    "colorBgContainer": "#FFFFFF",
+    "colorBgElevated": "#FFFFFF",
+    "colorBorder": "#E2E8F0",
+    "colorBorderSecondary": "#E2E8F0",
+    "colorPrimaryBg": "#EDF3FF",
+    "borderRadius": 6,
+    "borderRadiusLG": 12,
+    "controlHeight": 36,
+    "controlHeightLG": 40,
+    "fontSize": 14,
+    "fontSizeSM": 12,
+    "fontSizeLG": 16,
+    "fontSizeHeading3": 24,
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif",
+    "boxShadowSecondary": "0 8px 28px #1928421a, 0 2px 6px #19284208"
+  },
+  "cssVar": {
+    "prefix": "ant"
+  },
+  "$comment": "由 build-tokens.mjs 从 bridges.json 生成（建议）；<ConfigProvider theme={require('./bridge-antd.theme.json')}>；antd 会从 colorPrimary 自行派生十档"
+}

@@ -1,0 +1,41 @@
+/* 部门产品设计变量 1.1.0-draft.1 · 2026-09-19
+ * 由 build-tokens.mjs 从 tokens.json 生成，请勿手工修改；改 tokens.json 后重新生成。
+ * 目标：semi 主题桥接（web；建议，未在真机与真实工程验证）。引入方式：在 semi.min.css 与 design-tokens.css 之后引入；深色模式本期不纳入（细项 D-10）。状态：草案：基础与语义层的值来自已确认的 SalesBuddy Web V1.0（design-tokens.css）；主色 #2863CD 已于 2026-09-19 决定沿用；标注「建议」的条目与端侧映射尚未登记采用；原生 App 暂不在范围
+ */
+body, body .semi-always-light, :host, :host .semi-always-light {
+  --semi-blue-0: 240,248,255;
+  --semi-blue-1: 214,234,255;
+  --semi-blue-2: 165,200,242;
+  --semi-blue-3: 119,165,230;
+  --semi-blue-4: 78,131,217;
+  --semi-blue-5: 40,99,205;
+  --semi-blue-6: 25,69,166;
+  --semi-blue-7: 13,45,128;
+  --semi-blue-8: 4,26,89;
+  --semi-blue-9: 2,13,51;
+  --semi-color-primary: var(--ui-primary);
+  --semi-color-primary-hover: var(--ui-primary-hover);
+  --semi-color-primary-light-default: var(--ui-selected);
+  --semi-color-focus-border: var(--ui-focus);
+  --semi-color-bg-0: var(--ui-background);
+  --semi-color-bg-1: var(--ui-surface);
+  --semi-color-bg-2: var(--ui-surface);
+  --semi-color-bg-3: var(--ui-surface);
+  --semi-color-nav-bg: var(--ui-sidebar);
+  --semi-color-text-0: var(--ui-ink);
+  --semi-color-text-1: var(--ui-secondary);
+  --semi-color-text-2: var(--ui-muted);
+  --semi-color-border: var(--ui-line);
+  --semi-color-fill-0: var(--ui-neutral-soft);
+  --semi-color-danger: var(--ui-danger);
+  --semi-color-danger-light-default: var(--ui-danger-soft);
+  --semi-color-warning: var(--ui-warning);
+  --semi-color-warning-light-default: var(--ui-warning-soft);
+  --semi-color-success: var(--ui-success);
+  --semi-color-success-light-default: var(--ui-success-soft);
+  --semi-white: 255,255,255;
+  --semi-border-radius-medium: var(--ui-radius-control);
+  --semi-border-radius-large: var(--ui-radius-panel);
+  --semi-shadow-elevated: var(--ui-shadow-popup);
+  --semi-color-overlay-bg: var(--ui-overlay);
+}
