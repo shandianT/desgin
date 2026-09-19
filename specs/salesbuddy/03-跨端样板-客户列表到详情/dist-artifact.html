@@ -58,6 +58,7 @@
   --ui-sidebar-active: #2A568B;
   --ui-sidebar-accent: #91BAFF;
   --ui-sidebar-focus: #B9D2FF;
+  --ui-overlay: #142F5473;
 }
 
 /* 手机网页：仅覆盖端侧映射里声明的语义变量（建议，待验证） */
@@ -268,7 +269,7 @@ input { font: inherit; }
   .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
   .nav { order: 2; flex-direction: row; justify-content: space-around; padding: 0 var(--ui-space-1); padding-bottom: env(safe-area-inset-bottom, 0px); min-height: calc(var(--ui-tabbar-height) + env(safe-area-inset-bottom, 0px)); background: var(--ui-surface); color: var(--ui-secondary); border-top: 1px solid var(--ui-line); }
   .brand, .nav-foot, .nav-item.desktop-only { display: none; }
-  .nav-item { flex: 1 1 0; flex-direction: column; justify-content: center; gap: 2px; min-height: var(--ui-tabbar-height); padding: 4px 0; border-radius: 0; color: var(--ui-secondary); font-size: 11px; line-height: 1.2; }
+  .nav-item { flex: 1 1 0; flex-direction: column; justify-content: center; gap: 2px; min-height: var(--ui-tabbar-height); padding: 4px 0; border-radius: 0; color: var(--ui-secondary); font-size: var(--ui-text-small); line-height: 1.2; }
   .nav-item span { display: inline; }
   .nav-item svg { width: 22px; height: 22px; }
   .nav-item:hover { background: none; color: var(--ui-ink); }
@@ -636,14 +637,18 @@ input { font: inherit; }
   [mqMobile, mqTablet].forEach(function (mq) { mq.addEventListener('change', function () { syncDemo(); if (!stacked()) { app.classList.toggle('detail-open', !!state.selectedId && !detailContent.hidden); } }); });
 
   // ---------- 被规范站内嵌时接收指令（改变量、切演示状态、设置搜索词） ----------
+  // 只接受父页面（规范站）的消息；值做白名单：变量值只允许颜色／长度／字体名字符，不允许 url()，状态名只允许已知几种
   window.addEventListener('message', function (e) {
+    if (e.source !== window.parent || e.source === window) return;
+    if (location.protocol !== 'file:' && e.origin !== location.origin) return;
     var d = e.data || {};
-    if (d.type === 'set-token' && /^--ui-[a-z0-9-]+$/.test(d.name || '')) { if (d.value == null || d.value === '') document.documentElement.style.removeProperty(d.name); else document.documentElement.style.setProperty(d.name, d.value); }
+    var okValue = function (v) { return typeof v === 'string' && v.length <= 120 && /^[#a-zA-Z0-9 .,%()\-]*$/.test(v) && !/url\s*\(/i.test(v); };
+    if (d.type === 'set-token' && /^--ui-[a-z0-9-]+$/.test(d.name || '')) { if (d.value == null || d.value === '') document.documentElement.style.removeProperty(d.name); else if (okValue(d.value)) document.documentElement.style.setProperty(d.name, d.value); }
     if (d.type === 'reset-tokens') document.documentElement.removeAttribute('style');
     if (d.type === 'demo') {
-      if (d.list) { state.listState = d.list; save(); renderList(); }
-      if (d.detail) { state.detailState = d.detail; save(); }
-      if (typeof d.q === 'string') { state.q = d.q; save(); renderList(); }
+      if (d.list && ['normal', 'loading', 'error'].indexOf(d.list) >= 0) { state.listState = d.list; save(); renderList(); }
+      if (d.detail && ['normal', 'error', 'forbidden'].indexOf(d.detail) >= 0) { state.detailState = d.detail; save(); }
+      if (typeof d.q === 'string' && d.q.length <= 60) { state.q = d.q; save(); renderList(); }
       if (d.open) { var row = rows.querySelector('.row'); if (row) openDetail(row.dataset.id, true); }
       if (d.close && app.classList.contains('detail-open')) closeDetail();
       syncDemo();
