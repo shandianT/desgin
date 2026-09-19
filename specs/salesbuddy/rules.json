@@ -1,16 +1,31 @@
 {
   "$meta": {
+    "groups": {
+      "P": "设计原则",
+      "V": "视觉",
+      "C": "组件",
+      "T": "页面模板",
+      "B": "业务表达",
+      "G": "验收与维护",
+      "X": "跨端建议",
+      "D": "候选通用原则（多家之长）",
+      "A": "候选 AI 时代原则"
+    },
+    "confirmedGroups": "PVCTBG",
     "generatedFrom": [
       "1.0.0-使用包快照/依据/Web设计规范.md",
       "1.0.0-使用包快照/手册正文.md",
       "02-设计变量与同步链路/tokens.json",
       "03-跨端样板-客户列表到详情/规则映射表.md",
       "1.0.0-使用包快照/依据/Web验收清单.md",
-      "01-三端规则对照表.md"
+      "01-三端规则对照表.md",
+      "06-设计原则-多家之长与AI时代.md"
     ],
     "note": "由 tools/build-rules.mjs 生成，勿手改；规则文字以原文为准，改规则走变更单",
     "confirmed": 26,
-    "suggested": 12
+    "suggested": 12,
+    "crossSuggested": 12,
+    "principleCandidates": 0
   },
   "rules": [
     {

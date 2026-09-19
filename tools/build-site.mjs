@@ -112,7 +112,8 @@ function ruleCard(r, { open = false, extra = '' } = {}) {
   <p><b>怎么检查</b>　${esc(r.check)}</p>
   ${r.tokens.length ? `<p><b>相关变量</b>　${r.tokens.map((t) => `<code>${esc(t)}</code>`).join(' ')}</p>` : ''}
   ${anchors.length ? `<p><b>样板部件</b>　${anchors.map(esc).join('、')}</p>` : ''}
-  ${r.group !== 'X' && r.crossKind ? `<p><b>跨端结论</b>　${esc(r.crossKind)}：${esc(r.crossPlatform || '—')}　<small>（统一／适配划分为本轮建议，见 01 章）</small></p>` : ''}
+  ${r.origin ? `<p><b>来自哪几家</b>　${esc(r.origin)}</p>` : ''}
+  ${/[PVCTBG]/.test(r.group) && r.crossKind ? `<p><b>跨端结论</b>　${esc(r.crossKind)}：${esc(r.crossPlatform || '—')}　<small>（统一／适配划分为本轮建议，见 01 章）</small></p>` : ''}
   ${extra}
   <p class="src">来源：${esc(r.sourceFile)}:${r.sourceLine}${r.status === '建议' ? '　（跨端建议，待登记采用）' : ''}</p></div></details>`;
 }
@@ -146,7 +147,7 @@ const matrix = `<div class="tbl"><table class="matrix"><tr><th>组件</th>${STAT
 
 // 跨端表：分类来自 rules.json 的 crossKind（由 01 表结论列归类，划分本身是建议）；状态列保留 01 表原文
 const crossBadges = (raw) => { const b = []; if (/已确认/.test(raw)) b.push(badge('已确认')); if (/验证（本地）|已验证/.test(raw)) b.push(badge('已验证（本地）')); if (/建议/.test(raw)) b.push(badge('建议')); if (!b.length) b.push(badge('未验证')); return b.join(' '); };
-const crossRows = rules.rules.filter((r) => r.group !== 'X').map((r) => {
+const crossRows = rules.rules.filter((r) => /[PVCTBG]/.test(r.group)).map((r) => {
   const p = r.platforms[0]; const kind = r.crossKind || '未对照';
   const plat = p ? `<td>${esc(p.web)}</td><td>${esc(p.mobileWeb)}</td><td>${esc(p.miniprogram)}</td>` : `<td colspan="3" class="span">不分端：业务口径或流程，三端同一句话</td>`;
   return `<tr data-kind="${esc(kind)}" data-text="${esc(r.id + ' ' + r.scene)}"><td class="idc"><b>${r.id}</b><br><small>${esc(r.scene)}</small></td>${plat}<td><span class="kind">${esc(kind)}</span>${esc(r.crossPlatform || '')}</td><td>${crossBadges(r.crossStatus || '')}<br><small>${esc(r.crossStatus || '')}</small></td></tr>`; }).join('');
@@ -228,7 +229,7 @@ const body = `
   <div class="card brief"><h2>给部门的五分钟</h2>
     <ol>
       <li><b>问题</b>　${problemLine}；哪些必须一样、哪些允许不一样，以前没人拍板。</li>
-      <li><b>做了什么</b>　${rules.$meta.confirmed} 条 Web 规则 ${badge('已确认')}、${rules.$meta.suggested} 条跨端规则 ${badge('建议')}、${sem.length} 个设计变量（${confirmedTokens} ${badge('已确认')}，${suggestedTokens} ${badge('建议')}）、一页「客户列表→详情→返回」样板 ${accept.total ? `${accept.passed}/${accept.total} 项 ${badge('已验证（本地）')}` : badge('未验证')}。</li>
+      <li><b>做了什么</b>　${rules.$meta.confirmed} 条 Web 规则 ${badge('已确认')}、${byGroup('X').length} 条跨端规则 ${badge('建议')}${byGroup('D').length + byGroup('A').length ? `、${byGroup('D').length + byGroup('A').length} 条候选原则（多家之长与 AI 时代）${badge('建议')}` : ''}、${sem.length} 个设计变量（${confirmedTokens} ${badge('已确认')}，${suggestedTokens} ${badge('建议')}）、一页「客户列表→详情→返回」样板 ${accept.total ? `${accept.passed}/${accept.total} 项 ${badge('已验证（本地）')}` : badge('未验证')}。</li>
       <li><b>证据到什么程度</b>　看每张卡片右上角的状态词，含义见下面「五个状态词」。真机、真实工程接入都还没做。</li>
       <li><b>今天要决定的事</b>　${pending.length ? `<ul>${pending.map((d) => `<li>${inline(d.item)}　<small>谁决定：${inline(d.who)} · ${inline(d.status)}</small></li>`).join('')}</ul>` : '暂无'}</li>
       <li><b>要认领的角色</b>　${ROLES.map((r) => r[0]).join('、')}（目前全部待填，见「团队怎么用」）。</li>
@@ -237,12 +238,12 @@ const body = `
     <p class="note">建议汇报顺序（15 分钟）：本页 3 分 → 视觉基础改一个颜色 3 分 → 布局拖宽 2 分 → 交互状态点节点 2 分 → 跨端对照点「适配」2 分 → 回到本页要决策 3 分。</p></div>
   <div class="tiles">
     <div class="tile"><b>${rules.$meta.confirmed}</b><span>条 Web 规则已确认</span><small>P／V／C／T／B／G · 规范 1.0.0＝已确认的 Web 规则</small></div>
-    <div class="tile"><b>${rules.$meta.suggested}</b><span>条跨端建议</span><small>X-01～X-12 · ${esc(specVersion)}＝加上跨端建议的草稿，登记采用后转正</small></div>
+    <div class="tile"><b>${rules.$meta.suggested}</b><span>条建议规则</span><small>跨端 X ${byGroup('X').length} 条${byGroup('D').length + byGroup('A').length ? `、候选原则 D／A ${byGroup('D').length + byGroup('A').length} 条` : ''} · ${esc(specVersion)}＝草稿，登记采用后转正</small></div>
     <div class="tile"><b>${sem.length}</b><span>个设计变量</span><small>${confirmedTokens} 已确认 · ${suggestedTokens} 建议 · ${overrideCount} 个有端侧覆盖值（建议）</small></div>
     <div class="tile">${acceptTile}</div>
   </div>
   <div class="card"><h2>先认识六个词</h2><div class="tbl"><table><tr><th>词</th><th>意思</th></tr><tr><td>设计变量</td><td>颜色、字号、间距的统一名字（如 <code>--ui-primary</code>）；改名字对应的值，各端一起变</td></tr><tr><td>样板</td><td>03 章那页可点的「客户列表→详情→返回」演示页，用来验证规则，不是真实产品</td></tr><tr><td>变更单</td><td>改规则前填的一页表：当前规则、实际问题、候选改法、受影响页面、怎么验证</td></tr><tr><td>登记采用</td><td>某产品的某个端在采用登记表写下「已采用」；收到 ≠ 采用 ≠ 已验证</td></tr><tr><td>视口</td><td>浏览器窗口的宽度；本规范按 >900、601～900、≤600 三档</td></tr><tr><td>PR</td><td>在 Git 上提交一次修改申请，评审通过后合并</td></tr></table></div></div>
-  <div class="card"><h2>五个状态词，别混</h2><div class="tbl"><table><tr><th>词</th><th>含义</th></tr><tr><td>${badge('已确认')}</td><td>Web V1 的 ${rules.$meta.confirmed} 条正式规则及其 1.0.0 已定值的 ${confirmedTokens} 个变量，改它要走变更单</td></tr><tr><td>${badge('建议')}</td><td>跨端 X 规则、新增变量、端侧覆盖值与流程，尚未登记采用</td></tr><tr><td>${badge('业务事实')}</td><td>产品原则与业务口径，不是设计规则</td></tr><tr><td>${badge('已验证（本地）')}</td><td>样板自动验收通过：合成数据、模拟视口，未真机</td></tr><tr><td>${badge('未验证')}</td><td>还没有任何证据</td></tr></table></div></div>
+  <div class="card"><h2>五个状态词，别混</h2><div class="tbl"><table><tr><th>词</th><th>含义</th></tr><tr><td>${badge('已确认')}</td><td>Web V1 的 ${rules.$meta.confirmed} 条正式规则及其 1.0.0 已定值的 ${confirmedTokens} 个变量，改它要走变更单</td></tr><tr><td>${badge('建议')}</td><td>跨端 X 规则、候选原则 D／A、新增变量、端侧覆盖值与流程，尚未登记采用</td></tr><tr><td>${badge('业务事实')}</td><td>产品原则与业务口径，不是设计规则</td></tr><tr><td>${badge('已验证（本地）')}</td><td>样板自动验收通过：合成数据、模拟视口，未真机</td></tr><tr><td>${badge('未验证')}</td><td>还没有任何证据</td></tr></table></div></div>
   <div class="card"><h2>已经决定的事</h2>${decided.length ? `<ul>${decided.map((d) => `<li>${inline(d.item)}：${inline(d.impact)}　<small>${inline(d.status)}</small></li>`).join('')}</ul>` : '<p class="note">暂无</p>'}<p class="note">来源：采用登记表.md「待决定事项」；全表见「团队怎么用」。</p></div>
   <div class="card"><h2>怎么看这个站</h2><ol><li>按左侧七章顺序看。原则章是读的；其余六章每章先有一个能动手的东西，再是对应规则卡片。</li><li>每张卡片折叠时显示编号、场景和要求的第一句，右上角是状态词；点开看完整要求、正反例、怎么检查、来源行号。</li><li>顶部搜索框输入编号或变量名可直接跳到。</li></ol></div>
 </section>
@@ -252,6 +253,8 @@ const body = `
   <h2>设计原则（已确认）</h2>${cards(['P-01', 'P-02', 'P-03'], true)}
   <h2>产品原则（业务事实，共 ${PRINCIPLES.length} 条）</h2>${principleCards}
   <h2>业务表达（已确认）</h2>${cards(['B-01', 'B-02', 'B-03', 'B-04', 'B-05'])}
+  ${byGroup('D').length ? `<h2>候选原则：多家之长 ${badge('建议')}</h2><p class="note">从 Apple、Material、Ant Design、Semi、TDesign、Arco、Fluent、Atlassian、Polaris、GOV.UK、Salesforce、Nielsen 等提炼，来源见 06 章与依据 12～14；待评审后走变更单登记。</p>${cards(byGroup('D').map((r) => r.id))}` : ''}
+  ${byGroup('A').length ? `<h2>候选原则：AI 时代 ${badge('建议')}</h2><p class="note">AI 出草稿、人拍板；标识、依据、可撤销、可追溯、行动前授权。来源见 06 章。</p>${cards(byGroup('A').map((r) => r.id))}` : ''}
 </section>
 
 <section data-panel="visual" hidden>

@@ -33,6 +33,15 @@ lines(manual).forEach((line, i) => {
   const c = cells(line);
   rules.push({ id: m[1], group: 'X', title: c[1], scene: c[1], requirement: c[2], examples: '', check: c[3], status: '建议', scope: '跨端（待样板验证与登记采用）', platforms: [], tokens: [], anchors: [], checks: [], sourceFile: `${DIRS.snapshot}/手册正文.md`, sourceLine: i + 1 });
 });
+// 2b. 候选原则（建议）：06-设计原则-多家之长与AI时代.md 里的 D-xx（通用设计原则）与 A-xx（AI 时代原则）
+//     表格列：| 编号 | 原则 | 要求 | 怎么检查 | 来源（哪几家） |
+const principlesFile = join(specDir, '06-设计原则-多家之长与AI时代.md');
+if (existsSync(principlesFile)) lines(principlesFile).forEach((line, i) => {
+  const m = line.match(/^\| ([DA]-\d{2}) \|/);
+  if (!m) return;
+  const c = cells(line); if (c.length < 5) return;
+  rules.push({ id: m[1], group: m[1][0], title: c[1], scene: c[1], requirement: c[2], examples: '', check: c[3], status: '建议', scope: m[1][0] === 'A' ? 'AI 时代原则（候选，待评审登记）' : '通用设计原则（候选，多家之长，待评审登记）', origin: c[4], platforms: [], tokens: [], anchors: [], checks: [], sourceFile: '06-设计原则-多家之长与AI时代.md', sourceLine: i + 1 });
+});
 const byId = Object.fromEntries(rules.map((r) => [r.id, r]));
 const idsIn = (text) => [...new Set((text.match(/[PVCTBGX]-\d{2}/g) || []))];
 
@@ -71,12 +80,12 @@ if (existsSync(cmpFile)) lines(cmpFile).forEach((line, i) => {
   if (c.length >= 7) { r.platforms = [{ web: c[1], mobileWeb: c[2], miniprogram: c[3], app: c[4] }]; r.crossPlatform = c[5]; r.crossStatus = c[6]; r.crossKind = kindOf(c[5], true); r.crossSourceLine = i + 1; }
   else if (c.length === 3) { r.platforms = []; r.crossPlatform = c[1]; r.crossStatus = c[2]; r.crossKind = kindOf(c[1], false); r.crossSourceLine = i + 1; }
 });
-for (const r of rules) if (r.group !== 'X' && !r.crossKind) { r.crossKind = '未对照'; r.crossStatus = r.crossStatus || '未对照'; }
+for (const r of rules) if (/[PVCTBG]/.test(r.group) && !r.crossKind) { r.crossKind = '未对照'; r.crossStatus = r.crossStatus || '未对照'; }
 
-const out = { $meta: { generatedFrom: [`${DIRS.snapshot}/依据/Web设计规范.md`, `${DIRS.snapshot}/手册正文.md`, `${DIRS.tokens}/tokens.json`, `${DIRS.sample}/规则映射表.md`, `${DIRS.snapshot}/依据/Web验收清单.md`, '01-三端规则对照表.md'], note: '由 tools/build-rules.mjs 生成，勿手改；规则文字以原文为准，改规则走变更单', confirmed: rules.filter((r) => r.status === '已确认').length, suggested: rules.filter((r) => r.status === '建议').length }, rules };
+const out = { $meta: { groups: { P: '设计原则', V: '视觉', C: '组件', T: '页面模板', B: '业务表达', G: '验收与维护', X: '跨端建议', D: '候选通用原则（多家之长）', A: '候选 AI 时代原则' }, confirmedGroups: 'PVCTBG', generatedFrom: [`${DIRS.snapshot}/依据/Web设计规范.md`, `${DIRS.snapshot}/手册正文.md`, `${DIRS.tokens}/tokens.json`, `${DIRS.sample}/规则映射表.md`, `${DIRS.snapshot}/依据/Web验收清单.md`, '01-三端规则对照表.md', '06-设计原则-多家之长与AI时代.md'], note: '由 tools/build-rules.mjs 生成，勿手改；规则文字以原文为准，改规则走变更单', confirmed: rules.filter((r) => r.status === '已确认').length, suggested: rules.filter((r) => r.status === '建议').length, crossSuggested: rules.filter((r) => r.group === 'X').length, principleCandidates: rules.filter((r) => /[DA]/.test(r.group)).length }, rules };
 writeFileSync(join(specDir, 'rules.json'), JSON.stringify(out, null, 2) + '\n');
 
-let md = `# 规则索引（自动生成）\n\n由 \`tools/build-rules.mjs\` 生成，勿手改。已确认 ${out.$meta.confirmed} 条（P／V／C／T／B／G，来自 SalesBuddy Web V1.0），建议 ${out.$meta.suggested} 条（X，跨端）。每条可按「来源」定位到原文行号。「跨端结论」列来自 01-三端规则对照表.md，统一／适配的划分是本轮建议。\n\n| 编号 | 场景 | 要求 | 怎么检查 | 状态 | 跨端结论（建议） | 相关变量 | 样板部件 | 来源 |\n|---|---|---|---|---|---|---|---|---|\n`;
-for (const r of rules) md += `| ${r.id} | ${r.scene} | ${r.requirement} | ${r.check} | ${r.status} | ${r.group === 'X' ? '—' : `${r.crossKind}：${r.crossPlatform || '—'}`} | ${r.tokens.join('、') || '—'} | ${[...new Set(r.anchors)].slice(0, 3).join('、') || '—'} | ${r.sourceFile}:${r.sourceLine} |\n`;
+let md = `# 规则索引（自动生成）\n\n由 \`tools/build-rules.mjs\` 生成，勿手改。已确认 ${out.$meta.confirmed} 条（P／V／C／T／B／G，来自 SalesBuddy Web V1.0），建议 ${out.$meta.suggested} 条（X 跨端 ${out.$meta.crossSuggested} 条；D／A 候选原则 ${out.$meta.principleCandidates} 条）。每条可按「来源」定位到原文行号。「跨端结论」列来自 01-三端规则对照表.md，统一／适配的划分是本轮建议。\n\n| 编号 | 场景 | 要求 | 怎么检查 | 状态 | 跨端结论（建议） | 相关变量 | 样板部件 | 来源 |\n|---|---|---|---|---|---|---|---|---|\n`;
+for (const r of rules) md += `| ${r.id} | ${r.scene} | ${r.requirement} | ${r.check} | ${r.status} | ${/[PVCTBG]/.test(r.group) ? `${r.crossKind}：${r.crossPlatform || '—'}` : r.origin ? `来源：${r.origin}` : '—'} | ${r.tokens.join('、') || '—'} | ${[...new Set(r.anchors)].slice(0, 3).join('、') || '—'} | ${r.sourceFile}:${r.sourceLine} |\n`;
 writeFileSync(join(specDir, '规则索引.md'), md);
 console.log(`规则索引：已确认 ${out.$meta.confirmed} 条，建议 ${out.$meta.suggested} 条 → ${join(specDir, 'rules.json')}、规则索引.md`);
