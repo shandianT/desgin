@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * 一条命令跑完整条链（开发、AI、钩子、CI 都只记这一条）：
- *   对 规范清单.json 里的每套规范：生成变量 → 兼容校验 → 生成规则索引 → 样式检查 → 生成 AI 技能引用文件
+ *   对 规范清单.json 里的每套规范：生成变量 → 兼容校验 → 生成规则索引 → 生成规范站 → 样式检查 → 生成 AI 技能引用文件
  * 选项：
  *   --ci       全部生成后检查生成物与源一致（git diff --exit-code），用于评审前与 CI
  *   --verify   额外跑样板的 Playwright 验收（约 3 分钟，需要 Chromium）
@@ -32,6 +32,7 @@ for (const spec of manifest.specs) {
   run('生成设计变量', 'node', ['build-tokens.mjs'], tok);
   run('变量兼容校验', 'node', ['check-tokens.mjs'], tok);
   run('生成规则索引', 'node', [join(root, 'tools', 'build-rules.mjs'), dir], root);
+  if (spec.siteDir) run('生成规范站', 'node', [join(root, 'tools', 'build-site.mjs'), dir], root);
   run('样式检查（样板与文档）', 'node', [join(root, 'tools', 'lint-styles.mjs'), ...spec.lintTargets.map((t) => join(dir, t)), '--spec', dir], root);
   if (verify && spec.sampleDir) {
     run('样板 Playwright 验收', 'node', ['verify.mjs'], join(dir, spec.sampleDir));

@@ -635,6 +635,21 @@ input { font: inherit; }
   $('demo-empty').addEventListener('click', function () { state.q = '不存在的客户'; save(); renderList(); closeDemo(); q.focus(); });
   [mqMobile, mqTablet].forEach(function (mq) { mq.addEventListener('change', function () { syncDemo(); if (!stacked()) { app.classList.toggle('detail-open', !!state.selectedId && !detailContent.hidden); } }); });
 
+  // ---------- 被规范站内嵌时接收指令（改变量、切演示状态、设置搜索词） ----------
+  window.addEventListener('message', function (e) {
+    var d = e.data || {};
+    if (d.type === 'set-token' && /^--ui-[a-z0-9-]+$/.test(d.name || '')) { if (d.value == null || d.value === '') document.documentElement.style.removeProperty(d.name); else document.documentElement.style.setProperty(d.name, d.value); }
+    if (d.type === 'reset-tokens') document.documentElement.removeAttribute('style');
+    if (d.type === 'demo') {
+      if (d.list) { state.listState = d.list; save(); renderList(); }
+      if (d.detail) { state.detailState = d.detail; save(); }
+      if (typeof d.q === 'string') { state.q = d.q; save(); renderList(); }
+      if (d.open) { var row = rows.querySelector('.row'); if (row) openDetail(row.dataset.id, true); }
+      if (d.close && app.classList.contains('detail-open')) closeDetail();
+      syncDemo();
+    }
+  });
+
   // ---------- 启动 ----------
   renderList();
   listScroll.scrollTop = state.scroll;

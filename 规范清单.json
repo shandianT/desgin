@@ -11,11 +11,22 @@
       "owner": "待填",
       "tokensDir": "02-设计变量与同步链路",
       "sampleDir": "03-跨端样板-客户列表到详情",
-      "lintTargets": ["03-跨端样板-客户列表到详情"],
+      "lintTargets": [
+        "03-跨端样板-客户列表到详情"
+      ],
       "consumers": [
-        { "product": "SalesBuddy 电脑与手机网页（sales-web）", "repo": "不在仓库", "status": "待接入" },
-        { "product": "SalesBuddy 微信小程序", "repo": "shandianT/xiaoshouguanli frontend/miniprogram", "status": "待接入" }
-      ]
+        {
+          "product": "SalesBuddy 电脑与手机网页（sales-web）",
+          "repo": "不在仓库",
+          "status": "待接入"
+        },
+        {
+          "product": "SalesBuddy 微信小程序",
+          "repo": "shandianT/xiaoshouguanli frontend/miniprogram",
+          "status": "待接入"
+        }
+      ],
+      "siteDir": "站点"
     }
   ]
 }

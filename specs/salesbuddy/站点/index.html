@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light"><title>部门产品设计规范</title><link rel="stylesheet" href="../02-设计变量与同步链路/dist/design-tokens.css"><style>
+html, body { height: auto; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ui-background); color: var(--ui-ink); font-family: var(--ui-font); font-size: var(--ui-text-body); line-height: 1.65; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: var(--ui-text-page); font-weight: 650; line-height: 1.5; margin-bottom: var(--ui-space-2); }
+h2 { font-size: var(--ui-text-section); font-weight: 600; margin: var(--ui-space-6) 0 var(--ui-space-3); }
+h3 { font-size: var(--ui-text-body); font-weight: 600; margin: var(--ui-space-4) 0 var(--ui-space-2); color: var(--ui-secondary); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: var(--ui-text-small); background: var(--ui-neutral-soft); padding: 0 4px; border-radius: 4px; }
+button { font: inherit; cursor: pointer; }
+:is(a, button, input, [tabindex="0"]):focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+.skip { position: absolute; left: -9999px; } .skip:focus { left: 8px; top: 8px; background: var(--ui-surface); padding: 8px; z-index: 99; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.site { display: grid; grid-template-columns: var(--ui-nav-width) minmax(0, 1fr); min-height: 100vh; }
+.nav { position: sticky; top: 0; height: 100vh; overflow: auto; background: var(--ui-sidebar); color: var(--ui-sidebar-ink); padding: var(--ui-space-4) var(--ui-space-3); display: flex; flex-direction: column; gap: var(--ui-space-1); }
+.brand { display: flex; gap: var(--ui-space-2); align-items: center; padding: var(--ui-space-2) var(--ui-space-2) var(--ui-space-4); color: var(--ui-on-primary); font-weight: 650; font-size: var(--ui-text-section); line-height: 1.3; }
+.brand small, .pv-nav .mark { display: block; font-weight: 400; font-size: var(--ui-text-small); color: var(--ui-sidebar-muted); }
+.mark { width: 28px; height: 28px; border-radius: 8px; background: var(--ui-primary); color: var(--ui-on-primary); display: grid; place-items: center; font-size: 12px; flex: none; }
+.nav a { display: flex; gap: var(--ui-space-3); align-items: center; min-height: var(--ui-control-height); padding: 0 var(--ui-space-3); border-radius: var(--ui-radius-control); color: var(--ui-sidebar-nav); text-decoration: none; }
+.nav a span { font-size: var(--ui-text-small); opacity: .7; width: 20px; }
+.nav a:hover { background: var(--ui-sidebar-hover); color: var(--ui-on-primary); }
+.nav a[aria-current="page"] { background: var(--ui-sidebar-active); color: var(--ui-on-primary); box-shadow: inset 3px 0 var(--ui-sidebar-accent); font-weight: 600; }
+.navfoot { margin-top: auto; padding: var(--ui-space-3) var(--ui-space-2) 0; font-size: var(--ui-text-small); color: var(--ui-sidebar-muted); display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.navfoot b { width: 100%; color: var(--ui-on-primary); }
+.main { min-width: 0; padding: var(--ui-space-4) var(--ui-page-gutter) var(--ui-space-8); max-width: 1180px; }
+.top { display: flex; gap: var(--ui-space-3); align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: var(--ui-space-4); }
+.find input { height: var(--ui-field-height); width: min(360px, 100%); padding: 0 var(--ui-space-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); color: var(--ui-ink); font: inherit; }
+.topnote { color: var(--ui-muted); font-size: var(--ui-text-small); }
+.lead { color: var(--ui-secondary); max-width: 64em; margin-bottom: var(--ui-space-4); }
+.card { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-card-padding); margin-bottom: var(--ui-space-3); }
+.card > h2:first-child { margin-top: 0; }
+.ph { display: flex; justify-content: space-between; align-items: center; gap: var(--ui-space-3); flex-wrap: wrap; } .ph h2 { margin: 0; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--ui-space-3); margin: var(--ui-space-4) 0; }
+.tile { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-card-padding); }
+.tile b { display: block; font-size: var(--ui-text-metric); font-weight: 650; line-height: 1.2; color: var(--ui-primary); font-variant-numeric: tabular-nums; }
+.tile span { display: block; font-weight: 600; } .tile small { color: var(--ui-muted); font-size: var(--ui-text-small); }
+.st { display: inline-flex; align-items: center; gap: 4px; padding: 0 var(--ui-space-2); border-radius: 4px; font-size: var(--ui-text-small); line-height: 20px; white-space: nowrap; font-weight: 500; }
+.st-ok { background: var(--ui-success-soft); color: var(--ui-success); } .st-warn { background: var(--ui-warning-soft); color: var(--ui-warning); } .st-err { background: var(--ui-danger-soft); color: var(--ui-danger); }
+.st-fact { background: var(--ui-neutral-soft); color: var(--ui-neutral); } .st-local { background: var(--ui-selected); color: var(--ui-primary); } .st-none { background: var(--ui-neutral-soft); color: var(--ui-muted); }
+.rule summary { display: flex; align-items: center; gap: var(--ui-space-3); cursor: pointer; list-style: none; min-height: var(--ui-control-height); }
+.rule summary::-webkit-details-marker { display: none; }
+.rule .rid { font-family: ui-monospace, Menlo, monospace; font-weight: 650; color: var(--ui-primary); min-width: 44px; }
+.rule .rtitle { flex: 1; font-weight: 600; min-width: 0; }
+.rule .st { margin-left: auto; }
+.rbody { padding-top: var(--ui-space-3); border-top: 1px solid var(--ui-line); margin-top: var(--ui-space-3); display: flex; flex-direction: column; gap: var(--ui-space-2); }
+.req { font-size: var(--ui-text-section); line-height: 1.6; }
+.src, .note { color: var(--ui-muted); font-size: var(--ui-text-small); }
+.rule.hit { outline: 2px solid var(--ui-focus); }
+.tbl { overflow-x: auto; } table { border-collapse: collapse; width: 100%; } th, td { text-align: left; vertical-align: top; padding: var(--ui-space-2) var(--ui-space-3); border-bottom: 1px solid var(--ui-line); } th { color: var(--ui-secondary); font-weight: 600; font-size: var(--ui-text-small); white-space: nowrap; }
+tr.diff td { background: var(--ui-selected); }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 1px solid var(--ui-line); vertical-align: -2px; margin-right: 6px; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--ui-space-3); }
+.tks { display: flex; flex-direction: column; gap: 4px; max-height: 360px; overflow: auto; }
+.tk { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: var(--ui-space-2); align-items: center; min-height: 32px; }
+.tk span { display: none; } .tk code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tk input[type=color] { width: 40px; height: 28px; padding: 0; border: 1px solid var(--ui-line); border-radius: 6px; background: var(--ui-surface); }
+.tk input[type=number] { width: 44px; height: 28px; padding: 0 4px; border: 1px solid var(--ui-line); border-radius: 6px; font: inherit; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: var(--ui-control-height); padding: 0 var(--ui-space-3); border-radius: var(--ui-radius-control); border: 1px solid transparent; }
+.btn.pri { background: var(--ui-primary); color: var(--ui-on-primary); } .btn.pri:hover { background: var(--ui-primary-hover); }
+.btn.sec { background: var(--ui-surface); color: var(--ui-primary); border-color: var(--ui-line); } .btn.sec:hover, .btn.sec.on { background: var(--ui-selected); border-color: var(--ui-primary); }
+.presets { display: flex; gap: var(--ui-space-2); flex-wrap: wrap; }
+.preview .pv-nav { display: flex; gap: var(--ui-space-2); align-items: center; background: var(--ui-sidebar); color: var(--ui-sidebar-nav); padding: var(--ui-space-2) var(--ui-space-3); border-radius: var(--ui-radius-control) var(--ui-radius-control) 0 0; }
+.pv-nav a { padding: 4px var(--ui-space-3); border-radius: var(--ui-radius-control); } .pv-nav a.on { background: var(--ui-sidebar-active); color: var(--ui-on-primary); box-shadow: inset 3px 0 var(--ui-sidebar-accent); }
+.pv-work { background: var(--ui-background); padding: var(--ui-space-3); border-radius: 0 0 var(--ui-radius-control) var(--ui-radius-control); }
+.pv-surface { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-card-padding); }
+.pv-title { font-size: var(--ui-text-page); font-weight: 650; } .pv-title small { font-size: var(--ui-text-small); color: var(--ui-secondary); font-weight: 400; margin-left: var(--ui-space-2); }
+.pv-btns { display: flex; gap: var(--ui-space-2); align-items: center; margin: var(--ui-space-3) 0; flex-wrap: wrap; }
+.ui-btn { min-height: var(--ui-control-height); padding: 0 var(--ui-space-4); border-radius: var(--ui-radius-control); border: 1px solid transparent; font: inherit; }
+.ui-primary { background: var(--ui-primary); color: var(--ui-on-primary); } .ui-primary:hover, .ui-primary.is-hover { background: var(--ui-primary-hover); }
+.ui-secondary { background: var(--ui-surface); color: var(--ui-primary); border-color: var(--ui-line); } .ui-secondary:hover, .ui-secondary.is-hover { background: var(--ui-selected); }
+.ui-btn:disabled { opacity: .55; cursor: not-allowed; } .is-focus { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+.ui-field { display: flex; flex-direction: column; gap: 4px; font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.ui-field input { height: var(--ui-field-height); padding: 0 var(--ui-space-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); font: inherit; font-size: var(--ui-text-body); color: var(--ui-ink); background: var(--ui-surface); width: 100%; min-width: 150px; }
+.ui-field input.is-hover { border-color: var(--ui-focus); } .ui-field input:disabled { background: var(--ui-neutral-soft); } .ui-field.is-error input { border-color: var(--ui-danger); }
+.ui-err { color: var(--ui-danger); font-size: var(--ui-text-small); display: block; margin-top: 4px; }
+.ui-select { display: inline-flex; justify-content: space-between; gap: var(--ui-space-2); min-width: 170px; height: var(--ui-control-height); padding: 0 var(--ui-space-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); color: var(--ui-ink); font: inherit; align-items: center; }
+.ui-select.is-hover { border-color: var(--ui-focus); } .ui-select:disabled { opacity: .55; } .ui-select i { font-style: normal; color: var(--ui-muted); }
+.ui-chip { display: inline-flex; align-items: center; min-height: 32px; padding: 0 var(--ui-space-3); border-radius: 999px; border: 1px solid var(--ui-line); color: var(--ui-secondary); background: var(--ui-surface); }
+.ui-chip.is-hover { border-color: var(--ui-focus); color: var(--ui-primary); } .ui-chip.on { background: var(--ui-selected); border-color: var(--ui-primary); color: var(--ui-primary); font-weight: 600; } .ui-chip.off { opacity: .55; }
+.ui-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px var(--ui-space-3); padding: var(--ui-space-2) var(--ui-space-3); border-bottom: 1px solid var(--ui-line); min-width: 200px; align-items: center; }
+.ui-row b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ui-row small { color: var(--ui-secondary); font-size: var(--ui-text-small); grid-column: 1; } .ui-row .st, .ui-row em { grid-column: 2; grid-row: 1 / 3; align-self: center; font-style: normal; color: var(--ui-muted); font-size: var(--ui-text-small); }
+.ui-row.is-hover { background: var(--ui-background); } .ui-row.on { background: var(--ui-selected); box-shadow: inset 3px 0 var(--ui-primary); }
+.matrix td { min-width: 150px; }
+.ts { display: flex; justify-content: space-between; align-items: baseline; gap: var(--ui-space-3); padding: var(--ui-space-2) 0; border-bottom: 1px solid var(--ui-line); }
+.ss { display: grid; grid-template-columns: 40px auto minmax(0, 1fr); gap: var(--ui-space-3); align-items: center; padding: 4px 0; font-size: var(--ui-text-small); color: var(--ui-secondary); } .ss i { display: block; height: 12px; background: var(--ui-primary); border-radius: 2px; }
+.frame { width: 100%; height: 560px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); display: block; } .frame.tall { height: 640px; }
+.resizer { resize: horizontal; overflow: hidden; min-width: 280px; max-width: 100%; width: 100%; border: 2px dashed var(--ui-line); border-radius: var(--ui-radius-control); padding: 4px; }
+.readout { font-weight: 600; margin: var(--ui-space-3) 0; color: var(--ui-primary); font-variant-numeric: tabular-nums; }
+.ascii pre { margin: var(--ui-space-3) 0 0; padding: var(--ui-space-3); background: var(--ui-background); border-radius: var(--ui-radius-control); font-size: var(--ui-text-small); overflow-x: auto; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--ui-space-3); } figure { margin: 0; } figure img { width: 100%; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); } figcaption { font-size: var(--ui-text-small); color: var(--ui-secondary); margin-top: 4px; }
+svg.flow, svg.sm { width: 100%; height: auto; max-width: 100%; }
+.node rect { fill: var(--ui-surface); stroke: var(--ui-primary); stroke-width: 1.5; } .node text { fill: var(--ui-ink); font-size: 14px; text-anchor: middle; font-weight: 600; } .node { cursor: pointer; } .node:hover rect, .node:focus rect, .node.on rect { fill: var(--ui-selected); } .node:focus { outline: none; }
+.arrow, .edge { stroke: var(--ui-muted); stroke-width: 1.5; fill: none; } .el { fill: var(--ui-secondary); font-size: 11px; text-anchor: middle; paint-order: stroke; stroke: var(--ui-surface); stroke-width: 4px; }
+.arch { display: grid; grid-template-columns: 1fr auto 1.4fr auto 1fr; gap: var(--ui-space-3); align-items: center; } .arch > div { border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); padding: var(--ui-space-3); } .arch .arrows { border: 0; text-align: center; color: var(--ui-muted); font-size: var(--ui-text-page); }
+.arch b { display: block; color: var(--ui-primary); } .arch span { display: block; font-weight: 600; } .arch small { color: var(--ui-muted); font-size: var(--ui-text-small); } .entries { display: grid; gap: var(--ui-space-2); } .entries > div { border: 1px solid var(--ui-line); border-radius: 6px; padding: var(--ui-space-2); }
+.modal { position: fixed; inset: 0; background: rgb(25 40 66 / .45); display: grid; place-items: center; padding: var(--ui-space-4); z-index: 50; } .modal[hidden] { display: none; }
+.mbox { background: var(--ui-surface); border-radius: var(--ui-radius-panel); max-width: 860px; width: 100%; max-height: 90vh; overflow: auto; padding: var(--ui-card-padding); box-shadow: var(--ui-shadow-popup); }
+.mh { display: flex; justify-content: space-between; align-items: center; gap: var(--ui-space-3); margin-bottom: var(--ui-space-3); } .mh h2 { margin: 0; }
+.mb h3, .mb h4, .mb h5 { margin: var(--ui-space-4) 0 var(--ui-space-2); } .mb p { margin: 0 0 var(--ui-space-2); } .mb blockquote { margin: 0 0 var(--ui-space-2); padding-left: var(--ui-space-3); border-left: 3px solid var(--ui-line); color: var(--ui-secondary); }
+@media (max-width: 900px) {
+  .site { grid-template-columns: minmax(0, 1fr); }
+  .nav { position: sticky; top: 0; height: auto; flex-direction: row; overflow-x: auto; gap: var(--ui-space-2); padding: var(--ui-space-2) var(--ui-page-gutter); z-index: 5; }
+  .brand { display: none; } .navfoot { display: none; } .nav a { flex: none; min-height: var(--ui-touch-target); } .nav a span { display: none; }
+  .two { grid-template-columns: minmax(0, 1fr); } .arch { grid-template-columns: minmax(0, 1fr); } .arch .arrows { transform: rotate(90deg); }
+  .frame, .frame.tall { height: 520px; } .resizer { resize: none; }
+  .tile b { font-size: var(--ui-text-page); }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">跳到内容</a>
+<div class="site">
+<nav class="nav" aria-label="章节">
+  <div class="brand"><span class="mark">SB</span><span>部门产品设计规范<small>SalesBuddy · 1.1.0-draft.1</small></span></div>
+  <a href="#home" data-nav="home"><span>00</span>首页</a><a href="#principles" data-nav="principles"><span>01</span>原则</a><a href="#visual" data-nav="visual"><span>02</span>视觉基础</a><a href="#components" data-nav="components"><span>03</span>组件</a><a href="#layout" data-nav="layout"><span>04</span>布局</a><a href="#states" data-nav="states"><span>05</span>交互状态</a><a href="#cross" data-nav="cross"><span>06</span>跨端适配</a><a href="#team" data-nav="team"><span>07</span>团队怎么用</a>
+  <div class="navfoot"><b>状态词</b><span class="st st-ok">已确认</span> <span class="st st-warn">建议</span> <span class="st st-fact">业务事实</span> <span class="st st-local">已验证（本地）</span> <span class="st st-none">未验证</span></div>
+</nav>
+<main class="main" id="main">
+<header class="top"><label class="find"><span class="sr">查规则编号或变量名</span><input id="find" type="search" placeholder="查编号或变量，如 T-02、--ui-primary"></label><span class="topnote">生成于 rules.json 与 dist 产物 · 本站不含任何手写规则</span></header>
+
+<section data-panel="home">
+  <h1>让用户看清信息、完成操作；让产品、设计、开发、测试和 AI 用同一套规则</h1>
+  <p class="lead">这个站由规范仓库的源文件生成：规则来自 <code>rules.json</code>，颜色和间距来自 <code>tokens.json</code>，样板与验收来自 03 章。改源文件、跑一条命令，站点随之更新；站点本身不是第二份规范。</p>
+  <div class="tiles">
+    <div class="tile"><b>26</b><span>条 Web 规则已确认</span><small>P／V／C／T／B／G，1.0.0</small></div>
+    <div class="tile"><b>12</b><span>条跨端建议</span><small>X-01～X-12，待登记采用</small></div>
+    <div class="tile"><b>52</b><span>个设计变量</span><small>36 已确认 · 16 建议</small></div>
+    <div class="tile"><b>252/252</b><span>项样板验收通过</span><small>本地合成数据 · 8 个视口</small></div>
+  </div>
+  <div class="card"><h2>五个状态词，别混</h2><div class="tbl"><table><tr><th>词</th><th>含义</th></tr><tr><td><span class="st st-ok">已确认</span></td><td>Web V1 的 26 条正式规则，改它要走变更单</td></tr><tr><td><span class="st st-warn">建议</span></td><td>跨端 X 规则、新增变量与流程，尚未登记采用</td></tr><tr><td><span class="st st-fact">业务事实</span></td><td>产品原则与业务口径，不是设计规则</td></tr><tr><td><span class="st st-local">已验证（本地）</span></td><td>样板自动验收通过：合成数据、模拟视口，未真机</td></tr><tr><td><span class="st st-none">未验证</span></td><td>还没有任何证据</td></tr></table></div></div>
+  <div class="card"><h2>已经决定的事</h2><ul><li>主色沿用 <code>--ui-primary</code>（已确认值），小程序待接入。</li><li>部门仓库 shandianT/desgin 是共同入口，文件约定 + Git，无后端。</li><li>原生 App 暂不在范围。</li></ul></div>
+  <div class="card"><h2>怎么看这个站</h2><ol><li>按左侧七章顺序看，每章先有一个能动手的东西，再是对应规则卡片。</li><li>每张卡片右上角是状态词；点卡片展开要求、正反例、怎么检查、来源行号。</li><li>顶部搜索框输入编号或变量名可直接跳到。</li></ol></div>
+</section>
+
+<section data-panel="principles" hidden>
+  <h1>原则</h1><p class="lead">先定「优先解决谁的什么问题，遇到取舍怎么判」。设计原则 P 是已确认规则；产品原则是业务事实；业务表达 B 规定客户、商机、缺失值、红黄绿灰怎么说。</p>
+  <h2>设计原则（已确认）</h2><details class="card rule" id="rule-P-01" data-id="P-01"><summary><span class="rid">P-01</span><span class="rtitle">所有页面</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">先呈现对象、重点状态与主要动作；摘要后可看完整事实</p>
+  <p><b>正确示例／反例</b>　正：商机名称＋需关注＋变化摘要；反：所有信息同字号同权重</p>
+  <p><b>怎么检查</b>　首屏能回答“这是谁、发生什么、下一步做什么”</p>
+  
+  <p><b>样板部件</b>　详情摘要卡</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:33</p></div></details><details class="card rule" id="rule-P-02" data-id="P-02"><summary><span class="rid">P-02</span><span class="rtitle">多区域页面</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">用标题、留白、面板边界区分总览、操作、结果；每区一个主要动作</p>
+  <p><b>正确示例／反例</b>　正：首页待办与动态独立；反：一长列同质卡片</p>
+  <p><b>怎么检查</b>　隐去内容后仍能辨认分区；操作归属明确</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:34</p></div></details><details class="card rule" id="rule-P-03" data-id="P-03"><summary><span class="rid">P-03</span><span class="rtitle">连续操作</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">失败、取消或切换展示时保留有效输入；处理反馈与事实状态分别表达</p>
+  <p><b>正确示例／反例</b>　正：质检失败可回到原文；反：一失败就清空</p>
+  <p><b>怎么检查</b>　填写长文本后制造校验失败，内容仍完整</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:35</p></div></details>
+  <h2>产品原则（业务事实）</h2>
+  <details class="card rule fact"><summary><span class="rid">原则</span><span class="rtitle">以客户为核心，不以订单或商机为核心</span><span class="st st-fact">业务事实</span></summary><div class="rbody"><p class="req">客户下面挂商机、拜访、毛利、合同；一个客户可有多条商机。</p><p class="src">来源：产品仓库 CLAUDE.md「必须遵守的产品原则」</p></div></details>
+  <details class="card rule fact"><summary><span class="rid">原则</span><span class="rtitle">销售不手工打分、不填复杂表单</span><span class="st st-fact">业务事实</span></summary><div class="rbody"><p class="req">语音口述拜访 → Agent 结构化 → 人工确认归档；象限、风险、画像由 Agent 依据已确认事实重算，不可手工拖动或改分。</p><p class="src">来源：产品仓库 CLAUDE.md</p></div></details>
+  <details class="card rule fact"><summary><span class="rid">原则</span><span class="rtitle">四条不可破坏的原则</span><span class="st st-fact">业务事实</span></summary><div class="rbody"><p class="req">同一对象、同一事实、统一权限、关键动作可确认可追溯。</p><p class="src">来源：产品仓库 CLAUDE.md</p></div></details>
+  <details class="card rule fact"><summary><span class="rid">原则</span><span class="rtitle">Agent 只生成草稿和洞察</span><span class="st st-fact">业务事实</span></summary><div class="rbody"><p class="req">写入正式业务表必须经人工确认；权限由服务端判定，数据库 RLS 兜底。</p><p class="src">来源：产品仓库 CLAUDE.md</p></div></details>
+  <h2>业务表达（已确认）</h2><details class="card rule" id="rule-B-01" data-id="B-01"><summary><span class="rid">B-01</span><span class="rtitle">红黄绿灰灯</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">业务变化使用红“转差”、黄“需关注”、绿“向好”、灰“待评估”，同时呈现判断依据；沿用业务来源结果，不从颜色、关键词或缺失字段推断</p>
+  <p><b>正确示例／反例</b>　正：更新成功但判断未返回显示待评估；反：所有保存成功一律绿色向好</p>
+  <p><b>怎么检查</b>　使用四类业务返回检查标签、摘要、依据及关注计数；技术保存成功不冒充业务判断</p>
+  <p><b>相关变量</b>　<code>--ui-danger</code> <code>--ui-danger-soft</code> <code>--ui-warning</code> <code>--ui-warning-soft</code> <code>--ui-success</code> <code>--ui-success-soft</code> <code>--ui-neutral</code> <code>--ui-neutral-soft</code></p>
+  <p><b>样板部件</b>　列表行、红黄绿灰标签</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:101</p></div></details><details class="card rule" id="rule-B-02" data-id="B-02"><summary><span class="rid">B-02</span><span class="rtitle">对象与状态</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">客户、商机、拜访、任务各自有事实来源；任务已接受仍未完成；下一步计划未创建任务前不计入任务</p>
+  <p><b>正确示例／反例</b>　正：“已接受，待执行”；反：“接收方已确认”配已完成</p>
+  <p><b>怎么检查</b>　查看实际状态字段与持久化记录；不能仅凭展示推断完成</p>
+  
+  <p><b>样板部件</b>　列表行、象限判断依据、在推商机、待办与任务页签</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:102</p></div></details><details class="card rule" id="rule-B-03" data-id="B-03"><summary><span class="rid">B-03</span><span class="rtitle">金额、时间与缺失</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">ACV、确收、回款分别标注；0 仅用于明确零值；缺失显示未填写／未登记，处理中显示加载；金额有币种单位，完整日期带年份，动态时间展开可查</p>
+  <p><b>正确示例／反例</b>　正：¥ 0 与未登记并列；反：用导入当天补齐所有关单日期</p>
+  <p><b>怎么检查</b>　对照源数据；大金额和跨年日期无歧义；缺失不得臆造</p>
+  
+  <p><b>样板部件</b>　「未填写跟进」「ACV 未登记」「象限：待评估」、在推商机</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:103</p></div></details><details class="card rule" id="rule-B-04" data-id="B-04"><summary><span class="rid">B-04</span><span class="rtitle">AI 流程</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">核对内容→质检→人工确认→归档；处理中可见阶段；失败保留输入且可重试或返回；超时走已有恢复机制；质检完成不等于归档</p>
+  <p><b>正确示例／反例</b>　正：“已生成建议，待人工确认”；反：“AI 正在分析”时让用户误以为还能填写被锁字段</p>
+  <p><b>怎么检查</b>　草稿、处理中、失败、待确认、归档各自回读；仅真实归档回执可显示已归档</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:104</p></div></details><details class="card rule" id="rule-B-05" data-id="B-05"><summary><span class="rid">B-05</span><span class="rtitle">范围与权限</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">范围名邻近数据；权限与 capability 以服务端契约为准；前端隐藏按钮不等同于权限校验</p>
+  <p><b>正确示例／反例</b>　正：“本人／团队”对应同一授权范围；反：依靠角色名称猜写权限</p>
+  <p><b>怎么检查</b>　核对列表、详情和操作返回的权限；示例册合成数据不算权限验证</p>
+  
+  <p><b>样板部件</b>　列表标题 + 范围 + 总数、空数据／加载中／失败／无权限、辅栏「风险与关注」与「范围与权限」</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:105</p></div></details>
+</section>
+
+<section data-panel="visual" hidden>
+  <h1>视觉基础</h1><p class="lead">颜色、字号、间距、圆角都是变量。左边改一个值，右边的预览和下面的样板会一起变，这就是「改一处、各端同步」在浏览器里的样子。改完可以一键生成变更单草稿；这里的修改只在你的浏览器里，不会写回仓库。</p>
+  <div class="two">
+    <div class="card panel"><div class="ph"><h2>变量面板</h2><div><button class="btn sec" id="tk-reset">重置</button><button class="btn pri" id="tk-copy">复制为变更单草稿</button></div></div>
+      <h3>颜色</h3><div class="tks"><label class="tk"><input type="color" data-token="--ui-background" value="#F3F5F9"><code>--ui-background</code><span>工作区背景</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-surface" value="#FFFFFF"><code>--ui-surface</code><span>内容面板</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-sidebar" value="#142F54"><code>--ui-sidebar</code><span>深蓝导航</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-ink" value="#192842"><code>--ui-ink</code><span>正文文字</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-secondary" value="#5B6C82"><code>--ui-secondary</code><span>次要文字</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-muted" value="#617188"><code>--ui-muted</code><span>辅助文字</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-primary" value="#2863CD"><code>--ui-primary</code><span>主要操作、选中</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-primary-hover" value="#2055B5"><code>--ui-primary-hover</code><span>主要操作悬停</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-line" value="#E2E8F0"><code>--ui-line</code><span>边线</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-selected" value="#EDF3FF"><code>--ui-selected</code><span>选中底色</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-focus" value="#5786DC"><code>--ui-focus</code><span>键盘焦点轮廓</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-danger" value="#A73F38"><code>--ui-danger</code><span>红：转差／错误文字</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-danger-soft" value="#FBE4DF"><code>--ui-danger-soft</code><span>红底</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-warning" value="#805919"><code>--ui-warning</code><span>黄：需关注文字</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-warning-soft" value="#FFF0CF"><code>--ui-warning-soft</code><span>黄底</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-success" value="#27694C"><code>--ui-success</code><span>绿：向好文字</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-success-soft" value="#E8F5EE"><code>--ui-success-soft</code><span>绿底</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-neutral" value="#56677E"><code>--ui-neutral</code><span>灰：待评估文字</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-neutral-soft" value="#EEF2F7"><code>--ui-neutral-soft</code><span>灰底</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="color" data-token="--ui-on-primary" value="#FFFFFF"><code>--ui-on-primary</code><span>主操作按钮上的文字</span><span class="st st-warn">建议</span></label><label class="tk"><input type="color" data-token="--ui-sidebar-ink" value="#E7EFFA"><code>--ui-sidebar-ink</code><span>深蓝导航主文字（theme.css 已有实现）</span><span class="st st-warn">建议</span></label><label class="tk"><input type="color" data-token="--ui-sidebar-nav" value="#C2D1E6"><code>--ui-sidebar-nav</code><span>导航项文字</span><span class="st st-warn">建议</span></label><label class="tk"><input type="color" data-token="--ui-sidebar-muted" value="#B4C7E1"><code>--ui-sidebar-muted</code><span>导航次要文字</span><span class="st st-warn">建议</span></label><label class="tk"><input type="color" data-token="--ui-sidebar-hover" value="#23466F"><code>--ui-sidebar-hover</code><span>导航悬停底</span><span class="st st-warn">建议</span></label><label class="tk"><input type="color" data-token="--ui-sidebar-active" value="#2A568B"><code>--ui-sidebar-active</code><span>导航当前项底</span><span class="st st-warn">建议</span></label><label class="tk"><input type="color" data-token="--ui-sidebar-accent" value="#91BAFF"><code>--ui-sidebar-accent</code><span>导航当前项亮条</span><span class="st st-warn">建议</span></label><label class="tk"><input type="color" data-token="--ui-sidebar-focus" value="#B9D2FF"><code>--ui-sidebar-focus</code><span>导航上的键盘焦点轮廓</span><span class="st st-warn">建议</span></label></div>
+      <h3>字号、间距、尺寸（px）</h3><div class="tks"><label class="tk"><input type="number" min="0" max="64" data-token="--ui-text-small" data-unit="px" value="12"><code>--ui-text-small</code><span>辅助信息</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-text-body" data-unit="px" value="14"><code>--ui-text-body</code><span>正文</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-text-section" data-unit="px" value="16"><code>--ui-text-section</code><span>分区标题</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-text-page" data-unit="px" value="24"><code>--ui-text-page</code><span>页面标题</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-text-metric" data-unit="px" value="32"><code>--ui-text-metric</code><span>关键数字</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-space-1" data-unit="px" value="4"><code>--ui-space-1</code><span>4：图标与文字</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-space-2" data-unit="px" value="8"><code>--ui-space-2</code><span>8：同组控件</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-space-3" data-unit="px" value="12"><code>--ui-space-3</code><span>12：行内区域</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-space-4" data-unit="px" value="16"><code>--ui-space-4</code><span>16：内容块</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-space-6" data-unit="px" value="24"><code>--ui-space-6</code><span>24：面板内边距</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-space-8" data-unit="px" value="32"><code>--ui-space-8</code><span>32：大分区</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-radius-control" data-unit="px" value="6"><code>--ui-radius-control</code><span>控件圆角</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-radius-panel" data-unit="px" value="12"><code>--ui-radius-panel</code><span>面板圆角</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-control-height" data-unit="px" value="36"><code>--ui-control-height</code><span>普通控件高</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-field-height" data-unit="px" value="40"><code>--ui-field-height</code><span>表单控件高</span><span class="st st-ok">已确认</span></label><label class="tk"><input type="number" min="0" max="64" data-token="--ui-tabbar-height" data-unit="px" value="56"><code>--ui-tabbar-height</code><span>手机底部导航高度（不含安全区）</span><span class="st st-warn">建议</span></label></div>
+      <p class="note">加粗的端侧覆盖值与所有「建议」变量尚未登记采用；36 个已确认变量与 1.0.0 完全一致（check-tokens 校验）。</p></div>
+    <div class="card preview"><h2>预览</h2>
+      <div class="pv-nav"><span class="mark">SB</span><a class="on">客户</a><a>商机</a><a>任务</a></div>
+      <div class="pv-work"><div class="pv-surface"><div class="pv-title">客户 <small>范围：本人负责 · 24 家</small></div><div class="pv-btns"><button class="ui-btn ui-primary">记录拜访</button><button class="ui-btn ui-secondary">创建任务</button><span class="ui-chip on">有风险</span></div><div class="ui-row on"><b>云岭教育科技</b><small>客户资源 · 关系 6/10 · 地盘 HB-03</small><span class="st st-warn">● 需关注</span></div><div class="ui-row"><b>金桥制造股份有限公司</b><small>客户资产 · 关系 9/10</small><span class="st st-err">● 转差</span></div><div class="ui-row"><b>华宸数据科技有限公司</b><small>客户资产 · 关系 8/10</small><span class="st st-ok">● 向好</span></div><div class="ui-row"><b>泰和银行数据中心</b><small>象限：待评估</small><span class="st st-none">● 待评估</span></div></div></div>
+      <h3>字号</h3><div class="ts"><span style="font-size:var(--ui-text-small)">辅助信息：客户经营详情</span><code>--ui-text-small · 12px</code></div><div class="ts"><span style="font-size:var(--ui-text-body)">正文：客户经营详情</span><code>--ui-text-body · 14px</code></div><div class="ts"><span style="font-size:var(--ui-text-section)">分区标题：客户经营详情</span><code>--ui-text-section · 16px</code></div><div class="ts"><span style="font-size:var(--ui-text-page)">页面标题：客户经营详情</span><code>--ui-text-page · 24px</code></div><div class="ts"><span style="font-size:var(--ui-text-metric)">关键数字：客户经营详情</span><code>--ui-text-metric · 32px</code></div>
+      <h3>间距</h3><div class="ss"><i style="width:var(--ui-space-1)"></i><code>--ui-space-1 · 4px</code><span>4：图标与文字</span></div><div class="ss"><i style="width:var(--ui-space-2)"></i><code>--ui-space-2 · 8px</code><span>8：同组控件</span></div><div class="ss"><i style="width:var(--ui-space-3)"></i><code>--ui-space-3 · 12px</code><span>12：行内区域</span></div><div class="ss"><i style="width:var(--ui-space-4)"></i><code>--ui-space-4 · 16px</code><span>16：内容块</span></div><div class="ss"><i style="width:var(--ui-space-6)"></i><code>--ui-space-6 · 24px</code><span>24：面板内边距</span></div><div class="ss"><i style="width:var(--ui-space-8)"></i><code>--ui-space-8 · 32px</code><span>32：大分区</span></div>
+    </div>
+  </div>
+  <div class="card"><h2>样板实时跟随</h2><iframe class="frame" data-sample title="样板（视觉基础）" src="../03-跨端样板-客户列表到详情/index.html?frame=visual" loading="lazy"></iframe></div>
+  <h2>规则</h2><details class="card rule" id="rule-V-01" data-id="V-01"><summary><span class="rid">V-01</span><span class="rtitle">配色与层级</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">深蓝导航、浅色阅读、白色面板；蓝用于动作和选中；业务状态色配文字或图标</p>
+  <p><b>正确示例／反例</b>　正：红色边线＋“转差”＋依据；反：大面积深色正文区或只显示色点</p>
+  <p><b>怎么检查</b>　颜色与标签含义一致；文字在背景上可读</p>
+  <p><b>相关变量</b>　<code>--ui-background</code> <code>--ui-surface</code> <code>--ui-sidebar</code> <code>--ui-ink</code> <code>--ui-secondary</code> <code>--ui-muted</code> <code>--ui-primary</code> <code>--ui-primary-hover</code> <code>--ui-line</code> <code>--ui-selected</code> <code>--ui-on-primary</code> <code>--ui-sidebar-ink</code> <code>--ui-sidebar-nav</code> <code>--ui-sidebar-muted</code> <code>--ui-sidebar-hover</code> <code>--ui-sidebar-active</code> <code>--ui-sidebar-accent</code></p>
+  <p><b>样板部件</b>　深蓝导航栏（电脑）</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:57</p></div></details><details class="card rule" id="rule-V-02" data-id="V-02"><summary><span class="rid">V-02</span><span class="rtitle">字体与数字</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">系统中文字体；正文 14px、辅助 12px、分区标题 16px、页面标题 24px、关键数字 32px；正文行高 1.65，标题 1.5；数字等宽对齐</p>
+  <p><b>正确示例／反例</b>　正：标题、事实、时间分三层；反：一整段任务说明加粗作大标题</p>
+  <p><b>怎么检查</b>　长中文与大金额不覆盖状态、按钮；关键内容不因截断丢失</p>
+  <p><b>相关变量</b>　<code>--ui-font</code> <code>--ui-text-small</code> <code>--ui-text-body</code> <code>--ui-text-section</code> <code>--ui-text-page</code> <code>--ui-text-metric</code></p>
+  <p><b>样板部件</b>　手机正文 16px、手机说明文字 13px</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:58</p></div></details><details class="card rule" id="rule-V-03" data-id="V-03"><summary><span class="rid">V-03</span><span class="rtitle">间距与形状</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">间距 4/8/12/16/24/32px；控件圆角 6px、面板 12px；普通控件高 36px、表单 40px；同组紧密、分区疏朗</p>
+  <p><b>正确示例／反例</b>　正：列表条件与结果间 12～16px，独立面板间 24px；反：所有空隙等宽</p>
+  <p><b>怎么检查</b>　对照示例册；偏离时记录具体理由</p>
+  <p><b>相关变量</b>　<code>--ui-space-1</code> <code>--ui-space-2</code> <code>--ui-space-3</code> <code>--ui-space-4</code> <code>--ui-space-6</code> <code>--ui-space-8</code> <code>--ui-radius-control</code> <code>--ui-radius-panel</code> <code>--ui-control-height</code> <code>--ui-field-height</code></p>
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:59</p></div></details><details class="card rule" id="rule-V-04" data-id="V-04"><summary><span class="rid">V-04</span><span class="rtitle">图标与焦点</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">图标延用产品已有风格；常用图标 16px；纯图标按钮提供可读名称；键盘焦点轮廓至少 2px；正文正常状态对比度目标 ≥4.5:1</p>
+  <p><b>正确示例／反例</b>　正：刷新图标有“刷新”名称；反：依靠颜色猜按钮</p>
+  <p><b>怎么检查</b>　Tab 可见，读屏名称明确；检查常用文字与状态标签对比度</p>
+  <p><b>相关变量</b>　<code>--ui-focus</code> <code>--ui-sidebar-focus</code></p>
+  <p><b>样板部件</b>　详情页签、键盘焦点 2px 轮廓</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:60</p></div></details>
+</section>
+
+<section data-panel="components" hidden>
+  <h1>组件</h1><p class="lead">每个组件在每个状态下长什么样都有定论。这张矩阵用类名模拟悬停与聚焦，全部只引用变量。</p>
+  <div class="card"><div class="tbl"><table class="matrix"><tr><th>组件</th><th>默认</th><th>悬停</th><th>聚焦</th><th>禁用</th><th>处理中</th><th>错误／空</th></tr><tr><th>主按钮</th><td><button class="ui-btn ui-primary  " >记录拜访</button></td><td><button class="ui-btn ui-primary is-hover " >记录拜访</button></td><td><button class="ui-btn ui-primary  is-focus" >记录拜访</button></td><td><button class="ui-btn ui-primary  " disabled>记录拜访</button></td><td><button class="ui-btn ui-primary  " disabled>保存中…</button></td><td><button class="ui-btn ui-primary  " >重试</button></td></tr><tr><th>次按钮</th><td><button class="ui-btn ui-secondary  " >创建任务</button></td><td><button class="ui-btn ui-secondary is-hover " >创建任务</button></td><td><button class="ui-btn ui-secondary  is-focus" >创建任务</button></td><td><button class="ui-btn ui-secondary  " disabled>创建任务</button></td><td><button class="ui-btn ui-secondary  " >处理中…</button></td><td><button class="ui-btn ui-secondary  " >创建任务</button></td></tr><tr><th>输入框</th><td><label class="ui-field "><span>客户名称</span><input class=" " value="华宸数据科技"   placeholder="搜索客户名称或负责人"></label></td><td><label class="ui-field "><span>客户名称</span><input class="is-hover " value="华宸数据科技"   placeholder="搜索客户名称或负责人"></label></td><td><label class="ui-field "><span>客户名称</span><input class=" is-focus" value="华宸数据科技"   placeholder="搜索客户名称或负责人"></label></td><td><label class="ui-field "><span>客户名称</span><input class=" " value="华宸数据科技" disabled  placeholder="搜索客户名称或负责人"></label></td><td><label class="ui-field "><span>客户名称</span><input class=" " value="华宸数据科技"  readonly placeholder="搜索客户名称或负责人"></label></td><td><label class="ui-field is-error"><span>客户名称（必填）</span><input class=" " value=""   placeholder="搜索客户名称或负责人"></label><small class="ui-err">请填写客户名称，已保留其余输入</small></td></tr><tr><th>选择器</th><td><button class="ui-select  " ><span>第三季度 · 已选 2 项</span><i>▾</i></button></td><td><button class="ui-select is-hover " ><span>第三季度 · 已选 2 项</span><i>▾</i></button></td><td><button class="ui-select  is-focus" ><span>第三季度 · 已选 2 项</span><i>▾</i></button></td><td><button class="ui-select  " disabled><span>第三季度 · 已选 2 项</span><i>▾</i></button></td><td><button class="ui-select  " ><span>加载选项…</span><i>▾</i></button></td><td><button class="ui-select  " ><span>无匹配结果</span><i>▾</i></button></td></tr><tr><th>筛选片</th><td><span class="ui-chip    ">有风险</span></td><td><span class="ui-chip  is-hover  ">有风险</span></td><td><span class="ui-chip is-focus   ">有风险</span></td><td><span class="ui-chip    off">有风险</span></td><td><span class="ui-chip   on ">有风险 · 已选</span></td><td><span class="ui-chip    ">有风险</span></td></tr><tr><th>列表行</th><td><div class="ui-row   "><b>云岭教育科技</b><small>客户资源 · 关系 6/10</small><span class="st st-warn">需关注</span></div></td><td><div class="ui-row is-hover  "><b>云岭教育科技</b><small>客户资源 · 关系 6/10</small><span class="st st-warn">需关注</span></div></td><td><div class="ui-row  is-focus "><b>云岭教育科技</b><small>客户资源 · 关系 6/10</small><span class="st st-warn">需关注</span></div></td><td><div class="ui-row   "><b>云岭教育科技</b><small>客户资源 · 关系 6/10</small><em>无权限</em></div></td><td><div class="ui-row   on"><b>云岭教育科技</b><small>已选中 · 详情打开</small><span class="st st-warn">需关注</span></div></td><td><div class="ui-row   "><b>云岭教育科技</b><small>没有匹配的客户 · 清除条件</small><span class="st st-warn">需关注</span></div></td></tr><tr><th>状态标签</th><td><span class="st st-ok">● 向好</span></td><td><span class="st st-warn">● 需关注</span></td><td><span class="st st-err">● 转差</span></td><td><span class="st st-none">● 待评估</span></td><td><span class="st st-local">加载中…</span></td><td><span class="st st-none">未登记</span></td></tr></table></div><p class="note">选择器、日期等复杂控件的真实交互见 1.0.0 示例册；这里只定外观与状态。</p></div>
+  <h2>规则</h2><details class="card rule" id="rule-C-01" data-id="C-01"><summary><span class="rid">C-01</span><span class="rtitle">按钮</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">同一区域突出一个主操作，次操作描边或文字；默认、悬停、聚焦、禁用、处理中均有表达；禁用说明原因</p>
+  <p><b>正确示例／反例</b>　正：“保存中”并阻止重复提交；反：三个同样抢眼的主按钮</p>
+  <p><b>怎么检查</b>　鼠标、Tab、Enter 操作；处理中不可重复提交</p>
+  
+  <p><b>样板部件</b>　底部主动作条（手机）</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:68</p></div></details><details class="card rule" id="rule-C-02" data-id="C-02"><summary><span class="rid">C-02</span><span class="rtitle">输入与校验</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">标签常显，必填项明确；错误就地提示并关联字段；错误时保留输入；仅对应处理阶段只读</p>
+  <p><b>正确示例／反例</b>　正：沟通内容缺失时提示且保留下一步计划；反：用 placeholder 代替标签</p>
+  <p><b>怎么检查</b>　中文输入、长文、粘贴、失败重填；不可覆盖正在编辑的值</p>
+  
+  <p><b>样板部件</b>　搜索框</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:69</p></div></details><details class="card rule" id="rule-C-03" data-id="C-03"><summary><span class="rid">C-03</span><span class="rtitle">选择器</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">使用现有 SalesSelect、SalesDatePicker；搜索、多选与清空可用；单选选中即生效，多选点击应用；Esc 取消，焦点回触发点</p>
+  <p><b>正确示例／反例</b>　正：季度多选显示已选数量；反：四个季度用庞大双栏弹窗</p>
+  <p><b>怎么检查</b>　搜索无结果、取消、多选应用、日期合法性、窄屏位置</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:70</p></div></details><details class="card rule" id="rule-C-04" data-id="C-04"><summary><span class="rid">C-04</span><span class="rtitle">筛选栏</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">紧邻所属结果区，注明作用范围，显示已选条件、结果数和清除入口；总览与列表分别命名</p>
+  <p><b>正确示例／反例</b>　正：“商机列表·阶段”，上方总览保持不变；反：无标题下拉放在两个区域之间</p>
+  <p><b>怎么检查</b>　改列表条件核对总览；改统计周期核对列表；清除恢复</p>
+  
+  <p><b>样板部件</b>　筛选片、结果行</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:71</p></div></details><details class="card rule" id="rule-C-05" data-id="C-05"><summary><span class="rid">C-05</span><span class="rtitle">列表与表格</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">名称、状态、负责人、时间、金额、操作位置稳定；长文可展开完整内容；不以卡片堆叠替代桌面列表</p>
+  <p><b>正确示例／反例</b>　正：首行对象、次行摘要、末列操作；反：长标题把状态推离屏幕</p>
+  <p><b>怎么检查</b>　长名称、20 行以上、空列表、窄屏；操作可达且关联对象正确</p>
+  
+  <p><b>样板部件</b>　列表行</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:72</p></div></details><details class="card rule" id="rule-C-06" data-id="C-06"><summary><span class="rid">C-06</span><span class="rtitle">数据与反馈状态</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">加载有文案；空数据说明原因及下一步；异常可重试；部分缺失应显示已有数据并说明覆盖范围</p>
+  <p><b>正确示例／反例</b>　正：未登记回款；反：加载失败显示 0</p>
+  <p><b>怎么检查</b>　切换正常、加载、空数据、异常；重试不丢筛选</p>
+  
+  <p><b>样板部件</b>　空数据／加载中／失败／无权限</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:73</p></div></details><details class="card rule" id="rule-C-07" data-id="C-07"><summary><span class="rid">C-07</span><span class="rtitle">弹窗与展开</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">标题清楚；弹窗有关闭与取消；Esc 可关，焦点不逃逸且关闭回到触发点；次要详情优先就地展开</p>
+  <p><b>正确示例／反例</b>　正：摘要后展开完整判断依据；反：看一行备注也跳新页面</p>
+  <p><b>怎么检查</b>　Tab/Shift+Tab、Esc；展开不改变记录、顺序、业务状态</p>
+  <p><b>相关变量</b>　<code>--ui-shadow-popup</code></p>
+  <p><b>样板部件</b>　关闭（电脑）／返回（其他）、返回后保留</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:74</p></div></details>
+</section>
+
+<section data-panel="layout" hidden>
+  <h1>布局</h1><p class="lead">电脑上的「导航—列表—详情」三段，到手机变成「列表页 → 详情页 → 返回」。拖右下角把预览拉窄，看它在 900 与 600 两个门槛怎么折叠；手机上用下面的宽度按钮。</p>
+  <div class="card"><div class="ph"><h2>拖宽看三档</h2><div class="presets"><button class="btn sec" data-w="1200">1200</button><button class="btn sec" data-w="900">900</button><button class="btn sec" data-w="760">760</button><button class="btn sec" data-w="600">600</button><button class="btn sec" data-w="390">390</button><button class="btn sec" data-w="320">320</button></div></div>
+    <div class="readout" id="readout">当前宽度 — · —</div>
+    <div class="resizer" id="resizer"><iframe class="frame tall" data-sample title="样板（布局）" src="../03-跨端样板-客户列表到详情/index.html?frame=layout" loading="lazy"></iframe></div>
+    <div class="ascii"><pre>电脑 >900        [导航 220][客户列表 360][客户详情 其余宽度]        三栏并排
+收紧 601～900    [栏 56][客户列表 ────────────]  → 点一行 →  [栏 56][详情覆盖列表 ‹返回]
+手机 ≤600        [客户列表 整宽 + 底部导航]  → 点一行 →  [详情整页 ‹返回 + 底部操作条]</pre></div></div>
+  <div class="card"><h2>8 个视口的自动截图</h2><div class="gallery"><figure><a href="../03-跨端样板-客户列表到详情/截图/1440-详情.png" target="_blank" rel="noopener"><img loading="lazy" src="../03-跨端样板-客户列表到详情/截图/1440-详情.png" alt="1440 宽详情"></a><figcaption>1440px · 电脑 >900</figcaption></figure><figure><a href="../03-跨端样板-客户列表到详情/截图/1366-详情.png" target="_blank" rel="noopener"><img loading="lazy" src="../03-跨端样板-客户列表到详情/截图/1366-详情.png" alt="1366 宽详情"></a><figcaption>1366px · 电脑 >900</figcaption></figure><figure><a href="../03-跨端样板-客户列表到详情/截图/1024-详情.png" target="_blank" rel="noopener"><img loading="lazy" src="../03-跨端样板-客户列表到详情/截图/1024-详情.png" alt="1024 宽详情"></a><figcaption>1024px · 电脑 >900</figcaption></figure><figure><a href="../03-跨端样板-客户列表到详情/截图/900-详情.png" target="_blank" rel="noopener"><img loading="lazy" src="../03-跨端样板-客户列表到详情/截图/900-详情.png" alt="900 宽详情"></a><figcaption>900px · 收紧 601～900</figcaption></figure><figure><a href="../03-跨端样板-客户列表到详情/截图/760-详情.png" target="_blank" rel="noopener"><img loading="lazy" src="../03-跨端样板-客户列表到详情/截图/760-详情.png" alt="760 宽详情"></a><figcaption>760px · 收紧 601～900</figcaption></figure><figure><a href="../03-跨端样板-客户列表到详情/截图/600-详情.png" target="_blank" rel="noopener"><img loading="lazy" src="../03-跨端样板-客户列表到详情/截图/600-详情.png" alt="600 宽详情"></a><figcaption>600px · 手机 ≤600</figcaption></figure><figure><a href="../03-跨端样板-客户列表到详情/截图/390-详情.png" target="_blank" rel="noopener"><img loading="lazy" src="../03-跨端样板-客户列表到详情/截图/390-详情.png" alt="390 宽详情"></a><figcaption>390px · 手机 ≤600</figcaption></figure><figure><a href="../03-跨端样板-客户列表到详情/截图/320-详情.png" target="_blank" rel="noopener"><img loading="lazy" src="../03-跨端样板-客户列表到详情/截图/320-详情.png" alt="320 宽详情"></a><figcaption>320px · 手机 ≤600</figcaption></figure></div></div>
+  <h2>页面模板（已确认）</h2><details class="card rule" id="rule-T-01" data-id="T-01"><summary><span class="rid">T-01</span><span class="rtitle">首页工作台</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">待办、常用操作、业务动态独立；动态按对象、摘要、状态、时间、动作组织；红黄业务判断进入“需关注”</p>
+  <p><b>正确示例／反例</b>　正：需关注来自业务判断；反：橙色任务“待接受”当作商机风险</p>
+  <p><b>怎么检查</b>　全部／需关注切换、展开依据、完整标题可读；[#template-home](../示例册/design-system/index.html#template-home)</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:89</p></div></details><details class="card rule" id="rule-T-02" data-id="T-02"><summary><span class="rid">T-02</span><span class="rtitle">业务列表</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">总览独立面板；列表标题、工具栏、条件、数量和结果同区；局部筛选不污染其他区域</p>
+  <p><b>正确示例／反例</b>　正：列表无匹配时总览仍显示原统计；反：全页一个含糊的时间选择器</p>
+  <p><b>怎么检查</b>　搜索＋多选组合、单条件移除、清除；[#template-list](../示例册/design-system/index.html#template-list)</p>
+  
+  <p><b>样板部件</b>　列表标题 + 范围 + 总数、结果行</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:90</p></div></details><details class="card rule" id="rule-T-03" data-id="T-03"><summary><span class="rid">T-03</span><span class="rtitle">经营详情</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">对象摘要与主要操作在顶部；页签组织摘要、跟进、任务；主栏事实、辅栏关注与依据；客户与商机分开</p>
+  <p><b>正确示例／反例</b>　正：商机注明所属客户；反：把客户整体与某商机状态混为一谈</p>
+  <p><b>怎么检查</b>　两种对象切换、页签键盘操作、完整记录；[#template-detail](../示例册/design-system/index.html#template-detail)</p>
+  
+  <p><b>样板部件</b>　详情摘要卡、详情页签、辅栏「风险与关注」与「范围与权限」、辅栏何时并排</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:91</p></div></details><details class="card rule" id="rule-T-04" data-id="T-04"><summary><span class="rid">T-04</span><span class="rtitle">拜访录入</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">桌面左右分栏，关联对象与编辑内容同屏；长文本内部滚动，操作区固定在表单底部；窄屏上下排列</p>
+  <p><b>正确示例／反例</b>　正：失败保留下一步计划；反：长页面滚到底才能提交或静默失去草稿</p>
+  <p><b>怎么检查</b>　1024×600、长文本、必填缺失、返回修改；[#template-visit](../示例册/design-system/index.html#template-visit)</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:92</p></div></details><details class="card rule" id="rule-T-05" data-id="T-05"><summary><span class="rid">T-05</span><span class="rtitle">经营分析</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">范围／周期紧邻指标；金额、数量分别标单位；图表配数据表、空值与统计口径说明</p>
+  <p><b>正确示例／反例</b>　正：缺关单日期的条目明确标注未纳入；反：缺数据的指标算 0</p>
+  <p><b>怎么检查</b>　切季度图表与合计一致，缺失仍缺失；[#template-analytics](../示例册/design-system/index.html#template-analytics)</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:93</p></div></details>
+  <h2>跨端布局建议</h2><details class="card rule" id="rule-X-02" data-id="X-02"><summary><span class="rid">X-02</span><span class="rtitle">桌面频繁切换对象</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">客户、任务等可采用“功能导航＋对象列表＋详情”；窗口不够时折叠导航或将详情独立打开</p>
+  
+  <p><b>怎么检查</b>　连续查看多条、关闭详情、长标题与键盘操作</p>
+  <p><b>相关变量</b>　<code>--ui-nav-width</code> <code>--ui-nav-rail-width</code> <code>--ui-list-width</code></p>
+  <p><b>样板部件</b>　导航折叠成图标栏（收紧）</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:152　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-03" data-id="X-03"><summary><span class="rid">X-03</span><span class="rtitle">手机导航</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">常用一级功能可放底部；列表点进详情；返回时保留允许保留的条件、选中项和位置</p>
+  
+  <p><b>怎么检查</b>　列表→详情→返回；导航栏与系统返回的结果一致</p>
+  <p><b>相关变量</b>　<code>--ui-tabbar-height</code></p>
+  <p><b>样板部件</b>　底部导航（手机）、关闭（电脑）／返回（其他）、返回后保留</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:153　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-05" data-id="X-05"><summary><span class="rid">X-05</span><span class="rtitle">响应式</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">沿用 Web V1 的大于 900、601～900、不大于 600px 三档；根据内容决定是否分栏，不强行把所有页面做三栏</p>
+  
+  <p><b>怎么检查</b>　1440、1366、1024、900、600、390、320 宽度与短屏</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:155　（跨端建议，待登记采用）</p></div></details>
+</section>
+
+<section data-panel="states" hidden>
+  <h1>交互状态</h1><p class="lead">加载、空数据、失败、无权限是规范的一部分，不是开发自由发挥。点状态机的节点，下面的样板会真的切到那个画面，而且搜索与筛选条件不丢。</p>
+  <div class="card"><div class="ph"><h2>状态机</h2><small>点节点驱动样板</small></div><svg viewBox="0 0 580 240" class="sm" role="img" aria-label="列表与详情的状态机"><path d="M140 117 L260 42" class="edge"/><text x="195.2" y="75.9" class="el">请求</text><text x="204.8" y="91.1" class="el">成功</text><path d="M380 42 L440 42" class="edge"/><text x="410.0" y="37.0" class="el">失败</text><text x="410.0" y="55.0" class="el">重试，条件不丢</text><path d="M140 117 L260 117" class="edge"/><text x="200.0" y="112.0" class="el">搜索无结果</text><text x="200.0" y="130.0" class="el">清除条件</text><path d="M140 117 L260 192" class="edge"/><text x="204.8" y="150.9" class="el">点一行</text><text x="195.2" y="166.1" class="el">返回，保留条件与位置</text><path d="M380 192 L440 192" class="edge"/><text x="410.0" y="187.0" class="el">403</text><g class="node" data-demo='{"list":"normal","detail":"normal","q":""}' tabindex="0" role="button"><rect x="20" y="95" width="120" height="44" rx="10"/><text x="80" y="122">正常</text></g><g class="node" data-demo='{"list":"loading"}' tabindex="0" role="button"><rect x="260" y="20" width="120" height="44" rx="10"/><text x="320" y="47">加载中</text></g><g class="node" data-demo='{"list":"normal","q":"不存在的客户"}' tabindex="0" role="button"><rect x="260" y="95" width="120" height="44" rx="10"/><text x="320" y="122">无匹配</text></g><g class="node" data-demo='{"list":"normal","q":"","detail":"normal","open":true}' tabindex="0" role="button"><rect x="260" y="170" width="120" height="44" rx="10"/><text x="320" y="197">打开详情</text></g><g class="node" data-demo='{"list":"error"}' tabindex="0" role="button"><rect x="440" y="20" width="120" height="44" rx="10"/><text x="500" y="47">加载失败</text></g><g class="node" data-demo='{"list":"normal","q":"","detail":"forbidden","open":true}' tabindex="0" role="button"><rect x="440" y="170" width="120" height="44" rx="10"/><text x="500" y="197">无权限</text></g></svg></div>
+  <div class="card"><iframe class="frame tall" data-sample data-states title="样板（交互状态）" src="../03-跨端样板-客户列表到详情/index.html?frame=states" loading="lazy"></iframe></div>
+  <h2>规则</h2><details class="card rule" id="rule-C-06" data-id="C-06"><summary><span class="rid">C-06</span><span class="rtitle">数据与反馈状态</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">加载有文案；空数据说明原因及下一步；异常可重试；部分缺失应显示已有数据并说明覆盖范围</p>
+  <p><b>正确示例／反例</b>　正：未登记回款；反：加载失败显示 0</p>
+  <p><b>怎么检查</b>　切换正常、加载、空数据、异常；重试不丢筛选</p>
+  
+  <p><b>样板部件</b>　空数据／加载中／失败／无权限</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:73</p></div></details><details class="card rule" id="rule-C-07" data-id="C-07"><summary><span class="rid">C-07</span><span class="rtitle">弹窗与展开</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">标题清楚；弹窗有关闭与取消；Esc 可关，焦点不逃逸且关闭回到触发点；次要详情优先就地展开</p>
+  <p><b>正确示例／反例</b>　正：摘要后展开完整判断依据；反：看一行备注也跳新页面</p>
+  <p><b>怎么检查</b>　Tab/Shift+Tab、Esc；展开不改变记录、顺序、业务状态</p>
+  <p><b>相关变量</b>　<code>--ui-shadow-popup</code></p>
+  <p><b>样板部件</b>　关闭（电脑）／返回（其他）、返回后保留</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:74</p></div></details><details class="card rule" id="rule-B-04" data-id="B-04"><summary><span class="rid">B-04</span><span class="rtitle">AI 流程</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">核对内容→质检→人工确认→归档；处理中可见阶段；失败保留输入且可重试或返回；超时走已有恢复机制；质检完成不等于归档</p>
+  <p><b>正确示例／反例</b>　正：“已生成建议，待人工确认”；反：“AI 正在分析”时让用户误以为还能填写被锁字段</p>
+  <p><b>怎么检查</b>　草稿、处理中、失败、待确认、归档各自回读；仅真实归档回执可显示已归档</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:104</p></div></details><details class="card rule" id="rule-P-03" data-id="P-03"><summary><span class="rid">P-03</span><span class="rtitle">连续操作</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">失败、取消或切换展示时保留有效输入；处理反馈与事实状态分别表达</p>
+  <p><b>正确示例／反例</b>　正：质检失败可回到原文；反：一失败就清空</p>
+  <p><b>怎么检查</b>　填写长文本后制造校验失败，内容仍完整</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:35</p></div></details><details class="card rule" id="rule-X-11" data-id="X-11"><summary><span class="rid">X-11</span><span class="rtitle">状态覆盖</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">同一业务动作在各端都考虑加载、空数据、失败、无权限、成功和重复提交</p>
+  
+  <p><b>怎么检查</b>　同一组异常案例逐端检查</p>
+  
+  <p><b>样板部件</b>　空数据／加载中／失败／无权限</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:161　（跨端建议，待登记采用）</p></div></details>
+</section>
+
+<section data-panel="cross" hidden>
+  <h1>跨端适配</h1><p class="lead">「含义」统一，「尺寸和摆放」适配，「平台自带的东西」直接引用平台。按端筛选，只剩需要适配的条目。</p>
+  <div class="card"><div class="ph"><h2>规则逐条对照</h2><div class="presets" id="cross-filter"><button class="btn sec on" data-kind="">全部</button><button class="btn sec" data-kind="统一">统一</button><button class="btn sec" data-kind="适配">适配</button><button class="btn sec" data-kind="建议">跨端建议</button></div></div>
+    <div class="tbl"><table class="cross"><tr><th>规则</th><th>电脑网页</th><th>手机网页</th><th>小程序</th><th>结论／样板验证</th><th>状态</th></tr><tr data-kind="统一" data-text="P-01 所有页面"><td><b>P-01</b><br><small>所有页面</small></td><td>详情顶部摘要卡</td><td>同</td><td>同</td><td>统一</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="适配" data-text="P-02 多区域页面"><td><b>P-02</b><br><small>多区域页面</small></td><td>标题、留白、面板边界</td><td>同，留白档位变小</td><td>同</td><td>含义统一，留白值适配</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="P-03 连续操作"><td><b>P-03</b><br><small>连续操作</small></td><td>失败重试不丢筛选</td><td>同</td><td>同</td><td>统一</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="适配" data-text="V-01 配色与层级"><td><b>V-01</b><br><small>配色与层级</small></td><td>深蓝导航、浅色阅读、白面板、蓝主操作</td><td>同；导航在底部时用白底＋蓝选中</td><td>同；原生 tabBar 只能在 app.json 写十六进制</td><td>色值统一；导航容器适配</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="适配" data-text="V-02 字体与数字"><td><b>V-02</b><br><small>字体与数字</small></td><td>正文 14、辅助 12、分区 16、页面 24、数字 32</td><td>正文 16（建议），其余同</td><td>正文 16（建议）；小程序 px 按 WeUI 做法视为逻辑像素（待复核）</td><td>档位统一；正文值适配</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="适配" data-text="V-03 间距与形状"><td><b>V-03</b><br><small>间距与形状</small></td><td>4/8/12/16/24/32；圆角 6/12；控件高 36/40</td><td>同档位；留白取 16</td><td>同；只有随屏宽缩放的量用 rpx（小程序等比单位，详见 02 章）</td><td>档位统一；用途→档位的选择适配</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="适配" data-text="V-04 图标与焦点"><td><b>V-04</b><br><small>图标与焦点</small></td><td>16px 图标；焦点轮廓 2px；对比度 ≥4.5:1</td><td>同；触控目标 ≥44px（建议）</td><td>同</td><td>含义统一；目标尺寸适配</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="适配" data-text="C-01 按钮"><td><b>C-01</b><br><small>按钮</small></td><td>一区一主操作；处理中防重复</td><td>同；主动作固定在底部操作条</td><td>同</td><td>统一；位置适配</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="C-02 输入与校验"><td><b>C-02</b><br><small>输入与校验</small></td><td>标签常显、错误就地、保留输入</td><td>同；键盘弹起后操作可达</td><td>同；用平台 adjust-position（属性说明来自文档镜像，待复核）</td><td>统一；键盘处理引用平台</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="C-03 选择器"><td><b>C-03</b><br><small>选择器</small></td><td>SalesSelect／SalesDatePicker</td><td>同组件的窄屏位置</td><td>需小程序对应组件</td><td>行为统一；实现各端</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="C-04 筛选栏"><td><b>C-04</b><br><small>筛选栏</small></td><td>紧邻结果、显示已选与数量、可清除</td><td>同，筛选片横向滚动</td><td>同</td><td>统一</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="适配" data-text="C-05 列表与表格"><td><b>C-05</b><br><small>列表与表格</small></td><td>桌面用列表／表格，不以卡片堆叠替代</td><td>手机用列表行（名称／摘要／状态／时间）</td><td>同手机</td><td>字段与顺序统一；表格↔列表行适配</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="C-06 数据与反馈状态"><td><b>C-06</b><br><small>数据与反馈状态</small></td><td>加载有文案、空数据说原因、异常可重试</td><td>同</td><td>同（现状：三态外观相同）</td><td>统一</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="适配" data-text="C-07 弹窗与展开"><td><b>C-07</b><br><small>弹窗与展开</small></td><td>Esc 可关、焦点回触发点、次要详情就地展开</td><td>详情整页进入而不是弹窗；系统返回可关</td><td>同手机；浮层不得替代页面级返回</td><td>行为统一；容器适配</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="T-01 首页工作台"><td><b>T-01</b><br><small>首页工作台</small></td><td>待办／常用操作／动态分区</td><td>单栏顺序排列</td><td>同手机</td><td>统一</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="T-02 业务列表"><td><b>T-02</b><br><small>业务列表</small></td><td>总览独立；列表标题、工具栏、条件、数量、结果同区</td><td>同，总览可折叠</td><td>同</td><td>统一</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="T-03 经营详情"><td><b>T-03</b><br><small>经营详情</small></td><td>顶部摘要＋主操作；页签；主栏事实、辅栏关注</td><td>辅栏落到主栏下方</td><td>同手机</td><td>统一；分栏按详情栏自身宽度 ≥760px 决定（容器查询）</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="适配" data-text="T-04 拜访录入"><td><b>T-04</b><br><small>拜访录入</small></td><td>左右分栏</td><td>上下排列</td><td>同手机；textarea 在固定层需 fixed（来自文档镜像，待复核）</td><td>统一；分栏适配</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="T-05 经营分析"><td><b>T-05</b><br><small>经营分析</small></td><td>范围周期紧邻指标；图表配数据表</td><td>同</td><td>同</td><td>统一</td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="B-01 红黄绿灰灯"><td><b>B-01</b><br><small>红黄绿灰灯</small></td><td></td><td></td><td></td><td></td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="B-02 对象与状态"><td><b>B-02</b><br><small>对象与状态</small></td><td></td><td></td><td></td><td></td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="B-03 金额、时间与缺失"><td><b>B-03</b><br><small>金额、时间与缺失</small></td><td></td><td></td><td></td><td></td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="B-04 AI 流程"><td><b>B-04</b><br><small>AI 流程</small></td><td></td><td></td><td></td><td></td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="B-05 范围与权限"><td><b>B-05</b><br><small>范围与权限</small></td><td></td><td></td><td></td><td></td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="G-01 需求与开发"><td><b>G-01</b><br><small>需求与开发</small></td><td></td><td></td><td></td><td></td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="统一" data-text="G-02 版本与偏差"><td><b>G-02</b><br><small>版本与偏差</small></td><td></td><td></td><td></td><td></td><td><span class="st st-ok">已确认</span></td></tr><tr data-kind="建议" data-text="X-01 三端共同内容"><td><b>X-01</b><br><small>三端共同内容</small></td><td colspan="3">对象名称、字段含义、状态含义和权限规则保持一致；由同一业务契约确定</td><td>样板三档字段一致<br><small>真机：未验证</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-02 桌面频繁切换对象"><td><b>X-02</b><br><small>桌面频繁切换对象</small></td><td colspan="3">客户、任务等可采用“功能导航＋对象列表＋详情”；窗口不够时折叠导航或将详情独立打开</td><td>1440／1366／1024 并排；900／760 折叠导航、详情覆盖列表<br><small>真机：未验证</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-03 手机导航"><td><b>X-03</b><br><small>手机导航</small></td><td colspan="3">常用一级功能可放底部；列表点进详情；返回时保留允许保留的条件、选中项和位置</td><td>600／390／320 全部通过；浏览器返回与刷新也通过<br><small>真机：小程序现状用页内浮层，系统返回关不掉（见核查）</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-04 复杂编辑"><td><b>X-04</b><br><small>复杂编辑</small></td><td colspan="3">拜访录入等需要完整编辑空间；退出时说明未保存内容如何处理</td><td>未做<br><small>真机：未验证</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-05 响应式"><td><b>X-05</b><br><small>响应式</small></td><td colspan="3">沿用 Web V1 的大于 900、601～900、不大于 600px 三档；根据内容决定是否分栏，不强行把所有页面做三栏</td><td>8 个视口档位判定正确、无横向溢出<br><small>真机：未验证</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-06 手机可读可点"><td><b>X-06</b><br><small>手机可读可点</small></td><td colspan="3">手机正文建议从 16 个逻辑像素起评估；交互目标建议至少 44×44 个逻辑像素，可扩大无形点击区域</td><td>通过<br><small>真机：未验证</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-07 安全区与键盘"><td><b>X-07</b><br><small>安全区与键盘</small></td><td colspan="3">底部操作避开系统安全区；键盘弹起后当前输入和关键操作可到达</td><td>安全区按 CSS 规则写入；键盘未测<br><small>真机：需真机</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-08 共享间距"><td><b>X-08</b><br><small>共享间距</small></td><td colspan="3">使用相同间距档位和语义名称，端侧允许选择不同档位；具体值进入统一配置及采用记录</td><td>变量已定义并在样板使用<br><small>真机：未接入产品</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-09 单位适配"><td><b>X-09</b><br><small>单位适配</small></td><td colspan="3">Web 使用 CSS px；小程序按布局策略选择 px/rpx；原生 App 按平台逻辑单位实现。相同数字不代表相同实际尺寸</td><td>生成 WXSS 用 px；规则写在 02 章<br><small>真机：未接入</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-10 同步发布"><td><b>X-10</b><br><small>同步发布</small></td><td colspan="3">配置变化经生成、组件接入、回归检查和各端构建发布后生效；已安装或已发布客户端按各自机制升级</td><td>链路已跑通到「生成」；接入与发布未做<br><small>真机：未做</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-11 状态覆盖"><td><b>X-11</b><br><small>状态覆盖</small></td><td colspan="3">同一业务动作在各端都考虑加载、空数据、失败、无权限、成功和重复提交</td><td>加载／空／失败／无权限三档通过<br><small>真机：未验证</small></td><td><span class="st st-warn">建议</span></td></tr><tr data-kind="建议" data-text="X-12 例外管理"><td><b>X-12</b><br><small>例外管理</small></td><td colspan="3">平台限制或业务特性允许差异；记录原因、影响、负责人和复查时机</td><td>小程序原生 tabBar 颜色无法用变量，登记为例外<br><small>真机：—</small></td><td><span class="st st-warn">建议</span></td></tr></table></div></div>
+  <div class="card"><h2>变量在三端的值</h2><p class="note">高亮行是端侧不同的值（均为建议）。原生 App 暂不在范围。</p><div class="tbl"><table class="vars"><tr><th>变量</th><th>电脑网页</th><th>手机网页</th><th>小程序</th><th>状态</th></tr><tr class=""><td><code>--ui-background</code><br><small>工作区背景</small></td><td><i class="sw" style="background:#F3F5F9"></i>#F3F5F9</td><td><i class="sw" style="background:#F3F5F9"></i>#F3F5F9</td><td><i class="sw" style="background:#F3F5F9"></i>#F3F5F9</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-surface</code><br><small>内容面板</small></td><td><i class="sw" style="background:#FFFFFF"></i>#FFFFFF</td><td><i class="sw" style="background:#FFFFFF"></i>#FFFFFF</td><td><i class="sw" style="background:#FFFFFF"></i>#FFFFFF</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-sidebar</code><br><small>深蓝导航</small></td><td><i class="sw" style="background:#142F54"></i>#142F54</td><td><i class="sw" style="background:#142F54"></i>#142F54</td><td><i class="sw" style="background:#142F54"></i>#142F54</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-ink</code><br><small>正文文字</small></td><td><i class="sw" style="background:#192842"></i>#192842</td><td><i class="sw" style="background:#192842"></i>#192842</td><td><i class="sw" style="background:#192842"></i>#192842</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-secondary</code><br><small>次要文字</small></td><td><i class="sw" style="background:#5B6C82"></i>#5B6C82</td><td><i class="sw" style="background:#5B6C82"></i>#5B6C82</td><td><i class="sw" style="background:#5B6C82"></i>#5B6C82</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-muted</code><br><small>辅助文字</small></td><td><i class="sw" style="background:#617188"></i>#617188</td><td><i class="sw" style="background:#617188"></i>#617188</td><td><i class="sw" style="background:#617188"></i>#617188</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-primary</code><br><small>主要操作、选中</small></td><td><i class="sw" style="background:#2863CD"></i>#2863CD</td><td><i class="sw" style="background:#2863CD"></i>#2863CD</td><td><i class="sw" style="background:#2863CD"></i>#2863CD</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-primary-hover</code><br><small>主要操作悬停</small></td><td><i class="sw" style="background:#2055B5"></i>#2055B5</td><td><i class="sw" style="background:#2055B5"></i>#2055B5</td><td><i class="sw" style="background:#2055B5"></i>#2055B5</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-line</code><br><small>边线</small></td><td><i class="sw" style="background:#E2E8F0"></i>#E2E8F0</td><td><i class="sw" style="background:#E2E8F0"></i>#E2E8F0</td><td><i class="sw" style="background:#E2E8F0"></i>#E2E8F0</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-selected</code><br><small>选中底色</small></td><td><i class="sw" style="background:#EDF3FF"></i>#EDF3FF</td><td><i class="sw" style="background:#EDF3FF"></i>#EDF3FF</td><td><i class="sw" style="background:#EDF3FF"></i>#EDF3FF</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-focus</code><br><small>键盘焦点轮廓</small></td><td><i class="sw" style="background:#5786DC"></i>#5786DC</td><td><i class="sw" style="background:#5786DC"></i>#5786DC</td><td><i class="sw" style="background:#5786DC"></i>#5786DC</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-danger</code><br><small>红：转差／错误文字</small></td><td><i class="sw" style="background:#A73F38"></i>#A73F38</td><td><i class="sw" style="background:#A73F38"></i>#A73F38</td><td><i class="sw" style="background:#A73F38"></i>#A73F38</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-danger-soft</code><br><small>红底</small></td><td><i class="sw" style="background:#FBE4DF"></i>#FBE4DF</td><td><i class="sw" style="background:#FBE4DF"></i>#FBE4DF</td><td><i class="sw" style="background:#FBE4DF"></i>#FBE4DF</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-warning</code><br><small>黄：需关注文字</small></td><td><i class="sw" style="background:#805919"></i>#805919</td><td><i class="sw" style="background:#805919"></i>#805919</td><td><i class="sw" style="background:#805919"></i>#805919</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-warning-soft</code><br><small>黄底</small></td><td><i class="sw" style="background:#FFF0CF"></i>#FFF0CF</td><td><i class="sw" style="background:#FFF0CF"></i>#FFF0CF</td><td><i class="sw" style="background:#FFF0CF"></i>#FFF0CF</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-success</code><br><small>绿：向好文字</small></td><td><i class="sw" style="background:#27694C"></i>#27694C</td><td><i class="sw" style="background:#27694C"></i>#27694C</td><td><i class="sw" style="background:#27694C"></i>#27694C</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-success-soft</code><br><small>绿底</small></td><td><i class="sw" style="background:#E8F5EE"></i>#E8F5EE</td><td><i class="sw" style="background:#E8F5EE"></i>#E8F5EE</td><td><i class="sw" style="background:#E8F5EE"></i>#E8F5EE</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-neutral</code><br><small>灰：待评估文字</small></td><td><i class="sw" style="background:#56677E"></i>#56677E</td><td><i class="sw" style="background:#56677E"></i>#56677E</td><td><i class="sw" style="background:#56677E"></i>#56677E</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-neutral-soft</code><br><small>灰底</small></td><td><i class="sw" style="background:#EEF2F7"></i>#EEF2F7</td><td><i class="sw" style="background:#EEF2F7"></i>#EEF2F7</td><td><i class="sw" style="background:#EEF2F7"></i>#EEF2F7</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-font</code><br><small>系统中文字体</small></td><td>系统字体</td><td>系统字体</td><td>系统字体</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-text-small</code><br><small>辅助信息</small></td><td>12px</td><td>12px</td><td>12px</td><td><span class="st st-ok">已确认</span></td></tr><tr class="diff"><td><code>--ui-text-body</code><br><small>正文</small></td><td>14px</td><td>16px</td><td>16px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-text-section</code><br><small>分区标题</small></td><td>16px</td><td>16px</td><td>16px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-text-page</code><br><small>页面标题</small></td><td>24px</td><td>24px</td><td>24px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-text-metric</code><br><small>关键数字</small></td><td>32px</td><td>32px</td><td>32px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-space-1</code><br><small>4：图标与文字</small></td><td>4px</td><td>4px</td><td>4px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-space-2</code><br><small>8：同组控件</small></td><td>8px</td><td>8px</td><td>8px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-space-3</code><br><small>12：行内区域</small></td><td>12px</td><td>12px</td><td>12px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-space-4</code><br><small>16：内容块</small></td><td>16px</td><td>16px</td><td>16px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-space-6</code><br><small>24：面板内边距</small></td><td>24px</td><td>24px</td><td>24px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-space-8</code><br><small>32：大分区</small></td><td>32px</td><td>32px</td><td>32px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-radius-control</code><br><small>控件圆角</small></td><td>6px</td><td>6px</td><td>6px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-radius-panel</code><br><small>面板圆角</small></td><td>12px</td><td>12px</td><td>12px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-control-height</code><br><small>普通控件高</small></td><td>36px</td><td>36px</td><td>36px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-field-height</code><br><small>表单控件高</small></td><td>40px</td><td>40px</td><td>40px</td><td><span class="st st-ok">已确认</span></td></tr><tr class=""><td><code>--ui-shadow-popup</code><br><small>弹出层阴影（当前为 CSS 字符串形式，Style Dictionary 可直接输出；待工具链完整支持 2025.10 后迁移为对象形式）</small></td><td>0 8px 28px #1928421a, 0 2px 6px #19284208</td><td>0 8px 28px #1928421a, 0 2px 6px #19284208</td><td>0 8px 28px #1928421a, 0 2px 6px #19284208</td><td><span class="st st-ok">已确认</span></td></tr><tr class="diff"><td><code>--ui-page-gutter</code><br><small>页面左右留白（第 06 章间距映射示例：电脑 24，手机 16）</small></td><td>24px</td><td>16px</td><td>16px</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-card-padding</code><br><small>普通卡片内边距（第 06 章示例：16）</small></td><td>16px</td><td>16px</td><td>16px</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-block-gap</code><br><small>独立区块间隔（第 06 章示例：24）</small></td><td>24px</td><td>24px</td><td>24px</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-touch-target</code><br><small>手机最小交互目标（X-06 建议 44×44 逻辑像素）</small></td><td>44px</td><td>44px</td><td>44px</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-nav-width</code><br><small>桌面导航栏宽度（三段布局样板）</small></td><td>220px</td><td>220px</td><td>220px</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-nav-rail-width</code><br><small>折叠后的图标导航宽度（601～900px）</small></td><td>56px</td><td>56px</td><td>56px</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-list-width</code><br><small>桌面对象列表栏宽度（三段布局样板）</small></td><td>360px</td><td>360px</td><td>360px</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-tabbar-height</code><br><small>手机底部导航高度（不含安全区）</small></td><td>56px</td><td>56px</td><td>56px</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-on-primary</code><br><small>主操作按钮上的文字</small></td><td><i class="sw" style="background:#FFFFFF"></i>#FFFFFF</td><td><i class="sw" style="background:#FFFFFF"></i>#FFFFFF</td><td><i class="sw" style="background:#FFFFFF"></i>#FFFFFF</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-sidebar-ink</code><br><small>深蓝导航主文字（theme.css 已有实现）</small></td><td><i class="sw" style="background:#E7EFFA"></i>#E7EFFA</td><td><i class="sw" style="background:#E7EFFA"></i>#E7EFFA</td><td><i class="sw" style="background:#E7EFFA"></i>#E7EFFA</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-sidebar-nav</code><br><small>导航项文字</small></td><td><i class="sw" style="background:#C2D1E6"></i>#C2D1E6</td><td><i class="sw" style="background:#C2D1E6"></i>#C2D1E6</td><td><i class="sw" style="background:#C2D1E6"></i>#C2D1E6</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-sidebar-muted</code><br><small>导航次要文字</small></td><td><i class="sw" style="background:#B4C7E1"></i>#B4C7E1</td><td><i class="sw" style="background:#B4C7E1"></i>#B4C7E1</td><td><i class="sw" style="background:#B4C7E1"></i>#B4C7E1</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-sidebar-hover</code><br><small>导航悬停底</small></td><td><i class="sw" style="background:#23466F"></i>#23466F</td><td><i class="sw" style="background:#23466F"></i>#23466F</td><td><i class="sw" style="background:#23466F"></i>#23466F</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-sidebar-active</code><br><small>导航当前项底</small></td><td><i class="sw" style="background:#2A568B"></i>#2A568B</td><td><i class="sw" style="background:#2A568B"></i>#2A568B</td><td><i class="sw" style="background:#2A568B"></i>#2A568B</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-sidebar-accent</code><br><small>导航当前项亮条</small></td><td><i class="sw" style="background:#91BAFF"></i>#91BAFF</td><td><i class="sw" style="background:#91BAFF"></i>#91BAFF</td><td><i class="sw" style="background:#91BAFF"></i>#91BAFF</td><td><span class="st st-warn">建议</span></td></tr><tr class=""><td><code>--ui-sidebar-focus</code><br><small>导航上的键盘焦点轮廓</small></td><td><i class="sw" style="background:#B9D2FF"></i>#B9D2FF</td><td><i class="sw" style="background:#B9D2FF"></i>#B9D2FF</td><td><i class="sw" style="background:#B9D2FF"></i>#B9D2FF</td><td><span class="st st-warn">建议</span></td></tr></table></div></div>
+  <div class="card"><h2>小程序原生颜色接入情况</h2><div class="tbl"><table><tr><th>app.json 项</th><th>当前</th><th>规范</th><th>状态</th></tr><tr><td><code>window.backgroundColor</code></td><td><i class="sw" style="background:#F5F3F8"></i>#F5F3F8</td><td><i class="sw" style="background:#F3F5F9"></i>#F3F5F9</td><td><span class="st st-none">待接入</span></td></tr><tr><td><code>window.navigationBarBackgroundColor</code></td><td><i class="sw" style="background:#F8F7FA"></i>#F8F7FA</td><td><i class="sw" style="background:#FFFFFF"></i>#FFFFFF</td><td><span class="st st-none">待接入</span></td></tr><tr><td><code>window.navigationBarTextStyle</code></td><td><i class="sw" style="background:black"></i>black</td><td><i class="sw" style="background:black"></i>black</td><td><span class="st st-local">已验证（本地）</span></td></tr><tr><td><code>tabBar.color</code></td><td><i class="sw" style="background:#7A8495"></i>#7A8495</td><td><i class="sw" style="background:#5B6C82"></i>#5B6C82</td><td><span class="st st-none">待接入</span></td></tr><tr><td><code>tabBar.selectedColor</code></td><td><i class="sw" style="background:#1677FF"></i>#1677FF</td><td><i class="sw" style="background:#2863CD"></i>#2863CD</td><td><span class="st st-none">待接入</span></td></tr><tr><td><code>tabBar.backgroundColor</code></td><td><i class="sw" style="background:#FBFAFC"></i>#FBFAFC</td><td><i class="sw" style="background:#FFFFFF"></i>#FFFFFF</td><td><span class="st st-none">待接入</span></td></tr><tr><td><code>tabBar.borderStyle</code></td><td><i class="sw" style="background:white"></i>white</td><td><i class="sw" style="background:white"></i>white</td><td><span class="st st-local">已验证（本地）</span></td></tr></table></div><p class="note">原生 tabBar 与导航栏不认 CSS 变量，只能写十六进制；值由 tokens.json 生成到 miniprogram-app.tokens.json。当前小程序样式 0 处引用变量，是第一张待办变更。</p></div>
+  <h2>跨端建议全文</h2><details class="card rule" id="rule-X-01" data-id="X-01"><summary><span class="rid">X-01</span><span class="rtitle">三端共同内容</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">对象名称、字段含义、状态含义和权限规则保持一致；由同一业务契约确定</p>
+  
+  <p><b>怎么检查</b>　同一测试账号与记录，在已接入各端核对；记录缺失端</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:151　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-02" data-id="X-02"><summary><span class="rid">X-02</span><span class="rtitle">桌面频繁切换对象</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">客户、任务等可采用“功能导航＋对象列表＋详情”；窗口不够时折叠导航或将详情独立打开</p>
+  
+  <p><b>怎么检查</b>　连续查看多条、关闭详情、长标题与键盘操作</p>
+  <p><b>相关变量</b>　<code>--ui-nav-width</code> <code>--ui-nav-rail-width</code> <code>--ui-list-width</code></p>
+  <p><b>样板部件</b>　导航折叠成图标栏（收紧）</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:152　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-03" data-id="X-03"><summary><span class="rid">X-03</span><span class="rtitle">手机导航</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">常用一级功能可放底部；列表点进详情；返回时保留允许保留的条件、选中项和位置</p>
+  
+  <p><b>怎么检查</b>　列表→详情→返回；导航栏与系统返回的结果一致</p>
+  <p><b>相关变量</b>　<code>--ui-tabbar-height</code></p>
+  <p><b>样板部件</b>　底部导航（手机）、关闭（电脑）／返回（其他）、返回后保留</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:153　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-04" data-id="X-04"><summary><span class="rid">X-04</span><span class="rtitle">复杂编辑</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">拜访录入等需要完整编辑空间；退出时说明未保存内容如何处理</p>
+  
+  <p><b>怎么检查</b>　长文、输入法弹起、取消和失败恢复</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:154　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-05" data-id="X-05"><summary><span class="rid">X-05</span><span class="rtitle">响应式</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">沿用 Web V1 的大于 900、601～900、不大于 600px 三档；根据内容决定是否分栏，不强行把所有页面做三栏</p>
+  
+  <p><b>怎么检查</b>　1440、1366、1024、900、600、390、320 宽度与短屏</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:155　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-06" data-id="X-06"><summary><span class="rid">X-06</span><span class="rtitle">手机可读可点</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">手机正文建议从 16 个逻辑像素起评估；交互目标建议至少 44×44 个逻辑像素，可扩大无形点击区域</p>
+  
+  <p><b>怎么检查</b>　真机阅读、误触、长中文和系统字号放大；项目登记最终值</p>
+  <p><b>相关变量</b>　<code>--ui-touch-target</code></p>
+  <p><b>样板部件</b>　底部主动作条（手机）、手机正文 16px、触控目标 ≥44px</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:156　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-07" data-id="X-07"><summary><span class="rid">X-07</span><span class="rtitle">安全区与键盘</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">底部操作避开系统安全区；键盘弹起后当前输入和关键操作可到达</p>
+  
+  <p><b>怎么检查</b>　真机键盘、横竖屏及带底部手势区域设备</p>
+  
+  <p><b>样板部件</b>　底部导航（手机）、底部主动作条（手机）</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:157　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-08" data-id="X-08"><summary><span class="rid">X-08</span><span class="rtitle">共享间距</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">使用相同间距档位和语义名称，端侧允许选择不同档位；具体值进入统一配置及采用记录</p>
+  
+  <p><b>怎么检查</b>　调整一个公共配置，核对依赖它的各端组件</p>
+  <p><b>相关变量</b>　<code>--ui-page-gutter</code> <code>--ui-card-padding</code> <code>--ui-block-gap</code></p>
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:158　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-09" data-id="X-09"><summary><span class="rid">X-09</span><span class="rtitle">单位适配</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">Web 使用 CSS px；小程序按布局策略选择 px/rpx；原生 App 按平台逻辑单位实现。相同数字不代表相同实际尺寸</p>
+  
+  <p><b>怎么检查</b>　在基准和非基准宽度设备测量，避免直接机械替换单位</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:159　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-10" data-id="X-10"><summary><span class="rid">X-10</span><span class="rtitle">同步发布</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">配置变化经生成、组件接入、回归检查和各端构建发布后生效；已安装或已发布客户端按各自机制升级</p>
+  
+  <p><b>怎么检查</b>　记录配置版本、客户端版本、截图和接入日期</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:160　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-11" data-id="X-11"><summary><span class="rid">X-11</span><span class="rtitle">状态覆盖</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">同一业务动作在各端都考虑加载、空数据、失败、无权限、成功和重复提交</p>
+  
+  <p><b>怎么检查</b>　同一组异常案例逐端检查</p>
+  
+  <p><b>样板部件</b>　空数据／加载中／失败／无权限</p>
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:161　（跨端建议，待登记采用）</p></div></details><details class="card rule" id="rule-X-12" data-id="X-12"><summary><span class="rid">X-12</span><span class="rtitle">例外管理</span><span class="st st-warn">建议</span></summary>
+  <div class="rbody"><p class="req">平台限制或业务特性允许差异；记录原因、影响、负责人和复查时机</p>
+  
+  <p><b>怎么检查</b>　差异可查到具体页面，不以“移动端特殊”笼统解释</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/手册正文.md:162　（跨端建议，待登记采用）</p></div></details>
+</section>
+
+<section data-panel="team" hidden>
+  <h1>团队怎么用</h1><p class="lead">一份来源、四个入口、一道闸门。改规则走变更单和 PR，版本打标签，各产品登记采用。点流程里的一步，看对应模板。</p>
+  <div class="card"><h2>变更流程</h2><svg viewBox="0 0 900 90" class="flow" role="img" aria-label="变更流程"><g><g class="node" data-step="issue" tabindex="0" role="button"><rect x="8" y="16" width="130" height="52" rx="10"/><text x="73" y="47">发现问题</text></g><path d="M138 42 L158 42" class="arrow"/><g class="node" data-step="change" tabindex="0" role="button"><rect x="158" y="16" width="130" height="52" rx="10"/><text x="223" y="47">填变更单</text></g><path d="M288 42 L308 42" class="arrow"/><g class="node" data-step="pr" tabindex="0" role="button"><rect x="308" y="16" width="130" height="52" rx="10"/><text x="373" y="47">开 PR 改四样</text></g><path d="M438 42 L458 42" class="arrow"/><g class="node" data-step="review" tabindex="0" role="button"><rect x="458" y="16" width="130" height="52" rx="10"/><text x="523" y="47">评审</text></g><path d="M588 42 L608 42" class="arrow"/><g class="node" data-step="tag" tabindex="0" role="button"><rect x="608" y="16" width="130" height="52" rx="10"/><text x="673" y="47">合并 · 打标签</text></g><path d="M738 42 L758 42" class="arrow"/><g class="node" data-step="adopt" tabindex="0" role="button"><rect x="758" y="16" width="130" height="52" rx="10"/><text x="823" y="47">登记采用</text></g></g></svg><p class="note">点每一步查看说明与模板。</p></div>
+  <div class="card"><h2>一份来源、四个入口、一道闸门</h2><div class="arch"><div class="src"><b>一份来源</b><span>specs/salesbuddy/</span><small>规则原文 · tokens.json · 样板 · 模板 · 验收</small></div><div class="arrows">→</div><div class="entries"><div><b>人看</b><span>README、各章、本站</span></div><div><b>开发用</b><span>dist/ 变量产物、rules.json</span></div><div><b>AI 用</b><span>.claude/skills/design-spec 技能 + 按路径规则</span></div><div><b>其他工具</b><span>AGENTS.md、.agents、.cursor、.github</span></div></div><div class="arrows">→</div><div class="gate"><b>一道闸门</b><span>node tools/check.mjs</span><small>生成变量 → 兼容校验 → 规则索引 → 样式检查（报规则编号）→ 技能引用；Claude Code 钩子每次写文件后自动跑</small></div></div></div>
+  <div class="card"><h2>怎么引用</h2><div class="tbl"><table><tr><th>谁</th><th>怎么写</th></tr><tr><td>产品写需求</td><td>规则编号 + 页面模板 + 样板锚点，如「客户列表按 T-02、C-04；返回保留按 X-03（建议）」</td></tr><tr><td>设计出稿</td><td>标注变量名不标数值，如「按钮底色 --ui-primary」</td></tr><tr><td>开发写代码</td><td>只写 var(--ui-*)；PR 描述写规则编号；改完 node tools/check.mjs</td></tr><tr><td>测试验收</td><td>页面验收单逐项填实际结果与证据；空白不算通过</td></tr><tr><td>AI</td><td>技能自动触发；手动 /design-spec；交回规则编号、改动文件、新增变量数、检查输出、证据等级</td></tr></table></div></div>
+  <div class="card"><h2>角色（人名待填）</h2><div class="tbl"><table><tr><th>角色</th><th>负责</th><th>实际负责人</th></tr><tr><td>产品／业务负责人</td><td>变更单业务影响；PR 评审</td><td>待填</td></tr><tr><td>设计负责人</td><td>tokens.json 与规则文字；PR 评审</td><td>待填</td></tr><tr><td>开发负责人</td><td>各端接入与脚本</td><td>待填</td></tr><tr><td>测试／验收负责人</td><td>验收单与真机</td><td>待填</td></tr><tr><td>规范维护人</td><td>合并、打标签、更新日志、采用表</td><td>待填</td></tr></table></div></div>
+  <div class="card"><h2>待决定与已决定</h2><div class="tbl"><table><tr><th>事项</th><th>谁决定</th><th>影响</th><th>状态</th></tr><tr><td>主色</td><td>你</td><td>沿用 Web 已确认的 #2863CD；小程序 app.json 五项颜色与样式改用变量成为第一张待办变更（待授权执行）</td><td>已决定（2026-09-19）</td></tr><tr><td>部门共同入口</td><td>你</td><td>部门仓库 shandianT/desgin（本规范位于其 `specs/salesbuddy/`）为共同入口；本机 Obsidian 目录改为个人草稿区</td><td>已决定（2026-09-19）</td></tr><tr><td>原生 App</td><td>你</td><td>暂不在范围；变量源与对照表已去掉 App 一端，将来纳入时再补</td><td>已决定（2026-09-19）</td></tr><tr><td>一级导航命名是否三端一致（「客户」还是「作战地图」；手机底部 4 项＋更多的分配）</td><td>产品</td><td>X-01；样板手机导航</td><td>待决定，不阻塞</td></tr><tr><td>客户详情是否只保留一种呈现（小程序现有三种）</td><td>产品</td><td>小程序改造范围</td><td>待决定，不阻塞</td></tr><tr><td>8 个建议变量与两条端侧覆盖（手机正文 16px、留白 16px）是否登记采用</td><td>规范维护人</td><td>变量对照表状态列</td><td>待登记</td></tr><tr><td>手机说明文字 13px 是否新增 `--ui-text-small` 端侧覆盖</td><td>设计负责人</td><td>样板偏差</td><td>待决定</td></tr><tr><td>业务口径拍板项（客户等级、关系量纲、地图轴向、地盘落库、风险等级、董事长视图、待办与任务、有风险与需关注）</td><td>产研</td><td>样板数据与文案</td><td>见 `03-跨端样板-客户列表到详情/业务约束清单.md` 末节</td></tr></table></div></div>
+  <h2>验收与维护规则（已确认）</h2><details class="card rule" id="rule-G-01" data-id="G-01"><summary><span class="rid">G-01</span><span class="rtitle">需求与开发</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">每次变更引用规则编号、示例锚点和验收项；新业务语义先对齐契约，展示改造不发明第二套规则</p>
+  <p><b>正确示例／反例</b>　正：“按 T-02＋C-04 改商机列表”；反：“照截图画一下”</p>
+  <p><b>怎么检查</b>　评审能追溯规则与原始业务处理</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:111</p></div></details><details class="card rule" id="rule-G-02" data-id="G-02"><summary><span class="rid">G-02</span><span class="rtitle">版本与偏差</span><span class="st st-ok">已确认</span></summary>
+  <div class="rbody"><p class="req">主规范、示例册、验收清单一起更新；有效规范每类一份；偏差写清页面、影响、状态和证据</p>
+  <p><b>正确示例／反例</b>　正：某旧页仍有硬编码颜色，列待整改；反：构建绿灯就声称全系统遵循</p>
+  <p><b>怎么检查</b>　按偏差表复核；新证据覆盖旧结论时保留有效信息</p>
+  
+  
+  
+  <p class="src">来源：1.0.0-使用包快照/依据/Web设计规范.md:112</p></div></details>
+</section>
+</main>
+</div>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="mbox"><div class="mh"><h2 id="modal-title"></h2><button class="btn sec" id="modal-close" aria-label="关闭">×</button></div><div class="mb" id="modal-body"></div></div></div>
+<script type="application/json" id="tpl-data">{"01-任务单":"\u003ch3>页面设计与开发任务单\u003c/h3>\u003cp>填写说明：一项任务对应一个主要流程。未确定的内容写“待确认”，不要填写猜测。\u003c/p>\u003cdiv class=\"tbl\">\u003ctable>\u003ctr>\u003cth>项目\u003c/th>\u003cth>填写\u003c/th>\u003c/tr>\u003ctr>\u003ctd>任务名称／编号\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>产品、页面、终端\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>规范版本与规则编号\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>使用角色与业务对象\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>现在的问题\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>预期改善\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>正常流程：操作→结果\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>关键异常：操作→结果\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>数据、接口与权限依据\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>复用的组件、页面模板\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>新增建议或例外\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>产品／设计／开发／测试负责人\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>交付环境、版本与时间\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>验收结果在哪里记录\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003c/table>\u003c/div>\u003ch4>交付时补充\u003c/h4>\u003cul>\u003cli>实际改动文件与版本：\u003c/li>\u003cli>页面截图或演示入口：\u003c/li>\u003cli>实际检查结果：\u003c/li>\u003cli>本地演示／真实 API／跨端读回／生产分别覆盖了什么：\u003c/li>\u003cli>未覆盖、失败或待整改项：\u003c/li>\u003cli>规则与示例是否需要同步更新：\u003c/li>\u003c/ul>\u003ch4>示例填写（合成任务，不代表已完成）\u003c/h4>\u003cp>销售 Web 客户列表，采用 T-02、C-04；参考 X-03 的返回状态建议。销售筛选“本人负责”后进入详情，再返回，保留原条件。异常包括无匹配、对象权限变化和刷新。由团队填写实际负责人、实现版本及验证证据。\u003c/p>","02-规则变更单":"\u003ch3>设计规则变更单\u003c/h3>\u003cp>状态依次记录：提出／讨论／已确认采用／已实现／已验证／已发布。不同产品接入情况单独登记。\u003c/p>\u003cdiv class=\"tbl\">\u003ctable>\u003ctr>\u003cth>项目\u003c/th>\u003cth>填写\u003c/th>\u003c/tr>\u003ctr>\u003ctd>变更编号、提出人、日期\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>当前规范版本与规则编号\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>遇到的实际问题与证据\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>当前规则或实际行为\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>建议新规则\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>正确示例与错误示例\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>受影响的产品、终端、页面、组件\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>对业务含义、权限、数据的影响\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>兼容与迁移方式\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>实现与验证方法\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>不采用／回退时如何处理\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>决策负责人、结论与依据\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>规则、示例、代码、验收项的更新位置\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>发布版本与各产品接入记录\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003c/table>\u003c/div>\u003ch4>例外记录\u003c/h4>\u003cp>适用范围：____。原因：____。保留差异：____。负责人：____。复查时间或触发条件：____。\u003c/p>\u003cp>收到变更通知不等于已经接入；接入后仍需验证相应页面。\u003c/p>","03-页面验收单":"\u003ch3>页面设计验收单\u003c/h3>\u003cp>产品／页面：____。终端与设备：____。浏览器或客户端版本：____。\u003c/p>\u003cp>代码版本：____。规范版本与规则编号：____。验收人和日期：____。\u003c/p>\u003cp>环境与数据来源：____。身份与允许的操作范围：____。\u003c/p>\u003cdiv class=\"tbl\">\u003ctable>\u003ctr>\u003cth>检查\u003c/th>\u003cth>预期\u003c/th>\u003cth>实际结果\u003c/th>\u003cth>通过／待整改／不适用及原因\u003c/th>\u003cth>证据\u003c/th>\u003c/tr>\u003ctr>\u003ctd>首屏重点\u003c/td>\u003ctd>对象、状态、主要动作清楚\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>文字与间距\u003c/td>\u003ctd>符合已采用规则，长内容可读\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>组件状态\u003c/td>\u003ctd>默认、禁用、处理中表达完整\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>筛选归属\u003c/td>\u003ctd>条件、数量、结果一致，不污染其他区\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>列表详情返回\u003c/td>\u003ctd>符合本项目已采用的保留规则\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>表单校验失败\u003c/td>\u003ctd>定位错误并保留输入\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>加载、空数据与异常\u003c/td>\u003ctd>三者区分，下一步明确\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>金额、时间与缺失\u003c/td>\u003ctd>0、缺失和处理中分开\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>权限\u003c/td>\u003ctd>列表、详情、操作符合服务端授权\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>业务与 AI 状态\u003c/td>\u003ctd>以真实状态和回执为准\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>键盘与焦点\u003c/td>\u003ctd>操作可达，弹窗关闭恢复焦点\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>1440／1366／1024 宽与短屏\u003c/td>\u003ctd>无覆盖和遮挡\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>390／320 窄屏\u003c/td>\u003ctd>无整页横向溢出\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>手机键盘和安全区\u003c/td>\u003ctd>真机操作可达\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>保存与跨端读回\u003c/td>\u003ctd>同一记录在所测端显示一致\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003c/table>\u003c/div>\u003ch4>验收结论\u003c/h4>\u003cul>\u003cli>已验证范围：\u003c/li>\u003cli>未验证范围：\u003c/li>\u003cli>本地演示结果：\u003c/li>\u003cli>真实 API 联调结果：\u003c/li>\u003cli>跨端读回结果：\u003c/li>\u003cli>生产／实际用户验收结果：\u003c/li>\u003cli>待整改项、负责人和时间：\u003c/li>\u003cli>结论与证据：\u003c/li>\u003c/ul>\u003cp>空白项不是通过。未做真实联调时填写“未验证”；不适用时必须说明原因。\u003c/p>","04-产品采用登记表":"\u003ch3>部门设计规范采用登记表\u003c/h3>\u003cp>维护人：____。部门共同入口：____。本表更新时间：____。\u003c/p>\u003cp>每行对应一个产品和终端。以下首行是当前材料范围说明，具体负责人和接入验收仍需实际填写。\u003c/p>\u003cdiv class=\"tbl\">\u003ctable>\u003ctr>\u003cth>产品／终端\u003c/th>\u003cth>规范版本\u003c/th>\u003cth>收到日期\u003c/th>\u003cth>采用范围\u003c/th>\u003cth>负责人\u003c/th>\u003cth>组件／代码版本\u003c/th>\u003cth>验证范围与证据\u003c/th>\u003cth>未覆盖项\u003c/th>\u003cth>下次动作\u003c/th>\u003c/tr>\u003ctr>\u003ctd>SalesBuddy Web\u003c/td>\u003ctd>规则 V1.0；使用包 V1.0\u003c/td>\u003ctd>待登记\u003c/td>\u003ctd>26 条规则已确认；页面分批采用\u003c/td>\u003ctd>待指定\u003c/td>\u003ctd>按工程实际版本填写\u003c/td>\u003ctd>2026-09-17 有本地示例历史记录；当前页面需另验\u003c/td>\u003ctd>旧页面偏差、真实联调\u003c/td>\u003ctd>选择样板并填写验收单\u003c/td>\u003c/tr>\u003ctr>\u003ctd>手机网页\u003c/td>\u003ctd>待登记\u003c/td>\u003ctd>\u003c/td>\u003ctd>待明确\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>未填写\u003c/td>\u003ctd>真机与页面覆盖\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>微信小程序\u003c/td>\u003ctd>待登记\u003c/td>\u003ctd>\u003c/td>\u003ctd>待明确\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>未填写\u003c/td>\u003ctd>样式同步与真实读回\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>原生手机 App（如有）\u003c/td>\u003ctd>待登记\u003c/td>\u003ctd>\u003c/td>\u003ctd>待明确是否在范围内\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>未填写\u003c/td>\u003ctd>技术栈与组件映射\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003ctr>\u003ctd>部门其他产品\u003c/td>\u003ctd>待登记\u003c/td>\u003ctd>\u003c/td>\u003ctd>待明确\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>未填写\u003c/td>\u003ctd>品牌、业务与终端差异\u003c/td>\u003ctd>\u003c/td>\u003c/tr>\u003c/table>\u003c/div>\u003cp>接收、采用、实现、验证分别填写，禁止用一项状态代替其余状态。更新公共规则后，维护人核对各行是否需要升级。\u003c/p>"}</script>
+<script type="application/json" id="flow-data">[{"k":"issue","t":"发现问题","d":"规则不够用、页面有偏差、要换颜色或间距。先看规则索引里有没有现成规则。","tpl":"01-任务单"},{"k":"change","t":"填变更单","d":"当前规则 → 实际问题 → 候选改法 → 受影响页面 → 如何验证。","tpl":"02-规则变更单"},{"k":"pr","t":"开 PR 改四样","d":"规则条目、样例／变量、代码或接入说明、验收项一起改；第五样（规则索引与 AI 技能引用）由 node tools/check.mjs 自动刷新。"},{"k":"review","t":"评审","d":"设计负责人＋产品负责人各一人；check.mjs --ci 必须通过。"},{"k":"tag","t":"合并 · 打标签","d":"语义化版本：只改值→修订号；新增兼容规则或变量→次版本；改含义、默认样式、导航约定→主版本并附迁移说明。"},{"k":"adopt","t":"登记采用","d":"每个产品 × 终端一行：收到 ≠ 采用 ≠ 已验证。","tpl":"04-产品采用登记表"}]</script>
+<script type="application/json" id="token-defaults">{"--ui-background":"#F3F5F9","--ui-surface":"#FFFFFF","--ui-sidebar":"#142F54","--ui-ink":"#192842","--ui-secondary":"#5B6C82","--ui-muted":"#617188","--ui-primary":"#2863CD","--ui-primary-hover":"#2055B5","--ui-line":"#E2E8F0","--ui-selected":"#EDF3FF","--ui-focus":"#5786DC","--ui-danger":"#A73F38","--ui-danger-soft":"#FBE4DF","--ui-warning":"#805919","--ui-warning-soft":"#FFF0CF","--ui-success":"#27694C","--ui-success-soft":"#E8F5EE","--ui-neutral":"#56677E","--ui-neutral-soft":"#EEF2F7","--ui-font":"-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif","--ui-text-small":"12px","--ui-text-body":"14px","--ui-text-section":"16px","--ui-text-page":"24px","--ui-text-metric":"32px","--ui-space-1":"4px","--ui-space-2":"8px","--ui-space-3":"12px","--ui-space-4":"16px","--ui-space-6":"24px","--ui-space-8":"32px","--ui-radius-control":"6px","--ui-radius-panel":"12px","--ui-control-height":"36px","--ui-field-height":"40px","--ui-shadow-popup":"0 8px 28px #1928421a, 0 2px 6px #19284208","--ui-page-gutter":"24px","--ui-card-padding":"16px","--ui-block-gap":"24px","--ui-touch-target":"44px","--ui-nav-width":"220px","--ui-nav-rail-width":"56px","--ui-list-width":"360px","--ui-tabbar-height":"56px","--ui-on-primary":"#FFFFFF","--ui-sidebar-ink":"#E7EFFA","--ui-sidebar-nav":"#C2D1E6","--ui-sidebar-muted":"#B4C7E1","--ui-sidebar-hover":"#23466F","--ui-sidebar-active":"#2A568B","--ui-sidebar-accent":"#91BAFF","--ui-sidebar-focus":"#B9D2FF"}</script>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); }, $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  // 章节路由
+  var panels = $$('[data-panel]'), links = $$('.nav a[data-nav]');
+  function show(name) {
+    if (!panels.some(function (p) { return p.dataset.panel === name; })) name = 'home';
+    panels.forEach(function (p) { p.hidden = p.dataset.panel !== name; });
+    links.forEach(function (a) { if (a.dataset.nav === name) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+    window.scrollTo(0, 0);
+  }
+  function route() { var h = decodeURIComponent(location.hash.slice(1)); var m = h.match(/^(rule-[A-Z]-\d\d)$/); if (m) { var el = document.getElementById(m[1]); if (el) { show(el.closest('[data-panel]').dataset.panel); el.open = true; el.classList.add('hit'); el.scrollIntoView({ block: 'center' }); return; } } show(h || 'home'); }
+  window.addEventListener('hashchange', route); route();
+  // 查编号或变量
+  $('#find').addEventListener('change', function () {
+    var q = this.value.trim(); if (!q) return;
+    var rid = q.toUpperCase().match(/[PVCTBGX]-\d\d/); if (rid && document.getElementById('rule-' + rid[0])) { location.hash = 'rule-' + rid[0]; return; }
+    if (/^--ui-/.test(q)) { var inp = $('.tk input[data-token="' + q + '"]'); if (inp) { show('visual'); inp.closest('.tk').scrollIntoView({ block: 'center' }); inp.focus(); return; } }
+    var el = $$('.rule').filter(function (d) { return d.textContent.indexOf(q) >= 0; })[0]; if (el) { show(el.closest('[data-panel]').dataset.panel); el.open = true; el.scrollIntoView({ block: 'center' }); }
+  });
+  // 变量面板：改站点根变量并广播给样板
+  var defaults = JSON.parse($('#token-defaults').textContent), changed = {};
+  function frames() { return $$('iframe[data-sample]').map(function (f) { return f.contentWindow; }).filter(Boolean); }
+  function setToken(name, value) { document.documentElement.style.setProperty(name, value); changed[name] = value; frames().forEach(function (w) { w.postMessage({ type: 'set-token', name: name, value: value }, '*'); }); }
+  $$('.tk input').forEach(function (inp) { inp.addEventListener('input', function () { setToken(inp.dataset.token, inp.dataset.unit ? inp.value + inp.dataset.unit : inp.value); }); });
+  $('#tk-reset').addEventListener('click', function () { document.documentElement.removeAttribute('style'); changed = {}; frames().forEach(function (w) { w.postMessage({ type: 'reset-tokens' }, '*'); }); $$('.tk input').forEach(function (inp) { inp.value = inp.dataset.unit ? parseFloat(defaults[inp.dataset.token]) : defaults[inp.dataset.token]; }); });
+  $('#tk-copy').addEventListener('click', function () {
+    var rows = Object.keys(changed).map(function (k) { return '| ' + k + ' | ' + defaults[k] + ' | ' + changed[k] + ' |'; });
+    var text = '# 设计规则变更单（草稿，由规范站生成）\n\n状态：提出。当前规范版本：1.1.0-draft.1。\n\n| 变量 | 当前值 | 候选值 |\n|---|---|---|\n' + (rows.length ? rows.join('\n') : '| （尚未修改任何变量） | | |') + '\n\n遇到的实际问题与证据：____\n受影响的产品、终端、页面、组件：____\n实现与验证方法：改 tokens.json 后运行 node tools/check.mjs；样板验收；各端截图。\n决策负责人：设计负责人＋产品负责人。\n';
+    var done = function () { $('#tk-copy').textContent = '已复制到剪贴板'; setTimeout(function () { $('#tk-copy').textContent = '复制为变更单草稿'; }, 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { openModal('变更单草稿', '<pre style="white-space:pre-wrap">' + text.replace(/</g, '&lt;') + '</pre>'); });
+    else openModal('变更单草稿', '<pre style="white-space:pre-wrap">' + text.replace(/</g, '&lt;') + '</pre>');
+  });
+  // 布局：拖宽读数
+  var resizer = $('#resizer'), readout = $('#readout');
+  function tier(w) { return w > 900 ? '电脑 >900（三栏并排）' : w > 600 ? '收紧 601～900（图标导航，列表／详情二选一）' : '手机 ≤600（底部导航，详情整页进入）'; }
+  function update() { if (!resizer) return; var w = Math.round(resizer.clientWidth - 8); readout.textContent = '当前宽度 ' + w + 'px · ' + tier(w); }
+  if (window.ResizeObserver && resizer) new ResizeObserver(update).observe(resizer); update();
+  $$('.presets [data-w]').forEach(function (b) { b.addEventListener('click', function () { var w = Number(b.dataset.w); resizer.style.width = Math.min(w + 12, resizer.parentElement.clientWidth) + 'px'; update(); }); });
+  // 状态机
+  var statesFrame = $('iframe[data-states]');
+  $$('svg.sm .node').forEach(function (n) { var go = function () { $$('svg.sm .node').forEach(function (x) { x.classList.remove('on'); }); n.classList.add('on'); var d = JSON.parse(n.dataset.demo); if (statesFrame && statesFrame.contentWindow) statesFrame.contentWindow.postMessage(Object.assign({ type: 'demo', close: !d.open }, d), '*'); }; n.addEventListener('click', go); n.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); });
+  // 跨端筛选
+  $$('#cross-filter button').forEach(function (b) { b.addEventListener('click', function () { $$('#cross-filter button').forEach(function (x) { x.classList.remove('on'); }); b.classList.add('on'); var k = b.dataset.kind; $$('table.cross tr[data-kind]').forEach(function (tr) { tr.hidden = !!k && tr.dataset.kind !== k; }); }); });
+  // 流程图与模板弹窗
+  var tpl = JSON.parse($('#tpl-data').textContent), flow = JSON.parse($('#flow-data').textContent), modal = $('#modal'), lastFocus = null;
+  function openModal(title, html) { lastFocus = document.activeElement; $('#modal-title').textContent = title; $('#modal-body').innerHTML = html; modal.hidden = false; $('#modal-close').focus(); }
+  function closeModal() { modal.hidden = true; if (lastFocus) lastFocus.focus(); }
+  $('#modal-close').addEventListener('click', closeModal); modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+  $$('svg.flow .node').forEach(function (n) { var go = function () { var f = flow.filter(function (x) { return x.k === n.dataset.step; })[0]; if (!f) return; openModal(f.t, '<p>' + f.d + '</p>' + (f.tpl ? '<h3>模板：' + f.tpl + '</h3>' + tpl[f.tpl] : '')); }; n.addEventListener('click', go); n.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); });
+})();
+</script>
+</body>
+</html>

@@ -21,7 +21,7 @@ if (!targets.length) { console.error('用法：node tools/lint-styles.mjs <文�
 
 const tokensJson = join(specDir, '02-设计变量与同步链路', 'dist', 'design-tokens.json');
 const known = new Set(existsSync(tokensJson) ? Object.keys(JSON.parse(readFileSync(tokensJson, 'utf8')).semantic).map((n) => `--ui-${n}`) : []);
-const SKIP = /(\/dist\/|\/dist-artifact\.html$|1\.0\.0-使用包快照|\/vendor\/|\/截图\/|node_modules|tokens\.json$|\.min\.)/;
+const SKIP = /(\/dist\/|\/dist-artifact\.html$|1\.0\.0-使用包快照|\/vendor\/|\/截图\/|\/站点\/|node_modules|tokens\.json$|\.min\.)/; // 站点是生成物，色块与取色器里的值是数据
 const EXT = new Set(['.css', '.wxss', '.html', '.wxml', '.vue', '.jsx', '.tsx', '.js']);
 
 function walk(p, out = []) {
