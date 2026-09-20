@@ -21,7 +21,37 @@ metadata:
 4. 涉及布局或跨端时读 `specs/salesbuddy/01-三端规则对照表.md`；涉及客户列表、详情、返回时打开样板 `specs/salesbuddy/03-跨端样板-客户列表到详情/index.html` 与 `规则映射表.md`。
 5. 涉及业务字段口径（客户、商机、象限、缺失值、权限）时读 `specs/salesbuddy/03-跨端样板-客户列表到详情/业务约束清单.md`。
 
+6. 要用组件时读 `packages/ui-react/src/meta.js`（Web，17 个组件的名字、属性、状态）或 `packages/ui-miniprogram/README.md`（小程序，15 个组件）。引入写法在 `packages/ui-react/src/usage.js`。
+
 不要整章通读手册；规则原文只在 `specs/salesbuddy/1.0.0-使用包快照/` 里，那是原件，不改。
+
+## 先用现成组件，不要重画
+
+- 基础控件（按钮、输入框、选择器、日期、表格、弹窗、消息）直接用上游：Web 用 Ant Design 6，小程序用 tdesign-miniprogram 1.16。不自己画，不换别的库。
+- 部门组合件与 AI 件用 `@shandiant/ui-react`（Web）或 `@shandiant/ui-miniprogram`（小程序）。对照表：
+
+| 页面里要做的事 | Web | 小程序 |
+|---|---|---|
+| 红黄绿灰状态 | SbStatusTag | sb-status-tag |
+| 加载中、空、失败、无权限 | SbStatePanel | sb-state-panel |
+| 筛选栏 | SbFilterBar | sb-filter-bar |
+| 搜索框 | SbSearch | sb-search |
+| 列表行 | SbListRow | sb-list-row |
+| 底部固定按钮 | SbBottomBar | sb-bottom-bar |
+| 表单项（标签、必填、错误） | SbField | sb-field |
+| 底部弹层 | SbSheet | sb-sheet |
+| 分页或加载更多 | SbPagination | sb-pagination |
+| 指标数字（缺失显示未登记） | SbMetricTile | sb-metric-tile |
+| 页面标题加范围名 | SbPageHeader | sb-page-header |
+| AI 生成标识 | SbAiBadge | sb-ai-badge |
+| AI 待确认字段 | SbAiField | sb-ai-field |
+| AI 依据列表 | SbAiSources | sb-ai-sources |
+| AI 生成进度 | SbAiProgress | sb-ai-progress |
+| 电脑三栏、手机整页 | SbDetailLayout | 用 navigateTo |
+
+- Web 页面最外层包一次 `SbProvider`，主题就来自变量，不再手写颜色。
+- 装法：工程根目录 `.npmrc` 写 `@shandiant:registry=https://npm.pkg.github.com`，然后 `npm i @shandiant/tokens@draft @shandiant/ui-react`；小程序 `npm i tdesign-miniprogram@1.16.1 @shandiant/ui-miniprogram` 后在开发者工具构建 npm。没有源就用仓库 `release/` 里的包文件。细节在 `specs/salesbuddy/09-npm包与发布.md`。
+- 缺一个组件时，先在页面里用上游组件拼，并在交回说明里写「建议新增组件：名字、用途、用在几页」，不要在页面里造一个只用一次的。
 
 ## 怎么做
 
