@@ -32,6 +32,8 @@ updated: 2026-09-20
 
 ## 3｜怎么装
 
+不想自己一步步做的，把仓库 `模板/同事装包-给AI的提示词.md` 里的那段贴给 Claude Code 或 Cursor，AI 会替你做完并验证。下面是人工做法。
+
 源是 GitHub Packages，地址 `https://npm.pkg.github.com`。它不对外开放，装的人要有一个 GitHub token。
 
 先做一次，每台电脑一次：

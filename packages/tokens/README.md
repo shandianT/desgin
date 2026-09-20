@@ -13,6 +13,6 @@
 | `@shandiant/tokens/bridge-tdesign.css` | TDesign Web | `:root { --td-* }` |
 | `@shandiant/tokens/bridge-semi.css` | Semi Design | 浅色 |
 
-安装前在工程根目录建 `.npmrc`，写一行 `@shandiant:registry=https://npm.pkg.github.com`，再写一行 `//npm.pkg.github.com/:_authToken=<GitHub token>`；token 要有 read:packages 权限。没有 token 就用包文件 `npm i ./shandiant-tokens-<版本>.tgz`。
+不想自己做，把 `模板/同事装包-给AI的提示词.md` 里那段贴给 AI 工具，它会一步步做。安装前在工程根目录建 `.npmrc`，写一行 `@shandiant:registry=https://npm.pkg.github.com`，再写一行 `//npm.pkg.github.com/:_authToken=<GitHub token>`；token 要有 read:packages 权限。没有 token 就用包文件 `npm i ./shandiant-tokens-<版本>.tgz`。
 
 小程序不走 npm 的 exports，直接把 `dist/design-tokens.wxss` 与 `dist/bridge-tdesign.wxss` 复制到工程里 `@import`。
