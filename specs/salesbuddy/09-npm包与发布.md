@@ -1,6 +1,6 @@
 ---
 type: packaging
-status: 源定为 GitHub Packages（shandianT 账号下）。三个包已打成文件放在 release/，发布流程已写好，还没有真正发过一次
+status: 已发布。2026-09-20 三个包第一次发到 GitHub Packages：tokens 1.1.0-draft.1（draft 标签）、ui-react 0.3.0、ui-miniprogram 0.3.0
 updated: 2026-09-20
 ---
 
@@ -76,7 +76,7 @@ tokens 现在是草案号，装的时候写 `@draft`，定稿后去掉。小程�
 
 ## 5｜还没做的
 
-- 发布流程写好了，还没有真正跑过一次。第一次跑先勾演练。
+- 已发布一次（2026-09-20，Actions 第 3 次运行）。发布流程在干净环境暴露过两个问题并已修：tokens 包产物要先同步、测试依赖要 Node 22。
 - 装的人各自要申请一个 GitHub token，并且要能看到 desgin 仓库。仓库是私有的话，要先把人加进来。
 - 小程序包没有在开发者工具里装过、构建过。Node 里的模拟渲染已过（`npm test`），发布流程里也会跑。
 - 已验证：在干净的 React 18 加 antd 6 工程里装包、构建、渲染都正常，ES 与 CommonJS 两种引入都能用，TypeScript 工程有属性提示，传错枚举值会报错；小程序包结构符合微信 npm 规则，15 个组件 46 个状态在官方模拟器里渲染通过，但没在开发者工具里装过。
