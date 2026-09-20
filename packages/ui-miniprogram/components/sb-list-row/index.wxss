@@ -1,0 +1,8 @@
+.sb-row { display: flex; justify-content: space-between; gap: var(--ui-space-3); padding: var(--ui-space-3) var(--ui-page-gutter); border-bottom: 1px solid var(--ui-line); border-left: 3px solid transparent; background: var(--ui-surface); min-height: var(--ui-touch-target); }
+.sb-row-hover { background: var(--ui-background); }
+.sb-row.on { background: var(--ui-selected); border-left-color: var(--ui-primary); }
+.sb-row.off { color: var(--ui-muted); }
+.sb-row-main { min-width: 0; flex: 1; }
+.sb-row-name { font-weight: 600; font-size: var(--ui-text-body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-row-summary { color: var(--ui-secondary); font-size: var(--ui-text-small); }
+.sb-row-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: var(--ui-text-small); color: var(--ui-muted); white-space: nowrap; }

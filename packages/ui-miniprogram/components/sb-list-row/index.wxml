@@ -1,0 +1,4 @@
+<view class="sb-row {{selected ? 'on' : ''}} {{disabled ? 'off' : ''}}" hover-class="{{disabled ? '' : 'sb-row-hover'}}" bind:tap="onTap" aria-role="button" aria-selected="{{selected}}" aria-disabled="{{disabled}}">
+  <view class="sb-row-main"><view class="sb-row-name">{{name}}</view><view class="sb-row-summary">{{disabled && disabledReason ? disabledReason : summary}}</view></view>
+  <view class="sb-row-side"><sb-status-tag wx:if="{{tone && !disabled}}" tone="{{tone}}" label="{{statusLabel}}" reason="{{reason}}" /><text wx:if="{{disabled}}">无权限</text><text wx:if="{{time}}">{{time}}</text></view>
+</view>

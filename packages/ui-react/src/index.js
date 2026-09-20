@@ -1,0 +1,19 @@
+// 部门 Web 组件库入口。基础控件直接用 antd，这里只放规范要求的组合件与 AI 件。
+export { SbProvider } from './SbProvider.jsx';
+export { SbStatusTag } from './components/SbStatusTag.jsx';
+export { SbStatePanel } from './components/SbStatePanel.jsx';
+export { SbFilterBar } from './components/SbFilterBar.jsx';
+export { SbSearch } from './components/SbSearch.jsx';
+export { SbListRow } from './components/SbListRow.jsx';
+export { SbBottomBar } from './components/SbBottomBar.jsx';
+export { SbField } from './components/SbField.jsx';
+export { SbSheet } from './components/SbSheet.jsx';
+export { SbMetricTile } from './components/SbMetricTile.jsx';
+export { SbPageHeader } from './components/SbPageHeader.jsx';
+export { SbDetailLayout } from './components/SbDetailLayout.jsx';
+export { SbAiBadge } from './components/SbAiBadge.jsx';
+export { SbAiField } from './components/SbAiField.jsx';
+export { SbAiSources } from './components/SbAiSources.jsx';
+export { SbAiProgress } from './components/SbAiProgress.jsx';
+export { SbPagination } from './components/SbPagination.jsx';
+export { META } from './meta.js';

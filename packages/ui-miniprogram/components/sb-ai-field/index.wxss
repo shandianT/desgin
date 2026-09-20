@@ -1,0 +1,8 @@
+.sb-aifield { display: flex; flex-direction: column; gap: 4px; padding: var(--ui-space-2) var(--ui-page-gutter); background: var(--ui-surface); }
+.sb-aifield.edited { border-left: 3px solid var(--ui-primary); }
+.sb-aifield-head { display: flex; justify-content: space-between; align-items: center; gap: var(--ui-space-2); font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.sb-req { color: var(--ui-danger); }
+.sb-aifield-cands { display: flex; gap: var(--ui-space-2); flex-wrap: wrap; }
+.sb-chip { display: inline-flex; align-items: center; min-height: 32px; padding: 0 var(--ui-space-3); border-radius: 999px; border: 1px solid var(--ui-line); background: var(--ui-surface); color: var(--ui-secondary); font-size: var(--ui-text-body); }
+.sb-aifield-foot { display: flex; gap: var(--ui-space-3); align-items: center; font-size: var(--ui-text-small); color: var(--ui-muted); min-height: 20px; }
+.sb-link { color: var(--ui-primary); padding: 4px 0; }

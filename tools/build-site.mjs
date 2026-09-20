@@ -8,8 +8,9 @@
  *      --portable <目录>：把站点与依赖复制成可独立发布的一份（GitHub Pages、claude.ai、U 盘），--artifact 再去掉 html 外壳
  * 用法：node tools/build-site.mjs specs/salesbuddy [--tokens-dir 02-…] [--sample-dir 03-…] [--snapshot-dir 1.0.0-…] [--site-dir 站点] [--portable out/site] [--artifact]
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, copyFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, copyFileSync, cpSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 // ---------- 参数 ----------
 const argv = process.argv.slice(2);
@@ -76,7 +77,7 @@ const confirmedTokens = sem.filter((t) => t.status === '已确认').length, sugg
 const overrideCount = sem.filter((t) => new Set(Object.keys(PL).map((p) => t.platforms[p])).size > 1).length;
 
 // ---------- 路径 ----------
-const P = portable ? { sample: 'sample/index.html', tokensCss: 'sample/design-tokens.css', shots: 'shots/' } : { sample: `../${D.sample}/index.html`, tokensCss: `../${D.tokens}/dist/design-tokens.css`, shots: `../${D.sample}/截图/` };
+const P = portable ? { sample: 'sample/index.html', tokensCss: 'sample/design-tokens.css', shots: 'shots/', lib: 'lib/index.html' } : { sample: `../${D.sample}/index.html`, tokensCss: `../${D.tokens}/dist/design-tokens.css`, shots: `../${D.sample}/截图/`, lib: '组件库/index.html' };
 
 // ---------- 极简 Markdown 渲染（模板与说明用） ----------
 function md(text) {
@@ -97,6 +98,11 @@ function md(text) {
 // 只取一份 Markdown 里标题匹配的若干节（## 开头）
 function mdSections(text, re) { const body = text.replace(/^---\n[\s\S]*?\n---\n/, ''); const parts = body.split(/\n(?=## )/); return parts.filter((p) => re.test(p.split('\n')[0])).join('\n'); }
 const ecoDoc = existsSync(join(specDir, '05-组件生态选型.md')) ? R('05-组件生态选型.md') : '';
+// 组件库目录页（packages/ui-react 构建到 <站点>/组件库/）与组件说明（src/meta.js）
+const libDir = join(specDir, D.site, '组件库');
+const hasLib = existsSync(join(libDir, 'index.html'));
+const metaFile = resolve(specDir, '..', '..', 'packages', 'ui-react', 'src', 'meta.js');
+const LIB_META = existsSync(metaFile) ? (await import(pathToFileURL(metaFile).href)).META : [];
 
 // ---------- 片段 ----------
 const STATUS_CLASS = { '已确认': 'ok', '建议': 'warn', '业务事实': 'fact', '已验证（本地）': 'local', '未验证': 'none' };
@@ -279,6 +285,7 @@ const body = `
   <h1>组件</h1><p class="lead">同一个按钮三端三种样子，禁用了不说原因，这是最常见的返工。每个组件在每个状态下长什么样都有定论。横着看是同一个组件从默认到出错的六种样子，竖着看是同一状态下所有组件像不像一家。悬停和聚焦两列是把鼠标效果固定住给你看。</p>
   <div class="card"><p class="note">共 ${STATES.length} 列，窄屏可以左右滑，第一列固定。</p>${matrix}<p class="note">选择器、日期这类复杂控件的真实交互见 1.0.0 示例册，这里只定外观和状态。</p></div>
   <h2>规则</h2>${cards(['C-01', 'C-02', 'C-03', 'C-04', 'C-05', 'C-06', 'C-07'], true)}
+  ${hasLib ? `<h2>组件库：每个组件每个状态的真实渲染 ${badge('建议')}</h2><p class="lead">Web 组件库建在 Ant Design 6 与 Ant Design X 之上，主题只来自桥接文件。下面是它的目录页，可以直接操作。<a href="${P.lib}" target="_blank" rel="noopener">新窗口打开</a>。小程序组件在 packages/ui-miniprogram，浏览器看不到，用微信开发者工具打开 demo。</p><div class="card"><iframe class="frame tall" title="组件库目录" src="${P.lib}" loading="lazy"></iframe></div><div class="card"><div class="tbl"><table><tr><th>组件</th><th>做什么</th><th>规则</th><th>用在哪</th><th>状态</th></tr>${LIB_META.map((m) => `<tr><td><b>${esc(m.name)}</b><br><code>${esc(m.id)}</code></td><td>${esc(m.purpose)}</td><td>${m.rules.map(esc).join('、')}</td><td>${esc(m.pages)}</td><td>${m.states.map(esc).join('、')}</td></tr>`).join('')}</table></div><p class="src">来源：packages/ui-react/src/meta.js；清单依据 08-组件清单.md。小程序侧对应组件：sb-status-tag、sb-state-panel、sb-filter-bar、sb-list-row、sb-bottom-bar、sb-ai-badge、sb-ai-field。</p></div>` : ''}
   ${ecoDoc ? `<h2>组件用哪家 ${badge('建议')}</h2><div class="card doc">${md(mdSections(ecoDoc, /^## [012５5]/))}<p class="src">来源：05-组件生态选型.md，全文还有接入步骤和待决定事项。依据在 依据/外部查证-20260919/ 的 08 到 12。</p></div>` : ''}
 </section>
 
@@ -535,6 +542,7 @@ if (!portable) {
   const sample = R(`${D.sample}/index.html`).replace(/<link rel="stylesheet" href="[^"]*design-tokens\.css">/, '<link rel="stylesheet" href="design-tokens.css">');
   writeFileSync(join(portable, 'sample', 'index.html'), sample);
   for (const v of VPS) if (shots.includes(`${v}-详情.png`)) copyFileSync(join(shotsDir, `${v}-详情.png`), join(portable, 'shots', `${v}-详情.png`));
+  if (hasLib) cpSync(libDir, join(portable, 'lib'), { recursive: true });
   const page = artifact ? `<title>部门产品设计规范</title><link rel="stylesheet" href="${P.tokensCss}"><style>${css}</style>\n${body}\n<script>${js}</script>\n` : full;
   writeFileSync(join(portable, 'index.html'), page);
   console.log(`可发布站点 → ${portable}（index.html + sample/ + shots/）`);

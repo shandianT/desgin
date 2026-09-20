@@ -47,6 +47,11 @@ for (const spec of manifest.specs) {
   copyFileSync(join(tok, 'dist', '变量对照表.md'), join(refs, `${spec.id}-变量对照表.md`));
   console.log('✓ 更新技能引用文件 .claude/skills/design-spec/references/');
 }
+// 组件库：packages/ui-react 装了依赖就构建目录页到站点；没装就说明并跳过。样式文件一律查
+const uiReact = join(root, 'packages', 'ui-react');
+if (existsSync(join(uiReact, 'node_modules', 'vite'))) run('构建 Web 组件库目录页', 'npm', ['run', 'build', '--silent'], uiReact);
+else if (existsSync(uiReact)) console.log('· 未安装 packages/ui-react 依赖，跳过组件库构建（cd packages/ui-react && npm i --legacy-peer-deps）');
+for (const pkg of ['ui-react/src', 'ui-miniprogram']) if (existsSync(join(root, 'packages', pkg))) run(`样式检查（packages/${pkg}）`, 'node', [join(root, 'tools', 'lint-styles.mjs'), join(root, 'packages', pkg), '--spec', join(root, manifest.specs[0].dir)], root);
 // 技能副本：.agents/skills 供 Codex／Cursor 等工具（用 fs.cpSync 复制而非软链或外部命令，Windows 也能跑）
 const src = join(root, '.claude', 'skills', 'design-spec'), dst = join(root, '.agents', 'skills', 'design-spec');
 if (existsSync(src)) { try { cpSync(src, dst, { recursive: true }); console.log('✓ 同步技能副本到 .agents/skills'); } catch (e) { console.error(`✗ 同步技能副本失败：${e.message}`); failed++; } }

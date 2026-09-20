@@ -1,0 +1,5 @@
+<view class="sb-bottombar">
+  <t-button wx:if="{{secondaryLabel}}" variant="outline" size="large" disabled="{{secondaryDisabled}}" bind:tap="onSecondary">{{secondaryLabel}}</t-button>
+  <text wx:if="{{disabled && disabledReason}}" class="sb-bottombar-reason">{{disabledReason}}</text>
+  <t-button class="sb-bottombar-primary" theme="primary" size="large" loading="{{loading}}" disabled="{{disabled || loading}}" bind:tap="onPrimary">{{loading ? loadingLabel : primaryLabel}}</t-button>
+</view>

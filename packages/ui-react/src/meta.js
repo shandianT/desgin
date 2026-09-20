@@ -1,0 +1,20 @@
+// 组件说明：目录页与规范站从这里读，不手写第二份。
+export const META = [
+  { id: 'SbProvider', name: '主题注入', rules: ['V-01', 'V-03'], pages: '所有页', purpose: '一次注入主题：antd 的 token 来自 bridge-antd.theme.json，页面再引 design-tokens.css。', props: 'theme（可覆盖 token 与 components）', states: ['—'] },
+  { id: 'SbStatusTag', name: '状态标签', rules: ['B-01'], pages: '15 页', purpose: '红黄绿灰必带文字，可带依据。', props: 'tone：good | watch | bad | pending | unset；label；reason；showReason', states: ['向好', '需关注', '转差', '待评估', '未登记', '带依据'] },
+  { id: 'SbStatePanel', name: '四态面板', rules: ['C-06', 'P-03'], pages: '24 页', purpose: '加载中、空数据、失败可重试、无权限，一个组件。重试不清筛选，无权限不露对象名。', props: 'state：normal | loading | empty | error | forbidden；title；description；onRetry；onClear；skeleton', states: ['加载中', '骨架', '空', '失败', '无权限'] },
+  { id: 'SbFilterBar', name: '筛选栏', rules: ['C-04'], pages: '7 页', purpose: '标题带范围、筛选片、已选数、结果数、清除，紧邻结果区。', props: 'title；scope；options[{value,label,count}]；value[]；onChange；resultCount；disabled', states: ['默认', '已选', '禁用'] },
+  { id: 'SbSearch', name: '搜索框', rules: ['C-02', 'C-04'], pages: '8 页', purpose: '带清除；无结果由四态面板表达。', props: 'value；onChange；onSearch；placeholder；loading；disabled', states: ['默认', '输入中', '加载中', '禁用'] },
+  { id: 'SbListRow', name: '列表行', rules: ['C-05'], pages: '25 页', purpose: '名称、摘要、状态、时间位置固定；选中、禁用带原因。', props: 'name；summary；status{tone,label,reason}；time；selected；disabled；disabledReason；onClick', states: ['默认', '选中', '无权限'] },
+  { id: 'SbBottomBar', name: '底部操作条', rules: ['C-01', 'X-05'], pages: '13 页', purpose: '一个主操作，处理中防重复，禁用说原因，含安全区。', props: 'primary{label,onClick,loading,disabled,disabledReason}；secondary{label,onClick}；reason', states: ['默认', '处理中', '禁用说原因'] },
+  { id: 'SbField', name: '表单项', rules: ['C-02'], pages: '18 页', purpose: '标签常显、必填标记、错误就地、只读态；内部放 antd 的输入、选择、日期。', props: 'label；name；required；error；help；readOnly；rules；children', states: ['默认', '必填', '错误', '只读'] },
+  { id: 'SbSheet', name: '底部弹层', rules: ['C-07', 'X-03'], pages: '7 页', purpose: '标题、关闭、取消；不替代页面级返回。', props: 'open；title；onClose；footer；height', states: ['打开'] },
+  { id: 'SbPagination', name: '分页', rules: ['C-05'], pages: '5 页', purpose: '显示总数，末页禁用下一页。', props: 'current；total；pageSize；onChange', states: ['默认', '末页'] },
+  { id: 'SbMetricTile', name: '指标卡', rules: ['B-03'], pages: '看板、工作台、总览', purpose: '数字、说明、变化；缺失显示未登记，不显示 0。', props: 'value；label；note；missingText', states: ['有值', '缺失'] },
+  { id: 'SbPageHeader', name: '页面标题', rules: ['T-02', 'B-05'], pages: '所有页', purpose: '标题、范围名邻近数据、主操作。', props: 'title；scope；actions', states: ['默认'] },
+  { id: 'SbDetailLayout', name: '三段布局', rules: ['T-03', 'X-02', 'X-03'], pages: 'Web 列表详情页', purpose: '按容器宽度分三档：三栏并排、图标导航加二选一、底部导航加整页进入。', props: 'nav；list；detail；detailOpen；onBack；tier（强制档位，演示用）', states: ['电脑', '收紧', '手机列表', '手机详情'] },
+  { id: 'SbAiBadge', name: 'AI 标识', rules: ['A-02'], pages: '拜访确认、洞察、画像、总结', purpose: '持续显示，含「AI」与「生成」字样，不只靠图标或颜色；归档后写谁确认。', props: 'state：generating | pending | confirmed；confirmedBy；text', states: ['生成中', '待确认', '已确认'] },
+  { id: 'SbAiField', name: '待确认字段', rules: ['A-01', 'A-03', 'A-04'], pages: '拜访确认', purpose: 'AI 原值、人已修改、已确认三态；低把握留空给候选；可恢复 AI 建议。', props: 'label；required；value；aiValue；state：ai | edited | confirmed；confidence；candidates[]；onChange；onConfirm；onRestore；error', states: ['AI 原值待确认', '人已修改', '已确认', '低把握给候选', '错误'] },
+  { id: 'SbAiSources', name: 'AI 依据', rules: ['A-03'], pages: '洞察、象限、总结', purpose: '每条依据可点开到原始记录；默认折叠；没有依据就不展示结论。', props: 'items[{key,title,description,url}]；title；onClick；defaultExpanded', states: ['折叠', '展开', '无依据'] },
+  { id: 'SbAiProgress', name: '生成过程', rules: ['A-09', 'A-07'], pages: '语音转草稿', purpose: '具体阶段与进度，可取消并保留已生成部分；失败可重试。', props: 'stages[]；current；status：running | cancelled | failed | done；detail；onCancel；onRetry', states: ['进行中', '已取消', '失败', '完成'] },
+];

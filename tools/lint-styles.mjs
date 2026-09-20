@@ -69,6 +69,8 @@ for (const f of files) {
     }
     for (const m of line.matchAll(/style="([^"]*)"|style='([^']*)'/g)) declText += ';' + (m[1] || m[2] || '');
     if (!isSheet && !isMarkup && /:\s*['"`]?(#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\()/.test(line)) declText += ';' + line.replace(/['"`]/g, '');
+    // 定义自定义属性的行（--ui-xxx: #…）是变量源或其生成物本身，不算裸色值
+    if (/^\s*--[a-z0-9-]+\s*:/i.test(declText.trim())) declText = declText.replace(/^\s*--[a-z0-9-]+\s*:[^;]*;?/i, '');
     for (const hit of colorHits(declText)) findings.push({ file: rel, line: i + 1, rule: 'V-01', msg: `裸色值 ${hit}，应改用 var(--ui-…)（颜色只在 tokens.json 定义）` });
     // 字号底线：rpx 与 px 都查
     for (const m of declText.matchAll(/font-size\s*:\s*(\d+(?:\.\d+)?)(rpx|px)/g)) {

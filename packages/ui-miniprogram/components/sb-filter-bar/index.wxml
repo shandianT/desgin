@@ -1,0 +1,9 @@
+<view class="sb-filter" aria-role="group" aria-label="{{title}}">
+  <view class="sb-filter-head">
+    <view class="sb-filter-title">{{title}}<text wx:if="{{scope}}" class="sb-filter-scope">范围：{{scope}}</text></view>
+    <view class="sb-filter-meta"><text wx:if="{{value.length}}">已选 {{value.length}} 项</text><text wx:if="{{resultCount !== null}}">共 {{resultCount}} {{resultLabel}}</text><text wx:if="{{value.length}}" class="sb-filter-clear" bind:tap="onClear">清除</text></view>
+  </view>
+  <scroll-view scroll-x class="sb-filter-scroll"><view class="sb-filter-chips">
+    <view wx:for="{{items}}" wx:key="value" class="sb-chip {{item.on ? 'on' : ''}} {{disabled || item.disabled ? 'off' : ''}}" data-value="{{item.value}}" bind:tap="onChip" aria-role="button" aria-pressed="{{item.on}}">{{item.label}}<text wx:if="{{item.count !== undefined}}" class="sb-chip-count">{{item.count}}</text></view>
+  </view></scroll-view>
+</view>

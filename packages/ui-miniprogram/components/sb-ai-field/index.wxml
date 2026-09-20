@@ -1,0 +1,10 @@
+<view class="sb-aifield {{state === 'edited' ? 'edited' : ''}}">
+  <view class="sb-aifield-head"><text>{{label}}<text wx:if="{{required}}" class="sb-req"> *</text></text>
+    <sb-ai-badge wx:if="{{state === 'ai' && !low}}" state="pending" /><text wx:if="{{state === 'edited'}}">已由你修改</text><sb-ai-badge wx:if="{{state === 'confirmed'}}" state="confirmed" /><text wx:if="{{low}}">AI 不确定，请核对</text></view>
+  <t-input value="{{low ? '' : value}}" status="{{error ? 'error' : 'default'}}" tips="{{error}}" disabled="{{state === 'confirmed'}}" placeholder="{{low ? '请从候选里选或直接填写' : ''}}" borderless bind:change="onInput" />
+  <view wx:if="{{low && candidates.length}}" class="sb-aifield-cands"><view wx:for="{{candidates}}" wx:key="*this" class="sb-chip" data-value="{{item}}" bind:tap="onPick">{{item}}</view></view>
+  <view class="sb-aifield-foot">
+    <text wx:if="{{state === 'ai' && !low}}" class="sb-link" bind:tap="onConfirm">确认</text>
+    <text wx:if="{{state === 'edited' && aiValue}}">AI 建议：{{aiValue}} <text class="sb-link" bind:tap="onRestore">恢复</text></text>
+  </view>
+</view>

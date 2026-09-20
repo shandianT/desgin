@@ -1,0 +1,19 @@
+<view class="demo">
+  <view class="h">状态标签 sb-status-tag</view>
+  <view class="row"><sb-status-tag tone="good" /><sb-status-tag tone="watch" /><sb-status-tag tone="bad" /><sb-status-tag tone="pending" /><sb-status-tag tone="unset" /><sb-status-tag tone="watch" reason="一周无跟进" showReason /></view>
+  <view class="h">四态面板 sb-state-panel</view>
+  <sb-state-panel state="loading" /><sb-state-panel state="loading" skeleton /><sb-state-panel state="empty" title="没有匹配的客户" description="当前筛选：有风险、本人负责。" showClear /><sb-state-panel state="error" /><sb-state-panel state="forbidden" />
+  <view class="h">筛选栏 sb-filter-bar</view>
+  <sb-filter-bar title="客户列表" scope="本人负责" options="{{filterOpts}}" value="{{filter}}" resultCount="{{filter.length ? 6 : 24}}" resultLabel="家" bind:change="onFilter" />
+  <view class="h">列表行 sb-list-row</view>
+  <sb-list-row wx:for="{{rows}}" wx:key="name" name="{{item.name}}" summary="{{item.summary}}" tone="{{item.tone}}" reason="{{item.reason}}" time="{{item.time}}" selected="{{index === 0}}" />
+  <sb-list-row name="泰和银行数据中心" disabled disabledReason="不在你的授权范围内" />
+  <view class="h">AI 标识 sb-ai-badge</view>
+  <view class="row"><sb-ai-badge state="generating" /><sb-ai-badge state="pending" /><sb-ai-badge state="confirmed" confirmedBy="王明 9 月 19 日 " /></view>
+  <view class="h">待确认字段 sb-ai-field</view>
+  <sb-ai-field label="联系人角色" required value="{{ai.value}}" aiValue="张总（CIO）" state="{{ai.state}}" bind:change="onAi" bind:confirm="onAiConfirm" bind:restore="onAiRestore" />
+  <sb-ai-field label="客户预算" required value="{{aiLow.value}}" state="{{aiLow.state}}" confidence="low" candidates="{{['300 万', '320 万', '待确认']}}" bind:change="onAiLow" />
+  <sb-ai-field label="下一步" required value="" state="ai" error="下一步必须含时间与目标" />
+  <view class="pad"></view>
+</view>
+<sb-bottom-bar primaryLabel="归档" secondaryLabel="存草稿" loading="{{submitting}}" loadingLabel="归档中…" bind:primary="onSubmit" />

@@ -1,0 +1,1 @@
+{ "component": true, "usingComponents": { "t-loading": "tdesign-miniprogram/loading/loading", "t-skeleton": "tdesign-miniprogram/skeleton/skeleton", "t-button": "tdesign-miniprogram/button/button" } }

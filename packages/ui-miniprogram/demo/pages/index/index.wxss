@@ -1,0 +1,4 @@
+.demo { padding-bottom: 120px; }
+.h { padding: var(--ui-space-4) var(--ui-page-gutter) var(--ui-space-2); font-size: var(--ui-text-section); font-weight: 600; color: var(--ui-ink); }
+.row { display: flex; gap: var(--ui-space-2); flex-wrap: wrap; padding: 0 var(--ui-page-gutter); }
+.pad { height: var(--ui-space-8); }
