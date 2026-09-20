@@ -1,0 +1,200 @@
+<title>文案与图表规范评审稿</title>
+<meta name="description" content="部门产品设计规范第 11、12 章第一版：文案规范、修改前后对照、图表规范，供负责人评审">
+<style>
+/* 部门产品设计变量 1.1.0-draft.1 · 2026-09-19
+ * 由 build-tokens.mjs 从 tokens.json 生成，请勿手工修改；改 tokens.json 后重新生成。
+ * 目标：电脑网页与手机网页（同一份文件，≤600px 覆盖）。状态：草案：基础与语义层的值来自已确认的 SalesBuddy Web V1.0（design-tokens.css）；主色 #2863CD 已于 2026-09-19 决定沿用；标注「建议」的条目与端侧映射尚未登记采用；原生 App 暂不在范围
+ */
+:root {
+  color-scheme: light;
+  --ui-background: #F3F5F9;
+  --ui-surface: #FFFFFF;
+  --ui-sidebar: #142F54;
+  --ui-ink: #192842;
+  --ui-secondary: #5B6C82;
+  --ui-muted: #617188;
+  --ui-primary: #2863CD;
+  --ui-primary-hover: #2055B5;
+  --ui-line: #E2E8F0;
+  --ui-selected: #EDF3FF;
+  --ui-focus: #5786DC;
+  --ui-danger: #A73F38;
+  --ui-danger-soft: #FBE4DF;
+  --ui-warning: #805919;
+  --ui-warning-soft: #FFF0CF;
+  --ui-success: #27694C;
+  --ui-success-soft: #E8F5EE;
+  --ui-neutral: #56677E;
+  --ui-neutral-soft: #EEF2F7;
+  --ui-font: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --ui-text-small: 12px;
+  --ui-text-body: 14px;
+  --ui-text-section: 16px;
+  --ui-text-page: 24px;
+  --ui-text-metric: 32px;
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-6: 24px;
+  --ui-space-8: 32px;
+  --ui-radius-control: 6px;
+  --ui-radius-panel: 12px;
+  --ui-control-height: 36px;
+  --ui-field-height: 40px;
+  --ui-icon-sm: 16px;
+  --ui-icon-md: 20px;
+  --ui-icon-lg: 24px;
+  --ui-shadow-popup: 0 8px 28px #1928421a, 0 2px 6px #19284208;
+  --ui-page-gutter: 24px;
+  --ui-card-padding: 16px;
+  --ui-block-gap: 24px;
+  --ui-touch-target: 44px;
+  --ui-nav-width: 220px;
+  --ui-nav-rail-width: 56px;
+  --ui-list-width: 360px;
+  --ui-tabbar-height: 56px;
+  --ui-on-primary: #FFFFFF;
+  --ui-sidebar-ink: #E7EFFA;
+  --ui-sidebar-nav: #C2D1E6;
+  --ui-sidebar-muted: #B4C7E1;
+  --ui-sidebar-hover: #23466F;
+  --ui-sidebar-active: #2A568B;
+  --ui-sidebar-accent: #91BAFF;
+  --ui-sidebar-focus: #B9D2FF;
+  --ui-overlay: #142F5473;
+}
+
+/* 手机网页：仅覆盖端侧映射里声明的语义变量（建议，待验证） */
+@media (max-width: 600px) {
+  :root {
+    --ui-text-body: 16px;
+    --ui-page-gutter: 16px;
+  }
+}
+
+:root { --q-asset: color-mix(in srgb, var(--ui-primary) 12%, var(--ui-surface)); --q-attack: color-mix(in srgb, var(--ui-primary) 6%, var(--ui-surface)); --q-resource: color-mix(in srgb, var(--ui-neutral) 8%, var(--ui-surface)); --q-spot: var(--ui-surface); --ui-chart-1: #2863CD; --ui-chart-2: #0E8A8A; --ui-chart-3: #6B4FBB; --ui-chart-4: #C7741B; --ui-chart-5: #7A8A9E; --ink: var(--ui-ink); --paper: var(--ui-background); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ui-background: #0F1826; --ui-surface: #17233A; --ui-ink: #E6ECF5; --ui-secondary: #A6B4C8; --ui-muted: #8493A9; --ui-line: #2A3A55; --ui-selected: #1E3358; --ui-success-soft: #173427; --ui-warning-soft: #3A2E14; --ui-danger-soft: #3D1F1D; --ui-neutral-soft: #24304A; --q-spot: var(--ui-surface); } }
+:root[data-theme="dark"] { --ui-background: #0F1826; --ui-surface: #17233A; --ui-ink: #E6ECF5; --ui-secondary: #A6B4C8; --ui-muted: #8493A9; --ui-line: #2A3A55; --ui-selected: #1E3358; --ui-success-soft: #173427; --ui-warning-soft: #3A2E14; --ui-danger-soft: #3D1F1D; --ui-neutral-soft: #24304A; }
+body { background: var(--ui-background); color: var(--ui-ink); font: 15px/1.7 var(--ui-font-family, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif); margin: 0; }
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 24px 64px; padding-inline: 16px; }
+header.top { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; border-bottom: 1px solid var(--ui-line); padding-bottom: 16px; margin-bottom: 8px; }
+header.top h1 { font-size: 26px; margin: 0; text-wrap: balance; } header.top small { color: var(--ui-secondary); }
+nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); background: var(--ui-background); display: flex; gap: 4px; padding: 8px 0; z-index: 2; border-bottom: 1px solid var(--ui-line); margin-bottom: 16px; overflow-x: auto; }
+nav.tabs a { padding: 6px 12px; border-radius: 999px; color: var(--ui-secondary); text-decoration: none; white-space: nowrap; } nav.tabs a:hover, nav.tabs a:focus-visible { background: var(--ui-selected); color: var(--ui-primary); outline: none; }
+section { scroll-margin-top: 64px; } section + section { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--ui-line); }
+h2 { font-size: 20px; margin: 32px 0 8px; } h3 { font-size: 16px; margin: 20px 0 6px; } h4 { margin: 0 0 8px; font-size: 14px; color: var(--ui-secondary); font-weight: 600; }
+p { margin: 8px 0; max-width: 72ch; } .lead { color: var(--ui-secondary); max-width: 72ch; }
+ol, ul { padding-left: 1.4em; } li { margin: 4px 0; }
+code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background: var(--ui-neutral-soft); padding: 1px 5px; border-radius: 4px; }
+.tbl { overflow-x: auto; margin: 8px 0 16px; } table { border-collapse: collapse; width: 100%; font-size: 14px; } th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--ui-line); } th { color: var(--ui-secondary); font-weight: 600; font-size: 13px; }
+td s { text-decoration: line-through; text-decoration-color: var(--ui-danger); color: var(--ui-secondary); }
+.btn { display: inline-block; border: 1px solid var(--ui-primary); color: var(--ui-primary); border-radius: 6px; padding: 0 8px; font-size: 13px; line-height: 22px; }
+.status { display: inline-block; background: var(--ui-warning-soft); color: var(--ui-warning); border-radius: 999px; padding: 2px 10px; font-size: 13px; }
+.demo { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: 12px; padding: 16px; margin: 12px 0; } .demo.two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; } @media (max-width: 640px) { .demo.two { grid-template-columns: 1fr; } }
+.map { width: 100%; max-width: 560px; height: auto; display: block; } .map .qn { font-size: 14px; font-weight: 600; fill: var(--ui-secondary); } .map .ax { font-size: 12px; fill: var(--ui-muted); } .map .lab text { font-size: 12px; fill: var(--ui-ink); } .pt circle:hover { stroke: var(--ui-focus); stroke-width: 3; }
+.chart { width: 100%; height: auto; } .chart .grid line { stroke: var(--ui-line); } .chart .ax { font-size: 12px; fill: var(--ui-muted); } .chart .val { font-size: 12px; fill: var(--ui-ink); }
+.maplegend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ui-secondary); margin-top: 8px; align-items: center; } .maplegend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; } .maplegend .sep { margin-left: auto; } .maplegend .miss { color: var(--ui-primary); }
+.tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; } .tile { border: 1px solid var(--ui-line); border-radius: 12px; padding: 12px 14px; } .tile b { display: block; font-size: 32px; line-height: 1.2; color: var(--ui-primary); font-variant-numeric: tabular-nums; font-weight: 650; } .tile b small { font-size: 14px; margin-left: 2px; color: var(--ui-secondary); font-weight: 500; } .tile b.miss { color: var(--ui-muted); font-size: 22px; font-weight: 500; line-height: 1.75; } .tile span { display: block; font-size: 14px; } .tile em { font-style: normal; font-size: 12px; color: var(--ui-muted); } .tile em.up { color: var(--ui-success); } .tile em.down { color: var(--ui-danger); }
+.pal { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; } .pal i { display: block; height: 40px; border-radius: 6px; margin-bottom: 6px; } .pal small { display: block; color: var(--ui-muted); font-size: 12px; }
+.ask { background: var(--ui-selected); border-left: 3px solid var(--ui-primary); border-radius: 6px; padding: 10px 14px; margin: 16px 0; }
+@media (prefers-reduced-motion: no-preference) { .pt circle { transition: stroke-width .15s; } }
+</style>
+<div class="wrap">
+<header class="top"><h1>文案与图表规范评审稿</h1><small>部门产品设计规范 · 第 11、12 章 · 第一版 · 2026-09-20</small></header>
+<p class="lead">三部分：文案规范讲界面上的字怎么写；对照表把小程序 v1.0.6 里现在的文案和改法一行一行摆在一起；图表规范讲作战地图和看板怎么画。都是草稿，对过之后走变更单转正。看的时候在不同意的行旁边写理由就行。</p>
+<div class="ask"><b>要拍板的几件事</b><ol><li>按钮上不再出现「确定」「提交」，一律写动作。</li><li>「跟进」改叫「拜访」，「待办」改叫「任务」，全产品替换。</li><li>提示语不用「请」开头，不用感叹号。</li><li>作战地图的四个格子用深浅分，不用红黄绿；点的颜色才表示状态。</li><li>没登记潜力的客户不进格子，另列「待评估 N 家」。</li></ol></div>
+<nav class="tabs"><a href="#copy">文案规范</a><a href="#diff">修改前后对照</a><a href="#chart">图表规范</a><a href="#示例">图表示例</a></nav>
+<section id="copy"><h2 style="font-size:24px;margin-top:0">一、文案规范 <span class="status">草稿</span></h2><p>销售在小程序和网页里看到的每一个词都是文案：按钮、标题、空态、报错、提示、时间、数字。现在 26 页各写各的：按钮有 40 多种叫法，出错一律「请……」，时间只有「刚刚」。这份规范定一个说法，以后按它写，AI 写页面时也照它查。</p>
+<h2 id="1｜四条总则">1｜四条总则</h2>
+<ol><li><b>说事，不说情绪。</b> 写发生了什么、能做什么。不用感叹号，不用「哦」「呢」「亲」，不用「成功！」「抱歉！」。</li><li><b>动词加对象。</b> 按钮和链接写清做什么、对什么做：「记录拜访」「创建任务」，不写「确定」「提交」「操作」。</li><li><b>先说结果，再说原因，最后说下一步。</b> 报错和空态都按这个顺序，三句以内。</li><li><b>一个东西一个名字。</b> 业务词按第 5 节的词表，全产品统一，不用同义词换着说。</li></ol>
+<h2 id="2｜按钮与链接">2｜按钮与链接</h2>
+<div class="tbl"><table><thead><tr><th>场景</th><th>写法</th><th>例</th><th>不这样写</th></tr></thead><tbody><tr><td>主操作</td><td>动词加对象，2～4 个字</td><td>记录拜访、创建任务、归档</td><td>确定、提交、OK</td></tr><tr><td>次操作</td><td>动词，可省对象</td><td>存草稿、取消、返回</td><td>放弃、算了</td></tr><tr><td>危险操作</td><td>写清动作，按钮上不写「确定」</td><td>删除、作废、解除风险</td><td>确定、是</td></tr><tr><td>处理中</td><td>动词加「中…」</td><td>归档中…、保存中…</td><td>请稍候、Loading</td></tr><tr><td>禁用</td><td>按钮文字不变，旁边写原因</td><td>归档（还有 3 项必填未确认）</td><td>灰掉不说话</td></tr><tr><td>加载更多</td><td>固定「加载更多」，到底写「已显示全部 N 条」</td><td></td><td>没有更多了、到底啦</td></tr><tr><td>重试</td><td>固定「重试」</td><td></td><td>重新加载、刷新、再试一次</td></tr><tr><td>确认弹窗</td><td>标题说后果，按钮重复动作</td><td>标题「删除这条拜访记录？」说明「删除后不能恢复」按钮「删除」「取消」</td><td>「确定要删除吗？」「是」「否」</td></tr></tbody></table></div>
+<p>现在产品里「重新加载」「刷新名单」「重试」三个词是一件事，统一为「重试」。「确认选择」「确认登记」「确认完成」「确认转交」去掉「确认」二字，写「选择」「登记」「完成」「转交」。</p>
+<h2 id="3｜五种状态的文案">3｜五种状态的文案</h2>
+<p>每个列表、每张卡片都有五种情况，每种一个固定句式。对象名换成当前对象。</p>
+<div class="tbl"><table><thead><tr><th>状态</th><th>句式</th><th>客户列表的例子</th></tr></thead><tbody><tr><td>加载中</td><td>「正在加载对象…」</td><td>正在加载客户…</td></tr><tr><td>空，没条件</td><td>一句说没有什么，一句说怎么开始</td><td>还没有客户。点右下角「创建客户」添加第一个。</td></tr><tr><td>空，有筛选</td><td>「没有匹配的对象。」加「清除条件」按钮</td><td>没有匹配的客户。</td></tr><tr><td>失败</td><td>一句原因，一句下一步，加「重试」</td><td>加载失败，网络不通。检查网络后点重试，筛选条件会保留。</td></tr><tr><td>无权限</td><td>说没权限，不说对象是什么</td><td>这条记录不在你的授权范围内。需要查看请联系主管。</td></tr><tr><td>部分缺失</td><td>显示已有的，说明缺什么</td><td>已显示 24 家，其中 3 家的潜力还没登记。</td></tr></tbody></table></div>
+<p>各对象的空态第一句：客户「还没有客户」、商机「这个客户还没有商机」、拜访「还没有拜访记录」、任务「没有待处理的任务」、风险「没有需要关注的风险」、总结「这周还没有可总结的动作」。</p>
+<h2 id="4｜报错与提示">4｜报错与提示</h2>
+<ul><li>原因用人话，不出现错误码、接口名、英文。「网络不通」不写「request failed 500」。</li><li>每条报错带下一步。能重试给重试，要填的说填什么，要找人的说找谁。</li><li>表单校验写在字段下面，句式「要……」或「……不能为空」：「下一步要写明时间和目标」「客户名称不能为空」。不写「请输入」「格式错误」。</li><li>成功提示只在用户看不到结果时才弹：「已归档」「草稿已保存」。页面上已经能看到变化的，不弹。</li><li>提示语不用「请」开头。「请先选择客户」改「先选一个客户」；「请填写驳回原因」改「驳回要写原因」。</li><li>权限类提示不猜原因：「不在你的授权范围内」，不写「你没有权限」。</li></ul>
+<h2 id="5｜业务词表">5｜业务词表</h2>
+<p>全产品统一叫法。左边是唯一写法，右边是禁用的说法。</p>
+<div class="tbl"><table><thead><tr><th>用</th><th>不用</th></tr></thead><tbody><tr><td>客户</td><td>用户、企业、公司（指客户时）</td></tr><tr><td>商机</td><td>项目、订单、机会</td></tr><tr><td>拜访</td><td>跟进、走访、沟通记录</td></tr><tr><td>拜访记录</td><td>跟进记录、日志</td></tr><tr><td>任务</td><td>待办、工单</td></tr><tr><td>风险</td><td>预警、告警、异常（指客户风险时）</td></tr><tr><td>关系等级</td><td>关系分、亲密度</td></tr><tr><td>潜力</td><td>价值、规模</td></tr><tr><td>主攻区、客户资产、见单打单、客户资源</td><td>第一象限、Q1、A 类客户</td></tr><tr><td>需关注、向好、转差、待评估</td><td>黄灯、绿灯、红灯、灰灯（对用户说时）</td></tr><tr><td>负责人、地盘</td><td>归属人、owner</td></tr><tr><td>主管、总经理、董事长</td><td>领导、上级、管理员</td></tr><tr><td>即时总结</td><td>日报、周报（周报只指导出模板）</td></tr><tr><td>归档</td><td>提交、上报、入库</td></tr><tr><td>草稿</td><td>暂存、临时</td></tr><tr><td>AI 生成、由 AI 起草</td><td>智能推荐、系统建议、自动生成</td></tr><tr><td>依据</td><td>来源、证据、参考</td></tr><tr><td>未登记</td><td>暂无、无、空、—</td></tr><tr><td>赢单概率</td><td>成功率、把握</td></tr><tr><td>毛利</td><td>利润、盈利</td></tr><tr><td>确收</td><td>收入确认</td></tr><tr><td>回款</td><td>收款、到账</td></tr></tbody></table></div>
+<h2 id="6｜数字、金额、时间">6｜数字、金额、时间</h2>
+<div class="tbl"><table><thead><tr><th>项</th><th>写法</th><th>例</th></tr></thead><tbody><tr><td>金额</td><td>带单位，万元为主，整数不带小数；千万以上用「万」不用「亿」</td><td>320 万、1,200 万</td></tr><tr><td>缺失</td><td>「未登记」。0 只在明确是零的时候显示</td><td>回款：未登记</td></tr><tr><td>百分比</td><td>整数，带 %</td><td>赢单概率 70%</td></tr><tr><td>数量</td><td>带量词</td><td>24 家客户、3 条商机、5 个任务</td></tr><tr><td>关系等级</td><td>「N/10」</td><td>关系 8/10</td></tr><tr><td>相对时间</td><td>1 小时内「N 分钟前」，24 小时内「N 小时前」，7 天内「N 天前」</td><td>2 天前跟进</td></tr><tr><td>绝对时间</td><td>7 天以上写月日，跨年带年份，需要时刻写 24 小时制</td><td>9 月 18 日、2025 年 12 月 3 日、9 月 18 日 14:30</td></tr><tr><td>相对时间可查</td><td>相对时间旁能看到完整日期</td><td>2 天前（9 月 18 日）</td></tr><tr><td>周期</td><td>「第三季度」「9 月」「本周」</td><td>不写 Q3、2026-09</td></tr><tr><td>数字与文字</td><td>数字和单位、中英文之间空一格</td><td>320 万、Ant Design 6</td></tr></tbody></table></div>
+<h2 id="7｜标题与范围">7｜标题与范围</h2>
+<ul><li>页面标题是对象名：客户、商机、任务、作战地图、即时总结。不加「管理」「列表」「中心」。</li><li>标题旁写范围：「客户 · 本人负责 · 24 家」「作战地图 · 华南团队」。范围词用「本人负责」「直属团队」「授权部门」「核心客户」，和权限四级对应。</li><li>分区标题是名词短语：「待办」「业务动态」「关注与依据」。</li></ul>
+<h2 id="8｜AI相关">8｜AI 相关</h2>
+<ul><li>标识固定两种：生成中「AI 生成中…」，待确认「AI 生成，待确认」，已确认「由 AI 起草，某某确认」。</li><li>AI 没把握时写「AI 不确定，请核对」，给候选，不写「可能是」「大概」。</li><li>依据句式「依据：」加来源名称，可点开：「依据：9 月 12 日拜访记录」。</li><li>不用「智能」「聪明」「懂你」这类词，不给 AI 起人名，不用「我」自称。</li></ul>
+<h2 id="9｜标点与格式">9｜标点与格式</h2>
+<ul><li>中文全角标点。句末用句号，列表项末尾不加标点。</li><li>引用界面上的词用「」，不用双引号。</li><li>省略号用「…」一个字符。</li><li>不用括号解释，要解释就另起一句。</li><li>英文和数字用半角，前后空一格。</li></ul>
+<h2 id="10｜怎么检查">10｜怎么检查</h2>
+<ul><li>按钮文字是否动词加对象；有没有「确定」「提交」「OK」。</li><li>空态、失败、无权限三种文案是否按第 3 节句式。</li><li>有没有「请」开头的提示、感叹号、错误码。</li><li>业务词是否在第 5 节的「用」列。</li><li>时间和金额是否按第 6 节。</li></ul>
+<h2 id="11｜还没定的">11｜还没定的</h2>
+<ul><li>「即时总结」对用户是否改叫「今日总结」，看神码习惯。</li><li>主管视角的「团队」是否要区分「直属团队」和「授权部门」两个词，还是统一叫「团队」。</li><li>英文缩写 ACV 对用户显示「年度合同额」还是保留 ACV，看神码内部叫法。</li></ul></section>
+<section id="diff"><h2 style="font-size:24px;margin-top:0">二、修改前 → 修改后 <span class="status">草稿</span></h2><p>左列是产品里现在的写法，从 v1.0.6 的 wxml 和 js 里抓出来的。右列是按规范改的。最右一列是依据的条款。对的时候逐行看，不同意的划掉写理由。</p>
+<h2 id="1｜按钮">1｜按钮</h2>
+<div class="tbl"><table><thead><tr><th>修改前</th><th>修改后</th><th>依据</th></tr></thead><tbody><tr><td><s>确定</s></td><td>按实际动作写：归档、保存、选择</td><td>2 主操作</td></tr><tr><td><s>确认选择</s></td><td>选择</td><td>2 去掉「确认」</td></tr><tr><td><s>确认登记</s></td><td>登记</td><td>2</td></tr><tr><td><s>确认完成</s></td><td>完成</td><td>2</td></tr><tr><td><s>确认转交</s></td><td>转交</td><td>2</td></tr><tr><td><s>保存修改</s></td><td>保存</td><td>2 次操作</td></tr><tr><td><s>保存草稿</s></td><td>存草稿</td><td>2</td></tr><tr><td><s>重新加载</s></td><td>重试</td><td>2 重试</td></tr><tr><td><s>刷新名单</s></td><td>重试</td><td>2</td></tr><tr><td><s>重新录音</s></td><td>重新录</td><td>2</td></tr><tr><td><s>返回完善</s></td><td>返回修改</td><td>2</td></tr><tr><td><s>编辑场景</s></td><td>编辑</td><td>2</td></tr><tr><td><s>加载更多场景、加载更多记录</s></td><td>加载更多</td><td>2 加载更多</td></tr><tr><td><s>取消任务</s></td><td>作废任务（危险操作，弹窗确认）</td><td>2 危险操作</td></tr><tr><td><s>驳回、拒绝</s></td><td>统一「拒绝」（任务拒绝必须填意见，业务口径）</td><td>5 一个东西一个名字</td></tr><tr><td><s>撤销</s></td><td>撤销（保留）</td><td></td></tr><tr><td><s>关闭</s></td><td>关闭（只用于弹层）</td><td></td></tr><tr><td><s>切换账号</s></td><td>切换账号（保留）</td><td></td></tr><tr><td><s>日进展、周进展</s></td><td>今日、本周</td><td>6 周期</td></tr><tr><td><s>月、季度、周</s></td><td>本月、本季度、本周</td><td>6 周期</td></tr><tr><td><s>语音录入、文件录入</s></td><td>语音录入、上传文件</td><td>2 动词加对象</td></tr></tbody></table></div>
+<h2 id="2｜页面标题">2｜页面标题</h2>
+<div class="tbl"><table><thead><tr><th>修改前</th><th>修改后</th><th>依据</th></tr></thead><tbody><tr><td><s>商汤销售小浣熊</s></td><td>首页（导航栏标题）；品牌名放登录页</td><td>7 标题是对象名</td></tr><tr><td><s>总览</s></td><td>工作台</td><td>7；和 T-01 首页工作台一致</td></tr><tr><td><s>客户经营详情</s></td><td>客户</td><td>7 不加「经营详情」</td></tr><tr><td><s>维护商机</s></td><td>商机</td><td>7</td></tr><tr><td><s>商机看板</s></td><td>商机 · 看板视图，或并入商机页的一个视图</td><td>7</td></tr><tr><td><s>记录客户拜访</s></td><td>记录拜访</td><td>2</td></tr><tr><td><s>确认拜访记录</s></td><td>确认拜访</td><td>2</td></tr><tr><td><s>拜访记录详情</s></td><td>拜访记录</td><td>7</td></tr><tr><td><s>跟进记录</s></td><td>拜访记录</td><td>5 词表：不用「跟进」</td></tr><tr><td><s>待办详情、全部待办</s></td><td>任务、全部任务</td><td>5 词表：不用「待办」</td></tr><tr><td><s>风险详情、全部风险</s></td><td>风险、全部风险</td><td>7</td></tr><tr><td><s>核对客户建档与下发</s></td><td>核对客户</td><td>7</td></tr><tr><td><s>创建新客户</s></td><td>创建客户</td><td>2</td></tr><tr><td><s>客户认领</s></td><td>认领客户</td><td>2</td></tr><tr><td><s>编辑客户</s></td><td>编辑客户（保留）</td><td></td></tr><tr><td><s>经营实绩</s></td><td>实绩</td><td>7</td></tr><tr><td><s>销售能力详情</s></td><td>能力画像</td><td>7</td></tr><tr><td><s>即时总结详情</s></td><td>即时总结</td><td>7</td></tr><tr><td><s>看板、作战地图、我的</s></td><td>保留</td><td></td></tr><tr><td><s>创建 Demo 场景</s></td><td>创建演示场景（演示功能对客隐藏）</td><td>9 不夹英文</td></tr></tbody></table></div>
+<h2 id="3｜空态">3｜空态</h2>
+<div class="tbl"><table><thead><tr><th>修改前</th><th>修改后</th><th>依据</th></tr></thead><tbody><tr><td><s>暂无商机</s></td><td>这个客户还没有商机。</td><td>3 空态第一句</td></tr><tr><td><s>当前筛选条件下没有商机</s></td><td>没有匹配的商机。<span class="btn">清除条件</span></td><td>3 空有筛选</td></tr><tr><td><s>当前筛选范围暂无客户</s></td><td>没有匹配的客户。<span class="btn">清除条件</span></td><td>3</td></tr><tr><td><s>没有匹配到客户，请调整关键词</s></td><td>没有匹配的客户。换个关键词，或清除条件。</td><td>3、4 不用「请」</td></tr><tr><td><s>没有找到匹配客户</s></td><td>没有匹配的客户。</td><td>3</td></tr><tr><td><s>没有匹配的成员、没有匹配的同事、没有匹配的 FDE 成员</s></td><td>没有匹配的成员。</td><td>5 一个名字</td></tr><tr><td><s>当前没有待处理任务</s></td><td>没有待处理的任务。</td><td>3</td></tr><tr><td><s>当前客户暂无待办事项</s></td><td>这个客户还没有任务。</td><td>3、5</td></tr><tr><td><s>当前商机暂无已关联待办</s></td><td>这条商机还没有任务。</td><td>3、5</td></tr><tr><td><s>当前商机暂无已关联跟进</s></td><td>这条商机还没有拜访记录。</td><td>3、5</td></tr><tr><td><s>暂无跟进记录</s></td><td>还没有拜访记录。点右下角「记录拜访」添加第一条。</td><td>3 空无条件</td></tr><tr><td><s>本年暂无归档跟进记录</s></td><td>今年还没有归档的拜访记录。</td><td>3、5</td></tr><tr><td><s>你还没有在这条商机下确认归档拜访记录</s></td><td>这条商机还没有归档的拜访记录。</td><td>3</td></tr><tr><td><s>暂无已记录动态</s></td><td>还没有动态。</td><td>3</td></tr><tr><td><s>暂无能力画像</s></td><td>还没有能力画像。归档 3 条拜访记录后生成。</td><td>3 说怎么开始</td></tr><tr><td><s>暂无已保存的历史画像</s></td><td>还没有历史画像。</td><td>3</td></tr><tr><td><s>暂无可评估的归档记录，缺少样本的维度显示未评估</s></td><td>归档记录不够，还不能评估。样本不足的维度显示「待评估」。</td><td>3、5</td></tr><tr><td><s>当前范围暂无排名数据</s></td><td>这个范围还没有排名。</td><td>3</td></tr><tr><td><s>当前范围暂无成员记录</s></td><td>这个范围还没有成员。</td><td>3</td></tr><tr><td><s>本次复盘暂无此主题的专项建议。</s></td><td>这个主题没有建议。</td><td>3</td></tr><tr><td><s>本次没有需要补充的待办建议</s></td><td>没有需要补充的任务。</td><td>3、5</td></tr><tr><td><s>没有找到伙伴，请联系运营维护目录。</s></td><td>没有匹配的伙伴。目录不全找运营。</td><td>3、4</td></tr><tr><td><s>当前没有可接手人员，可联系运营或说明原因后取消。</s></td><td>没有可接手的人。找运营，或写明原因后作废。</td><td>3、4</td></tr><tr><td><s>还没有 Demo 场景</s></td><td>还没有演示场景。</td><td>9</td></tr></tbody></table></div>
+<h2 id="4｜加载与失败">4｜加载与失败</h2>
+<div class="tbl"><table><thead><tr><th>修改前</th><th>修改后</th><th>依据</th></tr></thead><tbody><tr><td><s>正在加载…</s></td><td>正在加载客户…（写对象）</td><td>3 加载中</td></tr><tr><td><s>正在加载客户信息…、正在加载商机信息…、正在加载商机经营信息…</s></td><td>正在加载客户…、正在加载商机…</td><td>3</td></tr><tr><td><s>正在加载团队成员…、正在加载团队统计…</s></td><td>正在加载团队…</td><td>3</td></tr><tr><td><s>正在加载可选范围…</s></td><td>正在加载…</td><td>3</td></tr><tr><td><s>正在加载下一页…</s></td><td>正在加载…</td><td>3</td></tr><tr><td><s>数据加载失败</s></td><td>加载失败，网络不通。检查网络后点重试，筛选条件会保留。</td><td>3 失败</td></tr><tr><td><s>下一页加载失败</s></td><td>加载失败。<span class="btn">重试</span></td><td>3</td></tr><tr><td><s>任务加载失败、业务选项加载失败、伙伴目录加载失败，请重试</s></td><td>加载失败。<span class="btn">重试</span></td><td>3、4 不用「请」</td></tr><tr><td><s>业务选项目录格式错误，请重试</s></td><td>加载失败，数据有问题。点重试，还不行找运营。</td><td>4 原因用人话</td></tr><tr><td><s>人员目录分页异常，请重试</s></td><td>加载失败。<span class="btn">重试</span></td><td>4</td></tr><tr><td><s>协同人加载失败：{错误信息}</s></td><td>加载失败。<span class="btn">重试</span>（错误信息不给用户看）</td><td>4 不出现错误码</td></tr><tr><td><s>API 请求失败（500）</s></td><td>加载失败，服务暂时不可用。稍后点重试。</td><td>4</td></tr><tr><td><s>语音识别失败（{状态码}）</s></td><td>没听清。重新录一次，或改成打字。</td><td>4</td></tr><tr><td><s>Agent 处理失败</s></td><td>AI 没能生成草稿。已录的内容还在，点重试。</td><td>4、8</td></tr><tr><td><s>{功能}生成失败，请稍后重试。</s></td><td>没能生成{功能}。点重试。</td><td>4</td></tr><tr><td><s>任务发送失败、任务响应失败</s></td><td>任务没发出去。<span class="btn">重试</span>、没能提交。<span class="btn">重试</span></td><td>4</td></tr><tr><td><s>上传失败</s></td><td>上传失败。<span class="btn">重试</span></td><td></td></tr></tbody></table></div>
+<h2 id="5｜提示语">5｜提示语</h2>
+<div class="tbl"><table><thead><tr><th>修改前</th><th>修改后</th><th>依据</th></tr></thead><tbody><tr><td><s>请先选择客户</s></td><td>先选一个客户</td><td>4 不用「请」开头</td></tr><tr><td><s>请先选择要认领的客户</s></td><td>先选要认领的客户</td><td>4</td></tr><tr><td><s>请选择任务负责人</s></td><td>任务要有负责人</td><td>4 校验句式</td></tr><tr><td><s>请重新选择负责销售</s></td><td>负责销售已变，重新选一个</td><td>4</td></tr><tr><td><s>请补充全部必填信息</s></td><td>还有 N 项必填没填（按钮旁列出）</td><td>2 禁用说原因</td></tr><tr><td><s>请填写驳回原因</s></td><td>拒绝要写原因</td><td>4</td></tr><tr><td><s>请填写风险解除依据</s></td><td>解除风险要写依据</td><td>4</td></tr><tr><td><s>请填写清晰的任务描述</s></td><td>任务描述要写清做什么</td><td>4</td></tr><tr><td><s>请填写完成说明</s></td><td>完成要写说明</td><td>4</td></tr><tr><td><s>请填写作废原因</s></td><td>作废要写原因</td><td>4</td></tr><tr><td><s>请至少选择一个季度</s></td><td>至少选一个季度</td><td>4</td></tr><tr><td><s>请先补充拜访文字内容</s></td><td>拜访内容不能为空</td><td>4</td></tr><tr><td><s>请先完成本次语音录入</s></td><td>先录完这段语音</td><td>4</td></tr><tr><td><s>请等待团队范围加载完成</s></td><td>正在加载团队…（禁用按钮，不弹提示）</td><td>4</td></tr><tr><td><s>请输入账号和密码</s></td><td>账号和密码不能为空</td><td>4</td></tr><tr><td><s>请先同意隐私与数据使用说明</s></td><td>先勾选同意隐私说明</td><td>4</td></tr><tr><td><s>录音时间太短，请重新录入</s></td><td>录音太短，至少 2 秒。重新录一次。</td><td>4</td></tr><tr><td><s>未获得麦克风权限、无法读取录音权限</s></td><td>没有麦克风权限。去微信设置里打开。</td><td>4 说下一步</td></tr><tr><td><s>当前微信版本不支持录音</s></td><td>这个微信版本不支持录音。升级微信后再试。</td><td>4</td></tr><tr><td><s>隐私指引暂不可用，请联系运营</s></td><td>隐私说明打不开。找运营。</td><td>4</td></tr><tr><td><s>退出未完成，请重试</s></td><td>没能退出。<span class="btn">重试</span></td><td>4</td></tr><tr><td><s>风险不存在或已不可见</s></td><td>这条风险已解除或不在你的授权范围内。</td><td>4 权限不猜原因</td></tr><tr><td><s>当前仅可查看这条历史摘要</s></td><td>这是历史摘要，只能查看。</td><td>4</td></tr><tr><td><s>草稿已保存</s></td><td>草稿已保存（保留）</td><td>4 成功提示</td></tr><tr><td><s>风险已解除</s></td><td>风险已解除（保留）</td><td></td></tr><tr><td><s>语音草案已生成、语音内容已填入</s></td><td>AI 草稿已生成，逐项确认（页面已显示时不弹）</td><td>4、8</td></tr></tbody></table></div>
+<h2 id="6｜数字与时间">6｜数字与时间</h2>
+<div class="tbl"><table><thead><tr><th>修改前</th><th>修改后</th><th>依据</th></tr></thead><tbody><tr><td><s>相对时间只有「刚刚」</s></td><td>5 分钟前、2 小时前、3 天前、9 月 18 日</td><td>6 相对时间</td></tr><tr><td><s>缺失显示「-」「暂无」或 0</s></td><td>未登记</td><td>6 缺失</td></tr><tr><td><s>关系分 8</s></td><td>关系 8/10</td><td>6</td></tr><tr><td><s>预算 3200000</s></td><td>预算 320 万</td><td>6 金额</td></tr><tr><td><s>概率 0.7</s></td><td>赢单概率 70%</td><td>6</td></tr><tr><td><s>2026-09-18</s></td><td>9 月 18 日</td><td>6 绝对时间</td></tr><tr><td><s>Q3</s></td><td>第三季度</td><td>6 周期</td></tr></tbody></table></div>
+<h2 id="7｜业务词替换（全局查找替换的候选）">7｜业务词替换（全局查找替换的候选）</h2>
+<div class="tbl"><table><thead><tr><th>现在</th><th>改成</th><th>出现在</th></tr></thead><tbody><tr><td><s>跟进记录、跟进</s></td><td>拜访记录、拜访</td><td>页面标题、空态、列表</td></tr><tr><td><s>待办</s></td><td>任务</td><td>页面标题、空态、看板</td></tr><tr><td><s>FDE 成员、同事、人员</s></td><td>成员</td><td>选人页</td></tr><tr><td><s>归属人、负责销售</s></td><td>负责人</td><td>客户认领</td></tr><tr><td><s>预警</s></td><td>风险</td><td>看板</td></tr><tr><td><s>Demo</s></td><td>演示</td><td>演示功能</td></tr></tbody></table></div></section>
+<section id="chart"><h2 style="font-size:24px;margin-top:0">三、图表规范 <span class="status">草稿</span></h2><p>作战地图是关系 × 潜力四象限，每个客户一个点。看板是指标卡加柱线图。董事长看的就是这两样，现在没有一条规则。小程序 v1.0.6 里只有一张画像雷达图，别的图还没做，所以这份规范先于代码。</p>
+<h2 id="1｜六条总则">1｜六条总则</h2>
+<ol><li><b>图先回答一个问题。</b> 每张图标题写它回答什么：「哪些客户该多跑」「本季毛利够不够」。回答不了具体问题的图不放。</li><li><b>颜色有含义才用。</b> 象限用象限色，状态用红黄绿灰，其余系列用固定顺序色。不为好看加颜色。</li><li><b>没数据就说没数据。</b> 缺失显示「未登记」，不画成 0；一个点也画坐标轴；空图显示原因和下一步。</li><li><b>图旁必有数。</b> 每张图能切到数据表，董事长要看数时不用猜。</li><li><b>字不小于 12。</b> 坐标轴、图例、标签都用 <code>--ui-text-small</code> 起，手机上 24rpx 起。</li><li><b>点得进去。</b> 图上的点和柱都能点到对应的客户、商机或明细，悬停显示依据。</li></ol>
+<h2 id="示例">先看示例</h2><p>下面三张都是按本规范用真实变量画的，数据是编的。</p><div class="demo"><h4>作战地图</h4><svg class="map" viewBox="0 0 560 480" role="img" aria-label="作战地图示例：客户资产 3 家，主攻区 3 家，客户资源 3 家，见单打单 3 家">
+  <rect x="44" y="44" width="236" height="196" fill="var(--q-attack)"/><rect x="280" y="44" width="236" height="196" fill="var(--q-asset)"/>
+  <rect x="44" y="240" width="236" height="196" fill="var(--q-spot)"/><rect x="280" y="240" width="236" height="196" fill="var(--q-resource)"/>
+  <rect x="44" y="44" width="472" height="392" fill="none" stroke="var(--ui-line)"/>
+  <line x1="280" y1="44" x2="280" y2="436" stroke="var(--ui-line)" stroke-dasharray="4 4"/><line x1="44" y1="240" x2="516" y2="240" stroke="var(--ui-line)" stroke-dasharray="4 4"/>
+  <text x="54" y="64" class="qn">主攻区</text><text x="506" y="64" class="qn" text-anchor="end">客户资产</text><text x="54" y="426" class="qn">见单打单</text><text x="506" y="426" class="qn" text-anchor="end">客户资源</text>
+  <text x="44" y="466" class="ax">潜力小</text><text x="516" y="466" class="ax" text-anchor="end">潜力大</text>
+  <text x="14" y="436" class="ax" transform="rotate(-90 14 436)">关系浅</text><text x="14" y="84" class="ax" transform="rotate(-90 14 84)">关系深</text>
+  <g class="pt"><circle cx="442.5777777777778" cy="122.40000000000003" r="11" fill="var(--ui-success)" stroke="var(--ui-surface)" stroke-width="2"><title>华宸数据科技 · 关系 8.2/10 · 潜力 8.6/10</title></circle></g><g class="pt"><circle cx="463.55555555555554" cy="157.2444444444444" r="11" fill="var(--ui-danger)" stroke="var(--ui-surface)" stroke-width="2"><title>金桥制造 · 关系 7.4/10 · 潜力 9/10</title></circle></g><g class="pt"><circle cx="390.1333333333333" cy="87.5555555555556" r="11" fill="var(--ui-success)" stroke="var(--ui-surface)" stroke-width="2"><title>泰和银行数据中心 · 关系 9/10 · 潜力 7.6/10</title></circle></g><g class="pt"><circle cx="201.33333333333331" cy="113.68888888888887" r="11" fill="var(--ui-warning)" stroke="var(--ui-surface)" stroke-width="2"><title>北辰智造集团 · 关系 8.4/10 · 潜力 4/10</title></circle></g><g class="pt"><circle cx="159.3777777777778" cy="183.3777777777778" r="8" fill="var(--ui-warning)" stroke="var(--ui-surface)" stroke-width="2"><title>云岭教育 · 关系 6.8/10 · 潜力 3.2/10</title></circle></g><g class="pt"><circle cx="117.42222222222222" cy="96.26666666666665" r="8" fill="var(--ui-success)" stroke="var(--ui-surface)" stroke-width="2"><title>恒信物流 · 关系 8.8/10 · 潜力 2.4/10</title></circle></g><g class="pt"><circle cx="421.59999999999997" cy="322.75555555555553" r="8" fill="var(--ui-success)" stroke="var(--ui-surface)" stroke-width="2"><title>南方电力设计院 · 关系 3.6/10 · 潜力 8.2/10</title></circle></g><g class="pt"><circle cx="327.20000000000005" cy="383.73333333333335" r="6" fill="var(--ui-neutral)" stroke="var(--ui-surface)" stroke-width="2"><title>星海传媒 · 关系 2.2/10 · 潜力 6.4/10</title></circle></g><g class="pt"><circle cx="369.15555555555557" cy="287.9111111111111" r="6" fill="var(--ui-success)" stroke="var(--ui-surface)" stroke-width="2"><title>嘉禾食品 · 关系 4.4/10 · 潜力 7.2/10</title></circle></g><g class="pt"><circle cx="127.91111111111111" cy="348.8888888888889" r="6" fill="var(--ui-neutral)" stroke="var(--ui-surface)" stroke-width="2"><title>蓝湾科技园 · 关系 3/10 · 潜力 2.6/10</title></circle></g><g class="pt"><circle cx="232.79999999999998" cy="401.15555555555557" r="6" fill="var(--ui-warning)" stroke="var(--ui-surface)" stroke-width="2"><title>大成律所 · 关系 1.8/10 · 潜力 4.6/10</title></circle></g><g class="pt"><circle cx="75.46666666666667" cy="279.20000000000005" r="6" fill="var(--ui-neutral)" stroke="var(--ui-surface)" stroke-width="2"><title>启明中学 · 关系 4.6/10 · 潜力 1.6/10</title></circle></g>
+  <g class="lab"><text x="426.5777777777778" y="126.40000000000003" text-anchor="end">华宸数据科技 · 关系 8/10 · 预算 320 万</text></g>
+</svg>
+<div class="maplegend"><span><i style="background:var(--ui-success)"></i>向好</span><span><i style="background:var(--ui-warning)"></i>需关注</span><span><i style="background:var(--ui-danger)"></i>转差</span><span><i style="background:var(--ui-neutral)"></i>待评估</span><span class="sep">点的大小 = 潜力三档</span><span class="miss">待评估 3 家，还没登记潜力 ›</span></div></div><div class="demo two"><div><h4>看板指标卡</h4><div class="tiles"><div class="tile"><b>320<small>万</small></b><span>本季毛利</span><em class="up">比上季 +23%</em></div><div class="tile"><b>24<small>家</small></b><span>客户</span><em>比上季 +2 家</em></div><div class="tile"><b class="miss">未登记</b><span>回款</span><em>财务还没登记</em></div><div class="tile"><b>70<small>%</small></b><span>赢单概率</span><em class="down">比上季 −10%</em></div></div></div><div><h4>柱状图：本季对上季</h4><svg class="chart" viewBox="0 0 420 220" role="img" aria-label="毛利示例：本季三个月与上季对比"><g class="grid"><line x1="40" x2="400" y1="170" y2="170"/><line x1="40" x2="400" y1="125" y2="125"/><line x1="40" x2="400" y1="80" y2="80"/><line x1="40" x2="400" y1="35" y2="35"/></g><text class="ax" x="34" y="174" text-anchor="end">0</text><text class="ax" x="34" y="129" text-anchor="end">120</text><text class="ax" x="34" y="84" text-anchor="end">240</text><text class="ax" x="34" y="39" text-anchor="end">360</text><rect x="70" y="102.5" width="34" height="67.5" fill="var(--ui-chart-1)"/><rect x="108" y="113.75" width="34" height="56.25" fill="var(--ui-chart-5)"/><text class="ax" x="106" y="192" text-anchor="middle">7 月</text><text class="val" x="87" y="96.5" text-anchor="middle">180</text><rect x="180" y="80" width="34" height="90" fill="var(--ui-chart-1)"/><rect x="218" y="95" width="34" height="75" fill="var(--ui-chart-5)"/><text class="ax" x="216" y="192" text-anchor="middle">8 月</text><text class="val" x="197" y="74" text-anchor="middle">240</text><rect x="290" y="50" width="34" height="120" fill="var(--ui-chart-1)"/><rect x="328" y="72.5" width="34" height="97.5" fill="var(--ui-chart-5)"/><text class="ax" x="326" y="192" text-anchor="middle">9 月</text><text class="val" x="307" y="44" text-anchor="middle">320</text><text class="ax" x="400" y="210" text-anchor="end">单位：万元</text></svg>
+<div class="maplegend"><span><i style="background:var(--ui-chart-1)"></i>本季</span><span><i style="background:var(--ui-chart-5)"></i>上季</span></div></div></div><div class="demo"><h4>顺序色</h4><div class="pal"><div><i style="background:#2863CD"></i><code>--ui-chart-1</code><small>#2863CD · 第一系列、本期</small></div><div><i style="background:#0E8A8A"></i><code>--ui-chart-2</code><small>#0E8A8A · 第二系列</small></div><div><i style="background:#6B4FBB"></i><code>--ui-chart-3</code><small>#6B4FBB · 第三系列</small></div><div><i style="background:#C7741B"></i><code>--ui-chart-4</code><small>#C7741B · 第四系列</small></div><div><i style="background:#7A8A9E"></i><code>--ui-chart-5</code><small>#7A8A9E · 第五系列、上期、其他</small></div></div></div><h2 id="2｜作战地图（四象限）">2｜作战地图（四象限）</h2>
+<h3>2.1 坐标</h3>
+<ul><li>横轴客户潜力，从左到右小到大；纵轴关系深度，从下到上浅到深。和产品原型一致，和董事长 PPT 的轴向相反但象限含义不变。</li><li>关系等级 1～10 直接当纵坐标，5.5 是分界线。潜力按预算、台数、IT 计划算成 1～10，分界线也是 5.5。算法是业务口径，不在本规范。</li><li>轴上不标刻度数字，只在两端标「浅」「深」「小」「大」。分界线是虚线。</li></ul>
+<h3>2.2 四个格子</h3>
+<div class="tbl"><table><thead><tr><th>格子</th><th>位置</th><th>底色</th><th>名字标在</th><th>含义一句话</th></tr></thead><tbody><tr><td>客户资产</td><td>右上</td><td><code>--ui-quadrant-asset</code>，主色 10%</td><td>格子右上角</td><td>关系好潜力大，要求高毛利</td></tr><tr><td>主攻区</td><td>左上</td><td><code>--ui-quadrant-attack</code>，主色 5%</td><td>左上角</td><td>潜力大关系浅，精力主要放这里</td></tr><tr><td>客户资源</td><td>右下</td><td><code>--ui-quadrant-resource</code>，中性 6%</td><td>右下角</td><td>关系好潜力小，让技术去</td></tr><tr><td>见单打单</td><td>左下</td><td><code>--ui-quadrant-spot</code>，白</td><td>左下角</td><td>有单就打，不花精力</td></tr></tbody></table></div>
+<p>底色只分深浅，不用红黄绿。四个格子的名字永远显示，不靠图例。上面两格比下面两格深一点，眼睛自然先看上面。</p>
+<h3>2.3 点</h3>
+<ul><li>一个客户一个圆点。默认直径 <code>--ui-icon-sm</code>（16px），手机 32rpx。</li><li>点的大小按潜力值分三档：小、中、大，直径 12、16、22。不按销量。</li><li>点的颜色是客户当前状态：向好绿、需关注黄、转差红、待评估灰，和 B-01 一致。状态色在点上，象限色在底，两层不打架。</li><li>点旁默认不标名字。选中或悬停时标名字加一行摘要：「华宸数据科技 · 关系 8/10 · 预算 320 万」。</li><li>点重叠时聚成一个大圆写数字，点开展开列表。手机上超过 30 个点就默认聚合。</li></ul>
+<h3>2.4 缺失</h3>
+<ul><li>关系或潜力任一没填的客户，不画进格子。图下方一行「待评估 N 家，还没登记潜力」，点开是列表。</li><li>整张图没有客户：显示「还没有客户进入作战地图。先在客户列表登记关系和潜力。」加「去客户列表」按钮。</li></ul>
+<h3>2.5 交互</h3>
+<ul><li>点一个点进客户详情，返回时地图保留缩放和选中。</li><li>顶部筛选：范围（本人、团队、部门）、行业、周期。筛选按 C-04 做。</li><li>可以按周期看变化：选「和上季度比」时，移动过的点画一条细箭头从旧位置指到新位置，箭头用 <code>--ui-secondary</code>。这是董事长要的「一格一格往右上移」。</li><li>象限不可拖动。销售不能把点拖到别的格子，这是产品原则。</li></ul>
+<h3>2.6 手机</h3>
+<ul><li>图保持正方形，宽度撑满，四个格子的名字缩成两个字：资产、主攻、资源、见单，点格子名显示全称。</li><li>底部一行四个数字：各格子客户数，点数字筛选该格子。</li></ul>
+<h2 id="3｜看板">3｜看板</h2>
+<h3>3.1 指标卡</h3>
+<ul><li>用 SbMetricTile：大数字 32、说明 14、变化 12。缺失显示「未登记」。</li><li>一行最多四张，手机两张。数字带单位，单位小一号放数字后。</li><li>变化写「比上季 +12%」或「比上季 −3 家」，升绿降红只用于业务上有好坏的指标；客户数这种无好坏的用灰。</li></ul>
+<h3>3.2 柱状图与折线图</h3>
+<ul><li>一张图最多五个系列，颜色按顺序色 <code>--ui-chart-1</code> 到 <code>--ui-chart-5</code>。第一个永远是主色。</li><li>系列名写在图例，图例在图上方左侧，不放右侧。</li><li>柱状图从 0 开始，不截断。折线图可以不从 0，但要在轴上标最小值。</li><li>时间轴按周期写：「7 月」「8 月」「9 月」，不写 2026-07。</li><li>数字标签只在柱少于八根时显示；多了只在悬停显示。</li><li>条形图（横柱）用于排名，名字在左，最长的在上。排名最多显示 10 条，其余「查看全部」。</li></ul>
+<h3>3.3 饼图与雷达图</h3>
+<ul><li>饼图只在份额确实是重点时用，最多五块，小于 5% 的合并成「其他」。能用柱状图就用柱状图。</li><li>雷达图只用于画像的多维度对比，最多六个维度，每个维度的满分一样。现有的画像雷达图保留，按本规范换色和字号。</li></ul>
+<h3>3.4 颜色</h3>
+<p>顺序色五个，都是建议，从主色出发派生，和红黄绿灰状态色错开：</p>
+<div class="tbl"><table><thead><tr><th>变量</th><th>值</th><th>用途</th></tr></thead><tbody><tr><td><code>--ui-chart-1</code></td><td>#2863CD 主色</td><td>第一系列、本期</td></tr><tr><td><code>--ui-chart-2</code></td><td>#0E8A8A 青</td><td>第二系列、上期</td></tr><tr><td><code>--ui-chart-3</code></td><td>#6B4FBB 紫</td><td>第三系列</td></tr><tr><td><code>--ui-chart-4</code></td><td>#C7741B 橙</td><td>第四系列</td></tr><tr><td><code>--ui-chart-5</code></td><td>#7A8A9E 灰蓝</td><td>第五系列、其他</td></tr></tbody></table></div>
+<p>只有两个系列时用 1 和 5，本期实色、上期灰。图表里的红黄绿只表示业务状态，不当系列色。</p>
+<h3>3.5 空与错</h3>
+<ul><li>没数据：图区显示「这个周期还没有数据」和原因，坐标轴照画。</li><li>加载失败：「加载失败，网络不通」加重试，筛选保留。</li><li>部分缺失：柱子照画，缺的那根位置写「未登记」，不画成 0。</li></ul>
+<h2 id="4｜通用规则">4｜通用规则</h2>
+<div class="tbl"><table><thead><tr><th>项</th><th>规则</th></tr></thead><tbody><tr><td>标题</td><td>每张图有标题，写它回答的问题或指标名；范围和周期紧挨标题，按 T-05</td></tr><tr><td>字号</td><td>标题 16，轴和图例 12，悬停框正文 14</td></tr><tr><td>边距</td><td>图区四周 <code>--ui-space-4</code>，图例和图区之间 <code>--ui-space-2</code></td></tr><tr><td>网格线</td><td>只画横线，用 <code>--ui-line</code>，不画竖线</td></tr><tr><td>悬停框</td><td>白底、<code>--ui-shadow-popup</code>、圆角 6；第一行对象名，后面是指标和依据</td></tr><tr><td>动画</td><td>首次出现 300 毫秒内画完，切换数据不重放动画</td></tr><tr><td>导出</td><td>周报导出时图表转成图片，页脚带范围、周期、生成时间和「由 AI 起草」标识</td></tr><tr><td>无障碍</td><td>每张图有一句文字摘要给读屏用：「客户资产 12 家，主攻区 9 家…」</td></tr></tbody></table></div>
+<h2 id="5｜怎么实现">5｜怎么实现</h2>
+<ul><li>Web 用 ECharts 6，小程序用 ECharts 的小程序版 ec-canvas。两端同一份配置，颜色从变量读，不写死。</li><li>做成三个组件放进组件库：SbBattleMap 作战地图、SbTrendChart 柱线图、SbMetricTile 已有。四象限的格子、点、聚合、箭头都在 SbBattleMap 里，页面只传客户列表。</li><li>变量新增七个：四个象限底色、五个顺序色中的四个新色（chart-1 用主色）。都标建议。</li></ul>
+<h2 id="6｜怎么检查">6｜怎么检查</h2>
+<ul><li>象限四个名字是否永远可见；点的颜色是否只表示状态。</li><li>没登记潜力的客户是否没画进格子、是否有「待评估 N 家」。</li><li>空图是否有文字和下一步；缺失是否写「未登记」而不是 0。</li><li>字号是否不小于 12；图旁有没有数据表入口。</li><li>点一个点能否进详情，返回是否保留筛选和选中。</li></ul>
+<h2 id="7｜还没定的">7｜还没定的</h2>
+<ul><li>潜力 1～10 的算法：预算、台数、IT 计划怎么加权。业务口径，要产品定。</li><li>「和上季度比」的箭头是默认显示还是点开才显示。</li><li>作战地图要不要给董事长一个只读的全集团视图，范围词叫什么。</li><li>小程序 ec-canvas 在低端机上的性能没测。</li></ul></section>
+</div>
