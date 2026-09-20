@@ -54,7 +54,7 @@ desgin/
 ## 怎么用
 
 - 看规范：`specs/salesbuddy/README.md`。想一张表看完全部规则和跨端结论，直接看 `specs/salesbuddy/规则索引.md`。
-- 看站点：浏览器打开 `specs/salesbuddy/站点/index.html`。七章依次是原则、视觉基础、组件、布局、交互状态、跨端适配、团队怎么用。每章开头都有一个能动手的东西：改变量全站变色、组件状态矩阵、拖宽看三档、状态机驱动样板、跨端筛选、流程图弹模板。汇报用它。
+- 看站点：https://shandiant.github.io/desgin/ ，main 有推送自动更新（.github/workflows/pages.yml）。离线看打开 `specs/salesbuddy/站点/index.html`。七章依次是原则、视觉基础、组件、布局、交互状态、跨端适配、团队怎么用。每章开头都有一个能动手的东西：改变量全站变色、组件状态矩阵、拖宽看三档、状态机驱动样板、跨端筛选、流程图弹模板。汇报用它。
 - 看样板：`specs/salesbuddy/03-跨端样板-客户列表到详情/index.html`，拖窗口看三档。`对照.html` 是三端并排。
 - 装包：仓库公开，直接从网址装，不用 token。网页 `npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.3.0.tgz`；小程序 `npm i tdesign-miniprogram@1.16.1 https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-miniprogram-0.3.0.tgz`。不想自己敲，把 `模板/同事装包-给AI的提示词.md` 贴给 AI。细节见 09 章。
 - 开发接入：样式只写 `var(--ui-*)`，组件先用包里现成的。不装包也可以直接引 `specs/salesbuddy/02-设计变量与同步链路/dist/design-tokens.css` 或 `.wxss`。

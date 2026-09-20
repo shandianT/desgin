@@ -449,7 +449,7 @@ const body = `
       <tr><td>做网页</td><td><code>npm i react@18 react-dom@18 antd@6 @ant-design/x@2</code><br><code>npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.3.0.tgz</code></td></tr>
       <tr><td>做小程序</td><td><code>npm i tdesign-miniprogram@1.16.1 https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-miniprogram-0.3.0.tgz</code>，然后开发者工具「构建 npm」，把包里 components/style/ 的两个 wxss 复制到根目录在 app.wxss 引入</td></tr>
       <tr><td>不想自己敲</td><td>把仓库 <code>模板/同事装包-给AI的提示词.md</code> 里那段贴给 Claude Code 或 Cursor，AI 装好并渲染一个标签验证</td></tr>
-      <tr><td>只是看规范</td><td>本站就是。离线看：仓库 <code>specs/salesbuddy/站点/index.html</code> 双击打开</td></tr>
+      <tr><td>只是看规范</td><td>记这一个网址：<a href="https://shandiant.github.io/desgin/" target="_blank" rel="noopener">https://shandiant.github.io/desgin/</a>。仓库 main 有改动它自动更新</td></tr>
     </table></div>
     <p class="note">装好之后：颜色字号只写 <code>var(--ui-…)</code>，组件先用包里现成的，用法在「组件」章每张卡片的「用法」。以后升级把网址里的版本号换成新的重装，最新版本看仓库 release/README.md。</p>
   </div>
