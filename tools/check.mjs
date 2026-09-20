@@ -48,6 +48,9 @@ for (const spec of manifest.specs) {
   console.log('✓ 更新技能引用文件 .claude/skills/design-spec/references/');
 }
 // 组件库：packages/ui-react 装了依赖就构建目录页到站点；没装就说明并跳过。样式文件一律查
+// tokens 包的 dist 不进仓库，干净环境里先从规范 dist 同步一份，目录页与库构建都从它读
+const tokensPkg = join(root, 'packages', 'tokens');
+if (existsSync(join(tokensPkg, 'sync.mjs'))) run('同步 tokens 包产物', 'node', ['sync.mjs'], tokensPkg);
 const uiReact = join(root, 'packages', 'ui-react');
 if (existsSync(join(uiReact, 'node_modules', 'vite'))) run('构建 Web 组件库目录页', 'npm', ['run', 'build', '--silent'], uiReact);
 else if (existsSync(uiReact)) console.log('· 未安装 packages/ui-react 依赖，跳过组件库构建（cd packages/ui-react && npm i --legacy-peer-deps）');
