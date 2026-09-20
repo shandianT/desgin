@@ -232,39 +232,49 @@ const body = `
 
 <section data-panel="home">
   <h1>部门产品设计规范</h1>
-  <p class="lead">一套规则、一套颜色字号、一套组件，给部门所有产品的电脑网页、手机网页和微信小程序共用。产品、设计、开发、测试和 AI 看的是同一份，改源文件、跑一条命令，这个站和各端的变量文件一起更新。现在覆盖的产品是 SalesBuddy 销售管理与小程序「销售智助」。</p>
-  <div class="card brief"><h2>目的</h2>
-    <ol>
-      <li><b>让用户看清信息、完成操作。</b>每条规则都回答一个具体问题：客户列表怎么排、缺失值怎么显示、AI 生成的内容怎么标、出错了怎么重试。</li>
-      <li><b>让三端长得一样、行为一致。</b>${problemLine}。规范定下哪些必须一样、哪些允许不一样，颜色和字号只有一个名字，不再靠截图口口相传。</li>
-      <li><b>让改动可控。</b>改规则走变更单，改值改变量，采用要登记。谁改的、为什么改、验过没有，都有记录。</li>
-      <li><b>让 AI 参与的界面有底线。</b>AI 出草稿，人拍板。标识、依据、可撤销、可追溯，写成规则，不靠自觉。</li>
-    </ol></div>
-  <div class="tiles">
-    <div class="tile"><b>${rules.$meta.confirmed}</b><span>条 Web 规则已确认</span><small>P、V、C、T、B、G 六组，规范 1.0.0</small></div>
-    <div class="tile"><b>${rules.$meta.suggested}</b><span>条建议规则</span><small>跨端 X ${byGroup('X').length} 条${byGroup('D').length + byGroup('A').length ? `，候选原则 D 与 A ${byGroup('D').length + byGroup('A').length} 条` : ''}。草稿版本 ${esc(specVersion)}，登记采用后转正</small></div>
-    <div class="tile"><b>${sem.length}</b><span>个设计变量</span><small>${confirmedTokens} 个已确认，${suggestedTokens} 个建议，${overrideCount} 个有端侧覆盖值</small></div>
-    <div class="tile">${acceptTile}</div>
-  </div>
-  <div class="card"><h2>这个站有什么</h2><div class="tbl"><table><tr><th>章</th><th>回答什么问题</th><th>给谁</th></tr>
-    <tr><td><a href="#principles">原则</a></td><td>取舍时按什么判。设计原则、产品原则、业务表达，以及 AI 时代的候选原则</td><td>所有人，先读这章</td></tr>
-    <tr><td><a href="#visual">视觉基础</a></td><td>颜色、字号、间距、圆角叫什么、值是多少。改一个变量看三端一起变</td><td>设计、开发</td></tr>
-    <tr><td><a href="#components">组件</a></td><td>有哪些可复用的组件，每个状态长什么样。这章就是组件库本体，能直接操作</td><td>设计、开发、测试</td></tr>
-    <tr><td><a href="#layout">布局</a></td><td>电脑三栏到手机单页怎么折，拖宽看三档</td><td>设计、开发</td></tr>
-    <tr><td><a href="#states">交互状态</a></td><td>加载、空、出错、无权限、处理中怎么表现，重试后条件丢不丢</td><td>开发、测试</td></tr>
-    <tr><td><a href="#cross">跨端适配</a></td><td>哪些必须一样、哪些允许不一样，端侧覆盖值有哪些</td><td>开发</td></tr>
-    <tr><td><a href="#team">团队怎么用</a></td><td>角色、变更单、采用登记、版本流程，待决定的事</td><td>产品、负责人</td></tr>
+  <p class="lead">我们的产品在电脑网页、手机网页和微信小程序上应该长什么样、怎么反应，这里说了算。产品、设计、开发、测试看的是同一份。下面每个例子都是用规范里的真实颜色和尺寸画出来的，看到的就是产品该有的样子。</p>
+
+  <div class="card"><h2>先看一眼：这套规范长什么样</h2>
+    <div class="glance">
+      <div class="gl"><div class="gl-demo"><span class="swatch" style="background:var(--ui-primary)"></span><span class="swatch" style="background:var(--ui-sidebar)"></span><span class="swatch" style="background:var(--ui-background);border:1px solid var(--ui-line)"></span></div><b>三个底色</b><p>蓝色只用在按钮和选中项，深蓝是左侧导航，浅灰是页面底。别的地方不用蓝。</p><a href="#rule-V-01">规则 V-01</a></div>
+      <div class="gl"><div class="gl-demo"><button class="ui-btn ui-primary" type="button">记录拜访</button><button class="ui-btn ui-secondary" type="button">创建任务</button></div><b>一页只有一个实心按钮</b><p>实心蓝的是这一页最该做的事，其余都是描边。两个实心按钮并排，用户就不知道先点哪个。</p><a href="#rule-C-01">规则 C-01</a></div>
+      <div class="gl"><div class="gl-demo">${tag('tag-ok', '● 向好')} ${tag('tag-warn', '● 需关注')} ${tag('tag-err', '● 转差')} ${tag('tag-none', '● 待评估')}</div><b>红黄绿灰必须带字</b><p>颜色旁边一定有「向好」「需关注」这样的字，还要能看到为什么。只有一个色点，色弱的人和打印出来都看不懂。</p><a href="#rule-B-01">规则 B-01</a></div>
+      <div class="gl"><div class="gl-demo gl-metric"><span><b>320 万</b><small>客户预算</small></span><span><b class="miss">未登记</b><small>年台数</small></span></div><b>没填的数字写「未登记」</b><p>不显示 0。0 是「真的没有」，「未登记」是「还没人填」，这两件事对销售管理完全不同。</p><a href="#rule-B-03">规则 B-03</a></div>
+      <div class="gl"><div class="gl-demo gl-empty"><b>没有匹配的客户</b><small>换一个条件试试，或清除全部条件。</small><button class="ui-btn ui-secondary" type="button">清除条件</button></div><b>列表空了要说原因、给出路</b><p>加载中、空、出错、无权限四种情况都要有话说。出错后点重试，用户选好的筛选条件不能丢。</p><a href="#rule-C-06">规则 C-06</a></div>
+      <div class="gl"><div class="gl-demo"><span class="ai-badge"><i>AI</i>AI 生成，待确认</span> <span class="ai-badge ok"><i>AI</i>由 AI 起草，李鹏程确认</span></div><b>AI 写的东西要一直标着</b><p>拜访记录、客户画像、总结，只要是 AI 生成的，标识不能消失，还要能点开看依据。归档后写上是谁确认的。</p><a href="#rule-A-02">规则 A-02</a></div>
+    </div>
+    <p class="note">想改颜色看效果，去「视觉基础」章；想看每个组件所有状态，去「组件」章，那里能直接点。</p></div>
+
+  <div class="card"><h2>常见问题，直接给答案</h2><div class="tbl"><table>
+    <tr><th>问题</th><th>答案</th><th>出处</th></tr>
+    <tr><td>主色是哪个</td><td><span class="swatch sm" style="background:var(--ui-primary)"></span> <code>#2863CD</code>，代码里写 <code>var(--ui-primary)</code>，不要写色值</td><td><a href="#visual">视觉基础</a></td></tr>
+    <tr><td>字多大</td><td>正文 14，辅助说明 12，分区标题 16，页面标题 24，关键数字 32。小程序把 px 换成两倍的 rpx，正文 28rpx</td><td><a href="#rule-V-02">V-02</a></td></tr>
+    <tr><td>按钮禁用了怎么办</td><td>旁边写原因，比如「还有 3 项必填未确认」。灰掉不说话等于让用户猜</td><td><a href="#rule-C-01">C-01</a></td></tr>
+    <tr><td>表单填错了怎么提示</td><td>错误写在那个字段下面，红字，输入的内容保留。不弹窗，不清空</td><td><a href="#rule-C-02">C-02</a></td></tr>
+    <tr><td>筛选条件放哪</td><td>紧挨着结果列表上方，写明范围（本人负责／全部门），显示已选几项、共几条，有「清除」</td><td><a href="#rule-C-04">C-04</a></td></tr>
+    <tr><td>手机上怎么进详情</td><td>列表点一行，详情整页进入。返回时列表还在原来的位置，筛选和搜索都还在</td><td><a href="#rule-X-03">X-03</a></td></tr>
+    <tr><td>电脑上列表和详情怎么摆</td><td>窗口宽过 900 三栏并排：导航、列表、详情。601 到 900 收成图标导航加二选一。600 以下和手机一样</td><td><a href="#layout">布局</a></td></tr>
+    <tr><td>AI 生成的字段用户要改怎么办</td><td>可以直接改，改完标「已由你修改」，旁边留着 AI 原值，可以一键恢复。AI 没把握的字段留空给候选</td><td><a href="#rule-A-03">A-03</a></td></tr>
+    <tr><td>规则不合适想改</td><td>填一张变更单：现在的规则、遇到的问题、想怎么改、影响哪些页面。评审通过后改源文件，站点自动更新</td><td><a href="#team">团队怎么用</a></td></tr>
   </table></div></div>
-  <div class="card"><h2>怎么用</h2><ol>
-    <li><b>做页面前</b>　先看原则章和对应的规则卡片。卡片折叠时显示编号、场景和要求的第一句，右上角是状态词。点开看完整要求、正反例、怎么检查。</li>
-    <li><b>写样式时</b>　只用视觉基础章里的变量名，不写具体颜色值。组件优先用组件章里现成的。</li>
-    <li><b>验收时</b>　按交互状态章逐项对：五个状态都有、重试不丢条件、AI 内容有标识和依据。</li>
-    <li><b>要改规则时</b>　填变更单，评审通过后改源文件、重新生成，在采用登记表登记。流程在团队怎么用章。</li>
-    <li><b>找东西</b>　顶部搜索框输入编号或变量名能直接跳过去，如 T-02、--ui-primary。</li>
-  </ol></div>
-  <div class="card"><h2>状态词</h2><div class="tbl"><table><tr><th>词</th><th>含义</th></tr><tr><td>${badge('已确认')}</td><td>Web 1.0 的 ${rules.$meta.confirmed} 条正式规则，和 1.0.0 已定值的 ${confirmedTokens} 个变量。改它要走变更单</td></tr><tr><td>${badge('建议')}</td><td>跨端 X 规则、候选原则 D 与 A、新增变量、端侧覆盖值、流程。还没登记采用</td></tr><tr><td>${badge('业务事实')}</td><td>产品原则和业务口径，不是设计规则</td></tr><tr><td>${badge('已验证（本地）')}</td><td>样板自动验收通过。合成数据，模拟视口，没上真机</td></tr><tr><td>${badge('未验证')}</td><td>还没有任何证据</td></tr></table></div></div>
-  <div class="card"><h2>几个词</h2><div class="tbl"><table><tr><th>词</th><th>意思</th></tr><tr><td>设计变量</td><td>颜色、字号、间距的统一名字（如 <code>--ui-primary</code>）；改名字对应的值，各端一起变</td></tr><tr><td>组件库</td><td>筛选栏、四态面板、AI 标识这些做好的积木，Web 和小程序各一套，装成 npm 包给产品用</td></tr><tr><td>样板</td><td>03 章那页可点的「客户列表→详情→返回」演示页，用来验证规则，不是真实产品</td></tr><tr><td>变更单</td><td>改规则前填的一页表：当前规则、实际问题、候选改法、受影响页面、怎么验证</td></tr><tr><td>登记采用</td><td>某产品的某个端在采用登记表写下「已采用」；收到 ≠ 采用 ≠ 已验证</td></tr><tr><td>视口</td><td>浏览器窗口的宽度；本规范按 >900、601～900、≤600 三档</td></tr></table></div></div>
-  <p class="note">已经决定的事、待决定的事和下一步在「团队怎么用」章。</p>
+
+  <div class="card"><h2>你是谁，从哪开始</h2><div class="roles">
+    <div class="role"><b>产品经理</b><ol><li>读「原则」章前三条，写需求时按它取舍。</li><li>写空态、出错、无权限时的文案，规则在「交互状态」章。</li><li>验收时对着「常见问题」这张表逐条问。</li></ol></div>
+    <div class="role"><b>设计师</b><ol><li>颜色、字号、间距只从「视觉基础」章取，不新造。</li><li>先在「组件」章找现成的，找不到再画新的。</li><li>新画的组件要标出用了哪些变量，交给开发时一起给。</li></ol></div>
+    <div class="role"><b>前端开发</b><ol><li>安装组件包，装法在「组件」章下方的说明。</li><li>样式只写 <code>var(--ui-…)</code>，跑一次检查脚本，新增违规为零。</li><li>页面做完按「跨端适配」章看三个宽度。</li></ol></div>
+    <div class="role"><b>测试</b><ol><li>每个列表页试四种情况：加载中、空、出错、无权限。</li><li>出错点重试，看筛选条件有没有丢。</li><li>AI 生成的内容，看标识在不在、依据能不能点开。</li></ol></div>
+  </div></div>
+
+  <div class="card"><h2>这个站有什么</h2><div class="tbl"><table><tr><th>章</th><th>回答什么问题</th></tr>
+    <tr><td><a href="#principles">原则</a></td><td>取舍时按什么判。设计原则、产品原则、业务表达，以及 AI 时代的候选原则</td></tr>
+    <tr><td><a href="#visual">视觉基础</a></td><td>颜色、字号、间距、圆角叫什么、值是多少。改一个变量看三端一起变</td></tr>
+    <tr><td><a href="#components">组件</a></td><td>有哪些可复用的组件，每个状态长什么样。这章就是组件库本体，能直接操作</td></tr>
+    <tr><td><a href="#layout">布局</a></td><td>电脑三栏到手机单页怎么折，拖宽看三档</td></tr>
+    <tr><td><a href="#states">交互状态</a></td><td>加载、空、出错、无权限、处理中怎么表现，重试后条件丢不丢</td></tr>
+    <tr><td><a href="#cross">跨端适配</a></td><td>哪些必须一样、哪些允许不一样，端侧覆盖值有哪些</td></tr>
+    <tr><td><a href="#team">团队怎么用</a></td><td>角色、变更单、采用登记、版本流程，待决定的事和进度数字</td></tr>
+  </table></div>
+  <p class="note">规则卡片右上角的小标签：${badge('已确认')} 是正式规则，改它要走变更单；${badge('建议')} 是还在讨论的；其余含义在「团队怎么用」章。</p></div>
 </section>
 
 <section data-panel="principles" hidden>
@@ -391,6 +401,15 @@ button { font: inherit; cursor: pointer; }
 .brief small, .card li small { color: var(--ui-muted); font-size: var(--ui-text-small); }
 .ph { display: flex; justify-content: space-between; align-items: center; gap: var(--ui-space-3); flex-wrap: wrap; } .ph h2 { margin: 0; } .ph small { color: var(--ui-muted); font-size: var(--ui-text-small); }
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--ui-space-3); margin: var(--ui-space-4) 0; }
+.glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--ui-space-4); }
+.gl { border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-space-4); display: flex; flex-direction: column; gap: var(--ui-space-2); }
+.gl-demo { min-height: 56px; display: flex; align-items: center; flex-wrap: wrap; gap: var(--ui-space-2); background: var(--ui-background); border-radius: var(--ui-radius-control); padding: var(--ui-space-3); }
+.gl b { font-size: var(--ui-text-section); } .gl p { margin: 0; color: var(--ui-secondary); flex: 1; } .gl a { font-size: var(--ui-text-small); }
+.swatch { display: inline-block; width: 40px; height: 40px; border-radius: var(--ui-radius-control); } .swatch.sm { width: 16px; height: 16px; vertical-align: -3px; }
+.gl-metric span { display: inline-flex; flex-direction: column; margin-right: var(--ui-space-6); } .gl-metric b { font-size: var(--ui-text-metric); color: var(--ui-primary); line-height: 1.2; font-variant-numeric: tabular-nums; } .gl-metric b.miss { color: var(--ui-muted); font-weight: 500; } .gl-metric small { color: var(--ui-secondary); font-size: var(--ui-text-small); }
+.gl-empty { flex-direction: column; align-items: flex-start; } .gl-empty b { font-size: var(--ui-text-body); } .gl-empty small { color: var(--ui-secondary); font-size: var(--ui-text-small); }
+.ai-badge { display: inline-flex; align-items: center; gap: var(--ui-space-1); padding: 2px var(--ui-space-2); border-radius: 999px; background: var(--ui-selected); color: var(--ui-primary); font-size: var(--ui-text-small); } .ai-badge i { font-style: normal; font-weight: 700; padding: 0 4px; border-radius: 3px; background: var(--ui-primary); color: var(--ui-on-primary); } .ai-badge.ok { background: var(--ui-success-soft); color: var(--ui-success); } .ai-badge.ok i { background: var(--ui-success); }
+.roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--ui-space-4); } .role { border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-space-4); } .role b { display: block; font-size: var(--ui-text-section); margin-bottom: var(--ui-space-2); } .role ol { margin: 0; padding-left: 1.3em; } .role li { margin-bottom: var(--ui-space-1); }
 .tile { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-card-padding); }
 .tile b { display: block; font-size: var(--ui-text-metric); font-weight: 650; line-height: 1.2; color: var(--ui-primary); font-variant-numeric: tabular-nums; }
 .tile span { display: block; font-weight: 600; } .tile small { color: var(--ui-muted); font-size: var(--ui-text-small); }
