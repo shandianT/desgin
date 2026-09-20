@@ -46,7 +46,7 @@ const bar = `<svg class="chart" viewBox="0 0 420 220" role="img" aria-label="毛
 const tiles = `<div class="tiles"><div class="tile"><b>320<small>万</small></b><span>本季毛利</span><em class="up">比上季 +23%</em></div><div class="tile"><b>24<small>家</small></b><span>客户</span><em>比上季 +2 家</em></div><div class="tile"><b class="miss">未登记</b><span>回款</span><em>财务还没登记</em></div><div class="tile"><b>70<small>%</small></b><span>赢单概率</span><em class="down">比上季 −10%</em></div></div>`;
 const pal = `<div class="pal">${[['--ui-chart-1', '#2863CD', '第一系列、本期'], ['--ui-chart-2', '#0E8A8A', '第二系列'], ['--ui-chart-3', '#6B4FBB', '第三系列'], ['--ui-chart-4', '#C7741B', '第四系列'], ['--ui-chart-5', '#7A8A9E', '第五系列、上期、其他']].map(([v, h, u]) => `<div><i style="background:${h}"></i><code>${v}</code><small>${h} · ${u}</small></div>`).join('')}</div>`;
 const copy = spec('11-文案规范.md'), diff = spec('11-文案规范-对照表.md'), chart = spec('12-图表规范.md');
-const chartHtml = md(chart).replace('<h2 id="2｜作战地图（四象限）">', `<h2 id="示例">先看示例</h2><p>下面三张都是按本规范用真实变量画的，数据是编的。</p><div class="demo"><h4>作战地图</h4>${quad}</div><div class="demo two"><div><h4>看板指标卡</h4>${tiles}</div><div><h4>柱状图：本季对上季</h4>${bar}</div></div><div class="demo"><h4>顺序色</h4>${pal}</div><h2 id="2｜作战地图（四象限）">`);
+const chartHtml = md(chart).replace('<h2 id="2｜作战地图（四象限）">', `<h2 id="示例">先看示例</h2><p>下面两张是按本规范用真实变量画的，数据是编的。作战地图的示例先不放，等图表规范定稿后再按最终样式画。</p><div class="demo two"><div><h4>看板指标卡</h4>${tiles}</div><div><h4>柱状图：本季对上季</h4>${bar}</div></div><div class="demo"><h4>顺序色</h4>${pal}</div><h2 id="2｜作战地图（四象限）">`);
 const html = `<title>文案与图表规范评审稿</title>
 <meta name="description" content="部门产品设计规范第 11、12 章第一版：文案规范、修改前后对照、图表规范，供负责人评审">
 <style>
