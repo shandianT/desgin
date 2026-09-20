@@ -215,6 +215,21 @@
       "type": "dimension",
       "description": ""
     },
+    "size.16": {
+      "value": "16px",
+      "type": "dimension",
+      "description": ""
+    },
+    "size.20": {
+      "value": "20px",
+      "type": "dimension",
+      "description": ""
+    },
+    "size.24": {
+      "value": "24px",
+      "type": "dimension",
+      "description": ""
+    },
     "size.36": {
       "value": "36px",
       "type": "dimension",
@@ -527,6 +542,30 @@
       "status": "已确认",
       "rule": "V-03"
     },
+    "icon-sm": {
+      "value": "16px",
+      "type": "dimension",
+      "from": "size.16",
+      "description": "图标：文字旁、按钮内、列表行",
+      "status": "建议",
+      "rule": "V-04"
+    },
+    "icon-md": {
+      "value": "20px",
+      "type": "dimension",
+      "from": "size.20",
+      "description": "图标：单独可点的图标按钮",
+      "status": "建议",
+      "rule": "V-04"
+    },
+    "icon-lg": {
+      "value": "24px",
+      "type": "dimension",
+      "from": "size.24",
+      "description": "图标：导航、空态、指标卡",
+      "status": "建议",
+      "rule": "V-04"
+    },
     "shadow-popup": {
       "value": "0 8px 28px #1928421a, 0 2px 6px #19284208",
       "type": "shadow",
@@ -709,6 +748,9 @@
       "radius-panel": "12px",
       "control-height": "36px",
       "field-height": "40px",
+      "icon-sm": "16px",
+      "icon-md": "20px",
+      "icon-lg": "24px",
       "shadow-popup": "0 8px 28px #1928421a, 0 2px 6px #19284208",
       "page-gutter": "24px",
       "card-padding": "16px",
@@ -764,6 +806,9 @@
       "radius-panel": "12px",
       "control-height": "36px",
       "field-height": "40px",
+      "icon-sm": "16px",
+      "icon-md": "20px",
+      "icon-lg": "24px",
       "shadow-popup": "0 8px 28px #1928421a, 0 2px 6px #19284208",
       "page-gutter": "16px",
       "card-padding": "16px",
@@ -819,6 +864,9 @@
       "radius-panel": "12px",
       "control-height": "36px",
       "field-height": "40px",
+      "icon-sm": "16px",
+      "icon-md": "20px",
+      "icon-lg": "24px",
       "shadow-popup": "0 8px 28px #1928421a, 0 2px 6px #19284208",
       "page-gutter": "16px",
       "card-padding": "16px",

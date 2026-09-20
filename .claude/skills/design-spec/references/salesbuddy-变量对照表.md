@@ -41,6 +41,9 @@
 | `--ui-radius-panel` | 面板圆角 | `radius.12` | 12px | 12px | 12px | 已确认 | V-03 |
 | `--ui-control-height` | 普通控件高 | `size.36` | 36px | 36px | 36px | 已确认 | V-03 |
 | `--ui-field-height` | 表单控件高 | `size.40` | 40px | 40px | 40px | 已确认 | V-03 |
+| `--ui-icon-sm` | 图标：文字旁、按钮内、列表行 | `size.16` | 16px | 16px | 16px | 建议 | V-04 |
+| `--ui-icon-md` | 图标：单独可点的图标按钮 | `size.20` | 20px | 20px | 20px | 建议 | V-04 |
+| `--ui-icon-lg` | 图标：导航、空态、指标卡 | `size.24` | 24px | 24px | 24px | 建议 | V-04 |
 | `--ui-shadow-popup` | 弹出层阴影（当前为 CSS 字符串形式，Style Dictionary 可直接输出；待工具链完整支持 2025.10 后迁移为对象形式） | 直接值 | 0 8px 28px #1928421a, 0 2px 6px #19284208 | 0 8px 28px #1928421a, 0 2px 6px #19284208 | 0 8px 28px #1928421a, 0 2px 6px #19284208 | 已确认 | C-07 |
 | `--ui-page-gutter` | 页面左右留白（第 06 章间距映射示例：电脑 24，手机 16） | `space.6` | 24px | **16px** | **16px** | 建议（电脑值）；端侧覆盖为建议 | X-08 |
 | `--ui-card-padding` | 普通卡片内边距（第 06 章示例：16） | `space.4` | 16px | 16px | 16px | 建议 | X-08 |

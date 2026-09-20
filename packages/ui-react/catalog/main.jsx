@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { palette } from '../../../specs/salesbuddy/02-设计变量与同步链路/palette.mjs';
 import { createRoot } from 'react-dom/client';
+import * as AntIcons from '@ant-design/icons';
 import { App as AntApp, Button, Cascader, Collapse, DatePicker, Drawer, Form, Input, Modal, Select, Table, Tabs, Tag, Tooltip } from 'antd';
 import '@shandiant/tokens/css';
-import { SbProvider, SbStatusTag, SbStatePanel, SbFilterBar, SbSearch, SbListRow, SbBottomBar, SbField, SbSheet, SbPagination, SbMetricTile, SbPageHeader, SbDetailLayout, SbAiBadge, SbAiField, SbAiSources, SbAiProgress, META, USAGE } from '../src/index.js';
+import { SbProvider, SbStatusTag, SbStatePanel, SbFilterBar, SbSearch, SbListRow, SbBottomBar, SbField, SbSheet, SbPagination, SbMetricTile, SbPageHeader, SbDetailLayout, SbAiBadge, SbAiField, SbAiSources, SbAiProgress, META, USAGE, ICONS } from '../src/index.js';
 
 const State = ({ title, children, className }) => <div className={className ? `state ${className}` : 'state'}><h4>{title}</h4>{children}</div>;
 const rows = [
@@ -56,6 +57,11 @@ function BasicsDemo() {
   const [checked, setChecked] = useState(true);
   return (
     <div className="basics">
+      <h3>Icon 图标</h3>
+      <p className="note">网页用 Ant Design 自带图标的线性一族，小程序用 TDesign 自带的 t-icon，两边风格一致。这里是 40 个常用图标的对照，每个下面写着两端的名字。尺寸三档：16 文字旁，20 图标按钮，24 导航与空态。图标旁必须有字，颜色跟文字走。</p>
+      <div className="icon-grid">
+        {ICONS.map((ic) => { const I = AntIcons[ic.antd]; return <div className="icon-cell" key={ic.key}><span className="icon-sizes">{I && <I style={{ fontSize: 'var(--ui-icon-sm)' }} />}{I && <I style={{ fontSize: 'var(--ui-icon-md)' }} />}{I && <I style={{ fontSize: 'var(--ui-icon-lg)', color: 'var(--ui-primary)' }} />}</span><b>{ic.label}</b><code>{ic.antd}</code><code>{ic.tdesign}</code></div>; })}
+      </div>
       <h3>Button 按钮</h3>
       <div className="states">
         <State title="主：一页只放一个"><Button type="primary">记录拜访</Button></State>

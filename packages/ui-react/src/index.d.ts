@@ -238,5 +238,8 @@ export interface SbMeta {
 }
 /** 每个组件的说明，目录页与规范站从这里读 */
 export declare const META: SbMeta[];
+export interface SbIcon { key: string; label: string; antd: string; tdesign: string }
+/** 常用图标对照：含义、Ant Design 图标名、TDesign 图标名 */
+export declare const ICONS: SbIcon[];
 /** 每个组件的引入与最小用例，键与 META 的 id 一致 */
 export declare const USAGE: Record<string, string>;

@@ -108,13 +108,74 @@ const LIB_META = existsSync(metaFile) ? (await import(pathToFileURL(metaFile).hr
 // ---------- 片段 ----------
 const STATUS_CLASS = { '已确认': 'ok', '建议': 'warn', '业务事实': 'fact', '已验证（本地）': 'local', '未验证': 'none' };
 const badge = (s) => `<span class="st st-${STATUS_CLASS[s] || 'none'}">${esc(s)}</span>`;
+
+// 每条正式规则的白话一句和一个用真实变量渲染的小例子。规则原文不动，原文改动走变更单。
+const PLAIN = {
+  'P-01': '一打开页面，先看到这是谁、现在什么状态、下一步能做什么。细节往下翻再看。',
+  'P-02': '一页里有好几块时，用标题和留白分开，每块只放一个主要按钮。',
+  'P-03': '出错、取消、切换页签，用户已经填的东西不能丢。「正在保存」和「已保存」是两回事，要分开显示。',
+  'V-01': '深蓝只做左侧导航，页面底是浅灰，内容放在白面板上。蓝色只给按钮和选中项。红黄绿一定带字。',
+  'V-02': '正文 14，说明 12，分区标题 16，页面标题 24，大数字 32。数字用等宽字体，一列对齐。',
+  'V-03': '间距只用 4、8、12、16、24、32 这六档。按钮圆角 6，面板圆角 12。按钮高 36，输入框高 40。',
+  'V-04': '图标 16 大，只有图标的按钮要有文字名。键盘选中要有 2 像素的框。文字和底色对比够。',
+  'C-01': '一块区域只有一个实心蓝按钮。按钮灰掉要写原因。点了以后显示「处理中」，不能连点两次。',
+  'C-02': '标签一直显示，必填打星。填错了红字写在那个字段下面，已填的内容保留。',
+  'C-03': '下拉选择能搜索、能多选、能清空。单选点了就生效，多选点「应用」才生效。按 Esc 关闭。',
+  'C-04': '筛选条件紧贴在结果列表上方，写清范围，显示已选几项、共几条，有「清除」。',
+  'C-05': '列表里名称、状态、负责人、时间、金额、操作的位置每一行都一样。电脑上用表格，不用一堆卡片。',
+  'C-06': '加载中有字，空了说原因和下一步，出错能重试，缺一部分数据就显示已有的并说明缺了什么。',
+  'C-07': '弹窗有标题、有关闭、有取消，按 Esc 能关，关了焦点回到打开它的地方。小详情就地展开，不弹窗。',
+  'T-01': '首页分三块：待办、常用操作、业务动态。动态每条写对象、摘要、状态、时间、动作。红黄的进「需关注」。',
+  'T-02': '列表页上方是总览面板，下面列表的标题、工具栏、筛选、数量、结果在一块。筛选只影响这个列表。',
+  'T-03': '详情页顶部是对象摘要和主按钮，下面用页签分摘要、跟进、任务。左边事实，右边关注点和依据。客户和商机分开两页。',
+  'T-04': '录拜访时电脑上左边是关联的客户，右边是编辑区，同屏。保存按钮固定在底部。手机上下排。',
+  'T-05': '分析页的范围和周期选择紧挨着指标。金额和数量分别写单位。图表旁边配数据表，空值和口径写清楚。',
+  'B-01': '红是转差，黄是需关注，绿是向好，灰是待评估，旁边一定有字和依据。颜色来自业务判断，不能因为字段没填就标红。',
+  'B-02': '客户、商机、拜访、任务各有各的来源。任务接受了不等于完成。下一步计划没建成任务前不算任务。',
+  'B-03': '年度合同额、确收、回款分开标。0 只在真是零时显示，没填的写「未登记」。金额带单位，日期带年份。',
+  'B-04': 'AI 处理拜访的四步：核对、质检、人工确认、归档。处理中显示到哪一步，失败保留输入可重试。质检完不等于归档。',
+  'B-05': '数据旁边写清范围，比如「本人负责 · 24 家」。有没有权限由服务端说了算，前端藏个按钮不算权限。',
+  'G-01': '提需求和改代码都写规则编号，比如「按 T-02、C-04 改商机列表」。新概念先对齐口径，不另发明一套规则。',
+  'G-02': '规范、示例、验收单一起改。每类规范只有一份有效版本。和规范不一致的地方写清页面、影响、状态、证据。',
+};
+const tag = (cls, text) => `<span class="tag ${cls}">${text}</span>`;
+const wf = (cols) => `<div class="wf">${cols.map(([w, t, dark]) => `<div class="wf-col ${dark ? 'dark' : ''}" style="flex:${w}">${t}</div>`).join('')}</div>`;
+const DEMO = {
+  'P-01': `<div class="dm-card"><b>华宸数据科技</b> ${tag('tag-warn', '● 需关注')}<small>一周无跟进 · 预算 320 万</small><button class="ui-btn ui-primary" type="button">记录拜访</button></div>`,
+  'P-02': wf([[1, '<b>总览</b><small>24 家 · 3 家需关注</small>'], [1, '<b>操作</b><small><span class="ui-btn ui-primary">记录拜访</span></small>'], [2, '<b>结果</b><small>列表在这里</small>']]),
+  'P-03': `<div class="dm-card"><small>保存失败，网络中断</small><span class="dm-input">客户预算：320 万（已填内容还在）</span><button class="ui-btn ui-secondary" type="button">重试</button></div>`,
+  'V-01': wf([[1, '<b>导航</b><small>深蓝</small>', true], [3, '<b>页面底浅灰</b><div class="dm-surface">白面板 <span class="ui-btn ui-primary">主按钮</span></div>']]),
+  'V-02': `<div class="dm-type"><span style="font-size:var(--ui-text-page)">客户 24</span><span style="font-size:var(--ui-text-section)">分区标题 16</span><span style="font-size:var(--ui-text-body)">正文 14</span><span style="font-size:var(--ui-text-small);color:var(--ui-secondary)">说明 12</span><b style="font-size:var(--ui-text-metric);color:var(--ui-primary)">320</b></div>`,
+  'V-03': `<div class="dm-space">${[1, 2, 3, 4, 6, 8].map((n) => `<span><i style="width:var(--ui-space-${n});height:var(--ui-space-${n})"></i>${[4, 8, 12, 16, 24, 32][[1, 2, 3, 4, 6, 8].indexOf(n)]}</span>`).join('')}<span class="ui-btn ui-secondary">圆角 6，高 36</span></div>`,
+  'V-04': `<div class="dm-row"><span class="dm-focus ui-btn ui-secondary">键盘选中的按钮</span><span class="ui-chip">🔍 有图标也有字</span><small>只有图标的按钮：aria-label="搜索"</small></div>`,
+  'C-01': `<div class="dm-row"><button class="ui-btn ui-primary" type="button">归档</button><button class="ui-btn ui-secondary" type="button">存草稿</button><button class="ui-btn ui-secondary" type="button" disabled>归档</button><small>还有 3 项必填未确认</small></div>`,
+  'C-02': `<div class="dm-card"><small>客户预算 <span class="dm-req">*</span></small><span class="dm-input dm-err">320</span><small class="dm-errtext">要写单位，比如 320 万</small></div>`,
+  'C-03': `<div class="dm-card"><span class="dm-input">季度 ▾　<span class="ui-chip on">第三季度</span> <span class="ui-chip on">第四季度</span></span><div class="dm-row"><small>已选 2 项</small><button class="ui-btn ui-secondary" type="button">清空</button><button class="ui-btn ui-primary" type="button">应用</button></div></div>`,
+  'C-04': `<div class="dm-card"><div class="dm-row"><b>客户</b><small>范围：本人负责</small><small>已选 1 项 · 共 6 条</small><a>清除</a></div><div class="dm-row"><span class="ui-chip on">有风险 6</span><span class="ui-chip">主攻区 9</span><span class="ui-chip">客户资产 7</span></div></div>`,
+  'C-05': `<div class="dm-table"><div><b>华宸数据科技</b><span>${tag('tag-ok', '● 向好')}</span><span>HB-01</span><span>2 天前</span><span>320 万</span><span>…</span></div><div><b>北辰智造集团</b><span>${tag('tag-warn', '● 需关注')}</span><span>HB-03</span><span>9 天前</span><span class="miss">未登记</span><span>…</span></div></div>`,
+  'C-06': `<div class="dm-row"><div class="dm-card"><small>正在加载…</small></div><div class="dm-card"><b>没有匹配的客户</b><small>换个条件试试</small></div><div class="dm-card"><b>加载失败</b><span class="ui-btn ui-secondary">重试</span><small>筛选条件保留</small></div></div>`,
+  'C-07': `<div class="dm-card dm-modal"><div class="dm-row"><b>选择季度</b><span class="dm-x">✕</span></div><small>内容</small><div class="dm-row"><button class="ui-btn ui-secondary" type="button">取消</button><button class="ui-btn ui-primary" type="button">应用</button></div></div>`,
+  'T-01': wf([[1, '<b>待办</b><small>3 条</small>'], [1, '<b>常用操作</b><small>记录拜访 · 创建任务</small>'], [2, '<b>业务动态</b><small>华宸 · 需关注 · 一周无跟进 · 2 天前 · 查看</small>']]),
+  'T-02': `${wf([[1, '<b>总览</b><small>24 家 · 3 家需关注</small>']])}${wf([[1, '<b>客户列表</b><small>工具栏 · 筛选 · 共 24 条 · 结果</small>']])}`,
+  'T-03': `${wf([[1, '<b>华宸数据科技</b> 需关注 <span class="ui-btn ui-primary">记录拜访</span>']])}${wf([[2, '<small>摘要 | 跟进 | 任务</small><b>事实</b>'], [1, '<b>关注与依据</b>']])}`,
+  'T-04': wf([[1, '<b>关联客户</b><small>华宸数据科技</small>'], [2, '<b>编辑区</b><small>拜访要点…（内部滚动）</small><span class="ui-btn ui-primary">保存</span>']]),
+  'T-05': wf([[1, '<small>范围：本人 · 周期：Q3</small><b>320 万</b><small>毛利，单位万元</small>'], [2, '<b>图表</b><small>旁配数据表；空值写「未登记」</small>']]),
+  'B-01': `<div class="dm-row">${tag('tag-err', '● 转差')}${tag('tag-warn', '● 需关注')}${tag('tag-ok', '● 向好')}${tag('tag-none', '● 待评估')}<small>依据：一周无跟进</small></div>`,
+  'B-02': `<div class="dm-row"><span class="ui-chip">客户</span><span class="ui-chip">商机</span><span class="ui-chip">拜访</span><span class="ui-chip">任务：已接受 ≠ 已完成</span></div>`,
+  'B-03': `<div class="dm-type"><b style="color:var(--ui-primary)">￥320 万</b><small>年度合同额</small><b class="miss">未登记</b><small>回款（没填）</small><b>0</b><small>确收（真的是零）</small><small>2026-09-20</small></div>`,
+  'B-04': `<div class="dm-row"><span class="ui-chip on">1 核对</span>→<span class="ui-chip">2 质检</span>→<span class="ui-chip">3 人工确认</span>→<span class="ui-chip">4 归档</span></div>`,
+  'B-05': `<div class="dm-row"><b>客户</b><small>范围：本人负责 · 24 家</small><span class="ui-chip">无权限的对象不显示名字</span></div>`,
+  'G-01': `<div class="dm-quote">需求：「客户列表按 T-02、C-04 改，返回保留按 X-03」<br>反例：「照截图画一下」</div>`,
+  'G-02': `<div class="dm-quote">偏差记录：客户详情页 · 影响 C-06 空态 · 状态待整改 · 证据截图 03</div>`,
+};
+const tryBox = (t) => `<div class="try"><b>试一试</b><span>${t}</span></div>`;
 const firstClause = (s) => String(s || '').split(/[；。]/)[0];
 const seenIds = {};
 function ruleCard(r, { open = false, extra = '' } = {}) {
   seenIds[r.id] = (seenIds[r.id] || 0) + 1; const id = seenIds[r.id] === 1 ? `rule-${r.id}` : `rule-${r.id}-${seenIds[r.id]}`; // 同一条规则出现在多章时 id 不重复；搜索与锚点按 data-id 找第一处
   const anchors = [...new Set(r.anchors)].slice(0, 4);
-  return `<details class="card rule" id="${id}" data-id="${r.id}"${open ? ' open' : ''}><summary><span class="rid">${r.id}</span><span class="rtitle"><span>${esc(r.scene)}</span><small class="rreq">${esc(firstClause(r.requirement))}</small></span>${badge(r.status)}</summary>
-  <div class="rbody"><p class="req">${esc(r.requirement)}</p>
+  return `<details class="card rule" id="${id}" data-id="${r.id}"${open ? ' open' : ''}><summary><span class="rid">${r.id}</span><span class="rtitle"><span>${esc(r.scene)}</span><small class="rreq">${esc(PLAIN[r.id] ? PLAIN[r.id].split(/[。]/)[0] + '。' : firstClause(r.requirement))}</small></span>${r.status === '已确认' ? '' : badge(r.status)}</summary>
+  <div class="rbody">${PLAIN[r.id] ? `<p class="plain">${esc(PLAIN[r.id])}</p>` : ''}${DEMO[r.id] ? `<div class="demo">${DEMO[r.id]}</div>` : ''}<p class="req"><b>规则原文</b>　${esc(r.requirement)}</p>
   ${r.examples ? `<p><b>正确示例／反例</b>　${esc(r.examples)}</p>` : ''}
   <p><b>怎么检查</b>　${esc(r.check)}</p>
   ${r.tokens.length ? `<p><b>相关变量</b>　${r.tokens.map((t) => `<code>${esc(t)}</code>`).join(' ')}</p>` : ''}
@@ -124,8 +185,9 @@ function ruleCard(r, { open = false, extra = '' } = {}) {
   ${extra}
   <p class="src">来源：${esc(r.sourceFile)}:${r.sourceLine}${r.status === '建议' ? '　（跨端建议，待登记采用）' : ''}</p></div></details>`;
 }
+const CORE_CANDIDATES = ['D-01', 'D-03', 'D-04', 'A-01', 'A-02', 'A-03'].filter((id) => ruleById[id]);
 const cards = (ids, openFirst = false) => ids.map((id) => ruleById[id]).filter(Boolean).map((r, i) => ruleCard(r, { open: openFirst && i === 0 })).join('');
-const factCard = (title, body, src, vars = [], n = 0) => `<details class="card rule fact"><summary><span class="rid">${n ? `原则 ${n}` : '原则'}</span><span class="rtitle"><span>${esc(title)}</span></span>${badge('业务事实')}</summary><div class="rbody"><p class="req">${esc(body)}</p>${vars.length ? `<p><b>相关变量</b>　${vars.map((v) => `<code>${esc(v)}</code>`).join(' ')}</p>` : ''}<p class="src">来源：${esc(src)}</p></div></details>`;
+const factCard = (title, body, src, vars = [], n = 0) => `<details class="card rule fact"><summary><span class="rid">${n ? `原则 ${n}` : '原则'}</span><span class="rtitle"><span>${esc(title)}</span></span></summary><div class="rbody"><p class="req">${esc(body)}</p>${vars.length ? `<p><b>相关变量</b>　${vars.map((v) => `<code>${esc(v)}</code>`).join(' ')}</p>` : ''}<p class="src">来源：${esc(src)}</p></div></details>`;
 // 产品原则：逐字引用产品仓库 CLAUDE.md「必须遵守的产品原则」（业务事实，不是设计规则）
 const PRINCIPLES = [
   ['以客户为核心，不以订单或商机为核心。', '客户下面挂商机、拜访、毛利、合同。一个客户可有多条商机。', 43],
@@ -139,7 +201,6 @@ const PRINCIPLES = [
 const principleCards = PRINCIPLES.map(([t, b, line, vars], i) => factCard(t, b, `产品仓库 shandianT/xiaoshouguanli CLAUDE.md:${line}「必须遵守的产品原则」`, vars || [], i + 1)).join('');
 
 // 产品里的状态标签用 .tag（业务状态），与站点的证据状态词 .st 分开。视觉基础章的预览和跨端章的比对列用它
-const tag = (cls, text) => `<span class="tag ${cls}">${text}</span>`;
 
 // 组件章：组件库目录页就是章节本体。Web 组件与小程序组件的对应关系，来自 08-组件清单.md 第 3 节
 const MP_OF = { SbStatusTag: 'sb-status-tag', SbStatePanel: 'sb-state-panel', SbFilterBar: 'sb-filter-bar', SbSearch: 'sb-search', SbListRow: 'sb-list-row', SbBottomBar: 'sb-bottom-bar', SbField: 'sb-field', SbSheet: 'sb-sheet', SbPagination: 'sb-pagination', SbMetricTile: 'sb-metric-tile', SbPageHeader: 'sb-page-header', SbAiBadge: 'sb-ai-badge', SbAiField: 'sb-ai-field', SbAiSources: 'sb-ai-sources', SbAiProgress: 'sb-ai-progress', SbProvider: 'app.wxss 两行 import', SbDetailLayout: '不适用，小程序用 navigateTo', Basics: 't-* 直接用' };
@@ -225,7 +286,7 @@ const body = `
 <nav class="nav" aria-label="章节">
   <div class="brand"><span class="mark">SB</span><span>部门产品设计规范<small>规则 1.0.0 已确认 · 跨端草稿 ${esc(specVersion)}</small></span></div>
   ${NAV.map(([k, t], i) => `<a href="#${k}" data-nav="${k}"><span>${String(i).padStart(2, '0')}</span>${t}</a>`).join('')}
-  <div class="navfoot"><b>状态词</b>${['已确认', '建议', '业务事实', '已验证（本地）', '未验证'].map(badge).join(' ')}</div>
+  <div class="navfoot"><small>没有标签的规则是正式规则。带 ${badge('建议')} 的还在讨论，没正式通过。</small></div>
 </nav>
 <main class="main" id="main">
 <header class="top"><label class="find"><span class="sr">查规则编号或变量名</span><input id="find" type="search" placeholder="查编号或变量，如 T-02、--ui-primary"></label><span class="topnote">内容由规范源文件生成，改源文件后重新生成即可</span></header>
@@ -255,6 +316,7 @@ const body = `
   <div class="card"><h2>常见问题，直接给答案</h2><div class="tbl"><table>
     <tr><th>问题</th><th>答案</th><th>出处</th></tr>
     <tr><td>主色是哪个</td><td><span class="swatch sm" style="background:var(--ui-primary)"></span> <code>#2863CD</code>，代码里写 <code>var(--ui-primary)</code>，不要写色值</td><td><a href="#visual">视觉基础</a></td></tr>
+    <tr><td>图标用哪套</td><td>网页用 Ant Design 自带的线性图标，小程序用 TDesign 自带的 t-icon。40 个常用图标的对照在「组件」章基础控件一节。图标旁必须有字</td><td><a href="#components">组件</a></td></tr>
     <tr><td>字多大</td><td>正文 14，辅助说明 12，分区标题 16，页面标题 24，关键数字 32。小程序把 px 换成两倍的 rpx，正文 28rpx</td><td><a href="#rule-V-02">V-02</a></td></tr>
     <tr><td>按钮禁用了怎么办</td><td>旁边写原因，比如「还有 3 项必填未确认」。灰掉不说话等于让用户猜</td><td><a href="#rule-C-01">C-01</a></td></tr>
     <tr><td>表单填错了怎么提示</td><td>错误写在那个字段下面，红字，输入的内容保留。不弹窗，不清空</td><td><a href="#rule-C-02">C-02</a></td></tr>
@@ -281,20 +343,36 @@ const body = `
     <tr><td><a href="#cross">跨端适配</a></td><td>哪些必须一样、哪些允许不一样，端侧覆盖值有哪些</td></tr>
     <tr><td><a href="#team">团队怎么用</a></td><td>角色、变更单、采用登记、版本流程，待决定的事和进度数字</td></tr>
   </table></div>
-  <p class="note">规则卡片右上角的小标签：${badge('已确认')} 是正式规则，改它要走变更单；${badge('建议')} 是还在讨论的；其余含义在「团队怎么用」章。</p></div>
+  <p class="note">规则卡片没有标签的就是正式规则，改它要走变更单。带 ${badge('建议')} 的还在讨论。</p></div>
 </section>
 
 <section data-panel="principles" hidden>
-  <h1>原则</h1><p class="lead">做页面时经常要取舍：信息放多少、先显示什么、出错了怎么办。原则就是取舍的依据，有了它不用每次重新争。这章四组，从上往下重要程度递减：设计原则三条是根本；产品原则七条是这个业务的事实，不能违反；业务表达五条规定客户、商机、缺失值、红黄绿灰怎么说；最后两组是还在讨论的候选原则。点开任何一张卡片能看正例、反例和怎么检查。</p>
+  <h1>原则</h1>${tryBox('点开任何一张卡片。第一行是白话，中间是用真实颜色画的例子，「规则原文」才是正式条文。顶部搜索框输入编号能直接跳到那条。')}<p class="lead">做页面时经常要取舍：信息放多少、先显示什么、出错了怎么办。原则就是取舍的依据，有了它不用每次重新争。这章四组，从上往下重要程度递减：设计原则三条是根本；产品原则七条是这个业务的事实，不能违反；业务表达五条规定客户、商机、缺失值、红黄绿灰怎么说；最后两组是还在讨论的候选原则。点开任何一张卡片能看正例、反例和怎么检查。</p>
   <h2>设计原则（已确认）</h2><p class="note">三条讲的是：先给结论再给细节；一页里用留白和面板把总览、操作、结果分开；用户输入过的东西别弄丢。</p>${cards(['P-01', 'P-02', 'P-03'], true)}
   <h2>产品原则（业务事实，共 ${PRINCIPLES.length} 条）</h2><p class="note">这七条来自产品仓库，是这个业务怎么运转的事实，设计只能顺着它做。比如「以客户为核心」决定了首页是客户列表而不是商机列表；「销售不手工打分」决定了象限图不能拖动。</p>${principleCards}
   <h2>业务表达（已确认）</h2><p class="note">同一个业务概念在三端怎么叫、怎么显示。红黄绿灰各代表什么，金额和时间怎么写，没填的值显示什么。</p>${cards(['B-01', 'B-02', 'B-03', 'B-04', 'B-05'])}
-  ${byGroup('D').length ? `<h2>候选原则：多家之长 ${badge('建议')}</h2><p class="note">从 Apple、Google、蚂蚁、腾讯、微软等十二家的设计规范里提炼出来的共识，还没正式通过。先看 D-01、D-03、D-04 三条，最常用到。来源见 06 章。</p>${cards(byGroup('D').map((r) => r.id))}` : ''}
-  ${byGroup('A').length ? `<h2>候选原则：AI 时代 ${badge('建议')}</h2><p class="note">AI 参与的界面怎么做才不出事。核心就一句：AI 出草稿，人拍板。先看 A-01 到 A-04 四条，拜访确认页全靠它们。来源见 06 章。</p>${cards(byGroup('A').map((r) => r.id))}` : ''}
+  ${byGroup('D').length || byGroup('A').length ? `<h2>候选原则 ${badge('建议')}</h2><p class="note">从 Apple、Google、蚂蚁、腾讯、微软等十二家的设计规范和 AI 产品的实践里提炼出来的，还没正式通过。先看这六条，页面里天天用到；其余十六条收在下面，评审时再看。来源见 06 章。</p>${cards(CORE_CANDIDATES)}<details class="card"><summary class="fold"><h2>其余 ${byGroup('D').length + byGroup('A').length - CORE_CANDIDATES.length} 条候选原则</h2><small>多家之长 D 与 AI 时代 A 的全文</small></summary>${cards([...byGroup('D'), ...byGroup('A')].map((r) => r.id).filter((id) => !CORE_CANDIDATES.includes(id)))}</details>` : ''}
 </section>
 
 <section data-panel="visual" hidden>
   <h1>视觉基础</h1><p class="lead">换个主色以前要改三端几十处，现在改一个变量。颜色、字号、间距、圆角都是变量。左边改一个值，右边的预览和下面的样板一起变。改完可以生成变更单草稿。这里的修改只在你的浏览器里，不会写回仓库。</p>
+  ${tryBox('把左边面板里「主色」改成别的颜色，右边预览和下面样板的按钮、选中项马上变。点「复制为变更单草稿」能拿到一段可以贴进变更单的文字。')}
+  <div class="card"><h2>颜色怎么用</h2><p class="note">一共就五种用法。记住这张图，不用记变量名。</p>
+    <div class="cmap">
+      <div class="cmap-nav"><b>1 导航</b><small>深蓝底，白字，选中项亮蓝</small></div>
+      <div class="cmap-page"><div class="cmap-label"><b>2 页面底</b><small>浅灰，让白面板浮起来</small></div>
+        <div class="cmap-surface"><div class="cmap-label"><b>3 面板</b><small>白底，正文深色，说明灰色</small></div>
+          <div class="cmap-row"><span class="ui-btn ui-primary">4 主按钮</span><span class="ui-btn ui-secondary">次按钮</span><span class="ui-chip on">选中项</span><small>蓝色只出现在这三种地方</small></div>
+          <div class="cmap-row">${tag('tag-ok', '● 向好')}${tag('tag-warn', '● 需关注')}${tag('tag-err', '● 转差')}${tag('tag-none', '● 待评估')}<small>5 状态色，只给业务状态，必须带字</small></div>
+        </div></div>
+    </div>
+    <div class="tbl"><table><tr><th>用法</th><th>变量</th><th>什么时候用</th></tr>
+      <tr><td>导航</td><td><code>--ui-sidebar</code></td><td>只有左侧或底部导航</td></tr>
+      <tr><td>页面底</td><td><code>--ui-background</code></td><td>整页最底下那层</td></tr>
+      <tr><td>面板与文字</td><td><code>--ui-surface</code>、<code>--ui-ink</code>、<code>--ui-secondary</code></td><td>白面板，正文，说明</td></tr>
+      <tr><td>动作与选中</td><td><code>--ui-primary</code>、<code>--ui-selected</code>、<code>--ui-focus</code></td><td>主按钮、链接、选中行、键盘焦点。别的地方不用蓝</td></tr>
+      <tr><td>业务状态</td><td><code>--ui-success</code>、<code>--ui-warning</code>、<code>--ui-danger</code>、<code>--ui-neutral</code></td><td>向好、需关注、转差、待评估。旁边一定有字</td></tr>
+    </table></div></div>
   <div class="two">
     <div class="card panel"><div class="ph"><h2>变量面板</h2><div><button class="btn sec" id="tk-reset">重置</button><button class="btn pri" id="tk-copy">复制为变更单草稿</button></div></div>
       <h3>颜色（共 ${colorTokens.length} 个，列表可滚动）</h3><div class="tks">${panelRows}</div>
@@ -313,6 +391,7 @@ const body = `
 
 <section data-panel="components" hidden>
   <h1>组件</h1><p class="lead">按钮、输入框、选择器这些基础控件直接用 Ant Design，筛选栏、四态面板这些组合件和 AI 标识、待确认字段这些 AI 件是部门自己的。下面就是组件库本体，每个组件每个状态都能直接点。</p>
+  ${tryBox('下面就是组件库。点任何一个按钮、筛选片、分页；右上角换个主色看所有组件一起变；每张卡片的「用法」是能直接复制的代码。')}
   ${libFrame}
   ${libTable}
   <h2>规则</h2>${cards(['C-01', 'C-02', 'C-03', 'C-04', 'C-05', 'C-06', 'C-07'], true)}
@@ -328,7 +407,7 @@ const body = `
 </section>
 
 <section data-panel="layout" hidden>
-  <h1>布局</h1><p class="lead">电脑三栏到手机单页怎么折，每个开发理解不一样。规范定死：电脑上是导航、列表、详情三段，到手机变成列表页进详情页再返回。电脑上拖预览框右下角的小三角把预览拉窄，看它在 900 和 600 两个门槛怎么折。手机上点上方的宽度按钮。</p>
+  <h1>布局</h1>${tryBox('点 1200、900、600、390 四个按钮，看同一页在电脑、收紧、手机三档怎么折。电脑上还能拖预览框右下角自己拉。')}<p class="lead">电脑三栏到手机单页怎么折，每个开发理解不一样。规范定死：电脑上是导航、列表、详情三段，到手机变成列表页进详情页再返回。电脑上拖预览框右下角的小三角把预览拉窄，看它在 900 和 600 两个门槛怎么折。手机上点上方的宽度按钮。</p>
   <div class="card"><div class="ph"><h2>拖宽看三档</h2><div class="presets">${['1200', '900', '760', '600', '390', '320'].map((w) => `<button class="btn sec" data-w="${w}">${w}</button>`).join('')}</div></div>
     <div class="readout" id="readout">当前宽度 — · —</div>
     <div class="resizer" id="resizer"><iframe class="frame tall" data-sample title="样板（布局）" src="${P.sample}?frame=layout" loading="lazy"></iframe></div>
@@ -341,14 +420,14 @@ const body = `
 </section>
 
 <section data-panel="states" hidden>
-  <h1>交互状态</h1><p class="lead">加载、空数据、失败、无权限也是规范的一部分，不由开发自由发挥。点状态机的节点，下面的样板会真的切到那个画面，搜索和筛选条件不丢。返回时保留条件这条按 X-03，还是建议。</p>
+  <h1>交互状态</h1>${tryBox('点状态机里的「加载中」「空」「失败」「无权限」，下面的样板会真的切到那个画面。点「失败」再点「重试」，看筛选条件有没有丢。')}<p class="lead">加载、空数据、失败、无权限也是规范的一部分，不由开发自由发挥。点状态机的节点，下面的样板会真的切到那个画面，搜索和筛选条件不丢。返回时保留条件这条按 X-03，还是建议。</p>
   <div class="card"><div class="ph"><h2>状态机</h2><small>点节点，样板跟着切。手机上图可以左右滑</small></div><div class="tbl">${smSvg}</div></div>
   <div class="card"><iframe class="frame tall" data-sample data-states title="样板（交互状态）" src="${P.sample}?frame=states" loading="lazy"></iframe></div>
   <h2>规则</h2>${cards(['C-06', 'C-07', 'B-04', 'P-03', 'X-03', 'X-11'], true)}
 </section>
 
 <section data-panel="cross" hidden>
-  <h1>跨端适配</h1><p class="lead">电脑网页、手机网页、小程序，哪些必须一样，哪些可以不一样。</p>
+  <h1>跨端适配</h1>${tryBox('展开「规则逐条对照」，点右上的「适配」，只剩三端做法不一样的规则，通常就是要多花心思的地方。')}<p class="lead">电脑网页、手机网页、小程序，哪些必须一样，哪些可以不一样。</p>
   <div class="card brief"><h2>三句话</h2><ol>
     <li><b>含义必须一样。</b>「需关注」在三端是同一个黄色同一个词；客户、商机的字段名和状态名一致；权限规则一致。</li>
     <li><b>尺寸和摆放可以不一样。</b>电脑三栏并排，手机上下排；手机上字可以大一点，按钮放底部；间距按端选档位。</li>
@@ -363,7 +442,7 @@ const body = `
 </section>
 
 <section data-panel="team" hidden>
-  <h1>团队怎么用</h1><p class="lead">规则改了谁知道、谁批、谁接入。这章回答四件事：想改规则怎么走（变更单），产品用了怎么登记（采用登记表），谁负责什么（角色），还有哪些事没定（待决定）。流程和角色还是 ${badge('建议')}，部门指定负责人后生效。点流程图里的一步能看到对应模板。</p>
+  <h1>团队怎么用</h1>${tryBox('点流程图里的任何一步，会显示那一步要填的模板。想改一条规则，从「变更单」那一步开始。')}<p class="lead">规则改了谁知道、谁批、谁接入。这章回答四件事：想改规则怎么走（变更单），产品用了怎么登记（采用登记表），谁负责什么（角色），还有哪些事没定（待决定）。流程和角色还是 ${badge('建议')}，部门指定负责人后生效。点流程图里的一步能看到对应模板。</p>
   <div class="card"><h2>变更流程 ${badge('建议')}</h2><p class="note">点每一步看说明和模板。手机上图可以左右滑。</p><div class="tbl">${flowSvg}</div></div>
   <div class="card"><h2>东西放在哪、怎么进来、怎么把关 ${badge('建议')}</h2><p class="note">所有规则、变量、样板只在仓库里有一份。人看站点，开发装包，AI 读技能文件，产品登记采用。改动只有一个口：变更单加评审。</p><div class="arch"><div class="src"><b>一份来源</b><span>specs/salesbuddy/</span><small>规则原文 · tokens.json · 样板 · 模板 · 验收</small></div><div class="arrows">→</div><div class="entries"><div><b>人看</b><span>README、各章、本站</span></div><div><b>开发用</b><span>dist/ 变量产物、rules.json</span></div><div><b>AI 用</b><span>.claude/skills/design-spec 技能 + 按路径规则</span></div><div><b>其他工具</b><span>AGENTS.md、.agents、.cursor、.github</span></div></div><div class="arrows">→</div><div class="gate"><b>一道闸门</b><span>node tools/check.mjs（一条命令）</span><small>生成变量、兼容校验、规则索引、规范站、样式检查、技能引用，一次跑完。Claude Code 钩子每次写文件后自动跑</small></div></div></div>
   <div class="card"><h2>怎么引用 ${badge('建议')}</h2><div class="tbl"><table><tr><th>谁</th><th>怎么写</th></tr><tr><td>产品写需求</td><td>写规则编号、页面模板和样板部件名。比如「客户列表按 T-02、C-04，返回保留按 X-03（建议）」</td></tr><tr><td>设计出稿</td><td>标注变量名不标数值，如「按钮底色 --ui-primary」</td></tr><tr><td>开发写代码</td><td>颜色和尺寸只写 var(--ui-*)。PR 描述写规则编号。改完跑 node tools/check.mjs</td></tr><tr><td>测试验收</td><td>页面验收单逐项填实际结果和证据。空白不算通过</td></tr><tr><td>AI</td><td>技能自动触发，也可以手动输入 /design-spec。交回时说清规则编号、改动文件、新增变量数、检查输出、证据等级</td></tr></table></div></div>
@@ -423,6 +502,26 @@ button { font: inherit; cursor: pointer; }
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--ui-space-3); margin: var(--ui-space-4) 0; }
 summary.fold { display: flex; align-items: center; gap: var(--ui-space-3); cursor: pointer; list-style: none; } summary.fold::-webkit-details-marker { display: none; } summary.fold h2 { margin: 0; } summary.fold small { color: var(--ui-muted); font-size: var(--ui-text-small); } summary.fold::before { content: '▸'; color: var(--ui-muted); } details[open] > summary.fold::before { content: '▾'; }
 abbr[title] { text-decoration: underline dotted var(--ui-muted); text-underline-offset: 3px; cursor: help; }
+.try { display: flex; gap: var(--ui-space-3); align-items: baseline; background: var(--ui-selected); border-left: 3px solid var(--ui-primary); border-radius: var(--ui-radius-control); padding: var(--ui-space-2) var(--ui-space-3); margin: var(--ui-space-3) 0; } .try b { color: var(--ui-primary); white-space: nowrap; }
+.plain { font-size: var(--ui-text-section); line-height: 1.6; margin: 0; } .req { font-size: var(--ui-text-body); color: var(--ui-secondary); } .req b { color: var(--ui-ink); }
+.demo { background: var(--ui-background); border-radius: var(--ui-radius-control); padding: var(--ui-space-3); display: flex; flex-wrap: wrap; gap: var(--ui-space-3); align-items: flex-start; font-size: var(--ui-text-body); }
+.demo small { color: var(--ui-secondary); font-size: var(--ui-text-small); } .demo .miss { color: var(--ui-muted); font-weight: 500; }
+.dm-card { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); padding: var(--ui-space-3); display: flex; flex-direction: column; gap: var(--ui-space-2); align-items: flex-start; min-width: 160px; }
+.dm-row { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); align-items: center; width: 100%; }
+.dm-input { display: block; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); padding: 0 var(--ui-space-3); min-height: var(--ui-field-height); line-height: var(--ui-field-height); background: var(--ui-surface); width: 100%; box-sizing: border-box; }
+.dm-err { border-color: var(--ui-danger); } .dm-errtext { color: var(--ui-danger); } .dm-req { color: var(--ui-danger); }
+.dm-focus { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+.dm-type { display: flex; flex-wrap: wrap; gap: var(--ui-space-4); align-items: baseline; } .dm-type b { font-variant-numeric: tabular-nums; }
+.dm-space { display: flex; flex-wrap: wrap; gap: var(--ui-space-4); align-items: flex-end; } .dm-space span { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; font-size: var(--ui-text-small); color: var(--ui-secondary); } .dm-space i { display: block; background: var(--ui-primary); border-radius: 2px; }
+.dm-table { width: 100%; display: flex; flex-direction: column; } .dm-table > div { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 24px; gap: var(--ui-space-2); align-items: center; background: var(--ui-surface); border-bottom: 1px solid var(--ui-line); padding: var(--ui-space-2) var(--ui-space-3); }
+.dm-modal { box-shadow: var(--ui-shadow-popup); min-width: 240px; } .dm-modal .dm-row { justify-content: space-between; } .dm-x { color: var(--ui-secondary); }
+.dm-quote { background: var(--ui-surface); border-left: 3px solid var(--ui-line); padding: var(--ui-space-2) var(--ui-space-3); line-height: 1.7; }
+.dm-surface { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); padding: var(--ui-space-2); margin-top: var(--ui-space-2); }
+.wf { display: flex; gap: var(--ui-space-2); width: 100%; } .wf-col { background: var(--ui-surface); border: 1px dashed var(--ui-line); border-radius: var(--ui-radius-control); padding: var(--ui-space-2) var(--ui-space-3); min-height: 56px; display: flex; flex-direction: column; gap: 4px; } .wf-col.dark { background: var(--ui-sidebar); color: var(--ui-on-primary); border-style: solid; } .wf-col.dark small { color: var(--ui-sidebar-muted); } .wf-col small { color: var(--ui-secondary); font-size: var(--ui-text-small); }
+.cmap { display: flex; gap: var(--ui-space-2); min-height: 200px; margin-bottom: var(--ui-space-3); } .cmap-nav { width: 120px; background: var(--ui-sidebar); color: var(--ui-on-primary); border-radius: var(--ui-radius-control); padding: var(--ui-space-3); } .cmap-nav small { color: var(--ui-sidebar-muted); display: block; }
+.cmap-page { flex: 1; background: var(--ui-background); border-radius: var(--ui-radius-control); padding: var(--ui-space-3); } .cmap-surface { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-space-3); margin-top: var(--ui-space-2); display: flex; flex-direction: column; gap: var(--ui-space-3); }
+.cmap-label b { display: block; } .cmap-label small { color: var(--ui-secondary); font-size: var(--ui-text-small); } .cmap-row { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); align-items: center; } .cmap-row small { color: var(--ui-secondary); font-size: var(--ui-text-small); }
+@media (max-width: 700px) { .cmap { flex-direction: column; } .cmap-nav { width: auto; } .wf { flex-direction: column; } .dm-table > div { grid-template-columns: 1fr 1fr; } }
 .glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--ui-space-4); }
 .gl { border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-space-4); display: flex; flex-direction: column; gap: var(--ui-space-2); }
 .gl-demo { min-height: 56px; display: flex; align-items: center; flex-wrap: wrap; gap: var(--ui-space-2); background: var(--ui-background); border-radius: var(--ui-radius-control); padding: var(--ui-space-3); }

@@ -38,6 +38,9 @@ page {
   --ui-radius-panel: 12px;
   --ui-control-height: 36px;
   --ui-field-height: 40px;
+  --ui-icon-sm: 16px;
+  --ui-icon-md: 20px;
+  --ui-icon-lg: 24px;
   --ui-shadow-popup: 0 8px 28px #1928421a, 0 2px 6px #19284208;
   --ui-page-gutter: 16px;
   --ui-card-padding: 16px;
