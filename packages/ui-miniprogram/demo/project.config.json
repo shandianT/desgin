@@ -1,1 +1,0 @@
-{ "miniprogramRoot": "./", "compileType": "miniprogram", "libVersion": "3.17.2", "setting": { "es6": true, "enhance": true, "nodeModules": true, "packNpmManually": false, "minified": true }, "appid": "touristappid", "projectname": "sb-ui-demo", "description": "部门小程序组件库演示。先在本目录 npm i tdesign-miniprogram@1.16.1，再在开发者工具里构建 npm。" }

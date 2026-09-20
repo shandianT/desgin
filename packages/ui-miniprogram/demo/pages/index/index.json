@@ -1,1 +1,22 @@
-{ "usingComponents": { "sb-status-tag": "../../../components/sb-status-tag/index", "sb-state-panel": "../../../components/sb-state-panel/index", "sb-filter-bar": "../../../components/sb-filter-bar/index", "sb-list-row": "../../../components/sb-list-row/index", "sb-bottom-bar": "../../../components/sb-bottom-bar/index", "sb-ai-badge": "../../../components/sb-ai-badge/index", "sb-ai-field": "../../../components/sb-ai-field/index", "t-button": "tdesign-miniprogram/button/button" } }
+{
+  "usingComponents": {
+    "sb-status-tag": "/components/sb-status-tag/index",
+    "sb-state-panel": "/components/sb-state-panel/index",
+    "sb-filter-bar": "/components/sb-filter-bar/index",
+    "sb-search": "/components/sb-search/index",
+    "sb-list-row": "/components/sb-list-row/index",
+    "sb-bottom-bar": "/components/sb-bottom-bar/index",
+    "sb-field": "/components/sb-field/index",
+    "sb-sheet": "/components/sb-sheet/index",
+    "sb-pagination": "/components/sb-pagination/index",
+    "sb-metric-tile": "/components/sb-metric-tile/index",
+    "sb-page-header": "/components/sb-page-header/index",
+    "sb-ai-badge": "/components/sb-ai-badge/index",
+    "sb-ai-field": "/components/sb-ai-field/index",
+    "sb-ai-sources": "/components/sb-ai-sources/index",
+    "sb-ai-progress": "/components/sb-ai-progress/index",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-cell": "tdesign-miniprogram/cell/cell"
+  }
+}

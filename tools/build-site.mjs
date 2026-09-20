@@ -3,8 +3,9 @@
  * 可视化规范站生成器（零依赖）。
  * 输入（全部是仓库内的源或生成物，本脚本不手写任何规则、CSS 不含任何字面色值）：
  *   rules.json、02/dist/design-tokens.json、02/tokens.json（$meta）、02/产品现状/miniprogram-app.json（tools/sync-product.mjs 同步的快照）、
- *   03/验收结果.json、03/截图/、1.0.0/模板/*.md、采用登记表.md、01-三端规则对照表.md
- * 输出：<规范目录>/<站点目录>/index.html（相对引用样板、变量 CSS、截图）
+ *   03/验收结果.json、03/截图/、1.0.0/模板/*.md、采用登记表.md、01-三端规则对照表.md、
+ *   packages/ui-react/src/meta.js（组件说明表）、<站点目录>/组件库/index.html（组件库目录页，由 packages/ui-react 构建，没构建就提示命令）
+ * 输出：<规范目录>/<站点目录>/index.html（相对引用样板、变量 CSS、截图、组件库）
  *      --portable <目录>：把站点与依赖复制成可独立发布的一份（GitHub Pages、claude.ai、U 盘），--artifact 再去掉 html 外壳
  * 用法：node tools/build-site.mjs specs/salesbuddy [--tokens-dir 02-…] [--sample-dir 03-…] [--snapshot-dir 1.0.0-…] [--site-dir 站点] [--portable out/site] [--artifact]
  */
@@ -137,19 +138,19 @@ const PRINCIPLES = [
 ];
 const principleCards = PRINCIPLES.map(([t, b, line, vars]) => factCard(t, b, `产品仓库 shandianT/xiaoshouguanli CLAUDE.md:${line}「必须遵守的产品原则」`, vars || [])).join('');
 
-// 组件状态矩阵：行 × 列，用类模拟伪状态。产品里的状态标签用 .tag（业务状态），与站点的证据状态词 .st 分开
-const STATES = ['默认', '悬停', '聚焦', '禁用', '处理中', '错误／空'];
+// 产品里的状态标签用 .tag（业务状态），与站点的证据状态词 .st 分开。视觉基础章的预览和跨端章的比对列用它
 const tag = (cls, text) => `<span class="tag ${cls}">${text}</span>`;
-const comp = {
-  '主按钮': (s) => `<button class="ui-btn ui-primary ${s === '悬停' ? 'is-hover' : ''} ${s === '聚焦' ? 'is-focus' : ''}" ${s === '禁用' || s === '处理中' ? 'disabled' : ''}>${s === '处理中' ? '保存中…' : s === '错误／空' ? '重试' : '记录拜访'}</button>`,
-  '次按钮': (s) => `<button class="ui-btn ui-secondary ${s === '悬停' ? 'is-hover' : ''} ${s === '聚焦' ? 'is-focus' : ''}" ${s === '禁用' ? 'disabled' : ''}>${s === '处理中' ? '处理中…' : '创建任务'}</button>`,
-  '输入框': (s) => `<label class="ui-field ${s === '错误／空' ? 'is-error' : ''}"><span>客户名称${s === '错误／空' ? '（必填）' : ''}</span><input class="${s === '悬停' ? 'is-hover' : ''} ${s === '聚焦' ? 'is-focus' : ''}" value="${s === '错误／空' ? '' : '华宸数据科技'}" ${s === '禁用' ? 'disabled' : ''} ${s === '处理中' ? 'readonly' : ''} placeholder="搜索客户名称或负责人"></label>${s === '错误／空' ? '<small class="ui-err">请填写客户名称，已保留其余输入</small>' : ''}`,
-  '选择器': (s) => `<button class="ui-select ${s === '悬停' ? 'is-hover' : ''} ${s === '聚焦' ? 'is-focus' : ''}" ${s === '禁用' ? 'disabled' : ''}><span>${s === '错误／空' ? '无匹配结果' : s === '处理中' ? '加载选项…' : '第三季度'}</span><i>▾</i></button>`,
-  '筛选片': (s) => `<span class="ui-chip ${s === '聚焦' ? 'is-focus' : ''} ${s === '悬停' ? 'is-hover' : ''} ${s === '处理中' ? 'on' : ''} ${s === '禁用' ? 'off' : ''}">${s === '处理中' ? '有风险 · 已选' : '有风险'}</span>`,
-  '列表行': (s) => `<div class="ui-row ${s === '悬停' ? 'is-hover' : ''} ${s === '聚焦' ? 'is-focus' : ''} ${s === '处理中' ? 'on' : ''}"><b>云岭教育科技</b><small>${s === '错误／空' ? '没有匹配的客户 · 清除条件' : s === '处理中' ? '已选中 · 详情打开' : '客户资源 · 关系 6/10'}</small>${s === '禁用' ? '<em>无权限</em>' : tag('tag-warn', '需关注')}</div>`,
-  '状态标签': (s) => ({ '默认': tag('tag-ok', '● 向好'), '悬停': tag('tag-warn', '● 需关注'), '聚焦': tag('tag-err', '● 转差'), '禁用': tag('tag-none', '● 待评估'), '处理中': tag('tag-none', '加载中…'), '错误／空': tag('tag-none', '未登记') })[s],
-};
-const matrix = `<div class="tbl"><table class="matrix"><tr><th>组件</th>${STATES.map((s) => `<th>${s}</th>`).join('')}</tr>${Object.entries(comp).map(([n, f]) => `<tr><th>${n}</th>${STATES.map((s) => `<td>${f(s)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+
+// 组件章：组件库目录页就是章节本体。Web 组件与小程序组件的对应关系，来自 08-组件清单.md 第 3 节
+const MP_OF = { SbStatusTag: 'sb-status-tag', SbStatePanel: 'sb-state-panel', SbFilterBar: 'sb-filter-bar', SbSearch: 'sb-search', SbListRow: 'sb-list-row', SbBottomBar: 'sb-bottom-bar', SbField: 'sb-field', SbSheet: 'sb-sheet', SbPagination: 'sb-pagination', SbMetricTile: 'sb-metric-tile', SbPageHeader: 'sb-page-header', SbAiBadge: 'sb-ai-badge', SbAiField: 'sb-ai-field', SbAiSources: 'sb-ai-sources', SbAiProgress: 'sb-ai-progress', SbProvider: 'app.wxss 两行 import', SbDetailLayout: '不适用，小程序用 navigateTo', Basics: 't-* 直接用' };
+const mpName = (id) => { const v = MP_OF[id] || '—'; return /^sb-/.test(v) ? `<code>${esc(v)}</code>` : esc(v); };
+const BUILD_CMD = 'cd packages/ui-react && npm i --legacy-peer-deps && npm run build';
+const libFrame = hasLib
+  ? `<div class="card libcard"><div class="ph"><a class="btn sec" href="${P.lib}" target="_blank" rel="noopener">新窗口打开</a><small>小程序版浏览器里看不到。用微信开发者工具打开 packages/ui-miniprogram，首页从上到下排开 15 个组件的每个状态</small></div><iframe class="frame lib" title="组件库目录" src="${P.lib}" loading="lazy"></iframe></div>`
+  : `<div class="card"><p class="note">组件库还没构建：<code>${BUILD_CMD}</code>。构建后重新生成站点，这里就是可以直接点的组件库。</p></div>`;
+const libTable = LIB_META.length
+  ? `<div class="card"><h2>组件说明表</h2><p class="note">用在哪一列写在做什么下面。小程序组件在 packages/ui-miniprogram/components。</p><div class="tbl"><table class="libmeta"><tr><th>组件</th><th>Web 组件</th><th>小程序组件</th><th>做什么</th><th>规则</th><th>状态</th></tr>${LIB_META.map((m) => `<tr><td class="idc"><b>${esc(m.name)}</b></td><td><code>${esc(m.id)}</code></td><td>${mpName(m.id)}</td><td>${esc(m.purpose)}<br><small>用在：${esc(m.pages)}</small></td><td>${m.rules.map(esc).join('、')}</td><td>${m.states.map(esc).join('、')}</td></tr>`).join('')}</table></div><p class="src">来源：packages/ui-react/src/meta.js。清单依据 08-组件清单.md。</p></div>`
+  : '';
 
 // 跨端表：分类来自 rules.json 的 crossKind（由 01 表结论列归类，划分本身是建议）；状态列保留 01 表原文
 const crossBadges = (raw) => { const b = []; if (/已确认/.test(raw)) b.push(badge('已确认')); if (/验证（本地）|已验证/.test(raw)) b.push(badge('已验证（本地）')); if (/建议/.test(raw)) b.push(badge('建议')); if (!b.length) b.push(badge('未验证')); return b.join(' '); };
@@ -251,7 +252,7 @@ const body = `
   <div class="card"><h2>几个词</h2><div class="tbl"><table><tr><th>词</th><th>意思</th></tr><tr><td>设计变量</td><td>颜色、字号、间距的统一名字（如 <code>--ui-primary</code>）；改名字对应的值，各端一起变</td></tr><tr><td>样板</td><td>03 章那页可点的「客户列表→详情→返回」演示页，用来验证规则，不是真实产品</td></tr><tr><td>变更单</td><td>改规则前填的一页表：当前规则、实际问题、候选改法、受影响页面、怎么验证</td></tr><tr><td>登记采用</td><td>某产品的某个端在采用登记表写下「已采用」；收到 ≠ 采用 ≠ 已验证</td></tr><tr><td>视口</td><td>浏览器窗口的宽度；本规范按 >900、601～900、≤600 三档</td></tr><tr><td>PR</td><td>在 Git 上提交一次修改申请，评审通过后合并</td></tr></table></div></div>
   <div class="card"><h2>状态词</h2><div class="tbl"><table><tr><th>词</th><th>含义</th></tr><tr><td>${badge('已确认')}</td><td>Web 1.0 的 ${rules.$meta.confirmed} 条正式规则，和 1.0.0 已定值的 ${confirmedTokens} 个变量。改它要走变更单</td></tr><tr><td>${badge('建议')}</td><td>跨端 X 规则、候选原则 D 与 A、新增变量、端侧覆盖值、流程。还没登记采用</td></tr><tr><td>${badge('业务事实')}</td><td>产品原则和业务口径，不是设计规则</td></tr><tr><td>${badge('已验证（本地）')}</td><td>样板自动验收通过。合成数据，模拟视口，没上真机</td></tr><tr><td>${badge('未验证')}</td><td>还没有任何证据</td></tr></table></div></div>
   <div class="card"><h2>已经决定的事</h2>${decided.length ? `<ul>${decided.map((d) => `<li>${inline(d.item)}：${inline(d.impact)}　<small>${inline(d.status)}</small></li>`).join('')}</ul>` : '<p class="note">暂无</p>'}<p class="note">来自采用登记表的待决定事项表，全表在「团队怎么用」。</p></div>
-  <div class="card"><h2>怎么看</h2><ol><li>按左侧七章顺序看。原则章是读的，其余六章每章先有一个能动手的东西，后面是规则卡片。</li><li>卡片折叠时显示编号、场景和要求的第一句，右上角是状态词。点开看完整要求、正反例、怎么检查、来源行号。</li><li>顶部搜索框输入编号或变量名能直接跳过去。</li></ol></div>
+  <div class="card"><h2>怎么看</h2><ol><li>组件章就是组件库本体，可以直接点。其余各章按左侧顺序看，原则章是读的，别的章先有一个能动手的东西，后面是规则卡片。</li><li>卡片折叠时显示编号、场景和要求的第一句，右上角是状态词。点开看完整要求、正反例、怎么检查、来源行号。</li><li>顶部搜索框输入编号或变量名能直接跳过去。</li></ol></div>
 </section>
 
 <section data-panel="principles" hidden>
@@ -282,10 +283,10 @@ const body = `
 </section>
 
 <section data-panel="components" hidden>
-  <h1>组件</h1><p class="lead">同一个按钮三端三种样子，禁用了不说原因，这是最常见的返工。每个组件在每个状态下长什么样都有定论。横着看是同一个组件从默认到出错的六种样子，竖着看是同一状态下所有组件像不像一家。悬停和聚焦两列是把鼠标效果固定住给你看。</p>
-  <div class="card"><p class="note">共 ${STATES.length} 列，窄屏可以左右滑，第一列固定。</p>${matrix}<p class="note">选择器、日期这类复杂控件的真实交互见 1.0.0 示例册，这里只定外观和状态。</p></div>
+  <h1>组件</h1><p class="lead">按钮、输入框、选择器这些基础控件直接用 Ant Design，筛选栏、四态面板这些组合件和 AI 标识、待确认字段这些 AI 件是部门自己的。下面就是组件库本体，每个组件每个状态都能直接点。</p>
+  ${libFrame}
+  ${libTable}
   <h2>规则</h2>${cards(['C-01', 'C-02', 'C-03', 'C-04', 'C-05', 'C-06', 'C-07'], true)}
-  ${hasLib ? `<h2>组件库：每个组件每个状态的真实渲染 ${badge('建议')}</h2><p class="lead">Web 组件库建在 Ant Design 6 与 Ant Design X 之上，主题只来自桥接文件。下面是它的目录页，可以直接操作。<a href="${P.lib}" target="_blank" rel="noopener">新窗口打开</a>。小程序组件在 packages/ui-miniprogram，浏览器看不到，用微信开发者工具打开 demo。</p><div class="card"><iframe class="frame tall" title="组件库目录" src="${P.lib}" loading="lazy"></iframe></div><div class="card"><div class="tbl"><table><tr><th>组件</th><th>做什么</th><th>规则</th><th>用在哪</th><th>状态</th></tr>${LIB_META.map((m) => `<tr><td><b>${esc(m.name)}</b><br><code>${esc(m.id)}</code></td><td>${esc(m.purpose)}</td><td>${m.rules.map(esc).join('、')}</td><td>${esc(m.pages)}</td><td>${m.states.map(esc).join('、')}</td></tr>`).join('')}</table></div><p class="src">来源：packages/ui-react/src/meta.js；清单依据 08-组件清单.md。小程序侧对应组件：sb-status-tag、sb-state-panel、sb-filter-bar、sb-list-row、sb-bottom-bar、sb-ai-badge、sb-ai-field。</p></div>` : ''}
   ${ecoDoc ? `<h2>组件用哪家 ${badge('建议')}</h2><div class="card doc">${md(mdSections(ecoDoc, /^## [012５5]/))}<p class="src">来源：05-组件生态选型.md，全文还有接入步骤和待决定事项。依据在 依据/外部查证-20260919/ 的 08 到 12。</p></div>` : ''}
 </section>
 
@@ -422,24 +423,17 @@ tr.diff td { background: var(--ui-selected); }
 .pv-title { font-size: var(--ui-text-page); font-weight: 650; } .pv-title small { font-size: var(--ui-text-small); color: var(--ui-secondary); font-weight: 400; margin-left: var(--ui-space-2); }
 .pv-btns { display: flex; gap: var(--ui-space-2); align-items: center; margin: var(--ui-space-3) 0; flex-wrap: wrap; }
 .ui-btn { min-height: var(--ui-control-height); padding: 0 var(--ui-space-4); border-radius: var(--ui-radius-control); border: 1px solid transparent; font: inherit; }
-.ui-primary { background: var(--ui-primary); color: var(--ui-on-primary); } .ui-primary:hover, .ui-primary.is-hover { background: var(--ui-primary-hover); }
-.ui-secondary { background: var(--ui-surface); color: var(--ui-primary); border-color: var(--ui-line); } .ui-secondary:hover, .ui-secondary.is-hover { background: var(--ui-selected); }
-.ui-btn:disabled { opacity: .55; cursor: not-allowed; } .is-focus { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
-.ui-field { display: flex; flex-direction: column; gap: 4px; font-size: var(--ui-text-small); color: var(--ui-secondary); }
-.ui-field input { height: var(--ui-field-height); padding: 0 var(--ui-space-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); font: inherit; font-size: var(--ui-text-body); color: var(--ui-ink); background: var(--ui-surface); width: 100%; min-width: 110px; }
-.ui-field input.is-hover { border-color: var(--ui-focus); } .ui-field input:disabled { background: var(--ui-neutral-soft); } .ui-field.is-error input { border-color: var(--ui-danger); }
-.ui-err { color: var(--ui-danger); font-size: var(--ui-text-small); display: block; margin-top: 4px; }
-.ui-select { display: inline-flex; justify-content: space-between; gap: var(--ui-space-2); min-width: 130px; height: var(--ui-control-height); padding: 0 var(--ui-space-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); color: var(--ui-ink); font: inherit; align-items: center; }
-.ui-select.is-hover { border-color: var(--ui-focus); } .ui-select:disabled { opacity: .55; } .ui-select i { font-style: normal; color: var(--ui-muted); }
+.ui-primary { background: var(--ui-primary); color: var(--ui-on-primary); } .ui-primary:hover { background: var(--ui-primary-hover); }
+.ui-secondary { background: var(--ui-surface); color: var(--ui-primary); border-color: var(--ui-line); } .ui-secondary:hover { background: var(--ui-selected); }
 .ui-chip { display: inline-flex; align-items: center; min-height: 32px; padding: 0 var(--ui-space-3); border-radius: 999px; border: 1px solid var(--ui-line); color: var(--ui-secondary); background: var(--ui-surface); }
-.ui-chip.is-hover { border-color: var(--ui-focus); color: var(--ui-primary); } .ui-chip.on { background: var(--ui-selected); border-color: var(--ui-primary); color: var(--ui-primary); font-weight: 600; } .ui-chip.off { opacity: .55; }
+.ui-chip.on { background: var(--ui-selected); border-color: var(--ui-primary); color: var(--ui-primary); font-weight: 600; }
 .ui-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px var(--ui-space-3); padding: var(--ui-space-2) var(--ui-space-3); border-bottom: 1px solid var(--ui-line); min-width: 150px; align-items: center; }
-.ui-row b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ui-row small { color: var(--ui-secondary); font-size: var(--ui-text-small); grid-column: 1; } .ui-row .tag, .ui-row em { grid-column: 2; grid-row: 1 / 3; align-self: center; font-style: normal; color: var(--ui-muted); font-size: var(--ui-text-small); }
-.ui-row.is-hover { background: var(--ui-background); } .ui-row.on { background: var(--ui-selected); box-shadow: inset 3px 0 var(--ui-primary); }
-.matrix td { min-width: 120px; padding: var(--ui-space-2); } .matrix th:first-child, .matrix td:first-child { position: sticky; left: 0; background: var(--ui-surface); z-index: 1; min-width: 80px; }
+.ui-row b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ui-row small { color: var(--ui-secondary); font-size: var(--ui-text-small); grid-column: 1; } .ui-row .tag { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+.ui-row.on { background: var(--ui-selected); box-shadow: inset 3px 0 var(--ui-primary); }
+.libcard .ph { margin-bottom: var(--ui-space-3); } .libcard .ph small { flex: 1 1 260px; } .libmeta td { min-width: 96px; } .libmeta td small { color: var(--ui-muted); font-size: var(--ui-text-small); }
 .ts { display: flex; justify-content: space-between; align-items: baseline; gap: var(--ui-space-3); padding: var(--ui-space-2) 0; border-bottom: 1px solid var(--ui-line); }
 .ss { display: grid; grid-template-columns: 40px auto minmax(0, 1fr); gap: var(--ui-space-3); align-items: center; padding: 4px 0; font-size: var(--ui-text-small); color: var(--ui-secondary); } .ss i { display: block; height: 12px; background: var(--ui-primary); border-radius: 2px; }
-.frame { width: 100%; height: 560px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); display: block; } .frame.tall { height: 640px; }
+.frame { width: 100%; height: 560px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); display: block; } .frame.tall { height: 640px; } .frame.lib { height: 860px; }
 .resizer { resize: horizontal; overflow: hidden; min-width: 280px; max-width: 100%; width: 100%; border: 2px dashed var(--ui-line); border-radius: var(--ui-radius-control); padding: 4px; }
 .readout { font-weight: 600; margin: var(--ui-space-3) 0; color: var(--ui-primary); font-variant-numeric: tabular-nums; }
 .ascii pre { margin: var(--ui-space-3) 0 0; padding: var(--ui-space-3); background: var(--ui-background); border-radius: var(--ui-radius-control); font-size: var(--ui-text-small); overflow-x: auto; }
@@ -462,7 +456,7 @@ svg.sm { width: 100%; min-width: 560px; max-width: 680px; height: auto; display:
   .find { flex-basis: 100%; max-width: none; }
   .two { grid-template-columns: minmax(0, 1fr); } .arch { grid-template-columns: minmax(0, 1fr); } .arch .arrows { transform: rotate(90deg); }
   .tks { max-height: none; } .tks::after { display: none; }
-  .frame, .frame.tall { height: 520px; } .resizer { resize: none; }
+  .frame, .frame.tall { height: 520px; } .frame.lib { height: 640px; } .resizer { resize: none; }
   .tile b { font-size: var(--ui-text-page); }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

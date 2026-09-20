@@ -1,0 +1,4 @@
+.sb-search { padding: var(--ui-space-2) var(--ui-page-gutter); background: var(--ui-surface); }
+.sb-search.off { opacity: .55; }
+.sb-search-inner { min-height: var(--ui-field-height); }
+.sb-search-loading { margin-left: var(--ui-space-2); font-size: var(--ui-text-small); color: var(--ui-secondary); white-space: nowrap; }

@@ -1,0 +1,12 @@
+<view class="sb-pager" aria-role="navigation" aria-label="分页">
+  <text class="sb-pager-total">共 {{total}} 条</text>
+  <block wx:if="{{mode === 'more'}}">
+    <text wx:if="{{end}}" class="sb-pager-end">已显示全部</text>
+    <t-button wx:else size="small" variant="outline" loading="{{loading}}" disabled="{{loading}}" bind:tap="onMore">{{loading ? '加载中…' : '加载更多'}}</t-button>
+  </block>
+  <view wx:else class="sb-pager-ctl">
+    <t-button size="small" variant="outline" disabled="{{first}}" bind:tap="onPrev">上一页</t-button>
+    <text class="sb-pager-pos">第 {{current}}／{{pages}} 页</text>
+    <t-button size="small" variant="outline" disabled="{{last}}" bind:tap="onNext">下一页</t-button>
+  </view>
+</view>

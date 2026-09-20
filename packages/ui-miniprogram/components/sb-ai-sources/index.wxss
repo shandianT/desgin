@@ -1,0 +1,8 @@
+.sb-sources { display: flex; flex-direction: column; padding: 0 var(--ui-page-gutter); background: var(--ui-surface); font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.sb-sources-none { padding: var(--ui-space-2) 0; color: var(--ui-muted); }
+.sb-sources-head { display: flex; align-items: center; justify-content: space-between; min-height: var(--ui-touch-target); color: var(--ui-primary); }
+.sb-sources-list { display: flex; flex-direction: column; }
+.sb-sources-item { box-sizing: border-box; min-height: var(--ui-touch-target); padding: var(--ui-space-2) 0; border-top: 1px solid var(--ui-line); }
+.sb-sources-hover { background: var(--ui-background); }
+.sb-sources-title { font-size: var(--ui-text-body); color: var(--ui-primary); }
+.sb-sources-desc { margin-top: var(--ui-space-1); color: var(--ui-secondary); }

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Button, DatePicker, Input, Select, Form } from 'antd';
-import { SbProvider, SbStatusTag, SbStatePanel, SbFilterBar, SbSearch, SbListRow, SbBottomBar, SbField, SbSheet, SbPagination, SbMetricTile, SbPageHeader, SbDetailLayout, SbAiBadge, SbAiField, SbAiSources, SbAiProgress, META } from '../src/index.js';
+import { App as AntApp, Button, Cascader, Collapse, DatePicker, Drawer, Form, Input, Modal, Select, Table, Tabs, Tag, Tooltip } from 'antd';
+import '../../../specs/salesbuddy/02-设计变量与同步链路/dist/design-tokens.css';
+import { SbProvider, SbStatusTag, SbStatePanel, SbFilterBar, SbSearch, SbListRow, SbBottomBar, SbField, SbSheet, SbPagination, SbMetricTile, SbPageHeader, SbDetailLayout, SbAiBadge, SbAiField, SbAiSources, SbAiProgress, META, USAGE } from '../src/index.js';
 
-const State = ({ title, children }) => <div className="state"><h4>{title}</h4>{children}</div>;
+const State = ({ title, children, className }) => <div className={className ? `state ${className}` : 'state'}><h4>{title}</h4>{children}</div>;
 const rows = [
   { name: '华宸数据科技有限公司', summary: '客户资产 · 关系 8/10 · 地盘 HB-01', status: { tone: 'good', reason: '近 30 天有高层拜访' }, time: '2 天前跟进' },
   { name: '北辰智造集团', summary: '主攻区 · 关系 4/10 · 地盘 HB-01', status: { tone: 'watch', reason: '一周无跟进' }, time: '9 天前跟进' },
@@ -25,15 +26,129 @@ function AiFieldDemo({ state, confidence, error }) {
 }
 const SOURCES = [{ key: 1, title: '9 月 12 日拜访记录', description: '「已获得 CIO 支持，预算在四季度审批」', url: '#' }, { key: 2, title: '客户档案 · 潜力', description: '预算 320 万，台数 1200', url: '#' }];
 
+// 基础控件的演示数据
+const CUSTOMERS = ['华宸数据科技有限公司', '北辰智造集团', '金桥制造股份有限公司', '泰和银行数据中心', '云启物流', '海晟半导体'];
+const SELECT_OPTS = CUSTOMERS.map((c) => ({ value: c, label: c }));
+const CASCADER_OPTS = [
+  { value: 'south', label: '南区', children: [{ value: 'HB-01', label: '地盘 HB-01' }, { value: 'HB-02', label: '地盘 HB-02' }] },
+  { value: 'east', label: '东区', children: [{ value: 'SH-01', label: '地盘 SH-01' }] },
+];
+const TABLE_COLS = [
+  { title: '客户', dataIndex: 'name', width: 220 },
+  { title: '象限', dataIndex: 'zone', width: 100 },
+  { title: '关系', dataIndex: 'rel', width: 80 },
+  { title: '地盘', dataIndex: 'plot', width: 100 },
+  { title: '最近跟进', dataIndex: 'time' },
+];
+const ZONES = ['主攻区', '客户资产', '见单打单', '客户资源'];
+const TABLE_ROWS = Array.from({ length: 24 }, (_, i) => ({ key: i, name: i < CUSTOMERS.length ? CUSTOMERS[i] : `${CUSTOMERS[i % CUSTOMERS.length]} ${i + 1}`, zone: ZONES[i % 4], rel: `${(i % 10) + 1}/10`, plot: `HB-0${(i % 3) + 1}`, time: `${i + 1} 天前` }));
+const full = { width: '100%' };
+const inCard = (n) => n.parentNode;
+// 常开的下拉固定在字段下方，不随视口位置翻到上面。
+const STAY_BELOW = { points: ['tl', 'bl'], offset: [0, 4], overflow: { adjustX: false, adjustY: false } };
+
+function BasicsDemo() {
+  const { message, notification } = AntApp.useApp();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [tab, setTab] = useState('visits');
+  const [checked, setChecked] = useState(true);
+  return (
+    <div className="basics">
+      <h3>Button</h3>
+      <div className="states">
+        <State title="主：一页只放一个"><Button type="primary">记录拜访</Button></State>
+        <State title="次"><Button>创建任务</Button></State>
+        <State title="文字"><Button type="text">查看依据</Button><Button type="link">查看全部</Button></State>
+        <State title="禁用"><div className="inline"><Button type="primary" disabled>归档</Button><Button disabled>存草稿</Button></div></State>
+        <State title="处理中：防重复提交"><Button type="primary" loading>归档中…</Button></State>
+      </div>
+      <h3>Input 与 Input.TextArea</h3>
+      <div className="states">
+        <State title="默认"><div className="stack"><Input placeholder="客户名称" /><Input.TextArea rows={2} placeholder="拜访要点" /></div></State>
+        <State title="聚焦样式"><div className="stack"><Input className="demo-focus" defaultValue="华宸数据科技" /><Input.TextArea className="demo-focus" rows={2} defaultValue="已获得 CIO 支持" /><span className="demo-note">点进输入框看真实的焦点环</span></div></State>
+        <State title="禁用"><div className="stack"><Input disabled value="华宸数据科技" /><Input.TextArea disabled rows={2} value="已获得 CIO 支持" /></div></State>
+        <State title="错误：就地说明，保留输入"><div className="stack"><Input status="error" placeholder="客户预算" /><Input.TextArea status="error" rows={2} defaultValue="发方案" /><span className="demo-error">下一步须含明确时间与目标</span></div></State>
+      </div>
+      <h3>Select</h3>
+      <div className="states">
+        <State title="默认"><Select defaultValue={CUSTOMERS[0]} options={SELECT_OPTS} style={full} /></State>
+        <State title="多选"><Select mode="multiple" defaultValue={[CUSTOMERS[0], CUSTOMERS[1]]} options={SELECT_OPTS} style={full} /></State>
+        <State title="加载中"><Select loading placeholder="正在取客户…" options={[]} style={full} /></State>
+        <State title="无匹配" className="popup-host"><Select open showSearch searchValue="泰山" notFoundContent="没有匹配的客户，换个词试试" options={[]} placeholder="搜索客户" style={full} getPopupContainer={inCard} placement="bottomLeft" popupAlign={STAY_BELOW} /></State>
+        <State title="禁用"><Select disabled defaultValue={CUSTOMERS[0]} options={SELECT_OPTS} style={full} /></State>
+      </div>
+      <h3>DatePicker</h3>
+      <div className="states">
+        <State title="默认"><DatePicker style={full} placeholder="拜访日期" /></State>
+        <State title="范围"><DatePicker.RangePicker style={full} /></State>
+        <State title="禁用"><DatePicker disabled style={full} placeholder="拜访日期" /></State>
+      </div>
+      <h3>Cascader</h3>
+      <div className="states">
+        <State title="默认：区域到地盘"><Cascader options={CASCADER_OPTS} placeholder="选择地盘" style={full} /></State>
+        <State title="已选"><Cascader options={CASCADER_OPTS} defaultValue={['south', 'HB-01']} style={full} /></State>
+        <State title="禁用"><Cascader disabled options={CASCADER_OPTS} placeholder="选择地盘" style={full} /></State>
+      </div>
+      <h3>Table</h3>
+      <div className="states wide">
+        <State title="加载中"><Table size="small" loading columns={TABLE_COLS} dataSource={TABLE_ROWS.slice(0, 3)} pagination={false} scroll={{ x: 'max-content' }} /></State>
+        <State title="空数据：文案交给四态面板"><Table size="small" columns={TABLE_COLS} dataSource={[]} pagination={false} scroll={{ x: 'max-content' }} locale={{ emptyText: <SbStatePanel state="empty" title="没有匹配的客户" description="当前筛选：有风险、本人负责。" /> }} /></State>
+        <State title="24 行，固定表头"><Table size="small" columns={TABLE_COLS} dataSource={TABLE_ROWS} pagination={false} scroll={{ y: 280, x: 'max-content' }} /></State>
+      </div>
+      <h3>Modal</h3>
+      <div className="states">
+        <State title="按钮打开，Esc 可关，关闭后焦点回到按钮">
+          <Button id="demo-modal-open" onClick={() => setModalOpen(true)}>打开确认框</Button>
+          <Modal title="归档这条拜访记录？" open={modalOpen} onOk={() => setModalOpen(false)} onCancel={() => setModalOpen(false)} okText="归档" cancelText="取消"><p>归档后由 Agent 重算象限与风险，不可手工改分。</p></Modal>
+        </State>
+      </div>
+      <h3>Drawer</h3>
+      <div className="states">
+        <State title="右侧抽屉">
+          <Button id="demo-drawer-open" onClick={() => setDrawerOpen(true)}>打开抽屉</Button>
+          <Drawer title="客户档案" open={drawerOpen} onClose={() => setDrawerOpen(false)}><p>华宸数据科技有限公司</p><p>客户资产，关系 8/10，地盘 HB-01。</p></Drawer>
+        </State>
+      </div>
+      <h3>message 与 notification</h3>
+      <div className="states">
+        <State title="message：轻提示，自动消失"><div className="inline"><Button id="demo-message-ok" onClick={() => message.success('已归档')}>成功</Button><Button onClick={() => message.error('保存失败，已保留你的输入')}>失败</Button></div></State>
+        <State title="notification：带标题与说明"><Button id="demo-notify-open" onClick={() => notification.open({ message: '任务已下发', description: '对方拒绝时需填意见，并推送给你。' })}>下发任务</Button></State>
+      </div>
+      <h3>Tag</h3>
+      <div className="states">
+        <State title="默认"><Tag>主攻区</Tag><Tag>HB-01</Tag></State>
+        <State title="带色：状态请用 SbStatusTag"><Tag color="processing">进行中</Tag><Tag color="success">已确认</Tag><Tag color="warning">待确认</Tag><Tag color="error">已拒绝</Tag></State>
+        <State title="可关闭"><Tag closable>有风险</Tag><Tag closable>本人负责</Tag></State>
+        <State title="可选"><Tag.CheckableTag checked={checked} onChange={setChecked}>本人负责</Tag.CheckableTag></State>
+      </div>
+      <h3>Tooltip</h3>
+      <div className="states">
+        <State title="悬停显示：禁用要说原因"><Tooltip title="不在你的授权范围内"><Button disabled>查看详情</Button></Tooltip></State>
+        <State title="常显" className="popup-host-right"><Tooltip title="一周无跟进" open placement="right" getPopupContainer={inCard}><Button>需关注</Button></Tooltip></State>
+      </div>
+      <h3>Tabs</h3>
+      <div className="states wide">
+        <State title="默认，含禁用项"><Tabs activeKey={tab} onChange={setTab} items={[{ key: 'visits', label: '拜访', children: '3 条拜访记录' }, { key: 'opps', label: '商机', children: '2 条商机' }, { key: 'contracts', label: '合同', children: '暂无合同' }, { key: 'profit', label: '毛利', disabled: true }]} /></State>
+      </div>
+      <h3>Collapse</h3>
+      <div className="states wide">
+        <State title="默认展开第一项"><Collapse defaultActiveKey={['1']} items={[{ key: '1', label: 'AI 依据 2 条', children: <p>9 月 12 日拜访记录：已获得 CIO 支持，预算在四季度审批。</p> }, { key: '2', label: '联系人', children: <p>张总，CIO。</p> }]} /></State>
+      </div>
+    </div>
+  );
+}
+
 const DEMOS = {
+  Basics: BasicsDemo,
   SbProvider: () => <div className="states"><State title="主色与控件高度来自桥接"><Button type="primary">记录拜访</Button> <Button>创建任务</Button></State><State title="表单字段高 40"><Input placeholder="搜索客户名称或负责人" /></State></div>,
   SbStatusTag: () => <div className="states"><State title="向好"><SbStatusTag tone="good" /></State><State title="需关注"><SbStatusTag tone="watch" /></State><State title="转差"><SbStatusTag tone="bad" /></State><State title="待评估"><SbStatusTag tone="pending" /></State><State title="未登记"><SbStatusTag tone="unset" /></State><State title="带依据"><SbStatusTag tone="watch" reason="一周无跟进" showReason /></State></div>,
   SbStatePanel: () => <div className="states"><State title="加载中"><SbStatePanel state="loading" /></State><State title="骨架"><SbStatePanel state="loading" skeleton /></State><State title="空"><SbStatePanel state="empty" title="没有匹配的客户" description="当前筛选：有风险、本人负责。" onClear={() => {}} /></State><State title="失败"><SbStatePanel state="error" onRetry={() => {}} /></State><State title="无权限"><SbStatePanel state="forbidden" /></State></div>,
   SbFilterBar: () => <div className="states wide"><State title="默认与已选"><FilterDemo /></State><State title="禁用"><FilterDemo disabled /></State></div>,
   SbSearch: () => <div className="states"><State title="默认"><SbSearch /></State><State title="输入中"><SbSearch value="华宸" /></State><State title="加载中"><SbSearch value="华宸" loading /></State><State title="禁用"><SbSearch disabled /></State></div>,
-  SbListRow: () => <div className="states wide"><State title="默认、选中、无权限"><SbListRow {...rows[0]} /><SbListRow {...rows[1]} selected /><SbListRow name="泰和银行数据中心" disabled disabledReason="不在你的授权范围内" /></State></div>,
+  SbListRow: () => <div className="states"><State title="默认"><SbListRow {...rows[0]} /></State><State title="选中"><SbListRow {...rows[1]} selected /></State><State title="无权限"><SbListRow name="泰和银行数据中心" disabled disabledReason="不在你的授权范围内" /></State></div>,
   SbBottomBar: () => <div className="states wide"><State title="默认"><SbBottomBar primary={{ label: '归档' }} secondary={{ label: '存草稿' }} /></State><State title="处理中"><SbBottomBar primary={{ label: '归档', loading: true, loadingLabel: '归档中…' }} secondary={{ label: '存草稿', disabled: true }} /></State><State title="禁用说原因"><SbBottomBar primary={{ label: '归档', disabled: true, disabledReason: '还有 3 项必填未确认：下一步、客户预算、联系人角色' }} secondary={{ label: '存草稿' }} /></State></div>,
-  SbField: () => <Form layout="vertical"><div className="states"><State title="默认"><SbField label="客户名称"><Input value="华宸数据科技" /></SbField></State><State title="必填"><SbField label="下一步" required help="须含时间与目标"><Input placeholder="10 月 8 日前发方案" /></SbField></State><State title="错误"><SbField label="客户预算" required error="请填写客户预算，已保留其余输入"><Input status="error" /></SbField></State><State title="只读"><SbField label="拜访日期" readOnly><Input value="2026-09-19" /></SbField></State><State title="选择与日期"><SbField label="季度"><Select defaultValue="q3" options={[{ value: 'q3', label: '第三季度' }, { value: 'q4', label: '第四季度' }]} /></SbField><SbField label="日期"><DatePicker style={{ width: '100%' }} /></SbField></State></div></Form>,
+  SbField: () => <Form layout="vertical"><div className="states"><State title="默认"><SbField label="客户名称"><Input value="华宸数据科技" /></SbField></State><State title="必填"><SbField label="下一步" required help="须含时间与目标"><Input placeholder="10 月 8 日前发方案" /></SbField></State><State title="错误"><SbField label="客户预算" required error="请填写客户预算，已保留其余输入"><Input status="error" /></SbField></State><State title="只读"><SbField label="拜访日期" readOnly><Input value="2026-09-19" /></SbField></State><State title="选择与日期"><SbField label="季度"><Select defaultValue="q3" options={[{ value: 'q3', label: '第三季度' }, { value: 'q4', label: '第四季度' }]} /></SbField><SbField label="日期"><DatePicker style={full} /></SbField></State></div></Form>,
   SbSheet: () => <div className="states"><State title="打开"><SheetDemo /></State></div>,
   SbPagination: () => <div className="states"><State title="默认"><SbPagination current={2} total={124} /></State><State title="末页"><SbPagination current={7} total={124} /></State></div>,
   SbMetricTile: () => <div className="states"><State title="有值"><SbMetricTile value="1,250,000" label="ACV（元）" note="本季度" /></State><State title="缺失"><SbMetricTile value={null} label="回款（元）" note="不显示 0" /></State></div>,
@@ -45,20 +160,66 @@ const DEMOS = {
   SbAiProgress: () => { const stages = ['转写语音', '提取 16 项基础字段', '核对「下一步」是否含时间与目标']; return <div className="states"><State title="进行中"><SbAiProgress stages={stages} current={1} detail="12/16" onCancel={() => {}} /></State><State title="已取消"><SbAiProgress stages={stages} current={1} status="cancelled" /></State><State title="失败"><SbAiProgress stages={stages} current={0} status="failed" onRetry={() => {}} /></State><State title="完成"><SbAiProgress stages={stages} current={3} status="done" /></State></div>; },
 };
 
-function App() {
+// 顶部工具条：只看某组件、按名称或规则编号搜索、改主色、重置。
+function Toolbar({ only, setOnly, query, setQuery, primary, setPrimary, onReset }) {
+  const options = [{ value: 'all', label: '全部展开' }, ...META.map((m) => ({ value: m.id, label: `${m.name} ${m.id}` }))];
+  return (
+    <div className="tools" role="toolbar" aria-label="目录工具">
+      <div className="tool"><span>看</span><Select id="tool-only" showSearch optionFilterProp="label" value={only} onChange={setOnly} options={options} popupMatchSelectWidth={false} className="tool-only" /></div>
+      <div className="tool"><span>找</span><Input id="tool-search" allowClear placeholder="组件名或规则编号，如 A-04" value={query} onChange={(e) => setQuery(e.target.value)} className="tool-search" /></div>
+      <label className="tool" htmlFor="tool-primary"><span>主色</span><input id="tool-primary" type="color" value={primary} onChange={(e) => setPrimary(e.target.value)} /><code>{primary}</code></label>
+      <Button id="tool-reset" onClick={onReset}>重置</Button>
+    </div>
+  );
+}
+
+function Catalog({ primary, setPrimary, resetPrimary }) {
+  const [only, setOnly] = useState('all');
+  const [query, setQuery] = useState('');
+  const [usageId, setUsageId] = useState(null);
+  const q = query.trim().toLowerCase();
+  const hit = (m) => !q || m.name.toLowerCase().includes(q) || m.id.toLowerCase().includes(q) || m.rules.some((r) => r.toLowerCase().includes(q));
+  const visible = META.filter((m) => (only === 'all' || m.id === only) && hit(m));
+  const usage = usageId ? META.find((m) => m.id === usageId) : null;
+  const reset = () => { setOnly('all'); setQuery(''); resetPrimary(); };
   return (
     <div className="cat">
-      <nav className="cat-nav"><h1>部门组件库<small>Web · Ant Design 6 与 Ant Design X 之上</small></h1>{META.map((m) => <a key={m.id} href={`#${m.id}`}>{m.name}<small>{m.id}</small></a>)}</nav>
+      <nav className="cat-nav">
+        <h1>部门组件库<small>Web · Ant Design 6 与 Ant Design X 之上</small></h1>
+        {visible.map((m) => <a key={m.id} href={`#${m.id}`}>{m.name}<small>{m.id}</small></a>)}
+        {visible.length < META.length && <p className="cat-nav-note">还有 {META.length - visible.length} 个被过滤，点重置全部显示。</p>}
+      </nav>
       <main className="cat-main">
-        <p className="lead">每个组件在每个状态下的真实渲染。基础控件直接用 Ant Design，这里只放规范要求的组合件与 AI 件。主题只来自 tokens.json 生成的桥接文件，改一个变量这里全变。</p>
-        {META.map((m) => { const Demo = DEMOS[m.id]; return (
+        <Toolbar only={only} setOnly={setOnly} query={query} setQuery={setQuery} primary={primary} setPrimary={setPrimary} onReset={reset} />
+        <p className="lead">每个组件在每个状态下的真实渲染。第一节是基础控件，直接用 Ant Design 6，不另做封装。后面是规范要求的组合件与 AI 件。主题只来自 tokens.json 生成的桥接文件，改上面的主色，整页一起变。每张卡右上角的用法按钮给出引入与最小用例。</p>
+        {visible.length === 0 && <SbStatePanel state="empty" title="没有匹配的组件" description="换个组件名或规则编号试试。" onClear={reset} />}
+        {visible.map((m) => { const Demo = DEMOS[m.id]; return (
           <section className="comp" key={m.id} id={m.id}>
-            <h2>{m.name}<code>{m.id}</code></h2>
+            <div className="comp-head"><h2>{m.name}<code>{m.id}</code></h2><Button size="small" className="usage-btn" onClick={() => setUsageId(m.id)}>用法</Button></div>
             <div className="comp-meta"><b>做什么</b><span>{m.purpose}</span><b>规则</b><span>{m.rules.map((r) => <span className="rule" key={r}>{r}</span>)}</span><b>用在哪</b><span>{m.pages}</span><b>属性</b><span>{m.props}</span></div>
             {Demo ? <Demo /> : null}
           </section>); })}
       </main>
+      <Modal open={!!usage} title={usage ? `${usage.name} ${usage.id} 的用法` : ''} footer={null} width={720} onCancel={() => setUsageId(null)}>
+        <pre className="usage"><code>{usage ? USAGE[usage.id] || '还没有写用法。' : ''}</code></pre>
+      </Modal>
     </div>
   );
 }
-createRoot(document.getElementById('root')).render(<SbProvider><App /></SbProvider>);
+
+// 主色从 design-tokens.css 读初值；改动时同时写 --ui-primary 与 antd 的 colorPrimary，重置就删掉覆盖。
+const readPrimary = () => (typeof document === 'undefined' ? '' : getComputedStyle(document.documentElement).getPropertyValue('--ui-primary').trim().toLowerCase());
+function Root() {
+  const [base, setBase] = useState(readPrimary);
+  const [primary, setPrimaryState] = useState(base);
+  useEffect(() => { if (!base) { const v = readPrimary(); setBase(v); setPrimaryState(v); } }, [base]);
+  const setPrimary = (v) => { document.documentElement.style.setProperty('--ui-primary', v); setPrimaryState(v); };
+  const resetPrimary = () => { document.documentElement.style.removeProperty('--ui-primary'); setPrimaryState(base); };
+  const theme = primary && primary !== base ? { token: { colorPrimary: primary, colorInfo: primary, colorLink: primary } } : undefined;
+  return (
+    <SbProvider theme={theme}>
+      <AntApp component={false}><Catalog primary={primary} setPrimary={setPrimary} resetPrimary={resetPrimary} /></AntApp>
+    </SbProvider>
+  );
+}
+createRoot(document.getElementById('root')).render(<Root />);

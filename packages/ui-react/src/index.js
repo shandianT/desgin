@@ -17,3 +17,4 @@ export { SbAiSources } from './components/SbAiSources.jsx';
 export { SbAiProgress } from './components/SbAiProgress.jsx';
 export { SbPagination } from './components/SbPagination.jsx';
 export { META } from './meta.js';
+export { USAGE } from './usage.js';

@@ -1,0 +1,13 @@
+<t-popup visible="{{visible}}" placement="bottom" close-btn="{{true}}" close-on-overlay-click="{{closeOnOverlay}}" bind:visible-change="onVisible">
+  <view class="sb-sheet" aria-role="dialog" aria-label="{{title}}">
+    <view class="sb-sheet-head">{{title}}</view>
+    <scroll-view scroll-y class="sb-sheet-body"><slot></slot></scroll-view>
+    <view class="sb-sheet-foot">
+      <slot name="footer"></slot>
+      <block wx:if="{{confirmLabel}}">
+        <t-button variant="outline" size="large" bind:tap="onCancel">{{cancelLabel}}</t-button>
+        <t-button theme="primary" size="large" loading="{{confirmLoading}}" disabled="{{confirmLoading}}" bind:tap="onConfirm">{{confirmLoading ? '处理中…' : confirmLabel}}</t-button>
+      </block>
+    </view>
+  </view>
+</t-popup>

@@ -1,0 +1,12 @@
+{
+  "pages": [
+    "demo/pages/index/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "部门组件库",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F3F5F9"
+  },
+  "lazyCodeLoading": "requiredComponents"
+}

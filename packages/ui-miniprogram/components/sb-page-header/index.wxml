@@ -1,0 +1,4 @@
+<view class="sb-pagehead">
+  <view class="sb-pagehead-title" aria-role="heading">{{title}}<text wx:if="{{scope}}" class="sb-pagehead-scope">范围：{{scope}}</text></view>
+  <view class="sb-pagehead-actions"><slot></slot></view>
+</view>

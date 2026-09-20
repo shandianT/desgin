@@ -1,0 +1,4 @@
+.sb-sheet { display: flex; flex-direction: column; max-height: 80vh; background: var(--ui-surface); border-radius: var(--ui-radius-panel) var(--ui-radius-panel) 0 0; }
+.sb-sheet-head { padding: var(--ui-space-4) calc(var(--ui-touch-target) + var(--ui-space-2)) var(--ui-space-2) var(--ui-page-gutter); font-size: var(--ui-text-section); font-weight: 600; color: var(--ui-ink); }
+.sb-sheet-body { flex: 1; max-height: 60vh; padding: 0 var(--ui-page-gutter); box-sizing: border-box; font-size: var(--ui-text-body); color: var(--ui-ink); }
+.sb-sheet-foot { display: flex; justify-content: flex-end; align-items: center; gap: var(--ui-space-2); padding: var(--ui-space-3) var(--ui-page-gutter); }

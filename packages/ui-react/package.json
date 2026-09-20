@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --config catalog/vite.config.mjs",
-    "build": "vite build --config catalog/vite.config.mjs",
-    "shots": "node catalog/shots.mjs"
+    "build": "vite build --config catalog/vite.config.mjs && node catalog/postbuild.mjs"
   },
   "peerDependencies": { "react": ">=18", "react-dom": ">=18", "antd": "^6.1.1", "@ant-design/x": "^2.0.0" },
   "devDependencies": {

@@ -1,19 +1,103 @@
 <view class="demo">
+  <view class="h">页面标题 sb-page-header</view>
+  <view class="sub">默认：标题、范围、主操作</view>
+  <sb-page-header title="客户" scope="本人负责 · 24 家"><t-button size="small" theme="primary">记录拜访</t-button><t-button size="small" variant="outline">创建任务</t-button></sb-page-header>
+  <view class="sub">只有标题</view>
+  <sb-page-header title="我的" />
+
   <view class="h">状态标签 sb-status-tag</view>
   <view class="row"><sb-status-tag tone="good" /><sb-status-tag tone="watch" /><sb-status-tag tone="bad" /><sb-status-tag tone="pending" /><sb-status-tag tone="unset" /><sb-status-tag tone="watch" reason="一周无跟进" showReason /></view>
+
   <view class="h">四态面板 sb-state-panel</view>
   <sb-state-panel state="loading" /><sb-state-panel state="loading" skeleton /><sb-state-panel state="empty" title="没有匹配的客户" description="当前筛选：有风险、本人负责。" showClear /><sb-state-panel state="error" /><sb-state-panel state="forbidden" />
+
   <view class="h">筛选栏 sb-filter-bar</view>
+  <view class="sub">已选，可点选与清除</view>
   <sb-filter-bar title="客户列表" scope="本人负责" options="{{filterOpts}}" value="{{filter}}" resultCount="{{filter.length ? 6 : 24}}" resultLabel="家" bind:change="onFilter" />
+  <view class="sub">禁用</view>
+  <sb-filter-bar title="客户列表" scope="本人负责" options="{{filterOpts}}" value="{{['risk']}}" resultCount="{{6}}" resultLabel="家" disabled />
+
+  <view class="h">搜索框 sb-search</view>
+  <view class="sub">默认，可输入，回车触发搜索</view>
+  <sb-search value="{{search}}" loading="{{searchLoading}}" bind:change="onSearch" bind:search="onSearchSubmit" bind:clear="onSearchClear" />
+  <view class="sub">输入中</view>
+  <sb-search value="华宸" />
+  <view class="sub">加载中</view>
+  <sb-search value="华宸" loading />
+  <view class="sub">禁用</view>
+  <sb-search disabled />
+
   <view class="h">列表行 sb-list-row</view>
   <sb-list-row wx:for="{{rows}}" wx:key="name" name="{{item.name}}" summary="{{item.summary}}" tone="{{item.tone}}" reason="{{item.reason}}" time="{{item.time}}" selected="{{index === 0}}" />
   <sb-list-row name="泰和银行数据中心" disabled disabledReason="不在你的授权范围内" />
+
+  <view class="h">分页 sb-pagination</view>
+  <view class="sub">分页，可点上一页下一页</view>
+  <sb-pagination current="{{page}}" total="{{124}}" pageSize="{{20}}" bind:change="onPage" />
+  <view class="sub">末页，下一页禁用</view>
+  <sb-pagination current="{{7}}" total="{{124}}" pageSize="{{20}}" />
+  <view class="sub">加载更多，可点</view>
+  <sb-pagination mode="more" total="{{124}}" loading="{{moreLoading}}" end="{{moreEnd}}" bind:more="onMore" />
+  <view class="sub">加载更多，加载中</view>
+  <sb-pagination mode="more" total="{{124}}" loading />
+  <view class="sub">加载更多，已到末尾</view>
+  <sb-pagination mode="more" total="{{124}}" end />
+
+  <view class="h">指标卡 sb-metric-tile</view>
+  <view class="grid">
+    <sb-metric-tile value="1,250,000" label="ACV（元）" note="本季度" />
+    <sb-metric-tile value="{{null}}" label="回款（元）" note="缺失不显示 0" />
+    <sb-metric-tile value="{{0}}" label="逾期任务" note="明确零值才显示 0" />
+    <sb-metric-tile value="" label="确收（元）" missingText="未填写" />
+  </view>
+
+  <view class="h">表单项 sb-field</view>
+  <view class="sub">默认</view>
+  <sb-field label="客户名称"><t-input value="{{fieldName}}" borderless bind:change="onFieldName" /></sb-field>
+  <view class="sub">必填，带说明</view>
+  <sb-field label="下一步" required help="须含时间与目标"><t-input value="{{fieldNext}}" placeholder="10 月 8 日前发方案" borderless bind:change="onFieldNext" /></sb-field>
+  <view class="sub">错误就地</view>
+  <sb-field label="客户预算" required error="请填写客户预算，已保留其余输入"><t-input value="{{fieldBudget}}" status="error" borderless bind:change="onFieldBudget" /></sb-field>
+  <view class="sub">只读</view>
+  <sb-field label="拜访日期" readOnly value="2026-09-19" />
+  <view class="sub">只读且未填</view>
+  <sb-field label="合同编号" readOnly />
+  <view class="sub">选择器触发器放在 slot 里</view>
+  <sb-field label="季度"><t-cell title="{{quarter}}" arrow bordered="{{false}}" bind:click="openSheet" /></sb-field>
+
+  <view class="h">底部弹层 sb-sheet</view>
+  <view class="row"><t-button size="small" variant="outline" bind:tap="openSheet">打开底部弹层</t-button></view>
+  <sb-sheet visible="{{sheet}}" title="选择季度" confirmLabel="应用" confirmLoading="{{sheetBusy}}" bind:close="closeSheet" bind:confirm="confirmSheet">
+    <view wx:for="{{['第三季度', '第四季度', '全年']}}" wx:key="*this" class="sheet-row {{item === quarter ? 'on' : ''}}" data-value="{{item}}" bind:tap="pickQuarter">{{item}}</view>
+    <text slot="footer" class="note">已选：{{quarter}}</text>
+  </sb-sheet>
+
   <view class="h">AI 标识 sb-ai-badge</view>
   <view class="row"><sb-ai-badge state="generating" /><sb-ai-badge state="pending" /><sb-ai-badge state="confirmed" confirmedBy="王明 9 月 19 日 " /></view>
+
   <view class="h">待确认字段 sb-ai-field</view>
   <sb-ai-field label="联系人角色" required value="{{ai.value}}" aiValue="张总（CIO）" state="{{ai.state}}" bind:change="onAi" bind:confirm="onAiConfirm" bind:restore="onAiRestore" />
   <sb-ai-field label="客户预算" required value="{{aiLow.value}}" state="{{aiLow.state}}" confidence="low" candidates="{{['300 万', '320 万', '待确认']}}" bind:change="onAiLow" />
   <sb-ai-field label="下一步" required value="" state="ai" error="下一步必须含时间与目标" />
+
+  <view class="h">AI 依据 sb-ai-sources</view>
+  <view class="sub">折叠，点标题展开，点每条弹提示</view>
+  <sb-ai-sources items="{{sources}}" bind:tap="onSource" />
+  <view class="sub">默认展开</view>
+  <sb-ai-sources items="{{sources}}" defaultExpanded bind:tap="onSource" />
+  <view class="sub">没有依据</view>
+  <sb-ai-sources items="{{[]}}" />
+
+  <view class="h">生成过程 sb-ai-progress</view>
+  <view class="sub">进行中，点取消变成已取消；下面的按钮重新开始</view>
+  <view class="card"><sb-ai-progress stages="{{stages}}" current="{{1}}" status="{{gen}}" detail="12/16" bind:cancel="onGenCancel" /><t-button size="small" variant="outline" bind:tap="onGenRestart">重新开始</t-button></view>
+  <view class="sub">已取消</view>
+  <view class="card"><sb-ai-progress stages="{{stages}}" current="{{1}}" status="cancelled" /></view>
+  <view class="sub">失败，点重试会跑一遍再完成</view>
+  <view class="card"><sb-ai-progress stages="{{stages}}" current="{{genFailStep}}" status="{{genFail}}" bind:retry="onGenFailRetry" /></view>
+  <view class="sub">完成</view>
+  <view class="card"><sb-ai-progress stages="{{stages}}" current="{{3}}" status="done" /></view>
   <view class="pad"></view>
 </view>
-<sb-bottom-bar primaryLabel="归档" secondaryLabel="存草稿" loading="{{submitting}}" loadingLabel="归档中…" bind:primary="onSubmit" />
+<view class="sub">底部操作条：点「切换禁用」看禁用说原因</view><view class="card"><t-button size="small" variant="outline" bind:tap="onBarToggle">切换禁用</t-button></view>
+<sb-bottom-bar primaryLabel="归档" secondaryLabel="存草稿" loading="{{submitting}}" loadingLabel="归档中…" bind:primary="onSubmit"  disabled="{{barDisabled}}" disabledReason="「下一步」还没填时间与目标" />

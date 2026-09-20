@@ -1,0 +1,11 @@
+<view class="sb-progress sb-progress-{{status}}" aria-role="status">
+  <t-progress theme="line" percentage="{{percent}}" color="{{bar}}" />
+  <view class="sb-progress-stages">
+    <view wx:for="{{rows}}" wx:key="name" class="sb-progress-stage {{item.state}}">{{index + 1}}. {{item.name}}<text wx:if="{{item.detail}}">（{{item.detail}}）</text></view>
+  </view>
+  <view class="sb-progress-foot">
+    <text>{{note}}</text>
+    <t-button wx:if="{{status === 'running'}}" size="small" variant="outline" bind:tap="onCancel">取消</t-button>
+    <t-button wx:if="{{status === 'failed'}}" size="small" theme="primary" bind:tap="onRetry">重试</t-button>
+  </view>
+</view>

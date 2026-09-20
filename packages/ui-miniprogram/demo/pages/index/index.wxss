@@ -1,4 +1,10 @@
 .demo { padding-bottom: 120px; }
 .h { padding: var(--ui-space-4) var(--ui-page-gutter) var(--ui-space-2); font-size: var(--ui-text-section); font-weight: 600; color: var(--ui-ink); }
+.sub { padding: var(--ui-space-2) var(--ui-page-gutter) var(--ui-space-1); font-size: var(--ui-text-small); color: var(--ui-muted); }
 .row { display: flex; gap: var(--ui-space-2); flex-wrap: wrap; padding: 0 var(--ui-page-gutter); }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ui-space-3); padding: 0 var(--ui-page-gutter); }
+.card { padding: 0 var(--ui-page-gutter); }
+.sheet-row { padding: var(--ui-space-3) 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-text-body); color: var(--ui-ink); }
+.sheet-row.on { color: var(--ui-primary); font-weight: 600; }
+.note { margin-right: auto; font-size: var(--ui-text-small); color: var(--ui-muted); }
 .pad { height: var(--ui-space-8); }

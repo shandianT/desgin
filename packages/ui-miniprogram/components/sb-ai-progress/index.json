@@ -1,0 +1,1 @@
+{ "component": true, "usingComponents": { "t-progress": "tdesign-miniprogram/progress/progress", "t-button": "tdesign-miniprogram/button/button" } }

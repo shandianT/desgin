@@ -1,0 +1,12 @@
+<view class="sb-sources" aria-role="group" aria-label="{{heading}}">
+  <text wx:if="{{!items.length}}" class="sb-sources-none">没有可展示的依据，此结论不应展示（A-03）</text>
+  <block wx:else>
+    <view class="sb-sources-head" catch:tap="onToggle" aria-role="button" aria-expanded="{{open}}"><text>{{heading}}</text><t-icon name="{{open ? 'chevron-up' : 'chevron-down'}}" size="32rpx" aria-hidden="true" /></view>
+    <view wx:if="{{open}}" class="sb-sources-list">
+      <view wx:for="{{items}}" wx:key="key" class="sb-sources-item" hover-class="sb-sources-hover" data-index="{{index}}" catch:tap="onItem" aria-role="link">
+        <view class="sb-sources-title">{{item.title}}</view>
+        <view wx:if="{{item.description}}" class="sb-sources-desc">{{item.description}}</view>
+      </view>
+    </view>
+  </block>
+</view>

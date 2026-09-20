@@ -4,26 +4,41 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">
 <title>部门组件库</title>
 <style>
+/* design-tokens.css 由 main.jsx 引入，Vite 打进产物的 CSS；这里只写目录页自己的布局。 */
 body { margin: 0; background: var(--ui-background); color: var(--ui-ink); font-family: var(--ui-font); font-size: var(--ui-text-body); line-height: 1.6; }
 .cat { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100vh; }
 .cat-nav { position: sticky; top: 0; height: 100vh; overflow: auto; background: var(--ui-sidebar); color: var(--ui-sidebar-nav); padding: var(--ui-space-4) var(--ui-space-3); }
 .cat-nav h1 { font-size: var(--ui-text-section); color: var(--ui-on-primary); margin: 0 0 var(--ui-space-3); } .cat-nav h1 small { display: block; font-weight: 400; font-size: var(--ui-text-small); color: var(--ui-sidebar-muted); }
 .cat-nav a { display: block; padding: 6px var(--ui-space-2); border-radius: var(--ui-radius-control); color: var(--ui-sidebar-nav); text-decoration: none; font-size: var(--ui-text-body); } .cat-nav a:hover { background: var(--ui-sidebar-hover); color: var(--ui-on-primary); }
-.cat-nav a small { color: var(--ui-sidebar-muted); margin-left: 6px; font-size: 12px; }
+.cat-nav a small { color: var(--ui-sidebar-muted); margin-left: 6px; font-size: var(--ui-text-small); }
+.cat-nav-note { margin: var(--ui-space-3) 0 0; padding: 0 var(--ui-space-2); font-size: var(--ui-text-small); color: var(--ui-sidebar-muted); }
 .cat-main { padding: var(--ui-space-4) var(--ui-page-gutter) var(--ui-space-8); max-width: 1180px; }
 .cat-main > p.lead { color: var(--ui-secondary); max-width: 64em; }
-section.comp { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-card-padding); margin: var(--ui-space-4) 0; }
+.tools { position: sticky; top: var(--ui-space-2); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: var(--ui-space-3); padding: var(--ui-space-2) var(--ui-space-3); background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); box-shadow: var(--ui-shadow-popup); }
+.tools .tool { display: inline-flex; align-items: center; gap: var(--ui-space-2); font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.tools .tool code { font-size: var(--ui-text-small); color: var(--ui-ink); }
+.tools .tool-only { width: 220px; } .tools .tool-search { width: 220px; }
+.tools input[type="color"] { width: 36px; height: var(--ui-control-height); padding: 2px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); cursor: pointer; }
+section.comp { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-card-padding); margin: var(--ui-space-4) 0; min-width: 0; isolation: isolate; scroll-margin-top: calc(var(--ui-control-height) + var(--ui-space-8)); }
+.comp-meta span { overflow-wrap: anywhere; }
+.comp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--ui-space-3); }
 section.comp h2 { margin: 0 0 4px; font-size: var(--ui-text-page); } section.comp h2 code { font-size: var(--ui-text-body); color: var(--ui-primary); background: var(--ui-selected); padding: 0 6px; border-radius: 4px; margin-left: var(--ui-space-2); }
 .comp-meta { display: grid; grid-template-columns: 6em minmax(0, 1fr); gap: 4px var(--ui-space-3); font-size: var(--ui-text-small); color: var(--ui-secondary); margin: var(--ui-space-2) 0 var(--ui-space-3); } .comp-meta b { color: var(--ui-ink); font-weight: 600; }
 .states { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--ui-space-3); }
 .states.wide { grid-template-columns: minmax(0, 1fr); }
-.state { border: 1px dashed var(--ui-line); border-radius: var(--ui-radius-control); padding: var(--ui-space-3); background: var(--ui-background); }
+.state { border: 1px dashed var(--ui-line); border-radius: var(--ui-radius-control); padding: var(--ui-space-3); background: var(--ui-background); min-width: 0; overflow-x: auto; }
 .state h4 { margin: 0 0 var(--ui-space-2); font-size: var(--ui-text-small); color: var(--ui-muted); font-weight: 600; }
 .rule { display: inline-block; font-family: ui-monospace, Menlo, monospace; font-size: var(--ui-text-small); color: var(--ui-primary); margin-right: 6px; }
-@media (max-width: 900px) { .cat { grid-template-columns: minmax(0, 1fr); } .cat-nav { position: static; height: auto; } }
+.basics h3 { margin: var(--ui-space-4) 0 var(--ui-space-2); font-size: var(--ui-text-section); } .basics h3:first-child { margin-top: 0; }
+.stack { display: flex; flex-direction: column; gap: var(--ui-space-2); } .inline { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); }
+.demo-note { font-size: var(--ui-text-small); color: var(--ui-muted); } .demo-error { font-size: var(--ui-text-small); color: var(--ui-danger); }
+.cat .state .demo-focus, .cat .state .demo-focus .ant-input { border-color: var(--ui-primary); box-shadow: 0 0 0 2px var(--ui-selected); }
+.popup-host { position: relative; padding-bottom: 130px; } .popup-host-right { position: relative; }
+.usage { margin: 0; padding: var(--ui-space-3); background: var(--ui-background); border-radius: var(--ui-radius-control); font-size: var(--ui-text-body); line-height: 1.6; overflow: auto; white-space: pre; }
+@media (max-width: 900px) { .cat { grid-template-columns: minmax(0, 1fr); } .cat-nav { position: static; height: auto; display: flex; flex-wrap: nowrap; overflow-x: auto; gap: var(--ui-space-2); padding: var(--ui-space-2) var(--ui-page-gutter); align-items: center; } .cat-nav h1 { flex: none; margin: 0 var(--ui-space-2) 0 0; font-size: var(--ui-text-body); } .cat-nav h1 small { display: none; } .cat-nav a { flex: none; white-space: nowrap; } .cat-nav a small { display: none; } .tools { position: static; box-shadow: none; } .tools .tool-only, .tools .tool-search { width: auto; flex: 1 1 140px; } section.comp { scroll-margin-top: var(--ui-space-3); } }
 </style>
-  <script type="module" crossorigin src="./assets/index-D7nkPecY.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-Dt1LoKBJ.css">
+  <script defer src="./assets/index-D2DX2tND.js"></script>
+  <link rel="stylesheet" href="./assets/style-Dt1LoKBJ.css">
 </head>
 <body><div id="root"></div></body>
 </html>

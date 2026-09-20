@@ -1,5 +1,6 @@
 // 组件说明：目录页与规范站从这里读，不手写第二份。
 export const META = [
+  { id: 'Basics', name: '基础控件', rules: ['V-01', 'V-03'], pages: '所有页', purpose: '直接用 Ant Design 6，主题只来自桥接文件；这里列出常用的和它们的状态', props: '按 Ant Design 6 文档，不另加封装；主题从 SbProvider 来', states: ['Button', 'Input', 'Select', 'DatePicker', 'Cascader', 'Table', 'Modal', 'Drawer', 'message', 'notification', 'Tag', 'Tooltip', 'Tabs', 'Collapse'] },
   { id: 'SbProvider', name: '主题注入', rules: ['V-01', 'V-03'], pages: '所有页', purpose: '一次注入主题：antd 的 token 来自 bridge-antd.theme.json，页面再引 design-tokens.css。', props: 'theme（可覆盖 token 与 components）', states: ['—'] },
   { id: 'SbStatusTag', name: '状态标签', rules: ['B-01'], pages: '15 页', purpose: '红黄绿灰必带文字，可带依据。', props: 'tone：good | watch | bad | pending | unset；label；reason；showReason', states: ['向好', '需关注', '转差', '待评估', '未登记', '带依据'] },
   { id: 'SbStatePanel', name: '四态面板', rules: ['C-06', 'P-03'], pages: '24 页', purpose: '加载中、空数据、失败可重试、无权限，一个组件。重试不清筛选，无权限不露对象名。', props: 'state：normal | loading | empty | error | forbidden；title；description；onRetry；onClear；skeleton', states: ['加载中', '骨架', '空', '失败', '无权限'] },

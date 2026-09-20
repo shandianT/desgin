@@ -1,0 +1,5 @@
+<view class="sb-metric" aria-role="text" aria-label="{{label}}：{{text}}">
+  <view class="sb-metric-value {{missing ? 'missing' : ''}}">{{text}}</view>
+  <view class="sb-metric-label">{{label}}</view>
+  <view wx:if="{{note}}" class="sb-metric-note">{{note}}</view>
+</view>

@@ -1,0 +1,9 @@
+.sb-field { display: flex; flex-direction: column; gap: var(--ui-space-1); padding: var(--ui-space-2) var(--ui-page-gutter); background: var(--ui-surface); }
+.sb-field-label { display: flex; align-items: center; font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.sb-req { color: var(--ui-danger); }
+.sb-field-ro { margin-left: auto; color: var(--ui-muted); }
+.sb-field-control { min-height: var(--ui-field-height); }
+.sb-field.error .sb-field-control { border-left: 3px solid var(--ui-danger); padding-left: var(--ui-space-2); }
+.sb-field-value { min-height: var(--ui-field-height); display: flex; align-items: center; font-size: var(--ui-text-body); color: var(--ui-secondary); }
+.sb-field-tips { font-size: var(--ui-text-small); color: var(--ui-muted); }
+.sb-field-tips.error { color: var(--ui-danger); }
