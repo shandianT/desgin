@@ -1,21 +1,21 @@
-# @sensetime-dept/ui-react
+# @shandiant/ui-react
 
 部门 Web 组件库。基础控件直接用 Ant Design 6，这里只放规范要求的组合件与 AI 件，17 个，主题只来自设计变量的桥接文件。
 
 ## 安装
 
 ```
-# 工程根目录 .npmrc 写一行：@sensetime-dept:registry=<部门私有源地址>（没有源就用包文件）
+# 工程根目录 .npmrc 写两行：@shandiant:registry=https://npm.pkg.github.com 与 //npm.pkg.github.com/:_authToken=<GitHub token>（没有 token 就用包文件）
 npm i react@18 react-dom@18 antd@6 @ant-design/x@^2.3
-npm i @sensetime-dept/tokens @sensetime-dept/ui-react   # 或 npm i ./sensetime-dept-tokens-<版本>.tgz ./sensetime-dept-ui-react-<版本>.tgz
+npm i @shandiant/tokens @shandiant/ui-react   # 或 npm i ./shandiant-tokens-<版本>.tgz ./shandiant-ui-react-<版本>.tgz
 ```
 
 ## 用
 
 ```jsx
-import '@sensetime-dept/tokens/css';          // 设计变量 --ui-*
-import '@sensetime-dept/ui-react/style.css';  // 组件样式
-import { SbProvider, SbStatePanel, SbStatusTag } from '@sensetime-dept/ui-react';
+import '@shandiant/tokens/css';          // 设计变量 --ui-*
+import '@shandiant/ui-react/style.css';  // 组件样式
+import { SbProvider, SbStatePanel, SbStatusTag } from '@shandiant/ui-react';
 
 export default function App() {
   return (

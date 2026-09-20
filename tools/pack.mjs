@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 把三个包打成 npm 包文件（.tgz）放到 release/，并写一份清单。不发布到任何源；发布要有源地址和凭证，见 specs/salesbuddy/09-npm包与发布.md。
+ * 把三个包打成 npm 包文件（.tgz）放到 release/，并写一份清单。发布走 .github/workflows/publish.yml，见 specs/salesbuddy/09-npm包与发布.md。
  * 用法：node tools/pack.mjs
  */
 import { spawnSync } from 'node:child_process';
@@ -25,6 +25,6 @@ for (const name of ['tokens', 'ui-react', 'ui-miniprogram']) {
   rows.push({ name: info.name, version: info.version, filename: info.filename, files: info.entryCount, size: statSync(file).size, sha256: sha });
   console.log(`✓ ${info.name}@${info.version} → release/${info.filename}（${info.entryCount} 个文件，${(statSync(file).size / 1024).toFixed(0)} KB）`);
 }
-const md = `# npm 包文件\n\n由 \`node tools/pack.mjs\` 生成。没有发布到任何源，装法：\`npm i ./release/<文件名>\`。发布到部门私有源见 \`specs/salesbuddy/09-npm包与发布.md\`。\n\n| 包 | 版本 | 文件 | 文件数 | 大小 | sha256 |\n|---|---|---|---|---|---|\n${rows.map((r) => `| ${r.name} | ${r.version} | ${r.filename} | ${r.files} | ${(r.size / 1024).toFixed(0)} KB | ${r.sha256.slice(0, 16)}… |`).join('\n')}\n`;
+const md = `# npm 包文件\n\n由 \`node tools/pack.mjs\` 生成。装法：\`npm i ./release/<文件名>\`；从 GitHub Packages 装与发布见 \`specs/salesbuddy/09-npm包与发布.md\`。\n\n| 包 | 版本 | 文件 | 文件数 | 大小 | sha256 |\n|---|---|---|---|---|---|\n${rows.map((r) => `| ${r.name} | ${r.version} | ${r.filename} | ${r.files} | ${(r.size / 1024).toFixed(0)} KB | ${r.sha256.slice(0, 16)}… |`).join('\n')}\n`;
 writeFileSync(join(out, 'README.md'), md);
 writeFileSync(join(out, 'manifest.json'), JSON.stringify({ generatedBy: 'tools/pack.mjs', packages: rows }, null, 2) + '\n');

@@ -1,5 +1,5 @@
 {
-  "name": "@sensetime-dept/tokens",
+  "name": "@shandiant/tokens",
   "version": "1.1.0-draft.1",
   "description": "部门设计变量：--ui-* 的 CSS、WXSS、JSON 产物，以及给 Ant Design、TDesign、Semi 的主题桥接文件。由规范仓库 tokens.json 生成，勿手改",
   "license": "UNLICENSED",
@@ -29,6 +29,12 @@
     "prepack": "node sync.mjs"
   },
   "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
     "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shandianT/desgin.git",
+    "directory": "packages/tokens"
   }
 }

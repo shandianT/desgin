@@ -1,0 +1,52 @@
+# 把三个 npm 包发布到 GitHub Packages（npm.pkg.github.com，scope @shandiant）。
+# 触发：Actions 页面「Run workflow」按钮，或推一个 v 开头的标签。
+# 用仓库自带的 GITHUB_TOKEN，不用另外配 secret。
+name: publish-npm
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 要发的包，逗号分隔：tokens,ui-react,ui-miniprogram
+        default: tokens,ui-react,ui-miniprogram
+      dry_run:
+        description: 只打包不发布（true / false）
+        default: 'false'
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: '@shandiant'
+      - name: 装 Web 组件库依赖
+        run: cd packages/ui-react && npm ci --legacy-peer-deps
+      - name: 自检
+        run: node tools/check.mjs
+      - name: 发布
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PKGS: ${{ github.event.inputs.packages || 'tokens,ui-react,ui-miniprogram' }}
+          DRY: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          set -e
+          for p in tokens ui-react ui-miniprogram; do
+            case ",$PKGS," in *",$p,"*) ;; *) echo "跳过 $p"; continue;; esac
+            cd packages/$p
+            v=$(node -p "require('./package.json').version")
+            tag=latest; case "$v" in *-*) tag=draft;; esac
+            extra=""; [ "$DRY" = "true" ] && extra="--dry-run"
+            echo "发布 @shandiant/$p@$v（tag $tag）"
+            npm publish --tag "$tag" $extra
+            cd ../..
+          done

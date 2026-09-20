@@ -52,9 +52,9 @@ app.wxss 头两行：
 
 装成 npm 包：
 
-1. 工程根目录建 `.npmrc`，写一行 `@sensetime-dept:registry=<部门私有源地址>`；没有源就用包文件。产品工程执行 `npm i tdesign-miniprogram@1.16.1 @sensetime-dept/ui-miniprogram`（或 `npm i ./sensetime-dept-ui-miniprogram-<版本>.tgz`），开发者工具「构建 npm」，`app.json` 删掉 `"style": "v2"`。
-2. 变量与桥接两个 wxss 要放到小程序根目录再引。构建 npm 只复制包里的 `components/`，不复制 node_modules，所以从 `node_modules/@sensetime-dept/ui-miniprogram/components/style/` 把 `design-tokens.wxss`、`bridge-tdesign.wxss` 复制到与 `app.wxss` 同级，然后 `app.wxss` 头两行写 `@import "./design-tokens.wxss"; @import "./bridge-tdesign.wxss";`。构建后它们也在 `miniprogram_npm/@sensetime-dept/ui-miniprogram/style/` 里，能不能直接 `@import` 那个绝对路径还没在开发者工具里验过，先按复制做。
-3. 页面 json 的 `usingComponents` 写 `"sb-state-panel": "@sensetime-dept/ui-miniprogram/sb-state-panel/index"`。包的 `miniprogram` 字段指向 `components/`，所以路径从组件名开始。
+1. 工程根目录建 `.npmrc`，写一行 `@shandiant:registry=https://npm.pkg.github.com`，再写一行 `//npm.pkg.github.com/:_authToken=<GitHub token>`；token 要有 read:packages 权限。没有 token 就用包文件。产品工程执行 `npm i tdesign-miniprogram@1.16.1 @shandiant/ui-miniprogram`（或 `npm i ./shandiant-ui-miniprogram-<版本>.tgz`），开发者工具「构建 npm」，`app.json` 删掉 `"style": "v2"`。
+2. 变量与桥接两个 wxss 要放到小程序根目录再引。构建 npm 只复制包里的 `components/`，不复制 node_modules，所以从 `node_modules/@shandiant/ui-miniprogram/components/style/` 把 `design-tokens.wxss`、`bridge-tdesign.wxss` 复制到与 `app.wxss` 同级，然后 `app.wxss` 头两行写 `@import "./design-tokens.wxss"; @import "./bridge-tdesign.wxss";`。构建后它们也在 `miniprogram_npm/@shandiant/ui-miniprogram/style/` 里，能不能直接 `@import` 那个绝对路径还没在开发者工具里验过，先按复制做。
+3. 页面 json 的 `usingComponents` 写 `"sb-state-panel": "@shandiant/ui-miniprogram/sb-state-panel/index"`。包的 `miniprogram` 字段指向 `components/`，所以路径从组件名开始。
 4. 样式只写 `var(--ui-*)`，改完跑规范仓库的 `node tools/check.mjs`。
 
 不装包也行：把 `components/` 复制到产品工程的 `components/sb/`，路径改成 `/components/sb/sb-state-panel/index`。

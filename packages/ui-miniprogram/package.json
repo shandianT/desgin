@@ -1,5 +1,5 @@
 {
-  "name": "@sensetime-dept/ui-miniprogram",
+  "name": "@shandiant/ui-miniprogram",
   "version": "0.2.1",
   "description": "部门小程序组件库：tdesign-miniprogram 之上的 15 个组合件与 AI 件，样式只用设计变量",
   "license": "UNLICENSED",
@@ -19,6 +19,12 @@
     "prepack": "node sync.mjs"
   },
   "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
     "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shandianT/desgin.git",
+    "directory": "packages/ui-miniprogram"
   }
 }
