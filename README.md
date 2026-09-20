@@ -1,7 +1,7 @@
 ---
 type: department-design-spec-entry
 status: 部门共同入口，2026-09-19 决定；只用文件约定和 Git，没有后端
-updated: 2026-09-19
+updated: 2026-09-20
 ---
 
 # 部门产品设计规范
@@ -33,7 +33,8 @@ desgin/
 ├── packages/                 tokens（变量产物包）、ui-react（Web 组件库与目录页）、ui-miniprogram（小程序组件库与演示）
 ├── release/                  三个包的 npm 包文件（.tgz）与清单，node tools/pack.mjs 生成
 ├── tools/                    check.mjs（唯一入口）、build-rules.mjs、build-site.mjs、lint-styles.mjs、sync-product.mjs、pack.mjs
-└── specs/salesbuddy/         SalesBuddy 规范：README、00～06 章、02 变量与同步链路、03 跨端样板、站点（生成）、采用登记表、依据、1.0.0 原件、rules.json、规则索引.md
+├── 模板/                     同事装包的 AI 提示词、产品仓库的 AI 说明
+└── specs/salesbuddy/         SalesBuddy 规范：README、00～12 章、02 变量与同步链路、03 跨端样板、站点（生成）、采用登记表、依据、1.0.0 原件、rules.json、规则索引.md
 ```
 
 ## 现在的状态
@@ -46,6 +47,8 @@ desgin/
 | 变量同步链路，从 tokens.json 生成 CSS、WXSS、JSON 和 app.json 片段 | 已跑通，产品未接入 |
 | AI 技能与钩子 | 已建立，触发评测待做 |
 | 可视化规范站 `specs/salesbuddy/站点/index.html` | 已生成，由 check.mjs 顺带生成 |
+| 组件库 | Web 17 个、小程序 15 个，npm 包 tokens 1.1.0-draft.1、ui-react 0.3.0、ui-miniprogram 0.3.0，2026-09-20 发到 GitHub Packages，包文件也在 release/ |
+| 图标、文案、图表 | 图标已定（10 章）；文案规范与图表规范第一版草稿（11、12 章），待评审 |
 | 决定 | 主色沿用 #2863CD。这个仓库是共同入口。原生 App 暂不在范围；2026-09-20 定 Web 引入 React、主库 Ant Design 6 加 Ant Design X、小程序主库 tdesign-miniprogram、飞书感不作硬要求 |
 
 ## 怎么用
@@ -53,7 +56,8 @@ desgin/
 - 看规范：`specs/salesbuddy/README.md`。想一张表看完全部规则和跨端结论，直接看 `specs/salesbuddy/规则索引.md`。
 - 看站点：浏览器打开 `specs/salesbuddy/站点/index.html`。七章依次是原则、视觉基础、组件、布局、交互状态、跨端适配、团队怎么用。每章开头都有一个能动手的东西：改变量全站变色、组件状态矩阵、拖宽看三档、状态机驱动样板、跨端筛选、流程图弹模板。汇报用它。
 - 看样板：`specs/salesbuddy/03-跨端样板-客户列表到详情/index.html`，拖窗口看三档。`对照.html` 是三端并排。
-- 开发接入：Web 引用 `specs/salesbuddy/02-设计变量与同步链路/dist/design-tokens.css`。小程序引用 `dist/design-tokens.wxss`，再按 `dist/miniprogram-app.tokens.json` 改 `app.json`。样式只写 `var(--ui-*)`。
+- 装包：仓库公开，直接从网址装，不用 token。网页 `npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.3.0.tgz`；小程序 `npm i tdesign-miniprogram@1.16.1 https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-miniprogram-0.3.0.tgz`。不想自己敲，把 `模板/同事装包-给AI的提示词.md` 贴给 AI。细节见 09 章。
+- 开发接入：样式只写 `var(--ui-*)`，组件先用包里现成的。不装包也可以直接引 `specs/salesbuddy/02-设计变量与同步链路/dist/design-tokens.css` 或 `.wxss`。
 - 改数值：只改 `tokens.json`，然后跑 `node tools/check.mjs`，生成物一起提交。
 - 改规则：填 `specs/salesbuddy/1.0.0-使用包快照/模板/02-规则变更单.md`，开 PR。PR 里同时改规则、样例、代码说明、验收项。合并后打 tag `design-spec/vX.Y.Z`，再到 `specs/salesbuddy/采用登记表.md` 登记。
 - AI：在这个仓库或产品仓库让 AI 改页面，技能会自动加载。也可以手动输入 `/design-spec`。
@@ -71,6 +75,7 @@ node tools/pack.mjs              # 把 tokens、ui-react、ui-miniprogram 打成
 
 ## 版本记录
 
+- 2026-09-20（六）：组件库建成并发包；规范站首页改给使用者看，每条规则配白话与例子；定图标；文案与图表规范草稿；同事装包提示词。
 - 2026-09-19（三）：按四个视角审查规范站与工具链，修了下面这些。
   - 产品原则逐字引用 7 条。
   - 跨端表按 01 表结论归类为统一、适配、引用平台、不分端，划分标「建议」，状态原文保留。

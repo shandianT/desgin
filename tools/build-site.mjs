@@ -443,6 +443,24 @@ const body = `
 
 <section data-panel="team" hidden>
   <h1>团队怎么用</h1>${tryBox('点流程图里的任何一步，会显示那一步要填的模板。想改一条规则，从「变更单」那一步开始。')}<p class="lead">规则改了谁知道、谁批、谁接入。这章回答四件事：想改规则怎么走（变更单），产品用了怎么登记（采用登记表），谁负责什么（角色），还有哪些事没定（待决定）。流程和角色还是 ${badge('建议')}，部门指定负责人后生效。点流程图里的一步能看到对应模板。</p>
+  <div class="card brief"><h2>同事怎么开始用</h2>
+    <p>仓库 <a href="https://github.com/shandianT/desgin" target="_blank" rel="noopener">shandianT/desgin</a> 是公开的，打好的包在仓库 release/ 目录，直接从网址装，不用申请权限。</p>
+    <div class="tbl"><table><tr><th>你是</th><th>做什么</th></tr>
+      <tr><td>做网页</td><td><code>npm i react@18 react-dom@18 antd@6 @ant-design/x@2</code><br><code>npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.3.0.tgz</code></td></tr>
+      <tr><td>做小程序</td><td><code>npm i tdesign-miniprogram@1.16.1 https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-miniprogram-0.3.0.tgz</code>，然后开发者工具「构建 npm」，把包里 components/style/ 的两个 wxss 复制到根目录在 app.wxss 引入</td></tr>
+      <tr><td>不想自己敲</td><td>把仓库 <code>模板/同事装包-给AI的提示词.md</code> 里那段贴给 Claude Code 或 Cursor，AI 装好并渲染一个标签验证</td></tr>
+      <tr><td>只是看规范</td><td>本站就是。离线看：仓库 <code>specs/salesbuddy/站点/index.html</code> 双击打开</td></tr>
+    </table></div>
+    <p class="note">装好之后：颜色字号只写 <code>var(--ui-…)</code>，组件先用包里现成的，用法在「组件」章每张卡片的「用法」。以后升级把网址里的版本号换成新的重装，最新版本看仓库 release/README.md。</p>
+  </div>
+  <div class="card"><h2>用 Git 一起改</h2><ol>
+    <li><b>拿仓库</b>　<code>git clone https://github.com/shandianT/desgin.git</code>，然后 <code>node tools/check.mjs</code> 生成站点和变量、跑检查。</li>
+    <li><b>开分支改</b>　不直接改 main。规则改 rules 相关的 md，变量改 <code>tokens.json</code>，组件改 <code>packages/</code>。</li>
+    <li><b>跑检查</b>　<code>node tools/check.mjs</code> 全部通过，生成物一起提交。</li>
+    <li><b>开 PR</b>　描述里写变更单四项：现在的规则、问题、改法、影响页面。引用规则编号。一个人评审通过后合并。</li>
+    <li><b>发包</b>　升 package.json 版本号，推到 main，Actions 页点 publish-npm 的 Run workflow，或打 <code>v</code> 开头的标签。</li>
+    <li><b>登记</b>　哪个产品用了哪个版本，在采用登记表加一行。</li>
+  </ol><p class="note">改真实业务工程要先授权，清单在 07 章。仓库协作者由负责人在 Settings 里加。</p></div>
   <div class="card"><h2>变更流程 ${badge('建议')}</h2><p class="note">点每一步看说明和模板。手机上图可以左右滑。</p><div class="tbl">${flowSvg}</div></div>
   <div class="card"><h2>东西放在哪、怎么进来、怎么把关 ${badge('建议')}</h2><p class="note">所有规则、变量、样板只在仓库里有一份。人看站点，开发装包，AI 读技能文件，产品登记采用。改动只有一个口：变更单加评审。</p><div class="arch"><div class="src"><b>一份来源</b><span>specs/salesbuddy/</span><small>规则原文 · tokens.json · 样板 · 模板 · 验收</small></div><div class="arrows">→</div><div class="entries"><div><b>人看</b><span>README、各章、本站</span></div><div><b>开发用</b><span>dist/ 变量产物、rules.json</span></div><div><b>AI 用</b><span>.claude/skills/design-spec 技能 + 按路径规则</span></div><div><b>其他工具</b><span>AGENTS.md、.agents、.cursor、.github</span></div></div><div class="arrows">→</div><div class="gate"><b>一道闸门</b><span>node tools/check.mjs（一条命令）</span><small>生成变量、兼容校验、规则索引、规范站、样式检查、技能引用，一次跑完。Claude Code 钩子每次写文件后自动跑</small></div></div></div>
   <div class="card"><h2>怎么引用 ${badge('建议')}</h2><div class="tbl"><table><tr><th>谁</th><th>怎么写</th></tr><tr><td>产品写需求</td><td>写规则编号、页面模板和样板部件名。比如「客户列表按 T-02、C-04，返回保留按 X-03（建议）」</td></tr><tr><td>设计出稿</td><td>标注变量名不标数值，如「按钮底色 --ui-primary」</td></tr><tr><td>开发写代码</td><td>颜色和尺寸只写 var(--ui-*)。PR 描述写规则编号。改完跑 node tools/check.mjs</td></tr><tr><td>测试验收</td><td>页面验收单逐项填实际结果和证据。空白不算通过</td></tr><tr><td>AI</td><td>技能自动触发，也可以手动输入 /design-spec。交回时说清规则编号、改动文件、新增变量数、检查输出、证据等级</td></tr></table></div></div>
