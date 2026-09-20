@@ -1,0 +1,48 @@
+# 把规范站发布到 GitHub Pages：https://shandiant.github.io/desgin/
+# main 有推送就自动重新生成并发布。
+name: pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 装依赖并生成站点
+        run: |
+          cd packages/ui-react && npm ci --legacy-peer-deps && cd ../..
+          node packages/tokens/sync.mjs
+          cd packages/ui-react && npm run build && cd ../..
+          node tools/build-site.mjs specs/salesbuddy --portable out/site
+          cp specs/salesbuddy/站点/评审稿-文案与图表.html out/site/
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out/site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
