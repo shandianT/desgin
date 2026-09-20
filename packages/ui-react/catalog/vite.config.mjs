@@ -9,6 +9,7 @@ export default defineConfig({
   root: here,
   base: './',
   plugins: [react()],
+  resolve: { alias: [{ find: /^@sensetime-dept\/tokens\/bridge-antd$/, replacement: resolve(here, '../../tokens/dist/bridge-antd.theme.json') }, { find: /^@sensetime-dept\/tokens\/css$/, replacement: resolve(here, '../../tokens/dist/design-tokens.css') }] },
   server: { fs: { allow: [resolve(here, '../../..')] } },
   build: {
     outDir: resolve(here, '../../../specs/salesbuddy/站点/组件库'),

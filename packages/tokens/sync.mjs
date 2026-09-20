@@ -9,4 +9,8 @@ cpSync(join(src, 'dist'), join(here, 'dist'), { recursive: true });
 const meta = JSON.parse(readFileSync(join(src, 'tokens.json'), 'utf8')).$meta;
 const pkg = JSON.parse(readFileSync(join(here, 'package.json'), 'utf8'));
 if (pkg.version !== meta.version) { pkg.version = meta.version; writeFileSync(join(here, 'package.json'), JSON.stringify(pkg, null, 2) + '\n'); }
+// 桥接主题再出一份 JS 模块，让不经打包器的 Node 也能 import／require
+const bridge = readFileSync(join(here, 'dist', 'bridge-antd.theme.json'), 'utf8');
+writeFileSync(join(here, 'dist', 'bridge-antd.theme.mjs'), `export default ${bridge.trim()};\n`);
+writeFileSync(join(here, 'dist', 'bridge-antd.theme.cjs'), `module.exports = ${bridge.trim()};\n`);
 console.error(`tokens 包 dist 已同步，版本 ${meta.version}`);

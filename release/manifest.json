@@ -6,24 +6,24 @@
       "version": "1.1.0-draft.1",
       "filename": "sensetime-dept-tokens-1.1.0-draft.1.tgz",
       "files": 12,
-      "size": 12954,
-      "sha256": "66b408ea336612586e5d10248cf095fb3a7b34d6fc2f66dfd9f4ad5869ec40e6"
+      "size": 8724,
+      "sha256": "9425bad16e6981cb7bb5ef6bbc982295a467831483a83850c6668fc653ebf7c4"
     },
     {
       "name": "@sensetime-dept/ui-react",
-      "version": "0.2.0",
-      "filename": "sensetime-dept-ui-react-0.2.0.tgz",
+      "version": "0.2.1",
+      "filename": "sensetime-dept-ui-react-0.2.1.tgz",
       "files": 7,
-      "size": 42425,
-      "sha256": "cf75be765863df800d86e9de5ec73313f76db0e0e9ec02e3ca89352695440fba"
+      "size": 41819,
+      "sha256": "7d002bb0e3a00a532b882007fd1a8fe097ce03cc6eedc2f54ee831c9fcc3549d"
     },
     {
       "name": "@sensetime-dept/ui-miniprogram",
-      "version": "0.2.0",
-      "filename": "sensetime-dept-ui-miniprogram-0.2.0.tgz",
+      "version": "0.2.1",
+      "filename": "sensetime-dept-ui-miniprogram-0.2.1.tgz",
       "files": 64,
-      "size": 13422,
-      "sha256": "51b552eb32fc4daf3361de4ca44ca17c9e91de9ed69be02606c31b81fda8e645"
+      "size": 13698,
+      "sha256": "d966a061147acbfcaebfdfd0eb1e8342fd0101efc700fed2d504ca1813432218"
     }
   ]
 }

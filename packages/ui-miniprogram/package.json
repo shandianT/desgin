@@ -1,10 +1,24 @@
 {
   "name": "@sensetime-dept/ui-miniprogram",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "部门小程序组件库：tdesign-miniprogram 之上的 15 个组合件与 AI 件，样式只用设计变量",
   "license": "UNLICENSED",
   "miniprogram": "components",
-  "files": ["components", "design-tokens.wxss", "bridge-tdesign.wxss", "README.md"],
-  "peerDependencies": { "tdesign-miniprogram": "^1.16.1" },
-  "devDependencies": { "tdesign-miniprogram": "1.16.1" }
+  "files": [
+    "components",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "tdesign-miniprogram": "^1.16.1"
+  },
+  "devDependencies": {
+    "tdesign-miniprogram": "1.16.1"
+  },
+  "scripts": {
+    "sync": "node sync.mjs",
+    "prepack": "node sync.mjs"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

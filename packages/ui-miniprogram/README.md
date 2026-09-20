@@ -13,11 +13,11 @@ app.wxss 头两行：
 | 组件 | 做什么 | 属性与事件 | 规则 |
 |---|---|---|---|
 | sb-status-tag | 红黄绿灰状态标签，必带文字，可带依据 | tone、label、reason、showReason | B-01 |
-| sb-state-panel | 加载中、空、失败可重试、无权限四态 | state、title、description、skeleton、showClear；事件 retry、clear | C-06 |
-| sb-filter-bar | 筛选栏：标题带范围、筛选片、已选数、结果数、清除 | title、scope、options、value、resultCount、disabled；事件 change | C-04 |
+| sb-state-panel | 加载中、空、失败可重试、无权限四态 | state、title、description、skeleton、showClear、retryLabel、clearLabel；事件 retry、clear | C-06 |
+| sb-filter-bar | 筛选栏：标题带范围、筛选片、已选数、结果数、清除 | title、scope、options、value、resultCount、resultLabel、disabled；事件 change | C-04 |
 | sb-search | 搜索框，带清除、占位、加载中、禁用；无结果由四态面板表达 | value、placeholder、clearable、loading、disabled；事件 change、search、clear | C-02、C-04 |
 | sb-list-row | 列表行：名称、摘要、状态、时间位置固定 | name、summary、tone、statusLabel、reason、time、selected、disabled、disabledReason；事件 tap | C-05 |
-| sb-bottom-bar | 底部固定操作条，主次按钮，含安全区 | primaryLabel、loading、disabled、disabledReason、secondaryLabel；事件 primary、secondary | C-01、X-05 |
+| sb-bottom-bar | 底部固定操作条，主次按钮，含安全区 | primaryLabel、loading、loadingLabel、disabled、disabledReason、secondaryLabel、secondaryDisabled；事件 primary、secondary | C-01、X-05 |
 | sb-field | 表单项：标签常显、必填星号、错误就地、只读态；控件放 slot | label、required、error、help、readOnly、value（只读时显示） | C-02 |
 | sb-sheet | 底部弹层：标题、关闭、可选取消确定；不替代页面级返回 | visible、title、closeOnOverlay、cancelLabel、confirmLabel、confirmLoading；slot 默认与 footer；事件 close、confirm | C-07、X-03 |
 | sb-pagination | 分页或加载更多，显示共 N 条，末页禁用 | current、total、pageSize、mode（page 或 more）、loading、end；事件 change、more | C-05 |
@@ -52,18 +52,19 @@ app.wxss 头两行：
 
 装成 npm 包：
 
-1. 产品工程 `npm i tdesign-miniprogram@1.16.1 @sensetime-dept/ui-miniprogram`（从部门私有源，或 `npm i ./sensetime-dept-ui-miniprogram-0.2.0.tgz`），开发者工具「构建 npm」，`app.json` 删掉 `"style": "v2"`。
-2. `app.wxss` 头两行引变量与桥接。两个文件在本包根目录，也可以从 `@sensetime-dept/tokens` 拿：`@import "./design-tokens.wxss"; @import "./bridge-tdesign.wxss";`
+1. 工程根目录建 `.npmrc`，写一行 `@sensetime-dept:registry=<部门私有源地址>`；没有源就用包文件。产品工程执行 `npm i tdesign-miniprogram@1.16.1 @sensetime-dept/ui-miniprogram`（或 `npm i ./sensetime-dept-ui-miniprogram-<版本>.tgz`），开发者工具「构建 npm」，`app.json` 删掉 `"style": "v2"`。
+2. 变量与桥接两个 wxss 要放到小程序根目录再引。构建 npm 只复制包里的 `components/`，不复制 node_modules，所以从 `node_modules/@sensetime-dept/ui-miniprogram/components/style/` 把 `design-tokens.wxss`、`bridge-tdesign.wxss` 复制到与 `app.wxss` 同级，然后 `app.wxss` 头两行写 `@import "./design-tokens.wxss"; @import "./bridge-tdesign.wxss";`。构建后它们也在 `miniprogram_npm/@sensetime-dept/ui-miniprogram/style/` 里，能不能直接 `@import` 那个绝对路径还没在开发者工具里验过，先按复制做。
 3. 页面 json 的 `usingComponents` 写 `"sb-state-panel": "@sensetime-dept/ui-miniprogram/sb-state-panel/index"`。包的 `miniprogram` 字段指向 `components/`，所以路径从组件名开始。
 4. 样式只写 `var(--ui-*)`，改完跑规范仓库的 `node tools/check.mjs`。
 
 不装包也行：把 `components/` 复制到产品工程的 `components/sb/`，路径改成 `/components/sb/sb-state-panel/index`。
-## 怎么看
 
-浏览器渲染不了小程序组件，规范站的「组件库」一节只能放 Web 端的实时目录页，小程序这边放截图。要看真实效果并且能操作，按下面做：
+## 怎么看（仓库内演示工程，不随 npm 包发布）
 
-1. 在本目录（packages/ui-miniprogram）执行 `npm i`，装 tdesign-miniprogram 1.16.1。
-2. 微信开发者工具导入本目录，AppID 选测试号，菜单里「工具」「构建 npm」。小程序根目录就是本目录，组件在 `components/`，演示页在 `demo/pages/index/`。
+浏览器渲染不了小程序组件，规范站的「组件」章只能放 Web 端的实时目录页。要看真实效果并且能操作，用仓库里的演示工程：
+
+1. 在仓库目录 packages/ui-miniprogram 执行 `npm i`，装 tdesign-miniprogram 1.16.1。
+2. 微信开发者工具导入这个目录，AppID 选测试号，菜单里「工具」「构建 npm」。小程序根目录就是这个目录，组件在 `components/`，演示页在 `demo/pages/index/`。
 3. 打开首页。每个组件的每个状态从上到下排开，每段前面有一行灰字写这是什么状态。
 4. 可以直接操作：搜索框打字并回车、筛选片点选、分页上一页下一页、加载更多、表单项输入、点「季度」或「打开底部弹层」打开弹层再点应用、AI 依据点开每一条、生成过程点取消看已取消态、失败态点重试、底部操作条点「切换禁用」看禁用说原因、待确认字段改值与恢复。
 5. 真机预览用工具的「预览」二维码。截图放回规范仓库 `specs/salesbuddy/站点/组件库/miniprogram/`。

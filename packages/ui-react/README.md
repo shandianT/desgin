@@ -5,8 +5,9 @@
 ## 安装
 
 ```
-npm i react@18 react-dom@18 antd@6 @ant-design/x@2
-npm i @sensetime-dept/ui-react        # 从部门私有源；或 npm i ./sensetime-dept-ui-react-0.2.0.tgz
+# 工程根目录 .npmrc 写一行：@sensetime-dept:registry=<部门私有源地址>（没有源就用包文件）
+npm i react@18 react-dom@18 antd@6 @ant-design/x@^2.3
+npm i @sensetime-dept/tokens @sensetime-dept/ui-react   # 或 npm i ./sensetime-dept-tokens-<版本>.tgz ./sensetime-dept-ui-react-<版本>.tgz
 ```
 
 ## 用

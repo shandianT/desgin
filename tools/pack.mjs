@@ -15,8 +15,8 @@ for (const f of readdirSync(out)) if (f.endsWith('.tgz')) rmSync(join(out, f));
 const rows = [];
 for (const name of ['tokens', 'ui-react', 'ui-miniprogram']) {
   const dir = join(root, 'packages', name);
-  if (name === 'ui-react' && !existsSync(join(dir, 'node_modules', 'vite'))) { console.log('· ui-react 未装依赖，跳过（cd packages/ui-react && npm i --legacy-peer-deps）'); continue; }
-  const r = spawnSync('npm', ['pack', '--pack-destination', out, '--json', '--silent'], { cwd: dir, encoding: 'utf8' });
+  if (name === 'ui-react' && !existsSync(join(dir, 'node_modules', 'vite'))) { console.error('✗ ui-react 未装依赖，先执行 cd packages/ui-react && npm i --legacy-peer-deps'); process.exit(1); }
+  const r = spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['pack', '--pack-destination', out, '--json', '--silent'], { cwd: dir, encoding: 'utf8' });
   if (r.status !== 0) { console.error(r.stdout, r.stderr); process.exit(1); }
   const jsonStart = r.stdout.lastIndexOf('\n[') >= 0 ? r.stdout.lastIndexOf('\n[') + 1 : r.stdout.indexOf('['); // prepack 的日志也会进 stdout，只取末尾的 JSON
   const info = JSON.parse(r.stdout.slice(jsonStart))[0];

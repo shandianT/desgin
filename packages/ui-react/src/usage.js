@@ -1,7 +1,7 @@
 // 每个组件的引入与最小用例。目录页的用法按钮从这里读，不手写第二份。
 // 键与 meta.js 的 id 一致。
 const PKG = '@sensetime-dept/ui-react';
-const TOKENS = '<规范目录>/02-设计变量与同步链路/dist/design-tokens.css';
+const TOKENS = '@sensetime-dept/tokens/css';
 
 export const USAGE = {
   Basics: `import { App, Button, Input, Select } from 'antd';

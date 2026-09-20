@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App as AntApp, Button, Cascader, Collapse, DatePicker, Drawer, Form, Input, Modal, Select, Table, Tabs, Tag, Tooltip } from 'antd';
-import '../../../specs/salesbuddy/02-设计变量与同步链路/dist/design-tokens.css';
+import '@sensetime-dept/tokens/css';
 import { SbProvider, SbStatusTag, SbStatePanel, SbFilterBar, SbSearch, SbListRow, SbBottomBar, SbField, SbSheet, SbPagination, SbMetricTile, SbPageHeader, SbDetailLayout, SbAiBadge, SbAiField, SbAiSources, SbAiProgress, META, USAGE } from '../src/index.js';
 
 const State = ({ title, children, className }) => <div className={className ? `state ${className}` : 'state'}><h4>{title}</h4>{children}</div>;
