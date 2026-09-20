@@ -44,7 +44,7 @@ desgin/
 | 变量同步链路，从 tokens.json 生成 CSS、WXSS、JSON 和 app.json 片段 | 已跑通，产品未接入 |
 | AI 技能与钩子 | 已建立，触发评测待做 |
 | 可视化规范站 `specs/salesbuddy/站点/index.html` | 已生成，由 check.mjs 顺带生成 |
-| 决定 | 主色沿用 #2863CD。这个仓库是共同入口。原生 App 暂不在范围 |
+| 决定 | 主色沿用 #2863CD。这个仓库是共同入口。原生 App 暂不在范围；2026-09-20 定 Web 引入 React、主库 Ant Design 6 加 Ant Design X、小程序主库 tdesign-miniprogram、飞书感不作硬要求 |
 
 ## 怎么用
 
