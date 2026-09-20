@@ -50,11 +50,14 @@ app.wxss 头两行：
 
 ## 怎么用
 
-1. 产品工程装 `tdesign-miniprogram`，开发者工具构建 npm，`app.json` 删掉 `"style": "v2"`。
-2. 把 `components/` 复制到产品工程的 `components/sb/`。
-3. 页面 json 的 `usingComponents` 写 `"sb-state-panel": "/components/sb/sb-state-panel/index"`。
-4. 样式只写 `var(--ui-*)`，改完在规范仓库跑 `node tools/lint-styles.mjs <目录> --spec specs/salesbuddy`，新增违规要是 0。
+装成 npm 包：
 
+1. 产品工程 `npm i tdesign-miniprogram@1.16.1 @sensetime-dept/ui-miniprogram`（从部门私有源，或 `npm i ./sensetime-dept-ui-miniprogram-0.2.0.tgz`），开发者工具「构建 npm」，`app.json` 删掉 `"style": "v2"`。
+2. `app.wxss` 头两行引变量与桥接。两个文件在本包根目录，也可以从 `@sensetime-dept/tokens` 拿：`@import "./design-tokens.wxss"; @import "./bridge-tdesign.wxss";`
+3. 页面 json 的 `usingComponents` 写 `"sb-state-panel": "@sensetime-dept/ui-miniprogram/sb-state-panel/index"`。包的 `miniprogram` 字段指向 `components/`，所以路径从组件名开始。
+4. 样式只写 `var(--ui-*)`，改完跑规范仓库的 `node tools/check.mjs`。
+
+不装包也行：把 `components/` 复制到产品工程的 `components/sb/`，路径改成 `/components/sb/sb-state-panel/index`。
 ## 怎么看
 
 浏览器渲染不了小程序组件，规范站的「组件库」一节只能放 Web 端的实时目录页，小程序这边放截图。要看真实效果并且能操作，按下面做：

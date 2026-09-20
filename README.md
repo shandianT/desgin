@@ -30,7 +30,9 @@ desgin/
 ├── AGENTS.md / CLAUDE.md     给 AI 工具的指路
 ├── .claude/                  skills/design-spec（技能）、rules（按路径自动加载）、hooks + settings.json（强制检查）
 ├── .agents/ .cursor/ .github/ 其他 AI 工具入口（只指路，不抄规则）
-├── tools/                    check.mjs（唯一入口）、build-rules.mjs、build-site.mjs、lint-styles.mjs、sync-product.mjs
+├── packages/                 tokens（变量产物包）、ui-react（Web 组件库与目录页）、ui-miniprogram（小程序组件库与演示）
+├── release/                  三个包的 npm 包文件（.tgz）与清单，node tools/pack.mjs 生成
+├── tools/                    check.mjs（唯一入口）、build-rules.mjs、build-site.mjs、lint-styles.mjs、sync-product.mjs、pack.mjs
 └── specs/salesbuddy/         SalesBuddy 规范：README、00～06 章、02 变量与同步链路、03 跨端样板、站点（生成）、采用登记表、依据、1.0.0 原件、rules.json、规则索引.md
 ```
 
@@ -63,6 +65,7 @@ node tools/check.mjs             # 唯一入口
 node tools/check.mjs --verify    # 加 Playwright 样板验收（首次：npm i -D playwright@1.56 && npx playwright install chromium）
 node tools/check.mjs --ci        # 评审前：确认生成物与源一致（含未跟踪的新生成物）
 node tools/sync-product.mjs      # 产品仓库 app.json 有变动时：刷新仓库内的产品现状快照，再跑 check.mjs
+node tools/pack.mjs              # 把 tokens、ui-react、ui-miniprogram 打成 npm 包文件放到 release/
 ```
 需要 Node 18+。
 

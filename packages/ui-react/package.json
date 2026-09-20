@@ -1,12 +1,23 @@
 {
   "name": "@sensetime-dept/ui-react",
-  "version": "0.1.0",
-  "private": true,
-  "description": "部门 Web 组件库：Ant Design 6 与 Ant Design X 之上的可复用组件，主题来自 tokens.json 的桥接文件",
+  "version": "0.2.0",
+  "description": "部门 Web 组件库：Ant Design 6 与 Ant Design X 之上的组合件与 AI 件，主题来自设计变量的桥接文件",
+  "license": "UNLICENSED",
   "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": { "import": "./dist/index.js", "require": "./dist/index.cjs" },
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": ["*.css"],
+  "files": ["dist", "README.md"],
   "scripts": {
     "dev": "vite --config catalog/vite.config.mjs",
-    "build": "vite build --config catalog/vite.config.mjs && node catalog/postbuild.mjs"
+    "build": "vite build --config catalog/vite.config.mjs && node catalog/postbuild.mjs",
+    "build:lib": "vite build --config vite.lib.config.mjs",
+    "prepack": "npm run build:lib"
   },
   "peerDependencies": { "react": ">=18", "react-dom": ">=18", "antd": "^6.1.1", "@ant-design/x": "^2.0.0" },
   "devDependencies": {

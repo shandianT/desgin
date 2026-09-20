@@ -55,7 +55,7 @@ function BasicsDemo() {
   const [checked, setChecked] = useState(true);
   return (
     <div className="basics">
-      <h3>Button</h3>
+      <h3>Button 按钮</h3>
       <div className="states">
         <State title="主：一页只放一个"><Button type="primary">记录拜访</Button></State>
         <State title="次"><Button>创建任务</Button></State>
@@ -63,14 +63,14 @@ function BasicsDemo() {
         <State title="禁用"><div className="inline"><Button type="primary" disabled>归档</Button><Button disabled>存草稿</Button></div></State>
         <State title="处理中：防重复提交"><Button type="primary" loading>归档中…</Button></State>
       </div>
-      <h3>Input 与 Input.TextArea</h3>
+      <h3>Input 输入框 与 Input.TextArea 多行输入</h3>
       <div className="states">
         <State title="默认"><div className="stack"><Input placeholder="客户名称" /><Input.TextArea rows={2} placeholder="拜访要点" /></div></State>
         <State title="聚焦样式"><div className="stack"><Input className="demo-focus" defaultValue="华宸数据科技" /><Input.TextArea className="demo-focus" rows={2} defaultValue="已获得 CIO 支持" /><span className="demo-note">点进输入框看真实的焦点环</span></div></State>
         <State title="禁用"><div className="stack"><Input disabled value="华宸数据科技" /><Input.TextArea disabled rows={2} value="已获得 CIO 支持" /></div></State>
         <State title="错误：就地说明，保留输入"><div className="stack"><Input status="error" placeholder="客户预算" /><Input.TextArea status="error" rows={2} defaultValue="发方案" /><span className="demo-error">下一步须含明确时间与目标</span></div></State>
       </div>
-      <h3>Select</h3>
+      <h3>Select 选择器</h3>
       <div className="states">
         <State title="默认"><Select defaultValue={CUSTOMERS[0]} options={SELECT_OPTS} style={full} /></State>
         <State title="多选"><Select mode="multiple" defaultValue={[CUSTOMERS[0], CUSTOMERS[1]]} options={SELECT_OPTS} style={full} /></State>
@@ -78,60 +78,60 @@ function BasicsDemo() {
         <State title="无匹配" className="popup-host"><Select open showSearch searchValue="泰山" notFoundContent="没有匹配的客户，换个词试试" options={[]} placeholder="搜索客户" style={full} getPopupContainer={inCard} placement="bottomLeft" popupAlign={STAY_BELOW} /></State>
         <State title="禁用"><Select disabled defaultValue={CUSTOMERS[0]} options={SELECT_OPTS} style={full} /></State>
       </div>
-      <h3>DatePicker</h3>
+      <h3>DatePicker 日期选择</h3>
       <div className="states">
         <State title="默认"><DatePicker style={full} placeholder="拜访日期" /></State>
         <State title="范围"><DatePicker.RangePicker style={full} /></State>
         <State title="禁用"><DatePicker disabled style={full} placeholder="拜访日期" /></State>
       </div>
-      <h3>Cascader</h3>
+      <h3>Cascader 级联选择</h3>
       <div className="states">
         <State title="默认：区域到地盘"><Cascader options={CASCADER_OPTS} placeholder="选择地盘" style={full} /></State>
         <State title="已选"><Cascader options={CASCADER_OPTS} defaultValue={['south', 'HB-01']} style={full} /></State>
         <State title="禁用"><Cascader disabled options={CASCADER_OPTS} placeholder="选择地盘" style={full} /></State>
       </div>
-      <h3>Table</h3>
+      <h3>Table 表格</h3>
       <div className="states wide">
         <State title="加载中"><Table size="small" loading columns={TABLE_COLS} dataSource={TABLE_ROWS.slice(0, 3)} pagination={false} scroll={{ x: 'max-content' }} /></State>
         <State title="空数据：文案交给四态面板"><Table size="small" columns={TABLE_COLS} dataSource={[]} pagination={false} scroll={{ x: 'max-content' }} locale={{ emptyText: <SbStatePanel state="empty" title="没有匹配的客户" description="当前筛选：有风险、本人负责。" /> }} /></State>
         <State title="24 行，固定表头"><Table size="small" columns={TABLE_COLS} dataSource={TABLE_ROWS} pagination={false} scroll={{ y: 280, x: 'max-content' }} /></State>
       </div>
-      <h3>Modal</h3>
+      <h3>Modal 对话框</h3>
       <div className="states">
         <State title="按钮打开，Esc 可关，关闭后焦点回到按钮">
           <Button id="demo-modal-open" onClick={() => setModalOpen(true)}>打开确认框</Button>
           <Modal title="归档这条拜访记录？" open={modalOpen} onOk={() => setModalOpen(false)} onCancel={() => setModalOpen(false)} okText="归档" cancelText="取消"><p>归档后由 Agent 重算象限与风险，不可手工改分。</p></Modal>
         </State>
       </div>
-      <h3>Drawer</h3>
+      <h3>Drawer 抽屉</h3>
       <div className="states">
         <State title="右侧抽屉">
           <Button id="demo-drawer-open" onClick={() => setDrawerOpen(true)}>打开抽屉</Button>
           <Drawer title="客户档案" open={drawerOpen} onClose={() => setDrawerOpen(false)}><p>华宸数据科技有限公司</p><p>客户资产，关系 8/10，地盘 HB-01。</p></Drawer>
         </State>
       </div>
-      <h3>message 与 notification</h3>
+      <h3>message 消息提示 与 notification 通知</h3>
       <div className="states">
         <State title="message：轻提示，自动消失"><div className="inline"><Button id="demo-message-ok" onClick={() => message.success('已归档')}>成功</Button><Button onClick={() => message.error('保存失败，已保留你的输入')}>失败</Button></div></State>
         <State title="notification：带标题与说明"><Button id="demo-notify-open" onClick={() => notification.open({ message: '任务已下发', description: '对方拒绝时需填意见，并推送给你。' })}>下发任务</Button></State>
       </div>
-      <h3>Tag</h3>
+      <h3>Tag 标签</h3>
       <div className="states">
         <State title="默认"><Tag>主攻区</Tag><Tag>HB-01</Tag></State>
         <State title="带色：状态请用 SbStatusTag"><Tag color="processing">进行中</Tag><Tag color="success">已确认</Tag><Tag color="warning">待确认</Tag><Tag color="error">已拒绝</Tag></State>
         <State title="可关闭"><Tag closable>有风险</Tag><Tag closable>本人负责</Tag></State>
         <State title="可选"><Tag.CheckableTag checked={checked} onChange={setChecked}>本人负责</Tag.CheckableTag></State>
       </div>
-      <h3>Tooltip</h3>
+      <h3>Tooltip 气泡提示</h3>
       <div className="states">
         <State title="悬停显示：禁用要说原因"><Tooltip title="不在你的授权范围内"><Button disabled>查看详情</Button></Tooltip></State>
         <State title="常显" className="popup-host-right"><Tooltip title="一周无跟进" open placement="right" getPopupContainer={inCard}><Button>需关注</Button></Tooltip></State>
       </div>
-      <h3>Tabs</h3>
+      <h3>Tabs 页签</h3>
       <div className="states wide">
         <State title="默认，含禁用项"><Tabs activeKey={tab} onChange={setTab} items={[{ key: 'visits', label: '拜访', children: '3 条拜访记录' }, { key: 'opps', label: '商机', children: '2 条商机' }, { key: 'contracts', label: '合同', children: '暂无合同' }, { key: 'profit', label: '毛利', disabled: true }]} /></State>
       </div>
-      <h3>Collapse</h3>
+      <h3>Collapse 折叠面板</h3>
       <div className="states wide">
         <State title="默认展开第一项"><Collapse defaultActiveKey={['1']} items={[{ key: '1', label: 'AI 依据 2 条', children: <p>9 月 12 日拜访记录：已获得 CIO 支持，预算在四季度审批。</p> }, { key: '2', label: '联系人', children: <p>张总，CIO。</p> }]} /></State>
       </div>

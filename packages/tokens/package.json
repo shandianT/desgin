@@ -1,0 +1,19 @@
+{
+  "name": "@sensetime-dept/tokens",
+  "version": "1.1.0-draft.1",
+  "description": "部门设计变量：--ui-* 的 CSS、WXSS、JSON 产物，以及给 Ant Design、TDesign、Semi 的主题桥接文件。由规范仓库 tokens.json 生成，勿手改",
+  "license": "UNLICENSED",
+  "files": ["dist", "README.md"],
+  "exports": {
+    "./css": "./dist/design-tokens.css",
+    "./wxss": "./dist/design-tokens.wxss",
+    "./json": "./dist/design-tokens.json",
+    "./miniprogram-app": "./dist/miniprogram-app.tokens.json",
+    "./bridge-antd": "./dist/bridge-antd.theme.json",
+    "./bridge-tdesign.css": "./dist/bridge-tdesign.css",
+    "./bridge-tdesign.wxss": "./dist/bridge-tdesign.wxss",
+    "./bridge-semi.css": "./dist/bridge-semi.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": { "sync": "node sync.mjs", "prepack": "node sync.mjs" }
+}
