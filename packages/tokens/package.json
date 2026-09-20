@@ -6,14 +6,23 @@
   "files": [
     "dist",
     "!dist/*.md",
-    "README.md"
+    "types",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "exports": {
     "./css": "./dist/design-tokens.css",
     "./wxss": "./dist/design-tokens.wxss",
-    "./json": "./dist/design-tokens.json",
-    "./miniprogram-app": "./dist/miniprogram-app.tokens.json",
+    "./json": {
+      "types": "./types/json.d.ts",
+      "default": "./dist/design-tokens.json"
+    },
+    "./miniprogram-app": {
+      "types": "./types/miniprogram-app.d.ts",
+      "default": "./dist/miniprogram-app.tokens.json"
+    },
     "./bridge-antd": {
+      "types": "./types/bridge-antd.d.ts",
       "import": "./dist/bridge-antd.theme.mjs",
       "require": "./dist/bridge-antd.theme.cjs",
       "default": "./dist/bridge-antd.theme.json"
@@ -22,7 +31,10 @@
     "./bridge-tdesign.wxss": "./dist/bridge-tdesign.wxss",
     "./bridge-semi.css": "./dist/bridge-semi.css",
     "./package.json": "./package.json",
-    "./bridge-antd.json": "./dist/bridge-antd.theme.json"
+    "./bridge-antd.json": {
+      "types": "./types/bridge-antd.d.ts",
+      "default": "./dist/bridge-antd.theme.json"
+    }
   },
   "scripts": {
     "sync": "node sync.mjs",
@@ -36,5 +48,13 @@
     "type": "git",
     "url": "git+https://github.com/shandianT/desgin.git",
     "directory": "packages/tokens"
+  },
+  "peerDependencies": {
+    "antd": ">=6"
+  },
+  "peerDependenciesMeta": {
+    "antd": {
+      "optional": true
+    }
   }
 }

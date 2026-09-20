@@ -5,25 +5,25 @@
       "name": "@shandiant/tokens",
       "version": "1.1.0-draft.1",
       "filename": "shandiant-tokens-1.1.0-draft.1.tgz",
-      "files": 12,
-      "size": 8847,
-      "sha256": "3681fc10ba12e02e0510457243bcf2cfd72aeceac3ae48763a025bf91e6794aa"
+      "files": 16,
+      "size": 10233,
+      "sha256": "9e947cd4d1a2e489f6cdaa23b9cb1241b7af6729c06f775e3644b805f234857d"
     },
     {
       "name": "@shandiant/ui-react",
-      "version": "0.2.1",
-      "filename": "shandiant-ui-react-0.2.1.tgz",
-      "files": 7,
-      "size": 41870,
-      "sha256": "2761614292d4f9889928163167df214f20fd2909962e5716c1af04e4a46259f0"
+      "version": "0.3.0",
+      "filename": "shandiant-ui-react-0.3.0.tgz",
+      "files": 9,
+      "size": 44594,
+      "sha256": "41aff607bacae9c8ccacacc53dbd00a30e56079d2b7a7d9d8da9d304d3209568"
     },
     {
       "name": "@shandiant/ui-miniprogram",
-      "version": "0.2.1",
-      "filename": "shandiant-ui-miniprogram-0.2.1.tgz",
-      "files": 64,
-      "size": 13815,
-      "sha256": "c96af3357542833d904d27dc973bc55b41b00909162aaaf872b0b9bf104014f4"
+      "version": "0.3.0",
+      "filename": "shandiant-ui-miniprogram-0.3.0.tgz",
+      "files": 65,
+      "size": 14195,
+      "sha256": "596cbaa92b12885076ac99ffce6ac0815f80c33440adb280a6cf3b57703c3a58"
     }
   ]
 }

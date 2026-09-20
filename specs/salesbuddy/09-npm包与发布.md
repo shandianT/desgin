@@ -25,7 +25,7 @@ updated: 2026-09-20
 | 包 | 给谁 | 里面是什么 |
 |---|---|---|
 | `@shandiant/tokens` | 所有端 | 设计变量的 CSS、WXSS、JSON，和给 Ant Design、TDesign、Semi 的桥接文件。版本号跟 `tokens.json` 走，现在是 1.1.0-draft.1 |
-| `@shandiant/ui-react` | Web | 17 个组合件与 AI 件，构建成 ES 与 CommonJS 两种格式加一个 style.css。React、antd、Ant Design X 不打进去，由使用方安装 |
+| `@shandiant/ui-react` | Web | 17 个组合件与 AI 件，构建成 ES 与 CommonJS 两种格式加一个 style.css 和类型文件 index.d.ts。React、antd、Ant Design X 不打进去，由使用方安装 |
 | `@shandiant/ui-miniprogram` | 小程序 | 15 个组件的源文件，`miniprogram` 字段指向 `components/`，微信开发者工具构建 npm 时按这个字段复制 |
 
 包名前缀 `@shandiant` 就是 GitHub 账号 shandianT 的小写，GitHub Packages 要求两者一致。包文件在仓库 `release/` 目录，`release/README.md` 列了文件名、大小和校验值。重新打包：`node tools/pack.mjs`。
@@ -52,7 +52,7 @@ npm i tdesign-miniprogram@1.16.1 @shandiant/ui-miniprogram
 
 tokens 现在是草案号，装的时候写 `@draft`，定稿后去掉。小程序还要多做一步：构建 npm 只复制包里的 `components/`，变量和桥接两个 wxss 要从 `node_modules/@shandiant/ui-miniprogram/components/style/` 复制到小程序根目录再 `@import`。
 
-没有 token、或者还没发布，用文件装：`npm i ./release/shandiant-tokens-1.1.0-draft.1.tgz ./release/shandiant-ui-react-0.2.1.tgz`，小程序是 `./release/shandiant-ui-miniprogram-0.2.1.tgz`。用法见各包的 README 和规范站「组件」章每张卡片的「用法」。
+没有 token、或者还没发布，用文件装：`npm i ./release/shandiant-tokens-1.1.0-draft.1.tgz ./release/shandiant-ui-react-0.3.0.tgz`，小程序是 `./release/shandiant-ui-miniprogram-0.3.0.tgz`。用法见各包的 README 和规范站「组件」章每张卡片的「用法」。
 
 ## 4｜怎么发
 
@@ -62,7 +62,7 @@ tokens 现在是草案号，装的时候写 `@draft`，定稿后去掉。小程�
 2. 要发哪几个包填在第一格，默认三个都发。第二格填 true 只演练不发布，第一次建议先演练一遍。
 3. 点绿色按钮，两三分钟跑完。发好的包在仓库首页右侧 Packages 里能看到。
 
-推一个 `v` 开头的标签也会触发，比如 `git tag v0.2.1 && git push origin v0.2.1`。
+推一个 `v` 开头的标签也会触发，比如 `git tag v0.3.0 && git push origin v0.3.0`。
 
 流程里做的事：装 ui-react 依赖，跑 `node tools/check.mjs`，依次发 tokens、ui-react、ui-miniprogram。版本号带 `-draft` 的自动发到 `draft` 标签，不占 latest；正式号发 latest。同一个版本号不能发第二次，改了东西先在 package.json 升号再发。
 
@@ -70,7 +70,7 @@ tokens 现在是草案号，装的时候写 `@draft`，定稿后去掉。小程�
 
 以后换到公司私有源（Nexus、Verdaccio 这类）只要改三处：`.npmrc` 的地址、publishConfig 的地址、发布流程的 registry-url 与 token。包名不用动。
 
-发布顺序：先 tokens，再 ui-react 和 ui-miniprogram，因为 ui-react 的主题从 tokens 包读。每次发布后在采用登记表登记版本。
+发布顺序：先 tokens，再 ui-react 和 ui-miniprogram，因为 ui-react 的主题从 tokens 包读。每次发布前在包目录的 CHANGELOG.md 加一段，写改了什么、对使用方有什么影响；发布后在采用登记表登记版本。
 
 版本号规则跟 04 章一致：只改值升修订号（0.2.1），加组件或加属性升次版本（0.3.0），改含义或删属性升主版本（1.0.0）。tokens 包的版本永远等于 `tokens.json` 的版本。
 
@@ -79,6 +79,4 @@ tokens 现在是草案号，装的时候写 `@draft`，定稿后去掉。小程�
 - 发布流程写好了，还没有真正跑过一次。第一次跑先勾演练。
 - 装的人各自要申请一个 GitHub token，并且要能看到 desgin 仓库。仓库是私有的话，要先把人加进来。
 - 小程序包没有在开发者工具里装过、构建过。
-- 没有更新记录文件，第一次正式发布时建 CHANGELOG。
-- Web 包没有 TypeScript 类型文件，TS 工程引入没有属性提示。
-- 已验证：在干净的 React 18 加 antd 6 工程里装包、构建、渲染都正常，ES 与 CommonJS 两种引入都能用；小程序包结构符合微信 npm 规则，但没在开发者工具里装过。
+- 已验证：在干净的 React 18 加 antd 6 工程里装包、构建、渲染都正常，ES 与 CommonJS 两种引入都能用，TypeScript 工程有属性提示，传错枚举值会报错；小程序包结构符合微信 npm 规则，但没在开发者工具里装过。

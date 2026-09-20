@@ -51,6 +51,16 @@ for (const spec of manifest.specs) {
 const uiReact = join(root, 'packages', 'ui-react');
 if (existsSync(join(uiReact, 'node_modules', 'vite'))) run('构建 Web 组件库目录页', 'npm', ['run', 'build', '--silent'], uiReact);
 else if (existsSync(uiReact)) console.log('· 未安装 packages/ui-react 依赖，跳过组件库构建（cd packages/ui-react && npm i --legacy-peer-deps）');
+// 类型声明与入口导出一致：index.js 每个 export 在 index.d.ts 里都要有声明，反之亦然
+{
+  const idx = join(uiReact, 'src', 'index.js'), dts = join(uiReact, 'src', 'index.d.ts');
+  if (existsSync(idx) && existsSync(dts)) {
+    const js = [...readFileSync(idx, 'utf8').matchAll(/export \{ (\w+) \}/g)].map((m) => m[1]);
+    const ts = [...readFileSync(dts, 'utf8').matchAll(/export declare (?:function|const) (\w+)/g)].map((m) => m[1]);
+    const miss = js.filter((n) => !ts.includes(n)), extra = ts.filter((n) => !js.includes(n));
+    if (miss.length || extra.length) { console.error(`✗ 类型声明与导出不一致：缺 ${miss.join(', ') || '无'}；多 ${extra.join(', ') || '无'}`); failed++; } else console.log(`✓ 类型声明覆盖 ${js.length} 个导出`);
+  }
+}
 for (const pkg of ['ui-react/src', 'ui-miniprogram']) if (existsSync(join(root, 'packages', pkg))) run(`样式检查（packages/${pkg}）`, 'node', [join(root, 'tools', 'lint-styles.mjs'), join(root, 'packages', pkg), '--spec', join(root, manifest.specs[0].dir)], root);
 // 技能副本：.agents/skills 供 Codex／Cursor 等工具（用 fs.cpSync 复制而非软链或外部命令，Windows 也能跑）
 const src = join(root, '.claude', 'skills', 'design-spec'), dst = join(root, '.agents', 'skills', 'design-spec');

@@ -1,6 +1,6 @@
 {
   "name": "@shandiant/ui-react",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "部门 Web 组件库：Ant Design 6 与 Ant Design X 之上的组合件与 AI 件，主题来自设计变量的桥接文件",
   "license": "UNLICENSED",
   "type": "module",
@@ -8,6 +8,7 @@
   "module": "./dist/index.js",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
@@ -19,7 +20,8 @@
   ],
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "dev": "vite --config catalog/vite.config.mjs",
@@ -51,5 +53,6 @@
     "type": "git",
     "url": "git+https://github.com/shandianT/desgin.git",
     "directory": "packages/ui-react"
-  }
+  },
+  "types": "./dist/index.d.ts"
 }

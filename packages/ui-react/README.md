@@ -27,7 +27,7 @@ export default function App() {
 }
 ```
 
-`SbProvider` 里已经带了 antd 的中文语言包和桥接主题（主色、圆角、控件高度）。每个组件的属性、状态、用法见规范站「组件」章，或包里的 `META` 与 `USAGE` 导出。
+`SbProvider` 里已经带了 antd 的中文语言包和桥接主题（主色、圆角、控件高度）。每个组件的属性、状态、用法见规范站「组件」章，或包里的 `META` 与 `USAGE` 导出。包里带类型文件，TypeScript 工程引入有属性提示，改动看 CHANGELOG.md。
 
 ## 版本
 
