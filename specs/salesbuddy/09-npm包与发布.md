@@ -64,7 +64,7 @@ tokens 现在是草案号，装的时候写 `@draft`，定稿后去掉。小程�
 
 推一个 `v` 开头的标签也会触发，比如 `git tag v0.3.0 && git push origin v0.3.0`。
 
-流程里做的事：装 ui-react 依赖，跑 `node tools/check.mjs`，依次发 tokens、ui-react、ui-miniprogram。版本号带 `-draft` 的自动发到 `draft` 标签，不占 latest；正式号发 latest。同一个版本号不能发第二次，改了东西先在 package.json 升号再发。
+流程里做的事：装 ui-react 与 ui-miniprogram 的依赖，跑 `node tools/check.mjs`（含小程序组件模拟渲染），依次发 tokens、ui-react、ui-miniprogram。版本号带 `-draft` 的自动发到 `draft` 标签，不占 latest；正式号发 latest。同一个版本号不能发第二次，改了东西先在 package.json 升号再发。
 
 三个 package.json 的 publishConfig 已经写死 `https://npm.pkg.github.com`，在本地误敲 `npm publish` 也不会发到公网。
 
@@ -78,5 +78,5 @@ tokens 现在是草案号，装的时候写 `@draft`，定稿后去掉。小程�
 
 - 发布流程写好了，还没有真正跑过一次。第一次跑先勾演练。
 - 装的人各自要申请一个 GitHub token，并且要能看到 desgin 仓库。仓库是私有的话，要先把人加进来。
-- 小程序包没有在开发者工具里装过、构建过。
-- 已验证：在干净的 React 18 加 antd 6 工程里装包、构建、渲染都正常，ES 与 CommonJS 两种引入都能用，TypeScript 工程有属性提示，传错枚举值会报错；小程序包结构符合微信 npm 规则，但没在开发者工具里装过。
+- 小程序包没有在开发者工具里装过、构建过。Node 里的模拟渲染已过（`npm test`），发布流程里也会跑。
+- 已验证：在干净的 React 18 加 antd 6 工程里装包、构建、渲染都正常，ES 与 CommonJS 两种引入都能用，TypeScript 工程有属性提示，传错枚举值会报错；小程序包结构符合微信 npm 规则，15 个组件 46 个状态在官方模拟器里渲染通过，但没在开发者工具里装过。

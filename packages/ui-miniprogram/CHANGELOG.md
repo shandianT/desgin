@@ -4,6 +4,7 @@
 
 ## 0.3.0（2026-09-20）
 
+- 加 `npm test`：用 miniprogram-simulate 渲染全部组件的 46 个状态并触发 14 次交互，进自检与发布流程。
 - 包名从 `@sensetime-dept/ui-miniprogram` 改为 `@shandiant/ui-miniprogram`，源为 GitHub Packages。
 - 加本文件。
 

@@ -61,6 +61,8 @@ else if (existsSync(uiReact)) console.log('· 未安装 packages/ui-react 依赖
     if (miss.length || extra.length) { console.error(`✗ 类型声明与导出不一致：缺 ${miss.join(', ') || '无'}；多 ${extra.join(', ') || '无'}`); failed++; } else console.log(`✓ 类型声明覆盖 ${js.length} 个导出`);
   }
 }
+const uiMp = join(root, 'packages', 'ui-miniprogram');
+if (existsSync(join(uiMp, 'node_modules', 'miniprogram-simulate'))) run('小程序组件模拟渲染（packages/ui-miniprogram）', 'npm', ['test', '--silent'], uiMp);
 for (const pkg of ['ui-react/src', 'ui-miniprogram']) if (existsSync(join(root, 'packages', pkg))) run(`样式检查（packages/${pkg}）`, 'node', [join(root, 'tools', 'lint-styles.mjs'), join(root, 'packages', pkg), '--spec', join(root, manifest.specs[0].dir)], root);
 // 技能副本：.agents/skills 供 Codex／Cursor 等工具（用 fs.cpSync 复制而非软链或外部命令，Windows 也能跑）
 const src = join(root, '.claude', 'skills', 'design-spec'), dst = join(root, '.agents', 'skills', 'design-spec');

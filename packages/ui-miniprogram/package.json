@@ -13,11 +13,16 @@
     "tdesign-miniprogram": "^1.16.1"
   },
   "devDependencies": {
-    "tdesign-miniprogram": "1.16.1"
+    "tdesign-miniprogram": "1.16.1",
+    "miniprogram-simulate": "^1.6.2",
+    "jsdom": "^30.0.0",
+    "esbuild": "^0.28.0",
+    "tslib": "^2.8.0"
   },
   "scripts": {
     "sync": "node sync.mjs",
-    "prepack": "node sync.mjs"
+    "prepack": "node sync.mjs",
+    "test": "node test/run.cjs"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { palette } from '../../../specs/salesbuddy/02-设计变量与同步链路/palette.mjs';
 import { createRoot } from 'react-dom/client';
 import { App as AntApp, Button, Cascader, Collapse, DatePicker, Drawer, Form, Input, Modal, Select, Table, Tabs, Tag, Tooltip } from 'antd';
 import '@shandiant/tokens/css';
@@ -207,14 +208,17 @@ function Catalog({ primary, setPrimary, resetPrimary }) {
   );
 }
 
-// 主色从 design-tokens.css 读初值；改动时同时写 --ui-primary 与 antd 的 colorPrimary，重置就删掉覆盖。
+// 主色从 design-tokens.css 读初值；改动时按 palette.mjs 派生十档，同时改 --ui-primary、悬停（第 7 档）、选中底（第 1 档）、焦点（第 5 档）与 antd 的 colorPrimary，重置就删掉覆盖。
+const DERIVED = { '--ui-primary': 5, '--ui-primary-hover': 6, '--ui-selected': 0, '--ui-focus': 4 };
+const applyPrimary = (v) => { const p = palette(v); for (const [k, i] of Object.entries(DERIVED)) document.documentElement.style.setProperty(k, p[i]); };
+const clearPrimary = () => { for (const k of Object.keys(DERIVED)) document.documentElement.style.removeProperty(k); };
 const readPrimary = () => (typeof document === 'undefined' ? '' : getComputedStyle(document.documentElement).getPropertyValue('--ui-primary').trim().toLowerCase());
 function Root() {
   const [base, setBase] = useState(readPrimary);
   const [primary, setPrimaryState] = useState(base);
   useEffect(() => { if (!base) { const v = readPrimary(); setBase(v); setPrimaryState(v); } }, [base]);
-  const setPrimary = (v) => { document.documentElement.style.setProperty('--ui-primary', v); setPrimaryState(v); };
-  const resetPrimary = () => { document.documentElement.style.removeProperty('--ui-primary'); setPrimaryState(base); };
+  const setPrimary = (v) => { applyPrimary(v); setPrimaryState(v); };
+  const resetPrimary = () => { clearPrimary(); setPrimaryState(base); };
   const theme = primary && primary !== base ? { token: { colorPrimary: primary, colorInfo: primary, colorLink: primary } } : undefined;
   return (
     <SbProvider theme={theme}>

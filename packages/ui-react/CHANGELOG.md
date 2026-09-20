@@ -4,6 +4,7 @@
 
 ## 0.3.0（2026-09-20）
 
+- 目录页换主色时，悬停、选中底、焦点三个派生色按主色十档一起变。
 - 加类型文件 `dist/index.d.ts`，TypeScript 工程引入有属性提示。17 个组件的属性、`META` 与 `USAGE` 都有声明。
 - 包名从 `@sensetime-dept/ui-react` 改为 `@shandiant/ui-react`，源为 GitHub Packages。旧包名没有发布过，没有迁移成本。
 - 加本文件。

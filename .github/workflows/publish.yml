@@ -31,6 +31,8 @@ jobs:
           scope: '@shandiant'
       - name: 装 Web 组件库依赖
         run: cd packages/ui-react && npm ci --legacy-peer-deps
+      - name: 装小程序组件库测试依赖
+        run: cd packages/ui-miniprogram && npm ci
       - name: 自检
         run: node tools/check.mjs
       - name: 发布

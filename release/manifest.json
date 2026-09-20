@@ -14,16 +14,16 @@
       "version": "0.3.0",
       "filename": "shandiant-ui-react-0.3.0.tgz",
       "files": 9,
-      "size": 44594,
-      "sha256": "41aff607bacae9c8ccacacc53dbd00a30e56079d2b7a7d9d8da9d304d3209568"
+      "size": 44710,
+      "sha256": "0f2c52262bfabdf893198e61e0d29f9ce6f0851acfe7b31e2c08142e2bcde594"
     },
     {
       "name": "@shandiant/ui-miniprogram",
       "version": "0.3.0",
       "filename": "shandiant-ui-miniprogram-0.3.0.tgz",
       "files": 65,
-      "size": 14195,
-      "sha256": "596cbaa92b12885076ac99ffce6ac0815f80c33440adb280a6cf3b57703c3a58"
+      "size": 14544,
+      "sha256": "168c75eb32e20d8f0fd47479227bc9e77e86fdb9bfa7eb0afabaaa83b35f2758"
     }
   ]
 }
