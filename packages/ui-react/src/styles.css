@@ -38,7 +38,7 @@
 .sb-pagehead h1 { margin: 0; font-size: var(--ui-text-page); font-weight: 650; line-height: 1.4; } .sb-pagehead h1 small { font-size: var(--ui-text-small); color: var(--ui-secondary); font-weight: 400; margin-left: var(--ui-space-2); }
 .sb-pagehead-actions { display: flex; gap: var(--ui-space-2); }
 .sb-ai { display: inline-flex; align-items: center; gap: 6px; padding: 0 var(--ui-space-2); border-radius: 4px; font-size: var(--ui-text-small); line-height: 20px; white-space: nowrap; font-weight: 500; }
-.sb-ai i { font-style: normal; font-weight: 700; padding: 0 4px; border-radius: 3px; background: var(--ui-primary); color: var(--ui-on-primary); font-size: 11px; line-height: 16px; }
+.sb-ai i { font-style: normal; font-weight: 700; padding: 0 4px; border-radius: 3px; background: var(--ui-primary); color: var(--ui-on-primary); font-size: var(--ui-text-small); line-height: 16px; }
 .sb-ai-generating { background: var(--ui-selected); color: var(--ui-primary); }
 .sb-ai-pending { background: var(--ui-warning-soft); color: var(--ui-warning); }
 .sb-ai-confirmed { background: var(--ui-neutral-soft); color: var(--ui-neutral); }
