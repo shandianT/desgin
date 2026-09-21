@@ -446,8 +446,8 @@ const body = `
   <div class="card brief"><h2>同事怎么开始用</h2>
     <p>仓库 <a href="https://github.com/shandianT/desgin" target="_blank" rel="noopener">shandianT/desgin</a> 是公开的，打好的包在仓库 release/ 目录，直接从网址装，不用申请权限。</p>
     <div class="tbl"><table><tr><th>你是</th><th>做什么</th></tr>
-      <tr><td>做网页</td><td><code>npm i react@18 react-dom@18 antd@6 @ant-design/x@2</code><br><code>npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.3.0.tgz</code></td></tr>
-      <tr><td>做小程序</td><td><code>npm i tdesign-miniprogram@1.16.1 https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-miniprogram-0.3.0.tgz</code>，然后开发者工具「构建 npm」，把包里 components/style/ 的两个 wxss 复制到根目录在 app.wxss 引入</td></tr>
+      <tr><td>做网页</td><td><code>npm i react@18 react-dom@18 antd@6 @ant-design/x@2</code><br><code>npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.4.0.tgz</code></td></tr>
+      <tr><td>做小程序</td><td><code>npm i tdesign-miniprogram@1.16.1 https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-miniprogram-0.4.0.tgz</code>，然后开发者工具「构建 npm」，把包里 components/style/ 的两个 wxss 复制到根目录在 app.wxss 引入</td></tr>
       <tr><td>不想自己敲</td><td>把仓库 <code>模板/同事装包-给AI的提示词.md</code> 里那段贴给 Claude Code 或 Cursor，AI 装好并渲染一个标签验证</td></tr>
       <tr><td>只是看规范</td><td>记这一个网址：<a href="https://shandiant.github.io/desgin/" target="_blank" rel="noopener">https://shandiant.github.io/desgin/</a>。仓库 main 有改动它自动更新</td></tr>
     </table></div>
