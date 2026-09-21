@@ -48,8 +48,12 @@ metadata:
 | AI 依据列表 | SbAiSources | sb-ai-sources |
 | AI 生成进度 | SbAiProgress | sb-ai-progress |
 | 电脑三栏、手机整页 | SbDetailLayout | 用 navigateTo |
+| 带标签的下拉筛选（选项多于 6） | SbLabeledSelect | sb-labeled-select |
+| 指标横排加周期切换 | SbMetricStrip | sb-metric-strip |
+| 带数量的标签页 | SbTabs | sb-tabs |
+| 表格（操作列、四态、分页） | SbTable | 手机用 sb-list-row |
 
-- 图标：网页用 `@ant-design/icons` 的 Outlined 一族，小程序用 `t-icon`；含义到名字的对照在 `packages/ui-react/src/icons.js`，尺寸 16／20／24px 用 `--ui-icon-sm/md/lg`。图标旁必须有字，见 `specs/salesbuddy/10-图标.md`。
+- 图标：用 `SbIcon`（小程序 `sb-icon`），传含义名 name="customer" 不传库里的名字，size sm／md／lg，tone 只给业务状态，tile 带底方块。含义表在 `packages/ui-react/src/icons.js`。图标旁必须有字，见 `specs/salesbuddy/10-图标.md`。
 - Web 页面最外层包一次 `SbProvider`，主题就来自变量，不再手写颜色。
 - 装法：工程根目录 `.npmrc` 写 `@shandiant:registry=https://npm.pkg.github.com`，然后 `npm i @shandiant/tokens@draft @shandiant/ui-react`；小程序 `npm i tdesign-miniprogram@1.16.1 @shandiant/ui-miniprogram` 后在开发者工具构建 npm。没有源就用仓库 `release/` 里的包文件。细节在 `specs/salesbuddy/09-npm包与发布.md`。
 - 缺一个组件时，先在页面里用上游组件拼，并在交回说明里写「建议新增组件：名字、用途、用在几页」，不要在页面里造一个只用一次的。

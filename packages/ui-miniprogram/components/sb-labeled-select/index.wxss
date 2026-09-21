@@ -1,0 +1,7 @@
+.sb-lselect { display: inline-flex; align-items: center; gap: var(--ui-space-1); min-height: var(--ui-control-height); padding: 0 var(--ui-space-2) 0 var(--ui-space-3); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); font-size: var(--ui-text-body); max-width: 100%; }
+.sb-lselect.on { border-color: var(--ui-primary); }
+.sb-lselect.disabled { background: var(--ui-background); color: var(--ui-muted); }
+.sb-lselect-label { color: var(--ui-secondary); white-space: nowrap; }
+.sb-lselect-text { color: var(--ui-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-lselect.on .sb-lselect-text { color: var(--ui-primary); font-weight: 600; }
+.sb-lselect-arrow, .sb-lselect-clear { color: var(--ui-muted); display: inline-flex; }

@@ -11,19 +11,19 @@
     },
     {
       "name": "@shandiant/ui-react",
-      "version": "0.4.0",
-      "filename": "shandiant-ui-react-0.4.0.tgz",
+      "version": "0.5.0",
+      "filename": "shandiant-ui-react-0.5.0.tgz",
       "files": 9,
-      "size": 57366,
-      "sha256": "2c1b07cd9e61e1264a00957c4023aadb9170d6f830b56ab0718c648f90d8e8e3"
+      "size": 70692,
+      "sha256": "8f305e3425ae5f4e77298935d03953f7277435560cef4d24688b5537db125fca"
     },
     {
       "name": "@shandiant/ui-miniprogram",
-      "version": "0.4.0",
-      "filename": "shandiant-ui-miniprogram-0.4.0.tgz",
-      "files": 70,
-      "size": 15861,
-      "sha256": "eb1d701b391a93b19ce74fed45fc7ee6274ed91f1f023dd7f33e098d91df6ea4"
+      "version": "0.5.0",
+      "filename": "shandiant-ui-miniprogram-0.5.0.tgz",
+      "files": 82,
+      "size": 18151,
+      "sha256": "4d0b63bd561160fc32ed4b76f6897b0dd2e6e3702776f9ed1de7ba53c4a54c7e"
     }
   ]
 }

@@ -124,6 +124,37 @@ import { SbPageHeader } from '${PKG}';
   detailOpen={open} onBack={() => setOpen(false)} />
 // 档位按容器宽度自动判断；演示时可传 tier="desktop" | "rail" | "mobile"`,
 
+  SbLabeledSelect: `import { SbLabeledSelect } from '${PKG}';
+
+<SbLabeledSelect label="象限" value={q} onChange={setQ}
+  options={[{ value: 'attack', label: '主攻区', count: 9 }, { value: 'asset', label: '客户资产', count: 12 }]} />
+// 不传 value 显示「全部」；清空回到「全部」`,
+
+  SbMetricStrip: `import { SbMetricStrip } from '${PKG}';
+
+<SbMetricStrip
+  items={[{ key: 'acv', label: '年度合同额 · 万元', value: 1880 }, { key: 'rev', label: '确收 · 万元', value: 138 }, { key: 'cash', label: '回款 · 万元', value: null }]}
+  periods={[{ value: 'year', label: '本年' }, { value: 'all', label: '历年' }]} period={period} onPeriodChange={setPeriod}
+  caliber="确收按合同签署月，回款按到账月" />`,
+
+  SbTabs: `import { SbTabs } from '${PKG}';
+
+<SbTabs activeKey={tab} onChange={setTab}
+  items={[{ key: 'todo', label: '待处理', count: 18 }, { key: 'done', label: '已完成', count: 4 }, { key: 'all', label: '全部', count: 122 }]} />`,
+
+  SbTable: `import { SbTable, SbStatusTag } from '${PKG}';
+import { Button } from 'antd';
+
+<SbTable rowKey="id" rows={rows} state={loading ? 'loading' : 'normal'}
+  columns={[
+    { title: '客户 / 负责人', dataIndex: 'name' },
+    { title: '当前状态', key: 'status', render: (_, r) => <SbStatusTag tone={r.tone} reason={r.reason} showReason /> },
+    { title: '预算', dataIndex: 'budget', render: (v) => v ?? '未登记' },
+  ]}
+  actions={(r) => <Button type="link" onClick={() => open(r)}>查看</Button>}
+  pagination={{ current: page, total: 124, pageSize: 20, onChange: setPage }}
+  onRetry={reload} onClear={clearFilters} />`,
+
   SbIcon: `import { SbIcon, ICONS } from '${PKG}';
 
 // 传含义名，不传 UserOutlined 这种库里的名字。40 个含义在 ICONS 里

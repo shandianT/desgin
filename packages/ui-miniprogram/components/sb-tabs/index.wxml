@@ -1,0 +1,7 @@
+<scroll-view scroll-x class="sb-tabs" aria-role="tablist">
+  <view class="sb-tabs-row">
+    <view wx:for="{{list}}" wx:key="key" class="sb-tabs-tab {{item.key === activeKey ? 'on' : ''}} {{item.disabled ? 'disabled' : ''}}" data-key="{{item.key}}" data-disabled="{{item.disabled}}" bind:tap="onTap" aria-role="tab" aria-selected="{{item.key === activeKey}}">
+      <text>{{item.label}}</text><text wx:if="{{item.countText}}" class="sb-tabs-count">{{item.countText}}</text>
+    </view>
+  </view>
+</scroll-view>

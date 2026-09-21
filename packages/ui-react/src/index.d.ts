@@ -175,6 +175,68 @@ export interface SbDetailLayoutProps {
 }
 export declare function SbDetailLayout(props: SbDetailLayoutProps): JSX.Element;
 
+export interface SbLabeledSelectOption { value: string | number; label: ReactNode; count?: number; disabled?: boolean }
+export interface SbLabeledSelectProps {
+  label: ReactNode;
+  value?: string | number | Array<string | number>;
+  options?: SbLabeledSelectOption[];
+  onChange?: (value: any) => void;
+  /** 没选时显示的字，默认「全部」 */
+  placeholder?: string;
+  allowClear?: boolean;
+  disabled?: boolean;
+  mode?: 'multiple' | 'tags';
+  width?: number | string;
+  className?: string;
+}
+export declare function SbLabeledSelect(props: SbLabeledSelectProps): JSX.Element;
+
+export interface SbMetricStripItem { key?: string; label: ReactNode; value?: ReactNode; note?: ReactNode; missingText?: string }
+export interface SbMetricStripProps {
+  items?: SbMetricStripItem[];
+  periods?: Array<{ value: string | number; label: ReactNode }>;
+  period?: string | number;
+  onPeriodChange?: (value: any) => void;
+  /** 统计口径，显示在提示图标的悬停里 */
+  caliber?: ReactNode;
+  loading?: boolean;
+  columns?: number;
+  className?: string;
+}
+export declare function SbMetricStrip(props: SbMetricStripProps): JSX.Element;
+
+export interface SbTabsItem { key: string; label: ReactNode; count?: number; children?: ReactNode; disabled?: boolean }
+export interface SbTabsProps {
+  items?: SbTabsItem[];
+  activeKey?: string;
+  defaultActiveKey?: string;
+  onChange?: (key: string) => void;
+  size?: 'small' | 'middle' | 'large';
+  className?: string;
+}
+export declare function SbTabs(props: SbTabsProps): JSX.Element;
+
+export interface SbTableProps<T = any> {
+  columns?: any[];
+  rows?: T[];
+  rowKey?: string | ((row: T) => string);
+  state?: SbPanelState;
+  emptyTitle?: ReactNode;
+  emptyDescription?: ReactNode;
+  onRetry?: () => void;
+  onClear?: () => void;
+  /** 操作列，固定在最右 */
+  actions?: (row: T) => ReactNode;
+  actionsWidth?: number;
+  pagination?: SbPaginationProps;
+  expandable?: any;
+  density?: 'default' | 'compact';
+  onRowClick?: (row: T) => void;
+  scrollX?: number | string;
+  className?: string;
+}
+export declare function SbTable<T = any>(props: SbTableProps<T>): JSX.Element;
+
 export type SbIconSize = 'sm' | 'md' | 'lg';
 export type SbIconTone = 'default' | 'secondary' | 'muted' | 'primary' | 'success' | 'warning' | 'danger';
 export interface SbIconProps {

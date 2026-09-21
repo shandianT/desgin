@@ -34,6 +34,14 @@
   <sb-list-row wx:for="{{rows}}" wx:key="name" name="{{item.name}}" summary="{{item.summary}}" tone="{{item.tone}}" reason="{{item.reason}}" time="{{item.time}}" selected="{{index === 0}}" />
   <sb-list-row name="泰和银行数据中心" disabled disabledReason="不在你的授权范围内" />
 
+  <view class="h">带标签下拉 sb-labeled-select</view>
+  <view class="row"><sb-labeled-select label="象限" value="{{quad}}" options="{{quadOpts}}" bind:change="onQuad" /><sb-labeled-select label="计划" options="{{[{value:'y',label:'有 IT 计划'},{value:'n',label:'无'}]}}" /><sb-labeled-select label="金额" disabled /></view>
+  <view class="h">指标条 sb-metric-strip</view>
+  <sb-metric-strip items="{{metrics}}" periods="{{[{value:'year',label:'本年'},{value:'all',label:'历年'}]}}" period="{{period}}" caliber="确收按合同签署月，回款按到账月，缺失显示未登记" bind:periodchange="onPeriod" />
+  <view class="note">加载中：不显示 0</view>
+  <sb-metric-strip items="{{metrics}}" loading />
+  <view class="h">带数量标签页 sb-tabs</view>
+  <sb-tabs items="{{[{key:'todo',label:'待处理',count:18},{key:'done',label:'已完成',count:4},{key:'closed',label:'已结束',count:0,disabled:true},{key:'all',label:'全部',count:122}]}}" activeKey="{{tab}}" bind:change="onTab" />
   <view class="h">分页 sb-pagination</view>
   <view class="sub">分页，可点上一页下一页</view>
   <sb-pagination current="{{page}}" total="{{124}}" pageSize="{{20}}" bind:change="onPage" />

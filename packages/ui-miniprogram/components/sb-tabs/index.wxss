@@ -1,0 +1,7 @@
+.sb-tabs { width: 100%; white-space: nowrap; border-bottom: 1px solid var(--ui-line); }
+.sb-tabs-row { display: inline-flex; gap: var(--ui-space-6); padding: 0 var(--ui-space-1); }
+.sb-tabs-tab { display: inline-flex; align-items: baseline; gap: var(--ui-space-1); padding: var(--ui-space-2) 0; font-size: var(--ui-text-body); color: var(--ui-secondary); border-bottom: 4rpx solid transparent; }
+.sb-tabs-tab.on { color: var(--ui-primary); font-weight: 600; border-bottom-color: var(--ui-primary); }
+.sb-tabs-tab.disabled { color: var(--ui-muted); }
+.sb-tabs-count { font-size: var(--ui-text-small); color: var(--ui-muted); font-variant-numeric: tabular-nums; }
+.sb-tabs-tab.on .sb-tabs-count { color: var(--ui-primary); }

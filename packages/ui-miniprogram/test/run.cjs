@@ -25,7 +25,7 @@ const src = path.join(pkg, 'node_modules/tdesign-miniprogram/miniprogram_dist'),
   }
 })(src);
 fs.mkdirSync(path.join(work, 'node_modules'), { recursive: true });
-for (const m of ['tslib']) fs.symlinkSync(path.join(pkg, 'node_modules', m), path.join(work, 'node_modules', m), 'dir');
+for (const m of ['tslib', 'dayjs']) fs.symlinkSync(path.join(pkg, 'node_modules', m), path.join(work, 'node_modules', m), 'dir');
 const names = fs.readdirSync(path.join(work, 'components')).filter((n) => n.startsWith('sb-'));
 for (const n of names) fs.symlinkSync(dst, path.join(work, 'components', n, 'tdesign-miniprogram'), 'dir');
 

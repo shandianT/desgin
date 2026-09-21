@@ -1,6 +1,6 @@
 {
   "name": "@shandiant/ui-miniprogram",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "部门小程序组件库：tdesign-miniprogram 之上的 15 个组合件与 AI 件，样式只用设计变量",
   "license": "UNLICENSED",
   "miniprogram": "components",
@@ -13,10 +13,11 @@
     "tdesign-miniprogram": "^1.16.1"
   },
   "devDependencies": {
-    "tdesign-miniprogram": "1.16.1",
-    "miniprogram-simulate": "^1.6.2",
-    "jsdom": "^30.0.0",
+    "dayjs": "^1.11.23",
     "esbuild": "^0.28.0",
+    "jsdom": "^30.0.0",
+    "miniprogram-simulate": "^1.6.2",
+    "tdesign-miniprogram": "1.16.1",
     "tslib": "^2.8.0"
   },
   "scripts": {

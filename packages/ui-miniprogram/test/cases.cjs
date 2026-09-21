@@ -1,6 +1,12 @@
 // 每个组件的用例（test/run.cjs 读）：data 是属性，expect 是渲染后应含的文字，event 触发一次交互并返回是否触发了对外事件。
 const exparser = require('miniprogram-exparser');
 // 点某个节点：自绘节点用组件选择器；t-* 上游组件的宿主选不到，就从它内部的真实 DOM 节点沿 exparser 冒泡上来，和真机的 tap 冒泡一致
+// 点第 n 个（模拟器的选择器不支持 :last-child）
+const tapNth = (sel, ev, n) => async (comp, simulate) => {
+  let hit = false; comp.addEventListener(ev, () => (hit = true));
+  const all = comp.querySelectorAll(sel); const el = all[n < 0 ? all.length + n : n];
+  if (!el) throw new Error('找不到 ' + sel + ' 第 ' + n + ' 个'); el.dispatchEvent('tap'); await simulate.sleep(20); return hit;
+};
 const tapFirst = (sel, ev, domSel) => async (comp, simulate) => {
   let hit = false; comp.addEventListener(ev, () => (hit = true));
   const el = comp.querySelector(sel);
@@ -9,6 +15,19 @@ const tapFirst = (sel, ev, domSel) => async (comp, simulate) => {
   await simulate.sleep(20); return hit;
 };
 module.exports = {
+  'sb-labeled-select': [
+    { title: '未选显示全部', data: { label: '象限', options: [{ value: 'a', label: '主攻区', count: 9 }] }, expect: ['象限', '全部'] },
+    { title: '已选', data: { label: '象限', value: 'a', options: [{ value: 'a', label: '主攻区', count: 9 }] }, expect: ['主攻区'], event: tapFirst('.sb-lselect-clear', 'change') },
+    { title: '禁用', data: { label: '金额', disabled: true }, expect: ['金额'] },
+  ],
+  'sb-metric-strip': [
+    { title: '带周期与口径', data: { items: [{ label: '确收 · 万元', value: 138 }, { label: '回款 · 万元', value: null }], periods: [{ value: 'year', label: '本年' }, { value: 'all', label: '历年' }], period: 'year', caliber: '口径' }, expect: ['138', '未登记', '本年', '历年'], event: tapNth('.sb-mstrip-seg-item', 'periodchange', -1) },
+    { title: '加载中不显示 0', data: { items: [{ label: '确收', value: 0 }], loading: true }, expect: ['正在读取', '…'] },
+  ],
+  'sb-tabs': [
+    { title: '带数量', data: { items: [{ key: 'todo', label: '待处理', count: 18 }, { key: 'all', label: '全部', count: 122 }], activeKey: 'todo' }, expect: ['待处理', '18', '99+'], event: tapNth('.sb-tabs-tab', 'change', -1) },
+    { title: '禁用不触发', data: { items: [{ key: 'a', label: '客户', count: 0 }, { key: 'b', label: '风险', disabled: true }], activeKey: 'a' }, expect: ['风险'] },
+  ],
   'sb-icon': [
     { title: '三档尺寸', data: { name: 'customer', size: 'lg' } },
     { title: '语义色', data: { name: 'risk', tone: 'warning', size: 'md' } },

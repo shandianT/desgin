@@ -1,0 +1,1 @@
+{ "component": true, "usingComponents": { "sb-metric-tile": "../sb-metric-tile/index", "t-icon": "tdesign-miniprogram/icon/icon" } }

@@ -2,6 +2,9 @@
   "usingComponents": {
     "sb-status-tag": "/components/sb-status-tag/index",
     "sb-icon": "/components/sb-icon/index",
+    "sb-labeled-select": "/components/sb-labeled-select/index",
+    "sb-metric-strip": "/components/sb-metric-strip/index",
+    "sb-tabs": "/components/sb-tabs/index",
     "sb-state-panel": "/components/sb-state-panel/index",
     "sb-filter-bar": "/components/sb-filter-bar/index",
     "sb-search": "/components/sb-search/index",

@@ -72,3 +72,24 @@
 .sb-icon-tile-warning { background: var(--ui-warning-soft); color: var(--ui-warning); }
 .sb-icon-tile-danger { background: var(--ui-danger-soft); color: var(--ui-danger); }
 .sb-icon-tile-secondary, .sb-icon-tile-muted, .sb-icon-tile-default { background: var(--ui-neutral-soft); color: var(--ui-secondary); }
+
+/* SbLabeledSelect：标签在框内左侧 */
+.sb-lselect { display: inline-flex; align-items: center; min-height: var(--ui-control-height); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); padding-left: var(--ui-space-3); min-width: 160px; }
+.sb-lselect:focus-within { border-color: var(--ui-focus); box-shadow: 0 0 0 2px var(--ui-selected); }
+.sb-lselect-label { color: var(--ui-secondary); font-size: var(--ui-text-body); white-space: nowrap; margin-right: var(--ui-space-1); }
+.sb-lselect-control { flex: 1; min-width: 80px; } .sb-lselect-disabled { background: var(--ui-background); color: var(--ui-muted); }
+/* SbMetricStrip：指标横排，右侧周期与口径 */
+.sb-mstrip { display: flex; flex-direction: column; gap: var(--ui-space-2); }
+.sb-mstrip-items { flex: 1; display: grid; grid-template-columns: repeat(var(--sb-mstrip-cols, auto-fit), minmax(150px, 1fr)); gap: var(--ui-space-3); }
+.sb-mstrip-side { display: flex; align-items: center; justify-content: flex-end; gap: var(--ui-space-2); }
+.sb-mstrip-help { border: 0; background: transparent; padding: var(--ui-space-1); cursor: help; border-radius: var(--ui-radius-control); display: inline-flex; } .sb-mstrip-help:focus-visible { outline: 2px solid var(--ui-focus); }
+@media (max-width: 600px) { .sb-mstrip-items { grid-template-columns: repeat(2, 1fr); } }
+/* SbTabs：数量小号灰字 */
+.sb-tabs-label small { margin-left: var(--ui-space-1); color: var(--ui-muted); font-size: var(--ui-text-small); font-variant-numeric: tabular-nums; }
+.ant-tabs-tab-active .sb-tabs-label small { color: var(--ui-primary); }
+/* SbTable：行高与页脚 */
+.sb-table .ant-table-tbody > tr > td { vertical-align: top; }
+.sb-table-default .ant-table-tbody > tr > td { padding-top: var(--ui-space-3); padding-bottom: var(--ui-space-3); }
+.sb-table-compact .ant-table-tbody > tr > td { padding-top: var(--ui-space-2); padding-bottom: var(--ui-space-2); }
+.sb-table .ant-table-empty .ant-table-tbody > tr > td { padding: var(--ui-space-8) var(--ui-space-4); }
+.sb-table-foot { display: flex; justify-content: flex-end; padding: var(--ui-space-3) 0 0; }

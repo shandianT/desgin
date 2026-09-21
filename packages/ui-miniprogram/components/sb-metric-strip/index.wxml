@@ -1,0 +1,11 @@
+<view class="sb-mstrip">
+  <view wx:if="{{periods.length || caliber}}" class="sb-mstrip-side">
+    <view wx:if="{{periods.length}}" class="sb-mstrip-seg" aria-role="radiogroup">
+      <view wx:for="{{periods}}" wx:key="value" class="sb-mstrip-seg-item {{item.value === period ? 'on' : ''}}" data-value="{{item.value}}" bind:tap="onPeriod" aria-role="radio" aria-checked="{{item.value === period}}">{{item.label}}</view>
+    </view>
+    <view wx:if="{{caliber}}" class="sb-mstrip-help" bind:tap="onCaliber" aria-role="button" aria-label="统计口径"><t-icon name="info-circle" size="40rpx" /></view>
+  </view>
+  <view class="sb-mstrip-items">
+    <sb-metric-tile wx:for="{{items}}" wx:key="label" label="{{item.label}}" value="{{loading ? '…' : item.value}}" note="{{loading ? '正在读取' : item.note}}" missingText="{{item.missingText || '未登记'}}" />
+  </view>
+</view>

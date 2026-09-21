@@ -48,6 +48,10 @@ metadata:
 | AI 依据列表 | SbAiSources | sb-ai-sources |
 | AI 生成进度 | SbAiProgress | sb-ai-progress |
 | 电脑三栏、手机整页 | SbDetailLayout | 用 navigateTo |
+| 带标签的下拉筛选（选项多于 6） | SbLabeledSelect | sb-labeled-select |
+| 指标横排加周期切换 | SbMetricStrip | sb-metric-strip |
+| 带数量的标签页 | SbTabs | sb-tabs |
+| 表格（操作列、四态、分页） | SbTable | 手机用 sb-list-row |
 
 - 图标：用 `SbIcon`（小程序 `sb-icon`），传含义名 name="customer" 不传库里的名字，size sm／md／lg，tone 只给业务状态，tile 带底方块。含义表在 `packages/ui-react/src/icons.js`。图标旁必须有字，见 `specs/salesbuddy/10-图标.md`。
 - Web 页面最外层包一次 `SbProvider`，主题就来自变量，不再手写颜色。

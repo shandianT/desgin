@@ -1,6 +1,6 @@
 ---
 type: packaging
-status: 已发布。2026-09-20 三个包第一次发到 GitHub Packages：tokens 1.1.0-draft.1（draft 标签）、ui-react 0.4.0、ui-miniprogram 0.4.0
+status: 已发布。2026-09-20 三个包第一次发到 GitHub Packages：tokens 1.1.0-draft.1（draft 标签）、ui-react 0.5.0、ui-miniprogram 0.5.0
 updated: 2026-09-20
 ---
 
@@ -54,7 +54,7 @@ npm i tdesign-miniprogram@1.16.1 @shandiant/ui-miniprogram
 
 tokens 现在是草案号，装的时候写 `@draft`，定稿后去掉。小程序还要多做一步：构建 npm 只复制包里的 `components/`，变量和桥接两个 wxss 要从 `node_modules/@shandiant/ui-miniprogram/components/style/` 复制到小程序根目录再 `@import`。
 
-没有 token、或者还没发布，用文件装：`npm i ./release/shandiant-tokens-1.1.0-draft.1.tgz ./release/shandiant-ui-react-0.4.0.tgz`，小程序是 `./release/shandiant-ui-miniprogram-0.4.0.tgz`。用法见各包的 README 和规范站「组件」章每张卡片的「用法」。
+没有 token、或者还没发布，用文件装：`npm i ./release/shandiant-tokens-1.1.0-draft.1.tgz ./release/shandiant-ui-react-0.5.0.tgz`，小程序是 `./release/shandiant-ui-miniprogram-0.5.0.tgz`。用法见各包的 README 和规范站「组件」章每张卡片的「用法」。
 
 ## 4｜怎么发
 
