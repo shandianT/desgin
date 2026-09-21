@@ -191,7 +191,7 @@ export interface SbLabeledSelectProps {
 }
 export declare function SbLabeledSelect(props: SbLabeledSelectProps): JSX.Element;
 
-export interface SbMetricStripItem { key?: string; label: ReactNode; value?: ReactNode; note?: ReactNode; missingText?: string }
+export interface SbMetricStripItem { key?: string; label: ReactNode; value?: ReactNode; note?: ReactNode; missingText?: string; /** 传了就整张卡可点，进明细 */ onClick?: () => void; ariaLabel?: string }
 export interface SbMetricStripProps {
   items?: SbMetricStripItem[];
   periods?: Array<{ value: string | number; label: ReactNode }>;

@@ -4,7 +4,7 @@ import { SbMetricTile } from './SbMetricTile.jsx';
 import { SbIcon } from './SbIcon.jsx';
 /**
  * 指标条（T-05、B-03）：几张指标卡横排，右侧周期切换与口径说明。缺失显示「未登记」，加载中显示「正在读取」而不是 0。
- * items: [{ key, label, value, note, missingText }]；periods: [{ value, label }]。
+ * items: [{ key, label, value, note, missingText, onClick }]；带 onClick 的卡可点进明细；periods: [{ value, label }]。
  */
 export function SbMetricStrip({ items = [], periods, period, onPeriodChange, caliber, loading = false, columns, className = '' }) {
   return (
@@ -16,7 +16,12 @@ export function SbMetricStrip({ items = [], periods, period, onPeriodChange, cal
         </div>
       )}
       <div className="sb-mstrip-items">
-        {items.map((m) => <SbMetricTile key={m.key ?? m.label} label={m.label} value={loading ? '…' : m.value} note={loading ? '正在读取' : m.note} missingText={m.missingText} />)}
+        {items.map((m) => {
+          const tile = <SbMetricTile label={m.label} value={loading ? '…' : m.value} note={loading ? '正在读取' : m.note} missingText={m.missingText} />;
+          return m.onClick
+            ? <button key={m.key ?? m.label} type="button" className="sb-mstrip-link" onClick={m.onClick} aria-label={m.ariaLabel || `${typeof m.label === 'string' ? m.label : ''}，查看明细`}>{tile}<span className="sb-mstrip-link-hint"><SbIcon name="forward" size="sm" /></span></button>
+            : <div key={m.key ?? m.label}>{tile}</div>;
+        })}
       </div>
     </div>
   );
