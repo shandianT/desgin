@@ -31,6 +31,7 @@ jobs:
           cd packages/ui-react && npm run build && cd ../..
           node tools/build-site.mjs specs/salesbuddy --portable out/site
           cp specs/salesbuddy/站点/评审稿-文案与图表.html out/site/
+          cp -r demo/web out/site/web
       - uses: actions/configure-pages@v5
         with:
           enablement: true
