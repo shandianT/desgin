@@ -1,6 +1,6 @@
 ---
 type: packaging
-status: 已发布。2026-09-20 三个包第一次发到 GitHub Packages：tokens 1.1.0-draft.1（draft 标签）、ui-react 0.5.5、ui-miniprogram 0.5.0。2026-09-21 本地打了 tokens 1.2.0-draft.1、ui-react 0.6.0、ui-miniprogram 0.6.0（release/），GitHub 上的 0.5.5 作为稳定版，新版何时发布另定
+status: 已发布。2026-09-20 三个包第一次发到 GitHub Packages：tokens 1.1.0-draft.1（draft 标签）、ui-react 0.5.5、ui-miniprogram 0.5.0。2026-09-21 发布 tokens 1.2.0-draft.1、ui-react 0.6.0、ui-miniprogram 0.6.0（release/ 同步）。发布触发：打 v* 标签，或 main 上任一包的 package.json 版本号变化；已发过的版本自动跳过
 updated: 2026-09-20
 ---
 

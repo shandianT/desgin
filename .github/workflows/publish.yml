@@ -14,6 +14,9 @@ on:
         default: 'false'
   push:
     tags: ['v*']
+    # main 上包版本号变了也发布；已发过的版本自动跳过
+    branches: [main]
+    paths: ['packages/*/package.json']
 
 permissions:
   contents: read
@@ -46,6 +49,7 @@ jobs:
             case ",$PKGS," in *",$p,"*) ;; *) echo "跳过 $p"; continue;; esac
             cd packages/$p
             v=$(node -p "require('./package.json').version")
+            if npm view "@shandiant/$p@$v" version >/dev/null 2>&1; then echo "@shandiant/$p@$v 已发布，跳过"; cd ../..; continue; fi
             tag=latest; case "$v" in *-*) tag=draft;; esac
             extra=""; [ "$DRY" = "true" ] && extra="--dry-run"
             echo "发布 @shandiant/$p@$v（tag $tag）"
