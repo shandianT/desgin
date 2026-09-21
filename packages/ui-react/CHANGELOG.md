@@ -4,6 +4,8 @@
 
 ## 0.6.0（2026-09-21）
 
+- SbSideNav 节奏按运营后台侧栏对齐：顶部留白 28、品牌靠左、分组间距 28、条目高 44、图标 18、当前项左侧加强调色竖条；收起时品牌标居中。
+
 - 新增八个组件：SbSideNav 侧导航、SbTopBar 顶栏、SbDatePicker 日期选择、SbSelect 下拉选择、SbSearchSelect 搜索选择、SbAmountInput 金额输入、SbTextarea 多行文本、SbSegmented 分段切换。侧栏与顶栏从 Web 样板（设计评审交付 v2）抽出，颜色只走 --ui-sidebar* 与语义变量；表单壳都是 antd 薄壳，统一 options 结构与「YYYY-MM-DD」「万元」「number | null」这些口径。
 - SbDatePicker 引 dayjs（antd 自带的那份），库构建把 dayjs 设为外部依赖，使用方无需额外安装。
 - 新增 SbBattleMap 作战地图：SVG 画的关系 × 潜力四象限（12 章 2.1～2.6），横轴潜力、纵轴关系，分界线 5.5 虚线；格子底色用 --ui-quadrant-*；点色是状态、点径是金额档；重叠聚成数字圆（onClusterClick），点象限放大（zoomQuadrant 受控）、点客户进详情（onPointClick）；空态、加载中、待评估计数、手机宽度底部四个数字。

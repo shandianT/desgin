@@ -147,13 +147,16 @@
 /* ---- 顶栏、侧导航、表单壳 ---- */
 /* SbSideNav：深蓝侧栏，颜色只走 --ui-sidebar* 一组变量；antd Menu 用 CSS 覆盖成深色，不用 theme="dark" */
 .sb-sidenav.ant-layout-sider { background: var(--ui-sidebar); color: var(--ui-sidebar-nav); height: 100%; min-height: 480px; }
-.sb-sidenav .ant-layout-sider-children { display: flex; flex-direction: column; height: 100%; padding: var(--ui-space-6) var(--ui-space-3) var(--ui-space-4); gap: var(--ui-space-2); }
+.sb-sidenav .ant-layout-sider-children { display: flex; flex-direction: column; height: 100%; padding: calc(var(--ui-space-6) + var(--ui-space-1)) var(--ui-space-4) var(--ui-space-4); gap: var(--ui-space-2); }
 .sb-sidenav-collapsed .ant-layout-sider-children { padding-left: var(--ui-space-2); padding-right: var(--ui-space-2); align-items: stretch; }
-.sb-sidenav-brand { display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 var(--ui-space-2); margin-bottom: var(--ui-space-3); color: var(--ui-sidebar-ink); text-decoration: none; }
+.sb-sidenav-collapsed .sb-sidenav-brand { justify-content: center; padding: 0; }
+.sb-sidenav-collapsed .sb-sidenav-brand img { max-width: 32px; max-height: 32px; }
+.sb-sidenav-collapsed .ant-menu-item { border-left-width: 0; }
+.sb-sidenav-brand { display: flex; align-items: center; justify-content: flex-start; min-height: 40px; padding: 0 var(--ui-space-1); margin-bottom: var(--ui-space-6); color: var(--ui-sidebar-ink); text-decoration: none; }
 .sb-sidenav-brand img { display: block; max-width: 100%; max-height: 40px; object-fit: contain; }
 .sb-sidenav-brand-text { font-size: var(--ui-text-section); font-weight: 650; letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sb-sidenav-ws, .sb-sidenav-account, .sb-sidenav-toggle { display: flex; align-items: center; gap: var(--ui-space-2); width: 100%; border: 1px solid transparent; border-radius: var(--ui-radius-control); background: var(--ui-sidebar-hover); color: var(--ui-sidebar-ink); font: inherit; text-align: left; cursor: pointer; padding: var(--ui-space-2); }
-.sb-sidenav-ws { margin-bottom: var(--ui-space-3); }
+.sb-sidenav-ws { margin-bottom: var(--ui-space-6); }
 .sb-sidenav-ws:hover, .sb-sidenav-account:hover, .sb-sidenav-toggle:hover, .sb-sidenav-admin:hover { background: var(--ui-sidebar-active); color: var(--ui-sidebar-ink); }
 .sb-sidenav-ws:focus-visible, .sb-sidenav-account:focus-visible, .sb-sidenav-toggle:focus-visible, .sb-sidenav-admin:focus-visible, .sb-sidenav-brand:focus-visible { outline: 2px solid var(--ui-sidebar-focus); outline-offset: 1px; }
 .sb-sidenav-ws-icon.sb-icon-tile { background: var(--ui-sidebar-active); color: var(--ui-sidebar-accent); }
@@ -162,14 +165,16 @@
 .sb-sidenav-ws-text small, .sb-sidenav-account-text small { font-size: var(--ui-text-small); color: var(--ui-sidebar-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sb-sidenav-nav { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
 .sb-sidenav .ant-menu, .sb-sidenav .ant-menu-inline, .sb-sidenav .ant-menu-inline-collapsed { background: transparent; color: var(--ui-sidebar-nav); border-inline-end: 0 !important; width: 100%; }
-.sb-sidenav .ant-menu-item-group + .ant-menu-item-group { margin-top: var(--ui-space-4); }
-.sb-sidenav .ant-menu-item-group-title { padding: 0 var(--ui-space-3); margin-bottom: var(--ui-space-1); font-size: var(--ui-text-small); font-weight: 600; letter-spacing: .6px; color: var(--ui-sidebar-muted); }
+.sb-sidenav .ant-menu-item-group + .ant-menu-item-group { margin-top: calc(var(--ui-space-6) + var(--ui-space-1)); }
+.sb-sidenav .ant-menu-item-group-title { padding: 0 var(--ui-space-3); margin-bottom: var(--ui-space-2); font-size: var(--ui-text-small); font-weight: 600; letter-spacing: .6px; color: var(--ui-sidebar-muted); }
 .sb-sidenav-collapsed .ant-menu-item-group-title { height: 0; padding: 0; margin: 0 0 var(--ui-space-2); overflow: hidden; border-top: 1px solid var(--ui-sidebar-hover); }
 .sb-sidenav .ant-menu-item-group-list { padding: 0; }
-.sb-sidenav .ant-menu-item { height: 40px; line-height: 40px; margin: 0 0 var(--ui-space-1); width: 100%; padding-inline: var(--ui-space-3) !important; border-radius: var(--ui-radius-control); color: var(--ui-sidebar-nav); font-size: var(--ui-text-body); }
+.sb-sidenav .ant-menu-item { height: 44px; line-height: 44px; margin: 0 0 var(--ui-space-1); width: 100%; padding-inline: var(--ui-space-3) !important; border-radius: var(--ui-radius-control); border-left: 3px solid transparent; color: var(--ui-sidebar-nav); font-size: var(--ui-text-body); }
+.sb-sidenav .ant-menu-item .ant-menu-title-content { margin-inline-start: var(--ui-space-3) !important; }
+.sb-sidenav .ant-menu-item .ant-menu-item-icon, .sb-sidenav .ant-menu-item .sb-icon, .sb-sidenav .ant-menu-item .ds-frame-icon { font-size: 18px; width: 18px; height: 18px; }
 .sb-sidenav .ant-menu-item .ant-menu-item-icon, .sb-sidenav .ant-menu-item .sb-icon { color: inherit; }
 .sb-sidenav .ant-menu-item:hover, .sb-sidenav .ant-menu-item-active { background: var(--ui-sidebar-hover) !important; color: var(--ui-sidebar-ink) !important; }
-.sb-sidenav .ant-menu-item-selected { background: var(--ui-sidebar-active) !important; color: var(--ui-sidebar-ink) !important; font-weight: 600; }
+.sb-sidenav .ant-menu-item-selected { background: var(--ui-sidebar-active) !important; color: var(--ui-sidebar-ink) !important; font-weight: 600; border-left-color: var(--ui-sidebar-accent); }
 .sb-sidenav .ant-menu-item-selected .sb-icon { color: var(--ui-sidebar-accent); }
 .sb-sidenav .ant-menu-item:focus-visible { outline: 2px solid var(--ui-sidebar-focus); outline-offset: -2px; }
 .sb-sidenav-collapsed .ant-menu-item { padding-inline: 0 !important; text-align: center; }
