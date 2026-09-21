@@ -1,6 +1,6 @@
 # 设计变量对照表（自动生成）
 
-版本 1.1.0-draft.1 · 2026-09-19。由 build-tokens.mjs 从 tokens.json 生成；改值请改 tokens.json。
+版本 1.2.0-draft.1 · 2026-09-21。由 build-tokens.mjs 从 tokens.json 生成；改值请改 tokens.json。
 
 状态说明：「已确认」= 值来自 SalesBuddy Web V1.0 已确认规则；「建议」= 本轮新增或跨端映射，尚未登记采用；端侧列中与电脑网页不同的值用 **加粗** 标出，**加粗的端侧值一律是建议，未登记采用**。
 
@@ -62,6 +62,15 @@
 | `--ui-sidebar-accent` | 导航当前项亮条 | `color.navy.200` | #91BAFF | #91BAFF | #91BAFF | 建议 | V-01 |
 | `--ui-sidebar-focus` | 导航上的键盘焦点轮廓 | `color.navy.100` | #B9D2FF | #B9D2FF | #B9D2FF | 建议 | V-04 |
 | `--ui-overlay` | 弹窗与抽屉背后的遮罩（深蓝导航色 45% 透明） | 直接值 | #142F5473 | #142F5473 | #142F5473 | 建议 | C-07 |
+| `--ui-quadrant-asset` | 客户资产（右上）底色：主色 5%，和主攻区同一种淡主色，只标出潜力大的两格 | `color.blue.25` | #F4F7FD | #F4F7FD | #F4F7FD | 建议 | 12 章 §2.2 |
+| `--ui-quadrant-attack` | 主攻区（右下）底色：主色 5% | `color.blue.25` | #F4F7FD | #F4F7FD | #F4F7FD | 建议 | 12 章 §2.2 |
+| `--ui-quadrant-resource` | 客户资源（左上）底色：白，不再用中性灰 | `color.gray.0` | #FFFFFF | #FFFFFF | #FFFFFF | 建议 | 12 章 §2.2 |
+| `--ui-quadrant-spot` | 见单打单（左下）底色：白 | `color.gray.0` | #FFFFFF | #FFFFFF | #FFFFFF | 建议 | 12 章 §2.2 |
+| `--ui-chart-1` | 图表顺序色一：主色，第一系列、本期 | `ui.primary` | #2863CD | #2863CD | #2863CD | 建议 | 12 章 §3.4 |
+| `--ui-chart-2` | 图表顺序色二：青，第二系列、上期 | `color.teal.600` | #0E8A8A | #0E8A8A | #0E8A8A | 建议 | 12 章 §3.4 |
+| `--ui-chart-3` | 图表顺序色三：紫 | `color.purple.600` | #6B4FBB | #6B4FBB | #6B4FBB | 建议 | 12 章 §3.4 |
+| `--ui-chart-4` | 图表顺序色四：橙 | `color.orange.600` | #C7741B | #C7741B | #C7741B | 建议 | 12 章 §3.4 |
+| `--ui-chart-5` | 图表顺序色五：灰蓝，第五系列、其他；只有两个系列时与 chart-1 搭配 | `color.slate.500` | #7A8A9E | #7A8A9E | #7A8A9E | 建议 | 12 章 §3.4 |
 
 ## 端侧说明
 

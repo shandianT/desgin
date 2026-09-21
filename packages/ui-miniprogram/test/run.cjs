@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 用微信官方的 miniprogram-simulate 在 Node 里渲染 15 个 sb-* 组件：每个状态能不能渲染、该有的文字在不在、点了会不会对外发事件。
+ * 用微信官方的 miniprogram-simulate 在 Node 里渲染全部 sb-* 组件：每个状态能不能渲染、该有的文字在不在、点了会不会对外发事件。
  * 不是真机，也不是开发者工具，但和真机走同一套组件框架（exparser）。真机与开发者工具的验证仍要人做。
  * 用法：在本目录 npm i 之后 npm test
  * 做法：把 components/ 复制到临时目录；把 tdesign-miniprogram 的 ESM 产物转成 CommonJS 放进 miniprogram_npm/（开发者工具「构建 npm」做的事）；
@@ -24,6 +24,10 @@ const src = path.join(pkg, 'node_modules/tdesign-miniprogram/miniprogram_dist'),
     else fs.copyFileSync(p, out);
   }
 })(src);
+// t-badge 的模板用了对象字面量 {dot,count,showZero}，模拟器的表达式解析器不认，换成只放 slot 的空壳（只影响测试，t-tab-bar-item 会引到它）
+fs.writeFileSync(path.join(dst, 'badge/badge.wxml'), '<view class="t-badge"><slot /></view>');
+// t-tab-bar-item 的 aria-label 里有对象展开 { ...badgeProps }，同样不认，去掉这一段（只影响测试里的读屏文字）
+const tbi = path.join(dst, 'tab-bar-item/tab-bar-item.wxml'); fs.writeFileSync(tbi, fs.readFileSync(tbi, 'utf8').replace(/aria-label="\{\{ ariaLabel \|\|[^}]*\}\) : ''\) \}\}"/, 'aria-label="{{ ariaLabel }}"'));
 fs.mkdirSync(path.join(work, 'node_modules'), { recursive: true });
 for (const m of ['tslib', 'dayjs']) fs.symlinkSync(path.join(pkg, 'node_modules', m), path.join(work, 'node_modules', m), 'dir');
 const names = fs.readdirSync(path.join(work, 'components')).filter((n) => n.startsWith('sb-'));
@@ -38,6 +42,8 @@ const info = { windowWidth: 375, windowHeight: 667, pixelRatio: 2, platform: 'de
 const query = () => ({ in() { return this; }, select() { return this; }, selectAll() { return this; }, boundingClientRect(cb) { cb && cb({ width: 0, height: 0, top: 0, left: 0 }); return this; }, exec(cb) { cb && cb([{ width: 0, height: 0 }]); } });
 global.wx = { getSystemInfoSync: () => info, getWindowInfo: () => info, getDeviceInfo: () => info, getAppBaseInfo: () => ({ SDKVersion: '3.0.0', theme: 'light' }), getMenuButtonBoundingClientRect: () => ({ top: 24, bottom: 56, height: 32 }), nextTick: (f) => setTimeout(f, 0), createSelectorQuery: query, canIUse: () => true, onThemeChange() {}, offThemeChange() {}, showToast() {} };
 global.getApp = () => ({ globalData: {} }); global.getCurrentPages = () => [];
+// t-tab-bar-item 挂载时用 createSelectorQuery 量 __text 的高度，模拟器里量不到会 reject(null)；这不影响渲染，只记一笔不中断
+process.on('unhandledRejection', (r) => { if (r !== null) console.error('未处理的 rejection：', r && r.stack || r); });
 const simulate = require('miniprogram-simulate');
 const CASES = require('./cases.cjs');
 

@@ -21,6 +21,15 @@
     "sb-ai-progress": "/components/sb-ai-progress/index",
     "t-button": "tdesign-miniprogram/button/button",
     "t-input": "tdesign-miniprogram/input/input",
-    "t-cell": "tdesign-miniprogram/cell/cell"
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "sb-tab-bar": "/components/sb-tab-bar/index",
+    "sb-date-picker": "/components/sb-date-picker/index",
+    "sb-select": "/components/sb-select/index",
+    "sb-amount-input": "/components/sb-amount-input/index",
+    "sb-textarea": "/components/sb-textarea/index",
+    "sb-segmented": "/components/sb-segmented/index",
+    "sb-battle-map": "/components/sb-battle-map/index",
+    "sb-kpi-card": "/components/sb-kpi-card/index",
+    "sb-chart-card": "/components/sb-chart-card/index"
   }
 }

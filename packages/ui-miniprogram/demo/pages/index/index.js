@@ -1,5 +1,14 @@
 const STAGES = ['转写语音', '提取 16 项基础字段', '核对「下一步」是否含时间与目标'];
 const SOURCES = [{ key: 1, title: '9 月 12 日拜访记录', description: '「已获得 CIO 支持，预算在四季度审批」', url: '/pages/visit/detail?id=1' }, { key: 2, title: '客户档案 · 潜力', description: '预算 320 万，台数 1200', url: '/pages/customer/detail?id=1' }];
+const MAP_POINTS = [
+  { id: 1, name: '华宸数据科技', potential: 8, relationship: 9, tone: 'good', amountBand: 'large' },
+  { id: 2, name: '北辰智造集团', potential: 7, relationship: 3, tone: 'watch', amountBand: 'medium' },
+  { id: 3, name: '云岭物流', potential: 8.5, relationship: 2, tone: 'bad', amountBand: 'medium' },
+  { id: 4, name: '瀚海医疗', potential: 3, relationship: 8, tone: 'good', amountBand: 'small' },
+  { id: 5, name: '恒远建材', potential: 2, relationship: 2, tone: 'pending', amountBand: 'small' },
+  { id: 6, name: '恒远建材（华南）', potential: 2.2, relationship: 2.3, tone: 'pending', amountBand: 'small' },
+  { id: 7, name: '星河教育', potential: 6, relationship: 6.5, tone: 'watch', amountBand: 'large' },
+];
 Page({
   data: {
     filter: ['risk'], filterOpts: [{ value: 'risk', label: '有风险', count: 6 }, { value: 'main', label: '主攻区', count: 9 }, { value: 'asset', label: '客户资产', count: 7 }, { value: 'mine', label: '本人负责', count: 24 }],
@@ -11,8 +20,25 @@ Page({
     sources: SOURCES, stages: STAGES, gen: 'running', genFail: 'failed', genFailStep: 0, barDisabled: false,
     quad: null, quadOpts: [{ value: 'attack', label: '主攻区', count: 9 }, { value: 'asset', label: '客户资产', count: 12 }, { value: 'spot', label: '见单打单', count: 3 }, { value: 'resource', label: '客户资源', count: 7 }],
     metrics: [{ label: '年度合同额 · 万元', value: 1880 }, { label: '确收 · 万元', value: 138 }, { label: '回款 · 万元', value: null, note: '财务还没登记' }, { label: '客户', value: 24, note: '比上季 +2 家' }], period: 'year', tab: 'todo',
+    seg: 'map', segOpts: [{ value: 'map', label: '地图' }, { value: 'list', label: '列表' }, { value: 'table', label: '表格', disabled: true }],
+    date: '', stage: 'verify', stageOpts: [{ value: 'find', label: '识别' }, { value: 'verify', label: '验证', count: 3 }, { value: 'plan', label: '方案' }, { value: 'sign', label: '签约', disabled: true }],
+    amount: 320, summary: '已获得 CIO 支持，预算在四季度审批。',
+    mapPoints: MAP_POINTS, mapZoom: '', mapSelected: null, chartState: 'error', tab5: 'home',
     ai: { value: '张总（CIO）', state: 'ai' }, aiLow: { value: '', state: 'ai' }, submitting: false,
   },
+  onSeg(e) { this.setData({ seg: e.detail.value }); },
+  onDate(e) { this.setData({ date: e.detail.value }); },
+  onStage(e) { this.setData({ stage: e.detail.value }); },
+  onAmount(e) { this.setData({ amount: e.detail.value }); },
+  onSummary(e) { this.setData({ summary: e.detail.value }); },
+  onKpi(e) { wx.showToast({ title: `打开：${e.detail.label}`, icon: 'none' }); },
+  onPoint(e) { this.setData({ mapSelected: e.detail.point.id }); wx.showToast({ title: e.detail.point.name, icon: 'none' }); },
+  onCluster(e) { wx.showToast({ title: `重叠 ${e.detail.points.length} 家：${e.detail.points.map((p) => p.name).join('、')}`, icon: 'none' }); },
+  onZoom(e) { this.setData({ mapZoom: e.detail.zoom }); },
+  onUnrated() { wx.showToast({ title: '打开待评估列表', icon: 'none' }); },
+  onMapEmpty() { wx.showToast({ title: '去客户列表', icon: 'none' }); },
+  onChartRetry() { this.setData({ chartState: 'loading' }); setTimeout(() => this.setData({ chartState: 'error' }), 1200); },
+  onTab5(e) { this.setData({ tab5: e.detail.value }); },
   onQuad(e) { this.setData({ quad: e.detail.value }); },
   onPeriod(e) { this.setData({ period: e.detail.value }); },
   onTab(e) { this.setData({ tab: e.detail.key }); },

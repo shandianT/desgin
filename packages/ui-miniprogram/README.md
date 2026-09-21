@@ -1,6 +1,6 @@
 # 部门小程序组件库
 
-放在 tdesign-miniprogram 1.16.1 之上的组合件与 AI 件，与 Web 端 `packages/ui-react` 一一对应。基础控件（按钮、输入、选择器、日期、弹层、提示）直接用 `t-*`，主题只靠两个文件：
+放在 tdesign-miniprogram 1.16.1 之上的组合件、表单件、图表件与 AI 件，与 Web 端 `packages/ui-react` 一一对应。基础控件（按钮、输入、选择器、日期、弹层、提示）直接用 `t-*`，主题只靠两个文件：
 
 ```
 app.wxss 头两行：
@@ -27,6 +27,15 @@ app.wxss 头两行：
 | sb-ai-field | 待确认字段三态，低把握给候选，可恢复 AI 建议 | label、required、value、aiValue、state、confidence、candidates、error；事件 change、confirm、restore | A-01、A-03、A-04 |
 | sb-ai-sources | AI 依据列表，默认折叠，每条可点；没有依据就不展示结论 | items、title、defaultExpanded；事件 tap（带 item） | A-03 |
 | sb-ai-progress | 生成过程：阶段、百分比、可取消并保留已生成部分，失败可重试 | stages、current、status（running、cancelled、failed、done）、detail；事件 cancel、retry | A-09、A-07 |
+| sb-tab-bar | 底部标签栏：t-tab-bar 薄壳，默认五个 Tab（总览、客户、商机、拜访、我的），不做跳转 | items、value、fixed、safeArea；事件 change（value、item） | T-01 |
+| sb-date-picker | 日期选择：一行触发器加滚轮，值统一 'YYYY-MM-DD'，快捷片今天、本周、本季 | label、value、placeholder、start、end、disabled、required、shortcuts；事件 change | C-02、C-03 |
+| sb-select | 表单单选：一行触发器加单列滚轮；筛选栏用 sb-labeled-select | label、value、options、placeholder、disabled、required；事件 change（value、option） | C-02、C-03 |
+| sb-amount-input | 金额输入：单位在右（默认万元），只收正数，失焦千分位、聚焦纯数字 | label、value、placeholder、unit、disabled、required、precision；事件 change（number 或 null） | C-02、B-03 |
+| sb-textarea | 多行文本：字数（默认 500）、自动增高 | label、value、placeholder、maxlength、disabled、required；事件 change | C-02 |
+| sb-segmented | 分段切换：自绘胶囊，选中白底加阴影与主色字 | options、value、size；事件 change | C-04、T-05 |
+| sb-battle-map | 作战地图：自绘四象限，点色表状态、点大小表金额档，重叠聚合，缺潜力的不画进格子，空态给下一步 | points、thresholds、zoom、selectedId、unrated、loading；事件 pointtap、clustertap、zoomchange、unratedtap、emptyaction | 12 章 §2 |
+| sb-kpi-card | 指标卡：数字 32、单位小一号、变化只在有好坏时着色，缺失显示未登记 | label、value、unit、note、change、loading、missingText；事件 tap | 12 章 §3.1、B-03 |
+| sb-chart-card | 图表卡片壳：标题、范围、口径 ⓘ，四态；图放默认 slot，图例放 legend slot | title、scope、caliber、state、emptyTitle、emptyDescription、summary；事件 retry、caliber | 12 章 §3.5、§4 |
 
 几处和 Web 端不同的地方：
 
@@ -34,6 +43,12 @@ app.wxss 头两行：
 - sb-sheet 传了 `confirmLabel` 才出现取消与确定两个按钮，`footer` slot 放在同一行左侧。关闭按钮与遮罩点击都发 close 事件，detail.trigger 说明来源。
 - sb-pagination 多了 `mode="more"`，小程序列表更常用加载更多。
 - sb-ai-progress 的百分比由 t-progress 自带的标签显示。失败时进度条变红，已取消变灰，完成时 t-progress 自己变绿。
+- sb-tab-bar 只发 change，不调 wx.switchTab，页面拿 item.pagePath 自己跳。默认五个 Tab 的 pagePath 对照交付包 app.json：总览 pages/index/index、客户 pages/customers/index、商机 pages/workbench/index、我的 pages/profile/index；「拜访」在交付包里不是 Tab，先指到 pages/visit-entry/index。图标名先按 sb-icon 的含义名查，查不到当 t-icon 名。
+- sb-date-picker 的快捷片：今天、本周指本周日、本季指本季最后一天；传 `shortcuts` 可换成 `[{ label, value }]`。t-date-time-picker 收到的 value 与发出的 value 都转成 'YYYY-MM-DD' 字符串。
+- sb-select 的禁用项在滚轮里标「不可选」，确定时拒绝并 toast。
+- sb-amount-input 的 change 在输入中就发（值已解析为数字），失焦时再格式化一次；输入非法字符直接过滤。
+- sb-battle-map 的聚合半径按 700rpx 宽的图折算成百分比：点之间距离小于约一个点直径聚成一个，超过 30 个点放宽半径默认聚合。点格子名用 wx.showToast 显示全称。象限底色用 `--ui-quadrant-asset/attack/resource/spot`，后面带同义回退值。
+- sb-chart-card 只做壳：图区用 ec-canvas（echarts-for-weixin），主题文件用 tokens 包的 `bridge-echarts.theme.json`。
 
 ## 用了哪些 t-* 组件
 
@@ -46,6 +61,12 @@ app.wxss 头两行：
 | sb-ai-sources | t-icon：name=chevron-down 或 chevron-up | — |
 | sb-ai-progress | t-progress：theme=line、percentage、color；t-button | tap |
 | sb-state-panel、sb-bottom-bar、sb-ai-field | t-loading、t-skeleton、t-button、t-input | tap、change |
+| sb-tab-bar | t-tab-bar：value、fixed、safe-area-inset-bottom、split=false；t-tab-bar-item：value、icon | change |
+| sb-date-picker | t-date-time-picker：visible、mode=date、format=YYYY-MM-DD、value、start、end、title、cancel-btn、confirm-btn；t-icon | confirm、cancel、close |
+| sb-select | t-picker：visible、title、value、cancel-btn、confirm-btn、auto-close=false；t-picker-item：options；t-icon | confirm、cancel |
+| sb-amount-input | t-input：type=digit、value、placeholder、disabled、align=right、borderless | focus、blur、change |
+| sb-textarea | t-textarea：value、placeholder、maxlength、indicator、autosize、disabled、bordered=false | change |
+| sb-battle-map、sb-chart-card | t-loading、t-button、t-icon | tap |
 
 属性名与事件名对照 1.16.1 包里各组件的 props.js 与编译后的 js 核过。t-progress 的 status 属性没有用：传了 status 会把百分比换成图标。
 
@@ -62,7 +83,7 @@ app.wxss 头两行：
 
 ## 怎么测（不用开发者工具）
 
-在本目录 `npm i` 然后 `npm test`。用微信官方的 miniprogram-simulate 在 Node 里渲染 15 个组件的每个状态，检查文字在不在、点了会不会对外发事件，用例在 `test/cases.cjs`。它和真机走同一套组件框架，但不是真机：布局、滚动、键盘、安全区这些还是要在开发者工具和真机看。
+在本目录 `npm i` 然后 `npm test`。用微信官方的 miniprogram-simulate 在 Node 里渲染 28 个组件的每个状态，检查文字在不在、点了会不会对外发事件，用例在 `test/cases.cjs`。它和真机走同一套组件框架，但不是真机：布局、滚动、键盘、安全区这些还是要在开发者工具和真机看。
 
 ## 怎么看（仓库内演示工程，不随 npm 包发布）
 
@@ -76,4 +97,4 @@ app.wxss 头两行：
 
 ## 状态
 
-15 个组件代码写好，与 Web 端 `packages/ui-react/src/meta.js` 的清单一致。t-* 的属性与事件名已对照 1.16.1 包核过；组件本身未在开发者工具与真机跑过。
+28 个组件代码写好（0.6.0 加了 9 个），与 Web 端 `packages/ui-react/src/meta.js` 的清单一致。t-* 的属性与事件名已对照 1.16.1 包核过；组件本身未在开发者工具与真机跑过。

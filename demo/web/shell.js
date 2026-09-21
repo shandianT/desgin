@@ -22,6 +22,9 @@
   ];
   const svg = content => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + content + '</svg>';
   const tabs = SALES_BUNDLE.config.tabBar.list;
+  // 外框（侧导航、顶栏）由部门组件画；这里只维护状态，改了就 paintFrame
+  const frame = {groups: [], activeKey: '', title: '工作空间', crumbGroup: '销售管理', showBack: false, showCreate: false, status: 'checking', statusText: '', date: '', environment: '', workspaceName: '企业工作空间', workspaceScope: '客户经营与销售协作', accountName: '尚未登录', accountRole: '请登录工作空间', accountTeam: '', accountAvatar: '我', accountActive: false};
+  const paintFrame = () => globalThis.SalesDepartmentUI?.renderFrame?.(frame);
   const taskIcon = '<rect x="4" y="4" width="16" height="17" rx="3"/><path d="M9 3h6v4H9zM8 12l2 2 5-5M8 18h8"/>';
   const visitIcon = '<path d="M8 3h8l4 4v14H4V3h4zM15 3v5h5M8 12h8M8 16h5"/>';
   const navigationGroups = [
@@ -49,12 +52,8 @@
     if (small) b.setAttribute('aria-label', t.text);
     return b;
   }
-  navigationGroups.forEach(group => {
-    const section = document.createElement('div'); section.className = 'web-nav-group';
-    if (group.title) { const label = document.createElement('div'); label.className = 'web-nav-label'; label.textContent = group.title; section.append(label); }
-    group.items.forEach(item => section.append(navButton(item)));
-    $('desktop-nav').append(section);
-  });
+  frame.groups = navigationGroups;
+  frame.onSelect = path => SalesRuntime.userRoute('/' + path, {tab: tabs.some(tab => tab.pagePath === path)});
   tabs.forEach((t, i) => {
     const module = navigationGroups.flatMap(group => group.items).find(item => item.pagePath === t.pagePath);
     $('mobile-nav').append(navButton(module || t, i, true));
@@ -85,19 +84,18 @@
       actions.append(button);
     });
   }
-  $('current-date').textContent = new Date().toLocaleDateString('zh-CN', {month: 'long', day: 'numeric', weekday: 'long', timeZone: 'Asia/Shanghai'});
+  frame.date = new Date().toLocaleDateString('zh-CN', {month: 'long', day: 'numeric', weekday: 'long', timeZone: 'Asia/Shanghai'});
   const preview = SALES_MODE === 'preview';
   const previewOnly = window.SALES_SERVICE?.previewOnly === true;
   if (previewOnly) {
     for (const id of ['enter-live', 'choose-live', 'preview-enter-live']) { $(id).hidden = true; $(id).disabled = true; }
-    $('workspace-status').title = '';
     document.querySelector('#preview-entry-choice > p').textContent = '选择身份后进入工作区。';
   }
   let crmData = null;
   document.body.dataset.mode = SALES_MODE;
   $('preview-notice').hidden = !preview;
   $('preview-visit-example').textContent = '沟通内容：今天与客户讨论试点范围，对方希望先评估两条产线。\n下一步计划：明天由我整理试点范围并发送验收清单给客户。\n跟进日期：今天\n对接人：张晓静';
-  $('workspace-status').textContent = preview ? '' : '企业工作区';
+  frame.environment = preview ? '' : '企业工作区';
   const loginUiKey = `sales-web:login-ui:${SALES_MODE}`;
   let connection = null, localLoginBusy = false, loginTransportBusy = 0, manualLoginOpen = !preview && sessionStorage.getItem(loginUiKey) === 'manual';
   if (preview) sessionStorage.removeItem(loginUiKey);
@@ -209,8 +207,9 @@
   function updateConnection() {
     const session = SalesRuntime.app?.globalData?.session;
     const text = preview ? '服务已连接' : connection?.reachable ? ('服务已连接' + (!session ? ' · 请登录' : '')) : connection?.configured === false ? '服务尚未配置' : connection ? '服务暂不可用' : '正在检查服务';
-    for (const id of ['connection-status', 'login-connection-status']) {
-      $(id).textContent = text; $(id).dataset.state = preview ? 'preview' : connection?.reachable ? 'ready' : connection ? 'unavailable' : 'checking';
+    frame.statusText = text; frame.status = preview ? 'preview' : connection?.reachable ? 'ready' : connection ? 'unavailable' : 'checking'; paintFrame();
+    for (const id of ['login-connection-status']) {
+      $(id).textContent = text; $(id).dataset.state = frame.status;
       $(id).title = [typeof connection?.label === 'string' ? connection.label : typeof connection?.environment === 'string' ? connection.environment : '', connection?.checkedAt ? '检查时间：' + new Date(connection.checkedAt).toLocaleTimeString('zh-CN') : ''].filter(Boolean).join(' · ');
     }
     updateLocalLogin();
@@ -235,7 +234,7 @@
     history.replaceState(null, '', url.href); location.reload();
   }
   const dialog = $('workspace-dialog');
-  $('workspace-switch').onclick = () => dialog.showModal();
+  frame.onWorkspace = () => dialog.showModal();
   $('close-workspace').onclick = () => dialog.close();
   $('choose-live').onclick = () => setMode('live');
   $('choose-preview').onclick = () => setMode('preview');
@@ -247,11 +246,10 @@
     setMode('preview');
   };
   const accountDialog = $('account-dialog'); let accountTrigger = null, accountFocusAfterClose = null, exitBusy = false;
-  $('refresh-button').after($('mobile-account-button'));
   function openAccount(event) {
     const session = SalesRuntime.app?.globalData?.session;
     if (!session || session.mustChangePassword) return;
-    accountTrigger = event.currentTarget;
+    accountTrigger = event?.currentTarget?.closest?.('button') || document.querySelector('#frame-sidenav button') || document.body;
     $('account-dialog-name').textContent = session.userName || '当前账号';
     $('account-dialog-title').textContent = '账号与登录';
     $('account-dialog-detail').textContent = [session.roleName, session.team || session.scope].filter(Boolean).join(' · ');
@@ -260,7 +258,7 @@
     accountTrigger.setAttribute('aria-expanded', 'true'); accountDialog.showModal();
     $('account-profile').focus();
   }
-  $('account-button').onclick = openAccount; $('mobile-account-button').onclick = openAccount;
+  frame.onAccount = openAccount; $('mobile-account-button').onclick = openAccount;
   $('close-account').onclick = () => accountDialog.close();
   accountDialog.addEventListener('close', () => {
     accountTrigger?.setAttribute('aria-expanded', 'false');
@@ -306,15 +304,16 @@
     sessionStorage.setItem(`sales-web:login-notice:${SALES_MODE}`, loginNotice);
     clearLoginError(); if (accountDialog.open) accountDialog.close();
   });
-  $('back-button').onclick = () => SalesRuntime.back();
-  $('refresh-button').onclick = () => { void checkConnection(); SalesRuntime.refresh(); };
+  frame.onBack = () => SalesRuntime.back();
+  frame.onRefresh = () => { void checkConnection(); SalesRuntime.refresh(); };
+  frame.onHelp = () => $('shortcut-help-button').click();
   const openQuickActions = () => {
     if (!availableQuickActions().length) return;
     renderQuickActions();
     $('quick-dialog').showModal();
   };
   $('mobile-actions').onclick = openQuickActions;
-  $('desktop-actions').onclick = openQuickActions;
+  frame.onCreate = openQuickActions;
   $('close-quick').onclick = () => $('quick-dialog').close();
   $('preview-role').onchange = async e => {
     setPreviewRole(e.target.value);
@@ -335,40 +334,41 @@
     $('preview-visit-guide').hidden = true;
     document.body.classList.toggle('web-login', path === 'pages/login/index');
     $('preview-entry-choice').hidden = !preview || path !== 'pages/login/index';
-    $('page-title').textContent = tabs.find(t => t.pagePath === path)?.text || detail.title || '工作空间';
+    frame.title = tabs.find(t => t.pagePath === path)?.text || detail.title || '工作空间';
     const modulePath = path === 'pages/customer-assets/index' && current?.data.opportunityId
       ? 'pages/workbench/index'
       : Object.keys(moduleRoutes).find(key => moduleRoutes[key].includes(path.split('/')[1])) || path;
     const nav = navigationGroups.flatMap(group => group.items.map(item => ({...item, group: group.title}))).find(item => item.pagePath === modulePath);
-    if (nav?.pagePath === path) $('page-title').textContent = nav.text;
-    $('breadcrumb-group').textContent = nav?.group || (modulePath === 'pages/profile/index' ? '个人中心' : '销售管理');
-    $('workspace-name').textContent = crmData ? (crmData.scope === 'full' ? 'CRM 全量工作空间' : 'CRM 样本工作空间') : preview ? '渠道销售工作区' : session?.team || '企业工作空间';
-    $('workspace-scope').textContent = session?.scope || '客户经营与销售协作';
-    $('back-button').hidden = !!tabs.find(t => t.pagePath === path) || path === 'pages/login/index';
-    $('account-name').textContent = session?.userName || '尚未登录';
-    $('account-role').textContent = session ? (session.roleName || '') + ' · ' + (session.team || session.scope || '') : '请使用企业账号';
-    $('account-avatar').textContent = session?.userName?.slice(-2) || '我';
+    if (nav?.pagePath === path) frame.title = nav.text;
+    frame.crumbGroup = nav?.group || (modulePath === 'pages/profile/index' ? '个人中心' : '销售管理');
+    frame.workspaceName = crmData ? (crmData.scope === 'full' ? 'CRM 全量工作空间' : 'CRM 样本工作空间') : preview ? '渠道销售工作区' : session?.team || '企业工作空间';
+    frame.workspaceScope = session?.scope || '客户经营与销售协作';
+    frame.showBack = !(tabs.find(t => t.pagePath === path) || path === 'pages/login/index');
+    frame.accountName = session?.userName || '尚未登录';
+    frame.accountRole = session ? (session.roleName || '') : '请使用企业账号';
+    frame.accountTeam = session ? (session.team || session.scope || '') : '';
+    frame.accountAvatar = session?.userName?.slice(-2) || '我';
     $('mobile-account-button').hidden = !session || path === 'pages/login/index';
     if (accountDialog.open && (!session || path === 'pages/login/index')) accountDialog.close();
     const hasActions = !!session && path !== 'pages/login/index' && availableQuickActions().length > 0;
     $('mobile-actions').hidden = !hasActions;
-    $('desktop-actions').hidden = !hasActions;
+    frame.showCreate = hasActions;
     const mobileModulePath = tabs.some(tab => tab.pagePath === modulePath) ? modulePath : 'pages/index/index';
-    document.querySelectorAll('#desktop-nav [data-path], #mobile-nav [data-path]').forEach(b => {
-      const active = b.dataset.path === (b.closest('#mobile-nav') ? mobileModulePath : modulePath);
+    frame.activeKey = modulePath;
+    document.querySelectorAll('#mobile-nav [data-path]').forEach(b => {
+      const active = b.dataset.path === mobileModulePath;
       b.classList.toggle('active', active);
       if (active) b.setAttribute('aria-current', b.dataset.path === path ? 'page' : 'location'); else b.removeAttribute('aria-current');
     });
-    const accountActive = modulePath === 'pages/profile/index';
-    $('account-button').classList.toggle('active', accountActive);
-    if (accountActive) $('account-button').setAttribute('aria-current', path === modulePath ? 'page' : 'location'); else $('account-button').removeAttribute('aria-current');
-    document.querySelectorAll('#desktop-nav [data-capability]').forEach(b => { b.hidden = !session || (!!b.dataset.capability && !SalesRuntime.app?.can(b.dataset.capability)); });
+    frame.accountActive = modulePath === 'pages/profile/index';
+    frame.groups = navigationGroups.map(group => ({...group, items: group.items.map(item => ({...item, hidden: !session || (!!item.capability && !SalesRuntime.app?.can(item.capability))}))}));
     if ($('quick-dialog').open) {
       if (!hasActions) $('quick-dialog').close();
       else renderQuickActions();
     }
     updateConnection();
-    document.title = ($('page-title').textContent || '工作空间') + ' · 商汤销售小浣熊';
+    document.title = (frame.title || '工作空间') + ' · 商汤销售小浣熊';
+    paintFrame();
   }
   window.addEventListener('sales:navigation', e => navigation(e.detail));
   // Source labels remain faithful in live mode; preview must never imply backend verification.
@@ -418,7 +418,7 @@
     if (crmData) {
       document.body.dataset.previewSource = 'crm';
       $('preview-notice').firstElementChild.textContent = `${crmData.label || 'CRM 真实样本 · 本地预览'}；操作仅保存在本机，未调用真实 Agent`;
-      $('workspace-status').textContent = crmData.scope === 'full' ? 'CRM 全量数据' : 'CRM 真实样本';
+      frame.environment = crmData.scope === 'full' ? 'CRM 全量数据' : 'CRM 真实样本';
       const first = crmData.state.visits[0];
       $('preview-visit-example').textContent = `真实跟进原文（第 ${first.source_ref.row} 行，重录仅用于本地演示）\n沟通内容：${first.follow_up_record || ''}\n下一步计划：${first.next_action || ''}\n跟进日期：${first.visit_date}\n对接人：${first.contact_name_snapshot || '原表未填写'}`;
       if (sessionStorage.getItem('sales-web:preview-dataset') !== crmData.dataset_id) {

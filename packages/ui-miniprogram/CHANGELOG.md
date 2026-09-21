@@ -2,6 +2,13 @@
 
 版本号规则与 ui-react 一致。每条写「改了什么、对使用方有什么影响」。
 
+## 0.6.0（2026-09-21）
+
+- 新增九个组件：sb-tab-bar（t-tab-bar 壳）、sb-date-picker（t-date-time-picker 壳）、sb-select（t-picker 壳）、sb-amount-input（t-input 壳）、sb-textarea（t-textarea 壳）、sb-segmented（自绘）、sb-battle-map（自绘四象限，view 绝对定位不用 canvas）、sb-kpi-card（自绘指标卡）、sb-chart-card（图表卡片壳，图区留给 ec-canvas）。
+- sb-battle-map 用到四个象限底色变量 `--ui-quadrant-asset/attack/resource/spot`（tokens 1.1.0-draft.2 起有）。
+- 测试：28 个组件、84 个状态、32 次交互；`test/run.cjs` 在临时目录里把 t-badge 模板换成空壳并去掉 t-tab-bar-item 读屏文字里的对象展开（模拟器的表达式解析器不认），只影响测试。
+- 演示页加九段。
+
 ## 0.5.0（2026-09-21）
 
 - 新增三个组件：sb-labeled-select、sb-metric-strip、sb-tabs。表格在手机上用列表，不做 sb-table。

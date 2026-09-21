@@ -2,6 +2,14 @@
 
 版本号规则：只改值升修订号，加组件或属性升次版本，改含义或删属性升主版本。每条写「改了什么、对使用方有什么影响」。
 
+## 0.6.0（2026-09-21）
+
+- 新增八个组件：SbSideNav 侧导航、SbTopBar 顶栏、SbDatePicker 日期选择、SbSelect 下拉选择、SbSearchSelect 搜索选择、SbAmountInput 金额输入、SbTextarea 多行文本、SbSegmented 分段切换。侧栏与顶栏从 Web 样板（设计评审交付 v2）抽出，颜色只走 --ui-sidebar* 与语义变量；表单壳都是 antd 薄壳，统一 options 结构与「YYYY-MM-DD」「万元」「number | null」这些口径。
+- SbDatePicker 引 dayjs（antd 自带的那份），库构建把 dayjs 设为外部依赖，使用方无需额外安装。
+- 新增 SbBattleMap 作战地图：SVG 画的关系 × 潜力四象限（12 章 2.1～2.6），横轴潜力、纵轴关系，分界线 5.5 虚线；格子底色用 --ui-quadrant-*；点色是状态、点径是金额档；重叠聚成数字圆（onClusterClick），点象限放大（zoomQuadrant 受控）、点客户进详情（onPointClick）；空态、加载中、待评估计数、手机宽度底部四个数字。
+- 新增四个图表组件（12 章）：SbChartCard 图表卡片壳、SbKpiCard 看板指标卡、SbBarChart 柱状图（横向排名与竖向对比）、SbLineChart 折线图。图表用 echarts/core 按需引入、SVG 渲染，主题 shandiant 来自 `@shandiant/tokens/bridge-echarts`，颜色、字号、网格线、悬停框都从变量取；缺失写「未登记」不画 0，动画只在首屏。
+- 使用方要装 `echarts@^6`（新增 peerDependency）；tokens 包升到 1.2.0-draft.1 才有 bridge-echarts 与 `--ui-chart-*`、`--ui-quadrant-*`。
+
 ## 0.5.5（2026-09-21）
 
 - SbMetricStrip 的 flat 行高从 46 提到 64，卡片整体高一档，数字与经营分析卡片同一档 32px，看起来不再局促。

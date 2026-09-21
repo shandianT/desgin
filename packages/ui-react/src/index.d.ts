@@ -314,6 +314,145 @@ export interface SbAiProgressProps {
 }
 export declare function SbAiProgress(props: SbAiProgressProps): JSX.Element;
 
+/** 作战地图的一个客户点（12 章 2.3） */
+export interface SbBattleMapPoint {
+  id: string | number;
+  name: string;
+  /** 客户潜力 1～10，横轴 */
+  potential: number;
+  /** 关系深度 1～10，纵轴 */
+  relationship: number;
+  /** 当前状态，决定点的颜色：向好、需关注、转差、待评估 */
+  tone?: 'good' | 'watch' | 'bad' | 'pending';
+  /** 金额档，决定点的直径 12／16／22 */
+  amountBand?: 'small' | 'medium' | 'large';
+  /** 悬停或选中时的一行摘要，如「关系 8/10 · 预算 320 万」 */
+  summary?: string;
+}
+/** 四个格子：客户资产（右上）、主攻区（左上）、客户资源（右下）、见单打单（左下） */
+export type SbBattleMapQuadrant = 'asset' | 'attack' | 'resource' | 'spot';
+export interface SbBattleMapProps {
+  points?: SbBattleMapPoint[];
+  /** 分界线，默认都是 5.5 */
+  thresholds?: { potential?: number; relationship?: number };
+  /** 没填关系或潜力的客户数，> 0 时图下方出「待评估 N 家」 */
+  unrated?: number;
+  /** 点数超过这个值时聚合更积极（合并半径翻倍），默认 30 */
+  clusterAfter?: number;
+  /** 受控的放大象限；不传则内部管理 */
+  zoomQuadrant?: SbBattleMapQuadrant | null;
+  defaultZoomQuadrant?: SbBattleMapQuadrant | null;
+  onZoomChange?: (quadrant: SbBattleMapQuadrant | null) => void;
+  onPointClick?: (point: SbBattleMapPoint) => void;
+  /** 点开聚合的大圆，回传里面的客户 */
+  onClusterClick?: (points: SbBattleMapPoint[]) => void;
+  onUnratedClick?: () => void;
+  selectedId?: string | number | null;
+  loading?: boolean;
+  emptyText?: string;
+  /** 空态按钮，label 默认「去客户列表」 */
+  emptyAction?: { label?: string; onClick?: () => void };
+  className?: string;
+  style?: React.CSSProperties;
+}
+export declare function SbBattleMap(props: SbBattleMapProps): JSX.Element;
+/** 点属于哪个格子：潜力 ≥ 阈值为「大」，关系 ≥ 阈值为「深」 */
+export declare function quadrantOf(point: Pick<SbBattleMapPoint, 'potential' | 'relationship'>, thresholds: { potential: number; relationship: number }): SbBattleMapQuadrant;
+
+/** 图表卡片的状态（12 章 §3.5） */
+export type SbChartState = 'normal' | 'loading' | 'empty' | 'error';
+export interface SbChartCardProps {
+  /** 写这张图回答什么问题 */
+  title?: ReactNode;
+  /** 范围与周期，紧挨标题 */
+  scope?: ReactNode;
+  /** 口径，放在悬停 ⓘ 里 */
+  caliber?: ReactNode;
+  /** 图例，图上方左侧 */
+  legend?: ReactNode;
+  state?: SbChartState;
+  emptyTitle?: ReactNode;
+  /** 空态的原因与下一步 */
+  emptyDescription?: ReactNode;
+  onRetry?: () => void;
+  /** 给读屏的一句摘要，写进 aria-label 与视觉隐藏文本 */
+  summary?: string;
+  /** 传了就出现「查看图表数据」折叠表；空值显示未登记 */
+  data?: { columns: ReactNode[]; rows: ReactNode[][] };
+  className?: string;
+  children?: ReactNode;
+}
+export declare function SbChartCard(props: SbChartCardProps): JSX.Element;
+
+export interface SbKpiChange {
+  text: ReactNode;
+  /** 只决定箭头 */
+  tone?: 'up' | 'down' | 'flat';
+  /** true 绿、false 红、不传灰：无好坏的指标不上色 */
+  good?: boolean;
+}
+export interface SbKpiCardProps {
+  /** 空或 null 显示 missingText，不显示 0 */
+  value?: ReactNode;
+  /** 单位，小一号跟在数字后 */
+  unit?: ReactNode;
+  label?: ReactNode;
+  note?: ReactNode;
+  change?: SbKpiChange;
+  missingText?: string;
+  /** 显示「正在读取」而不是 0 */
+  loading?: boolean;
+  /** 传了整张卡可点进明细 */
+  onClick?: () => void;
+  ariaLabel?: string;
+  className?: string;
+}
+export declare function SbKpiCard(props: SbKpiCardProps): JSX.Element;
+
+export interface SbChartSeries {
+  name: string;
+  /** null 不画成 0，柱位或点位写「未登记」 */
+  data: Array<number | null>;
+  /** 指定顺序色档位 1～5；不传按系列顺序取 chart-1～5，两个系列时取 1 和 5 */
+  tone?: 1 | 2 | 3 | 4 | 5;
+}
+export interface SbBarChartProps {
+  categories?: string[];
+  /** 最多五个 */
+  series?: SbChartSeries[];
+  unit?: string;
+  valueFormatter?: (value: number) => string;
+  /** 不传时柱少于 8 根才显示数字 */
+  showLabel?: boolean;
+  /** 横向排名默认 10，超出显示「查看全部」 */
+  maxItems?: number;
+  onShowAll?: () => void;
+  onClick?: (index: number, seriesIndex: number) => void;
+  height?: number;
+  /** horizontal 横向条形（排名、阶段 ACV），vertical 竖向柱状 */
+  orientation?: 'horizontal' | 'vertical';
+  /** 不传时多于一个系列才显示图例 */
+  showLegend?: boolean;
+  className?: string;
+}
+export declare function SbBarChart(props: SbBarChartProps): JSX.Element;
+
+export interface SbLineChartProps {
+  categories?: string[];
+  series?: SbChartSeries[];
+  unit?: string;
+  valueFormatter?: (value: number) => string;
+  smooth?: boolean;
+  area?: boolean;
+  /** 可以不从 0 开始，轴上会标最小值 */
+  yMin?: number;
+  onClick?: (index: number, seriesIndex: number) => void;
+  height?: number;
+  showLegend?: boolean;
+  className?: string;
+}
+export declare function SbLineChart(props: SbLineChartProps): JSX.Element;
+
 export interface SbMeta {
   id: string;
   name: string;
@@ -330,3 +469,145 @@ export interface SbIcon { key: string; label: string; antd: string; tdesign: str
 export declare const ICONS: SbIcon[];
 /** 每个组件的引入与最小用例，键与 META 的 id 一致 */
 export declare const USAGE: Record<string, string>;
+
+/* ---- 0.6.0：顶栏、侧导航、表单壳 ---- */
+export interface SbSideNavItem { key: string; label: ReactNode; /** ReactNode 或 SbIcon 的含义名 */ icon?: ReactNode | string; path?: string; hidden?: boolean }
+export interface SbSideNavGroup { key?: string; title?: ReactNode; items: SbSideNavItem[] }
+export interface SbSideNavBrand { logoSrc?: string; /** 折叠时用的小标 */ markSrc?: string; alt?: string; href?: string }
+export interface SbSideNavProps {
+  brand?: ReactNode | SbSideNavBrand;
+  workspace?: { name: ReactNode; scope?: ReactNode; onClick?: () => void };
+  groups?: SbSideNavGroup[];
+  activeKey?: string;
+  onSelect?: (key: string, item?: SbSideNavItem) => void;
+  /** 折叠成 64 宽的窄条，只留图标 */
+  collapsed?: boolean;
+  /** 传了就显示收起／展开按钮 */
+  onCollapse?: (collapsed: boolean) => void;
+  footer?: ReactNode;
+  account?: { name: string; role?: string; team?: string; /** 图片地址或两个字；不传取姓名前两字 */ avatar?: string; active?: boolean; onClick?: () => void };
+  adminLink?: { label?: string; href: string };
+  className?: string;
+}
+export declare function SbSideNav(props: SbSideNavProps): JSX.Element;
+
+export type SbTopBarStatus = 'ready' | 'preview' | 'unavailable' | 'checking';
+export interface SbTopBarCrumb { label: ReactNode; onClick?: () => void }
+export interface SbTopBarProps {
+  /** 面包屑，最后一项是当前页 */
+  items?: SbTopBarCrumb[];
+  onBack?: () => void;
+  status?: SbTopBarStatus;
+  /** 覆盖状态文字 */
+  statusText?: string;
+  /** 不传显示今天，如「2026年9月21日 周一」 */
+  date?: string;
+  onCreate?: () => void;
+  createLabel?: ReactNode;
+  createHidden?: boolean;
+  onHelp?: () => void;
+  onRefresh?: () => void;
+  refreshing?: boolean;
+  /** 放在动作区左侧 */
+  extra?: ReactNode;
+  className?: string;
+}
+export declare function SbTopBar(props: SbTopBarProps): JSX.Element;
+
+export interface SbDatePickerPreset { label: ReactNode; value: any }
+export interface SbDatePickerProps {
+  /** 'YYYY-MM-DD'；range 时为两元数组 */
+  value?: string | null | [string | null, string | null];
+  onChange?: (value: any) => void;
+  range?: boolean;
+  /** 不传用「今天、本周、本季」；false 不显示 */
+  presets?: SbDatePickerPreset[] | false;
+  allowClear?: boolean;
+  disabled?: boolean;
+  disabledDate?: (d: any) => boolean;
+  placeholder?: string | [string, string];
+  locale?: any;
+  width?: number | string;
+  className?: string;
+  [key: string]: any;
+}
+export declare function SbDatePicker(props: SbDatePickerProps): JSX.Element;
+
+export interface SbSelectOption { value: string | number; label: ReactNode; count?: number; disabled?: boolean }
+export interface SbSelectProps {
+  value?: any;
+  onChange?: (value: any, option?: any) => void;
+  options?: SbSelectOption[];
+  placeholder?: string;
+  allowClear?: boolean;
+  disabled?: boolean;
+  width?: number | string;
+  mode?: 'multiple' | 'tags';
+  showSearch?: boolean;
+  className?: string;
+  [key: string]: any;
+}
+export declare function SbSelect(props: SbSelectProps): JSX.Element;
+
+export interface SbSearchSelectProps {
+  value?: any;
+  onChange?: (value: any, option?: any) => void;
+  /** 远程搜索；不传则用 options 本地过滤 */
+  search?: (keyword: string) => Promise<SbSelectOption[]> | SbSelectOption[];
+  options?: SbSelectOption[];
+  /** 毫秒，默认 300 */
+  debounce?: number;
+  /** 少于这个字数不发请求，默认 1 */
+  minLength?: number;
+  placeholder?: string;
+  allowClear?: boolean;
+  disabled?: boolean;
+  width?: number | string;
+  mode?: 'multiple' | 'tags';
+  className?: string;
+  [key: string]: any;
+}
+export declare function SbSearchSelect(props: SbSearchSelectProps): JSX.Element;
+
+export interface SbAmountInputProps {
+  value?: number | null;
+  onChange?: (value: number | null) => void;
+  /** 后缀单位，默认「万元」；传空字符串不显示 */
+  unit?: string;
+  min?: number;
+  max?: number;
+  precision?: number;
+  placeholder?: string;
+  disabled?: boolean;
+  width?: number | string;
+  className?: string;
+  [key: string]: any;
+}
+export declare function SbAmountInput(props: SbAmountInputProps): JSX.Element;
+
+export interface SbTextareaProps {
+  value?: string;
+  onChange?: (value: string, event?: any) => void;
+  maxLength?: number;
+  showCount?: boolean;
+  autoSize?: boolean | { minRows?: number; maxRows?: number };
+  placeholder?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  className?: string;
+  [key: string]: any;
+}
+export declare function SbTextarea(props: SbTextareaProps): JSX.Element;
+
+export interface SbSegmentedOption { value: string | number; label: ReactNode; disabled?: boolean }
+export interface SbSegmentedProps {
+  value?: string | number;
+  onChange?: (value: any) => void;
+  options?: SbSegmentedOption[];
+  size?: 'small' | 'middle' | 'large';
+  disabled?: boolean;
+  block?: boolean;
+  className?: string;
+  [key: string]: any;
+}
+export declare function SbSegmented(props: SbSegmentedProps): JSX.Element;

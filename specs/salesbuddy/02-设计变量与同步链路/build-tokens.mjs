@@ -163,7 +163,11 @@ if (bridges) {
   const toRgb = (hex) => { const { r, g, b } = hexToRgb(hex); return `${r},${g},${b}`; };
   const resolveBridge = (expr, fmt, platform) => {
     const m = String(expr).match(/^\{(ui|palette)\.([^|}]+)(?:\|(rgb))?\}$/);
-    if (!m) return { text: String(expr), literal: expr };
+    if (!m) {
+      // 字符串里夹着引用（如 "box-shadow: {ui.shadow-popup};"）：逐个替换成解析后的字面值；数字、布尔原样透传
+      if (typeof expr === 'string' && /\{(ui|palette)\.[^}]+\}/.test(expr)) { const t = expr.replace(/\{(?:ui|palette)\.[^}]+\}/g, (e) => resolveBridge(e, 'json', platform).literal); return { text: t, literal: t }; }
+      return { text: String(expr), literal: expr };
+    }
     const [, kind, path, mod] = m;
     let hex, token;
     if (kind === 'ui') { token = sv(path); if (!token) throw new Error(`bridges.json 引用了不存在的变量 --ui-${path}`); hex = platformValue(platform, token); }
@@ -183,7 +187,8 @@ if (bridges) {
       const platform = o.platform || 'web';
       if (fmt === 'json') {
         const obj = {};
-        for (const [k, v] of Object.entries(def.map)) { const r = resolveBridge(v, 'json', platform); const parts = k.split('.'); let cur = obj; for (const p of parts.slice(0, -1)) cur = cur[p] ??= {}; cur[parts.at(-1)] = r.literal; }
+        // 路径段是数字时建数组（如 color.0、color.1 → color: [...]），ECharts 主题的 color 就是数组
+        for (const [k, v] of Object.entries(def.map)) { const r = resolveBridge(v, 'json', platform); const parts = k.split('.'); let cur = obj; parts.slice(0, -1).forEach((p, i) => { cur = cur[p] ??= /^\d+$/.test(parts[i + 1]) ? [] : {}; }); cur[parts.at(-1)] = r.literal; }
         obj.$comment = `由 build-tokens.mjs 从 bridges.json 生成（建议）；${o.include || ''}`;
         bridgeOut.push({ file: o.file, text: JSON.stringify(obj, null, 2) + '\n' });
       } else {

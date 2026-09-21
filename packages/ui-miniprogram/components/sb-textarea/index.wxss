@@ -1,0 +1,4 @@
+.sb-textarea { display: flex; flex-direction: column; gap: var(--ui-space-1); padding: var(--ui-space-2) var(--ui-page-gutter); background: var(--ui-surface); }
+.sb-textarea-label { display: flex; align-items: center; font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.sb-req { color: var(--ui-danger); }
+.sb-textarea-control { font-size: var(--ui-text-body); color: var(--ui-ink); }

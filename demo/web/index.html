@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <script src="theme.js"></script>
+  <script>try{if(!/[?&]mode=/.test(location.search))history.replaceState(null,'',location.pathname+'?mode=preview'+(location.hash||'#/pages/index/index'));}catch(e){}</script>
+<script src="theme.js"></script>
   <meta name="application-name" content="商汤销售小浣熊">
   <meta name="description" content="Raccoon SalesBuddy · 记录每一次沟通，让 AI 助力销售增长。">
   <title>商汤销售小浣熊 · 工作空间</title>
@@ -36,17 +37,9 @@
   <link rel="stylesheet" href="department-ui/app.css">
 </head>
 <body class="web-login">
-  <aside class="web-sidebar" aria-label="工作空间导航">
-    <a class="web-brand" href="#/pages/index/index"><img class="web-brand-logo" src="assets/brand/raccoon-salesbuddy-horizontal-navy-sidebar.svg" alt="商汤销售小浣熊 · Raccoon SalesBuddy" width="1818" height="368"></a>
-    <button id="workspace-switch" class="web-workspace"><span class="web-workspace-icon">▦</span><span><b id="workspace-name">企业工作空间</b><small id="workspace-scope">客户经营与销售协作</small></span><span class="workspace-chevron">⌄</span></button>
-    <nav id="desktop-nav" aria-label="业务导航"></nav>
-    <div class="web-sidebar-bottom">
-      <a class="web-admin-link" href="https://www.ericepc.com/admin" target="_blank" rel="noopener noreferrer">运营管理后台 <span>↗</span></a>
-      <button id="account-button" class="web-account" aria-label="账号与登录设置" aria-haspopup="dialog" aria-controls="account-dialog" aria-expanded="false"><span id="account-avatar">我</span><span><b id="account-name">尚未登录</b><small id="account-role">请登录工作空间</small></span><span>⌄</span></button>
-    </div>
-  </aside>
+  <aside class="web-sidebar" id="frame-sidenav" aria-label="工作空间导航"></aside>
   <div class="web-main">
-    <header class="web-topbar"><div class="web-breadcrumb"><button id="back-button" aria-label="返回上一页">←</button><span id="breadcrumb-group">销售管理</span><span class="web-crumb-divider">/</span><strong id="page-title">总览</strong></div><div class="web-topbar-actions"><span id="workspace-status" class="web-environment"></span><span id="connection-status" class="web-connection" role="status">正在检查服务</span><span class="web-date" id="current-date"></span><button id="desktop-actions" class="web-create-button" hidden aria-haspopup="dialog" aria-controls="quick-dialog">＋ 新建</button><button id="shortcut-help-button" class="web-icon-button" aria-label="键盘操作" aria-haspopup="dialog" aria-controls="shortcut-help-dialog" title="键盘操作（?）">?</button><button id="refresh-button" class="web-icon-button" aria-label="刷新当前页面" title="刷新当前页面">↻</button></div></header>
+    <header class="web-topbar" id="frame-topbar"></header><button id="shortcut-help-button" hidden aria-label="键盘操作" aria-haspopup="dialog" aria-controls="shortcut-help-dialog"></button>
     <header class="web-authbar"><a class="web-brand" href="#/pages/login/index"><img class="web-brand-logo" src="assets/brand/raccoon-salesbuddy-horizontal-navy-sidebar.svg" alt="商汤销售小浣熊 · Raccoon SalesBuddy" width="1818" height="368"></a><a href="https://www.ericepc.com/admin" target="_blank" rel="noopener noreferrer">运营管理后台 ↗</a></header>
     <section class="web-auth-intro" aria-label="销售工作空间介绍"><div class="auth-eyebrow"><span></span>企业销售协作空间</div><h1>记录每一次沟通，<br>让 AI 助力销售增长。</h1><div class="auth-flow"><div><span>01</span><b>建立客户关系</b></div><div><span>02</span><b>推进销售商机</b></div><div><span>03</span><b>记录每次拜访</b></div><div><span>04</span><b>落实团队行动</b></div></div></section>
     <div class="web-auth-form-heading"><div class="auth-eyebrow">欢迎回来</div><h2>企业账号登录</h2><div id="login-session-notice" class="web-session-notice" role="status" hidden></div><div id="local-login-choice" class="web-local-login" hidden><button id="local-login-button" class="web-local-login-button">一键进入 · 一线销售 <span>→</span></button><p id="local-login-description">使用本机配置的快捷销售账号，进入企业真实数据。</p><button id="show-account-login" class="web-account-login-link">使用其他企业账号</button></div></div>

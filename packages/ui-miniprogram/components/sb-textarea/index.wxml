@@ -1,0 +1,4 @@
+<view class="sb-textarea {{disabled ? 'disabled' : ''}}" aria-role="group" aria-label="{{label}}">
+  <view class="sb-textarea-label"><text>{{label}}</text><text wx:if="{{required}}" class="sb-req" aria-label="必填"> *</text></view>
+  <t-textarea class="sb-textarea-control" value="{{value}}" placeholder="{{placeholder}}" maxlength="{{maxlength}}" indicator autosize disabled="{{disabled}}" bordered="{{false}}" bind:change="onInput" />
+</view>

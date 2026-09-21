@@ -9,6 +9,7 @@
 | `@shandiant/tokens/json` | 工具、脚本 | 已解析的扁平表 |
 | `@shandiant/tokens/miniprogram-app` | 小程序 app.json | window 与 tabBar 五项颜色 |
 | `@shandiant/tokens/bridge-antd` | Ant Design 6 | ConfigProvider 的 theme，JS 模块；要原始 JSON 用 `/bridge-antd.json` |
+| `@shandiant/tokens/bridge-echarts` | ECharts 6 | `registerTheme('shandiant', theme)` 用的主题对象：顺序色 chart-1～5、字号、坐标轴、网格线、悬停框都来自变量；JS 模块，要原始 JSON 用 `/bridge-echarts.json` |
 | `@shandiant/tokens/bridge-tdesign.wxss` | tdesign-miniprogram | `page { --td-* }` |
 | `@shandiant/tokens/bridge-tdesign.css` | TDesign Web | `:root { --td-* }` |
 | `@shandiant/tokens/bridge-semi.css` | Semi Design | 浅色 |

@@ -1,8 +1,8 @@
 {
   "$meta": {
     "name": "部门产品设计变量",
-    "version": "1.1.0-draft.1",
-    "updated": "2026-09-19",
+    "version": "1.2.0-draft.1",
+    "updated": "2026-09-21",
     "status": "草案：基础与语义层的值来自已确认的 SalesBuddy Web V1.0（design-tokens.css）；主色 #2863CD 已于 2026-09-19 决定沿用；标注「建议」的条目与端侧映射尚未登记采用；原生 App 暂不在范围",
     "format": "W3C Design Tokens 社区组格式（DTCG 2025.10）的 Style Dictionary v5 兼容子集：颜色写 #RRGGBB 字符串，尺寸写 \"16px\" 字符串，阴影写 CSS 字符串，用 {路径} 引用另一个变量；每个变量有 $value、$type、$description。顶部 $schema 仅作格式标识：按 2025.10 严格校验，字符串形式的尺寸与阴影不通过，待工具链完整支持后迁移为对象形式",
     "layers": {
@@ -15,10 +15,20 @@
     "generatedFrom": "tokens.json"
   },
   "base": {
+    "color.blue.25": {
+      "value": "#F4F7FD",
+      "type": "color",
+      "description": "主色 5% 与白 95% 混合（作战地图主攻区底）"
+    },
     "color.blue.50": {
       "value": "#EDF3FF",
       "type": "color",
       "description": "选中底色"
+    },
+    "color.blue.100": {
+      "value": "#EAEFFA",
+      "type": "color",
+      "description": "主色 10% 与白 90% 混合（作战地图客户资产底）"
     },
     "color.blue.400": {
       "value": "#5786DC",
@@ -85,6 +95,11 @@
       "type": "color",
       "description": "白"
     },
+    "color.gray.30": {
+      "value": "#F5F6F7",
+      "type": "color",
+      "description": "中性色（ink.550）6% 与白 94% 混合（作战地图客户资源底）"
+    },
     "color.gray.50": {
       "value": "#F3F5F9",
       "type": "color",
@@ -144,6 +159,26 @@
       "value": "#B4C7E1",
       "type": "color",
       "description": "导航次要文字"
+    },
+    "color.teal.600": {
+      "value": "#0E8A8A",
+      "type": "color",
+      "description": "青"
+    },
+    "color.purple.600": {
+      "value": "#6B4FBB",
+      "type": "color",
+      "description": "紫"
+    },
+    "color.orange.600": {
+      "value": "#C7741B",
+      "type": "color",
+      "description": "橙"
+    },
+    "color.slate.500": {
+      "value": "#7A8A9E",
+      "type": "color",
+      "description": "灰蓝"
     },
     "space.1": {
       "value": "4px",
@@ -709,6 +744,78 @@
       "description": "弹窗与抽屉背后的遮罩（深蓝导航色 45% 透明）",
       "status": "建议",
       "rule": "C-07"
+    },
+    "quadrant-asset": {
+      "value": "#F4F7FD",
+      "type": "color",
+      "from": "color.blue.25",
+      "description": "客户资产（右上）底色：主色 5%，和主攻区同一种淡主色，只标出潜力大的两格",
+      "status": "建议",
+      "rule": "12 章 §2.2"
+    },
+    "quadrant-attack": {
+      "value": "#F4F7FD",
+      "type": "color",
+      "from": "color.blue.25",
+      "description": "主攻区（右下）底色：主色 5%",
+      "status": "建议",
+      "rule": "12 章 §2.2"
+    },
+    "quadrant-resource": {
+      "value": "#FFFFFF",
+      "type": "color",
+      "from": "color.gray.0",
+      "description": "客户资源（左上）底色：白，不再用中性灰",
+      "status": "建议",
+      "rule": "12 章 §2.2"
+    },
+    "quadrant-spot": {
+      "value": "#FFFFFF",
+      "type": "color",
+      "from": "color.gray.0",
+      "description": "见单打单（左下）底色：白",
+      "status": "建议",
+      "rule": "12 章 §2.2"
+    },
+    "chart-1": {
+      "value": "#2863CD",
+      "type": "color",
+      "from": "ui.primary",
+      "description": "图表顺序色一：主色，第一系列、本期",
+      "status": "建议",
+      "rule": "12 章 §3.4"
+    },
+    "chart-2": {
+      "value": "#0E8A8A",
+      "type": "color",
+      "from": "color.teal.600",
+      "description": "图表顺序色二：青，第二系列、上期",
+      "status": "建议",
+      "rule": "12 章 §3.4"
+    },
+    "chart-3": {
+      "value": "#6B4FBB",
+      "type": "color",
+      "from": "color.purple.600",
+      "description": "图表顺序色三：紫",
+      "status": "建议",
+      "rule": "12 章 §3.4"
+    },
+    "chart-4": {
+      "value": "#C7741B",
+      "type": "color",
+      "from": "color.orange.600",
+      "description": "图表顺序色四：橙",
+      "status": "建议",
+      "rule": "12 章 §3.4"
+    },
+    "chart-5": {
+      "value": "#7A8A9E",
+      "type": "color",
+      "from": "color.slate.500",
+      "description": "图表顺序色五：灰蓝，第五系列、其他；只有两个系列时与 chart-1 搭配",
+      "status": "建议",
+      "rule": "12 章 §3.4"
     }
   },
   "platforms": {
@@ -768,7 +875,16 @@
       "sidebar-active": "#2A568B",
       "sidebar-accent": "#91BAFF",
       "sidebar-focus": "#B9D2FF",
-      "overlay": "#142F5473"
+      "overlay": "#142F5473",
+      "quadrant-asset": "#F4F7FD",
+      "quadrant-attack": "#F4F7FD",
+      "quadrant-resource": "#FFFFFF",
+      "quadrant-spot": "#FFFFFF",
+      "chart-1": "#2863CD",
+      "chart-2": "#0E8A8A",
+      "chart-3": "#6B4FBB",
+      "chart-4": "#C7741B",
+      "chart-5": "#7A8A9E"
     },
     "mobile-web": {
       "background": "#F3F5F9",
@@ -826,7 +942,16 @@
       "sidebar-active": "#2A568B",
       "sidebar-accent": "#91BAFF",
       "sidebar-focus": "#B9D2FF",
-      "overlay": "#142F5473"
+      "overlay": "#142F5473",
+      "quadrant-asset": "#F4F7FD",
+      "quadrant-attack": "#F4F7FD",
+      "quadrant-resource": "#FFFFFF",
+      "quadrant-spot": "#FFFFFF",
+      "chart-1": "#2863CD",
+      "chart-2": "#0E8A8A",
+      "chart-3": "#6B4FBB",
+      "chart-4": "#C7741B",
+      "chart-5": "#7A8A9E"
     },
     "miniprogram": {
       "background": "#F3F5F9",
@@ -884,7 +1009,16 @@
       "sidebar-active": "#2A568B",
       "sidebar-accent": "#91BAFF",
       "sidebar-focus": "#B9D2FF",
-      "overlay": "#142F5473"
+      "overlay": "#142F5473",
+      "quadrant-asset": "#F4F7FD",
+      "quadrant-attack": "#F4F7FD",
+      "quadrant-resource": "#FFFFFF",
+      "quadrant-spot": "#FFFFFF",
+      "chart-1": "#2863CD",
+      "chart-2": "#0E8A8A",
+      "chart-3": "#6B4FBB",
+      "chart-4": "#C7741B",
+      "chart-5": "#7A8A9E"
     }
   }
 }

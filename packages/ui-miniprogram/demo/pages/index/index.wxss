@@ -8,3 +8,4 @@
 .sheet-row.on { color: var(--ui-primary); font-weight: 600; }
 .note { margin-right: auto; font-size: var(--ui-text-small); color: var(--ui-muted); }
 .pad { height: var(--ui-space-8); }
+.chart-stub { min-height: 360rpx; display: flex; align-items: center; justify-content: center; font-size: var(--ui-text-small); color: var(--ui-muted); background: var(--ui-background); border-radius: var(--ui-radius-control); }

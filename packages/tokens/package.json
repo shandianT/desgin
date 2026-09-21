@@ -1,7 +1,7 @@
 {
   "name": "@shandiant/tokens",
-  "version": "1.1.0-draft.1",
-  "description": "部门设计变量：--ui-* 的 CSS、WXSS、JSON 产物，以及给 Ant Design、TDesign、Semi 的主题桥接文件。由规范仓库 tokens.json 生成，勿手改",
+  "version": "1.2.0-draft.1",
+  "description": "部门设计变量：--ui-* 的 CSS、WXSS、JSON 产物，以及给 Ant Design、TDesign、Semi、ECharts 的主题桥接文件。由规范仓库 tokens.json 生成，勿手改",
   "license": "UNLICENSED",
   "files": [
     "dist",
@@ -26,6 +26,16 @@
       "import": "./dist/bridge-antd.theme.mjs",
       "require": "./dist/bridge-antd.theme.cjs",
       "default": "./dist/bridge-antd.theme.json"
+    },
+    "./bridge-echarts": {
+      "types": "./types/bridge-echarts.d.ts",
+      "import": "./dist/bridge-echarts.theme.mjs",
+      "require": "./dist/bridge-echarts.theme.cjs",
+      "default": "./dist/bridge-echarts.theme.json"
+    },
+    "./bridge-echarts.json": {
+      "types": "./types/bridge-echarts.d.ts",
+      "default": "./dist/bridge-echarts.theme.json"
     },
     "./bridge-tdesign.css": "./dist/bridge-tdesign.css",
     "./bridge-tdesign.wxss": "./dist/bridge-tdesign.wxss",

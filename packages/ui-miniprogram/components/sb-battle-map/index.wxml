@@ -1,0 +1,33 @@
+<view class="sb-bmap" aria-role="img" aria-label="作战地图：{{summary}}">
+  <view class="sb-bmap-box">
+    <view wx:if="{{loading}}" class="sb-bmap-cover" aria-role="status"><t-loading theme="circular" size="40rpx" text="正在读取" /></view>
+    <view wx:elif="{{empty}}" class="sb-bmap-cover sb-bmap-empty">
+      <text class="sb-bmap-empty-text">还没有客户进入作战地图。先在客户列表登记关系和潜力。</text>
+      <t-button size="small" theme="primary" bind:tap="onEmpty">去客户列表</t-button>
+    </view>
+    <block wx:else>
+      <block wx:if="{{!zoomName}}">
+        <view wx:for="{{quads}}" wx:key="key" class="sb-bmap-quad q-{{item.key}}" style="left:{{item.hiP ? xLine : 0}}%;right:{{item.hiP ? 0 : 100 - xLine}}%;top:{{item.hiR ? 0 : 100 - yLine}}%;bottom:{{item.hiR ? yLine : 0}}%;">
+          <view class="sb-bmap-quad-name" data-name="{{item.name}}" bind:tap="onQuadName" aria-role="button" aria-label="{{item.name}}">{{item.short}}</view>
+        </view>
+        <view class="sb-bmap-line v" style="left:{{xLine}}%;"></view>
+        <view class="sb-bmap-line h" style="bottom:{{yLine}}%;"></view>
+      </block>
+      <view wx:else class="sb-bmap-quad q-{{zoom}} full">
+        <view class="sb-bmap-quad-name">{{zoomName}}</view>
+        <view class="sb-bmap-back" bind:tap="onBack" aria-role="button">返回全图</view>
+      </view>
+      <view wx:for="{{marks}}" wx:key="key" class="sb-bmap-hit {{item.selected ? 'on' : ''}}" style="left:{{item.x}}%;bottom:{{item.y}}%;" data-index="{{index}}" bind:tap="onMark" aria-role="button" aria-label="{{item.label}}">
+        <view wx:if="{{item.cluster}}" class="sb-bmap-cluster" style="width:{{item.size}}rpx;height:{{item.size}}rpx;">{{item.count}}</view>
+        <view wx:else class="sb-bmap-dot tone-{{item.tone}}" style="width:{{item.size}}rpx;height:{{item.size}}rpx;"></view>
+        <view wx:if="{{item.selected && item.name}}" class="sb-bmap-name {{item.x > 60 ? 'left' : ''}}">{{item.name}}</view>
+      </view>
+      <text class="sb-bmap-axis x-lo">小</text><text class="sb-bmap-axis x-hi">大</text>
+      <text class="sb-bmap-axis y-lo">浅</text><text class="sb-bmap-axis y-hi">深</text>
+    </block>
+  </view>
+  <view wx:if="{{!empty && !loading}}" class="sb-bmap-counts">
+    <view wx:for="{{counts}}" wx:key="key" class="sb-bmap-count {{item.key === zoom ? 'on' : ''}}" data-key="{{item.key}}" bind:tap="onCount" aria-role="button" aria-label="{{item.name}} {{item.count}} 家"><text class="sb-bmap-count-num">{{item.count}}</text><text class="sb-bmap-count-label">{{item.short}}</text></view>
+  </view>
+  <view wx:if="{{unrated > 0}}" class="sb-bmap-unrated" bind:tap="onUnrated" aria-role="button">待评估 {{unrated}} 家，还没登记潜力 ›</view>
+</view>

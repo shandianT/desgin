@@ -1,0 +1,8 @@
+<view class="sb-select {{disabled ? 'disabled' : ''}}" bind:tap="onOpen" aria-role="button" aria-label="{{label}}：{{text || placeholder}}">
+  <text class="sb-select-label">{{label}}<text wx:if="{{required}}" class="sb-req" aria-label="必填"> *</text></text>
+  <text class="sb-select-value {{text ? '' : 'placeholder'}}">{{text || placeholder}}</text>
+  <t-icon name="chevron-right" size="36rpx" class="sb-select-arrow" />
+</view>
+<t-picker visible="{{open}}" title="{{label}}" value="{{pickerValue}}" cancel-btn="取消" confirm-btn="确定" auto-close="{{false}}" bind:cancel="onCancel" bind:confirm="onConfirm">
+  <t-picker-item options="{{columns}}" />
+</t-picker>

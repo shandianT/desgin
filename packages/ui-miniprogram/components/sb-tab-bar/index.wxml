@@ -1,0 +1,3 @@
+<t-tab-bar class="sb-tabbar" value="{{value}}" fixed="{{fixed}}" safe-area-inset-bottom="{{safeArea}}" split="{{false}}" bind:change="onChange">
+  <t-tab-bar-item wx:for="{{list}}" wx:key="key" value="{{item.key}}" icon="{{item.iconName}}" aria-label="{{item.label}}">{{item.label}}</t-tab-bar-item>
+</t-tab-bar>

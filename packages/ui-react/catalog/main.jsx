@@ -4,7 +4,9 @@ import { createRoot } from 'react-dom/client';
 import * as AntIcons from '@ant-design/icons';
 import { App as AntApp, Button, Cascader, Collapse, DatePicker, Drawer, Form, Input, Modal, Select, Table, Tabs, Tag, Tooltip } from 'antd';
 import '@shandiant/tokens/css';
+import { SbSideNav, SbTopBar, SbDatePicker, SbSelect, SbSearchSelect, SbAmountInput, SbTextarea, SbSegmented, SbChartCard, SbKpiCard, SbBarChart, SbLineChart } from '../src/index.js';
 import { SbProvider, SbStatusTag, SbStatePanel, SbFilterBar, SbSearch, SbListRow, SbBottomBar, SbField, SbSheet, SbPagination, SbMetricTile, SbPageHeader, SbDetailLayout, SbAiBadge, SbAiField, SbAiSources, SbAiProgress, META, USAGE, ICONS, SbIcon, SbLabeledSelect, SbMetricStrip, SbTabs, SbTable } from '../src/index.js';
+import { SbBattleMap } from '../src/index.js';
 
 const State = ({ title, children, className }) => <div className={className ? `state ${className}` : 'state'}><h4>{title}</h4>{children}</div>;
 const rows = [
@@ -150,7 +152,113 @@ function BasicsDemo() {
   );
 }
 
+
+// 0.6.0：顶栏、侧导航、表单壳
+const NAV_GROUPS = [
+  { title: '销售管理', items: [{ key: 'overview', label: '总览', icon: 'dashboard' }, { key: 'customer', label: '客户', icon: 'customer' }, { key: 'opportunity', label: '商机', icon: 'opportunity' }, { key: 'visit', label: '拜访', icon: 'visit' }, { key: 'task', label: '任务', icon: 'task' }] },
+  { title: '经营', items: [{ key: 'map', label: '作战地图', icon: 'map' }, { key: 'board', label: '看板', icon: 'dashboard' }, { key: 'hidden', label: '不显示', icon: 'more', hidden: true }] },
+  { title: '团队', items: [{ key: 'members', label: '成员', icon: 'team' }] },
+];
+function SideNavDemo() {
+  const [active, setActive] = useState('customer'); const [collapsed, setCollapsed] = useState(false);
+  const common = { brand: { alt: '销售小浣熊', href: '#SbSideNav' }, workspace: { name: '企业工作空间', scope: '客户经营与销售协作' }, groups: NAV_GROUPS, activeKey: active, onSelect: setActive, adminLink: { label: '运营管理后台', href: '#SbSideNav' }, account: { name: '王小明', role: '一线销售', team: '华北一组' } };
+  return <div className="states wide"><State title="展开 232：品牌、工作区、分组导航、底部后台链接与账号；点「收起」变窄条"><div style={{ display: 'flex', height: 560, border: '1px solid var(--ui-line)', borderRadius: 'var(--ui-radius-panel)', overflow: 'hidden' }}><SbSideNav {...common} collapsed={collapsed} onCollapse={setCollapsed} /><div style={{ flex: 1, background: 'var(--ui-background)', padding: 'var(--ui-page-gutter)', color: 'var(--ui-secondary)' }}>当前：{active}</div></div></State><State title="折叠窄条 64：只留图标，悬停出提示；账号激活态"><div style={{ display: 'flex', height: 480, border: '1px solid var(--ui-line)', borderRadius: 'var(--ui-radius-panel)', overflow: 'hidden' }}><SbSideNav {...common} collapsed account={{ ...common.account, active: true }} /><div style={{ flex: 1, background: 'var(--ui-background)' }} /></div></State></div>;
+}
+function TopBarDemo() {
+  const crumbs = [{ label: '销售管理', onClick: () => {} }, { label: '客户' }];
+  return <div className="states wide"><State title="已连接：返回、面包屑、状态点、日期、新建、帮助、刷新"><SbTopBar items={crumbs} onBack={() => {}} status="ready" onCreate={() => {}} createLabel="新建客户" onHelp={() => {}} onRefresh={() => {}} /></State><State title="演示数据，没有返回，动作区左侧放 extra"><SbTopBar items={[{ label: '总览' }]} status="preview" date="2026年9月21日 周一" extra={<SbSegmented options={[{ value: 'mine', label: '本人' }, { value: 'team', label: '团队' }]} value="mine" />} onCreate={() => {}} onRefresh={() => {}} /></State><State title="服务不可用：新建隐藏，刷新中"><SbTopBar items={crumbs} status="unavailable" onCreate={() => {}} createHidden onHelp={() => {}} onRefresh={() => {}} refreshing /></State><State title="正在检查服务"><SbTopBar items={[{ label: '销售管理' }, { label: '拜访' }, { label: '拜访确认' }]} onBack={() => {}} status="checking" /></State></div>;
+}
+function DatePickerDemo() {
+  const [d, setD] = useState('2026-09-21'); const [r, setR] = useState([null, null]);
+  return <div className="states"><State title={`单日，快捷项今天 / 本周 / 本季：${d ?? '空'}`}><SbDatePicker value={d} onChange={setD} /></State><State title={`区间：${r?.[0] ?? '—'} ～ ${r?.[1] ?? '—'}`}><SbDatePicker range value={r} onChange={(v) => setR(v || [null, null])} /></State><State title="禁用"><SbDatePicker value="2026-09-21" disabled /></State></div>;
+}
+const STAGE_OPTS = [{ value: 10, label: '识别 10%', count: 12 }, { value: 30, label: '验证 30%', count: 8 }, { value: 50, label: '方案 50%', count: 5 }, { value: 70, label: '谈判 70%' }, { value: 90, label: '签约 90%', disabled: true }];
+function SelectDemo() {
+  const [v, setV] = useState(); const [m, setM] = useState([10, 30]);
+  return <div className="states"><State title="未选"><SbSelect placeholder="选择阶段" options={STAGE_OPTS} value={v} onChange={setV} width={200} /></State><State title="已选，带数量灰小字"><SbSelect options={STAGE_OPTS} value={30} width={200} /></State><State title="多选、可清除"><SbSelect mode="multiple" allowClear options={STAGE_OPTS} value={m} onChange={setM} width={260} /></State><State title="禁用"><SbSelect options={STAGE_OPTS} value={50} disabled width={200} /></State></div>;
+}
+const SEARCH_CUSTOMERS = ['华宸数据科技有限公司', '北辰智造集团', '金桥制造股份有限公司', '泰和银行数据中心', '华北云图科技'];
+function SearchSelectDemo() {
+  const [v, setV] = useState(); const search = (kw) => new Promise((res) => setTimeout(() => res(SEARCH_CUSTOMERS.filter((c) => c.includes(kw)).map((c, i) => ({ value: `${kw}-${i}`, label: c }))), 600));
+  return <div className="states"><State title="远程搜索：试输入「华」或「不存在」"><SbSearchSelect value={v} onChange={setV} search={search} placeholder="输入客户名称搜索" width={260} /></State><State title="静态选项本地过滤"><SbSearchSelect options={SEARCH_CUSTOMERS.map((c) => ({ value: c, label: c }))} placeholder="选人" width={260} /></State><State title="禁用"><SbSearchSelect disabled placeholder="输入客户名称搜索" width={260} /></State></div>;
+}
+function AmountDemo() {
+  const [a, setA] = useState(1234567.5); const [b, setB] = useState(null);
+  return <div className="states"><State title={`有值，千分位：${a}`}><SbAmountInput value={a} onChange={setA} /></State><State title={`空是 null 不是 0：${String(b)}`}><SbAmountInput value={b} onChange={setB} /></State><State title="换单位、整数"><SbAmountInput value={120} unit="台" precision={0} /></State><State title="禁用"><SbAmountInput value={88} disabled /></State></div>;
+}
+function TextareaDemo() {
+  const [t, setT] = useState('今天见了华宸的 IT 总监，聊了明年数据中心扩容的预算，下周三前给方案。');
+  return <div className="states"><State title="默认：带字数，3～8 行"><SbTextarea placeholder="口述这次拜访：见了谁、聊了什么、下一步什么时候做什么" /></State><State title="有内容"><SbTextarea value={t} onChange={setT} /></State><State title="禁用"><SbTextarea value={t} disabled /></State></div>;
+}
+function SegmentedDemo() {
+  const [p, setP] = useState('year');
+  return <div className="states"><State title="默认 small"><SbSegmented options={[{ value: 'year', label: '本年' }, { value: 'all', label: '历年' }]} value={p} onChange={setP} /></State><State title="带禁用项"><SbSegmented options={[{ value: 'list', label: '列表' }, { value: 'map', label: '地图' }, { value: 'kanban', label: '看板', disabled: true }]} value="list" /></State><State title="中号、撑满"><SbSegmented size="middle" block options={[{ value: 'mine', label: '本人' }, { value: 'team', label: '团队' }, { value: 'dept', label: '部门' }]} value="team" /></State></div>;
+}
+
+// 作战地图：24 个点四种状态三种档位，含几组重叠；放大态受控；空态；手机 360px
+const BMAP_NAMES = ['华宸数据科技', '北辰智造集团', '金桥制造股份', '泰和银行数据中心', '云启物流', '海晟半导体', '恒润能源', '中科智算', '广汇建设', '星河教育', '嘉信医疗', '远达通信', '博源化工', '润泽水务', '联创汽车', '鼎新食品', '盛世传媒', '天成地产', '瑞丰农业', '安泰保险', '凌云航空', '国泰纺织', '锦程酒店', '正大电子'];
+const BMAP_POINTS = BMAP_NAMES.map((name, i) => {
+  const grid = [[8, 8], [8, 8], [8.2, 7.9], [9, 9], [7, 7], [6, 9], [8, 3], [8, 3], [7, 4], [9, 2], [6, 5], [7, 2], [3, 8], [2, 9], [3, 8.1], [4, 7], [5, 6], [2, 2], [3, 3], [4, 2], [2, 4], [5, 5], [1, 1], [3, 5]];
+  const tone = ['good', 'watch', 'bad', 'pending'][i % 4], band = ['small', 'medium', 'large'][i % 3];
+  return { id: i + 1, name, potential: grid[i][0], relationship: grid[i][1], tone, amountBand: band, summary: `关系 ${Math.round(grid[i][1])}/10 · 预算 ${[60, 120, 320][i % 3]} 万` };
+});
+function BattleMapDemo() {
+  const [zoom, setZoom] = useState('asset');
+  const [selected, setSelected] = useState(4);
+  const [last, setLast] = useState('');
+  return <div className="states">
+    <State title="默认：24 家，四种状态、三档金额，三组重叠聚成数字；点客户选中"><SbBattleMap points={BMAP_POINTS} unrated={3} selectedId={selected} onPointClick={(p) => { setSelected(p.id); setLast(`点了 ${p.name}`); }} onClusterClick={(list) => setLast(`展开 ${list.length} 家：${list.map((p) => p.name).join('、')}`)} onUnratedClick={() => setLast('打开待评估列表')} /><p className="cat-nav-note">{last || '点一个点、一个数字圆或「待评估」看回调'}</p></State>
+    <State title="放大一个象限（受控 zoomQuadrant）"><div className="inline" style={{ marginBottom: 8 }}>{[['asset', '客户资产'], ['attack', '主攻区'], ['resource', '客户资源'], ['spot', '见单打单'], [null, '全部']].map(([v, l]) => <Button key={String(v)} size="small" type={zoom === v ? 'primary' : 'default'} onClick={() => setZoom(v)}>{l}</Button>)}</div><SbBattleMap points={BMAP_POINTS} zoomQuadrant={zoom} onZoomChange={setZoom} onPointClick={(p) => setLast(`点了 ${p.name}`)} /></State>
+    <State title="空：坐标轴照画"><SbBattleMap points={[]} emptyAction={{ onClick: () => setLast('去客户列表') }} /></State>
+    <State title="加载中"><SbBattleMap loading /></State>
+    <State title="手机 360px：格子名两个字，底部四个数字"><div style={{ maxWidth: 360 }}><SbBattleMap points={BMAP_POINTS} unrated={3} onPointClick={(p) => setLast(`点了 ${p.name}`)} /></div></State>
+  </div>;
+}
+
+function ChartsDemo() {
+  const [state, setState] = useState('normal');
+  const rank = { categories: ['华宸数据科技', '北辰智造集团', '金桥制造股份', '泰和银行数据中心', '云启软件', '恒信物流'], data: [320, 260, 180, null, 96, 40] };
+  const months = ['4 月', '5 月', '6 月', '7 月', '8 月', '9 月'];
+  return (
+    <div className="states wide">
+      <State title="KPI 一行四张：单位小一号跟在数字后，升绿降红只在有好坏时用，客户数这类无好坏用灰，缺失显示未登记">
+        <div className="sb-kpi-row">
+          <SbKpiCard value="1,880" unit="万元" label="年度合同额" change={{ text: '比上季 +12%', tone: 'up', good: true }} onClick={() => {}} />
+          <SbKpiCard value="138" unit="万元" label="确收" change={{ text: '比上季 −3%', tone: 'down', good: false }} />
+          <SbKpiCard value={24} unit="家" label="客户" change={{ text: '比上季 +2 家', tone: 'up' }} />
+          <SbKpiCard value={null} label="回款" note="财务还没登记" />
+        </div>
+      </State>
+      <State title="横向排名条形：名字在左、第一条在上、缺失的柱位写未登记；卡片带口径、读屏摘要与数据表">
+        <SbChartCard title="哪些客户贡献了最多 ACV" scope="本人负责 · 第三季度" caliber="ACV 按合同签署月计入，未签合同不计" summary="ACV 排名前六：华宸数据科技 320 万元最高，泰和银行数据中心未登记" data={{ columns: ['客户', 'ACV（万元）'], rows: rank.categories.map((c, i) => [c, rank.data[i]]) }}>
+          <SbBarChart categories={rank.categories} series={[{ name: 'ACV', data: rank.data }]} unit="万元" onClick={() => {}} />
+        </SbChartCard>
+      </State>
+      <State title="竖向柱状，两个系列自动用 chart-1 与 chart-5（本期实色、上期灰），图例在图上方左侧">
+        <SbChartCard title="每月跟进数够不够" scope="团队 · 近六个月" caliber="按拜访确认归档日统计">
+          <SbBarChart orientation="vertical" categories={months} series={[{ name: '本期', data: [42, 51, 38, 60, null, 47] }, { name: '上期', data: [30, 44, 40, 52, 49, 35] }]} unit="次" />
+        </SbChartCard>
+      </State>
+      <State title="折线：不从 0 开始时轴上标最小值；缺失断开并写未登记">
+        <SbChartCard title="毛利率走势" scope="部门 · 近六个月">
+          <SbLineChart categories={months} series={[{ name: '毛利率', data: [18.2, 19.1, null, 20.4, 21.0, 22.3] }]} unit="%" yMin={15} area />
+        </SbChartCard>
+      </State>
+      <State title="空态与加载态：空态说原因，失败可重试且不清筛选">
+        <div className="inline" style={{ marginBottom: 8 }}>{['normal', 'loading', 'empty', 'error'].map((s) => <Button key={s} size="small" type={state === s ? 'primary' : 'default'} onClick={() => setState(s)}>{({ normal: '有数据', loading: '加载中', empty: '空', error: '失败' })[s]}</Button>)}</div>
+        <SbChartCard title="本季毛利够不够" scope="本人 · 第三季度" state={state} onRetry={() => setState('normal')} emptyDescription="还没有已确认的合同，归档拜访并录入合同后再看。">
+          <SbBarChart orientation="vertical" categories={['7 月', '8 月', '9 月']} series={[{ name: '毛利', data: [12, 18, 9] }]} unit="万元" />
+        </SbChartCard>
+      </State>
+    </div>
+  );
+}
+
 const DEMOS = {
+  SbChartCard: ChartsDemo,
+  SbKpiCard: ChartsDemo,
+  SbBarChart: ChartsDemo,
+  SbLineChart: ChartsDemo,
   Basics: BasicsDemo,
   SbProvider: () => <div className="states"><State title="主色与控件高度来自桥接"><Button type="primary">记录拜访</Button> <Button>创建任务</Button></State><State title="表单字段高 40"><Input placeholder="搜索客户名称或负责人" /></State></div>,
   SbStatusTag: () => <div className="states"><State title="向好"><SbStatusTag tone="good" /></State><State title="需关注"><SbStatusTag tone="watch" /></State><State title="转差"><SbStatusTag tone="bad" /></State><State title="待评估"><SbStatusTag tone="pending" /></State><State title="未登记"><SbStatusTag tone="unset" /></State><State title="带依据"><SbStatusTag tone="watch" reason="一周无跟进" showReason /></State></div>,
@@ -169,11 +277,21 @@ const DEMOS = {
   SbMetricStrip: MetricStripDemo,
   SbTabs: TabsDemo,
   SbTable: TableDemo,
+  SbBattleMap: BattleMapDemo,
   SbIcon: () => <div className="states"><State title="三档尺寸：16 文字旁，20 图标按钮，24 导航与空态"><div className="inline"><SbIcon name="customer" size="sm" /><SbIcon name="customer" size="md" /><SbIcon name="customer" size="lg" /></div></State><State title="语义色：只给业务状态"><div className="inline"><SbIcon name="success" tone="success" size="md" /><SbIcon name="risk" tone="warning" size="md" /><SbIcon name="fail" tone="danger" size="md" /><SbIcon name="info" tone="muted" size="md" /></div></State><State title="带底方块：导航、空态、指标卡"><div className="inline"><SbIcon name="customer" tile tone="primary" size="lg" label="客户" /><SbIcon name="opportunity" tile size="md" label="商机" /><SbIcon name="risk" tile tone="warning" size="md" label="风险" /><SbIcon name="ai" tile tone="primary" size="sm" label="AI" /></div></State><State title="和文字一起"><div className="inline"><Button type="primary" icon={<SbIcon name="add" />}>记录拜访</Button><Button icon={<SbIcon name="filter" />}>筛选</Button><Button icon={<SbIcon name="search" label="搜索" />} /></div></State></div>,
   SbAiBadge: () => <div className="states"><State title="生成中"><SbAiBadge state="generating" /></State><State title="待确认"><SbAiBadge state="pending" /></State><State title="已确认"><SbAiBadge state="confirmed" confirmedBy="王明 9 月 19 日 " /></State></div>,
   SbAiField: () => <div className="states"><State title="AI 原值，待确认"><AiFieldDemo state="ai" /></State><State title="人已修改，可恢复"><AiFieldDemo state="edited" /></State><State title="已确认"><AiFieldDemo state="confirmed" /></State><State title="低把握，给候选"><AiFieldDemo state="ai" confidence="low" /></State><State title="错误"><AiFieldDemo state="ai" error="联系人角色不能为空" /></State></div>,
   SbAiSources: () => <div className="states"><State title="折叠"><SbAiSources items={SOURCES} /></State><State title="展开"><SbAiSources items={SOURCES} defaultExpanded /></State><State title="无依据"><SbAiSources items={[]} /></State></div>,
   SbAiProgress: () => { const stages = ['转写语音', '提取 16 项基础字段', '核对「下一步」是否含时间与目标']; return <div className="states"><State title="进行中"><SbAiProgress stages={stages} current={1} detail="12/16" onCancel={() => {}} /></State><State title="已取消"><SbAiProgress stages={stages} current={1} status="cancelled" /></State><State title="失败"><SbAiProgress stages={stages} current={0} status="failed" onRetry={() => {}} /></State><State title="完成"><SbAiProgress stages={stages} current={3} status="done" /></State></div>; },
+  // 0.6.0：顶栏、侧导航、表单壳
+  SbSideNav: SideNavDemo,
+  SbTopBar: TopBarDemo,
+  SbDatePicker: DatePickerDemo,
+  SbSelect: SelectDemo,
+  SbSearchSelect: SearchSelectDemo,
+  SbAmountInput: AmountDemo,
+  SbTextarea: TextareaDemo,
+  SbSegmented: SegmentedDemo,
 };
 
 // 顶部工具条：只看某组件、按名称或规则编号搜索、改主色、重置。

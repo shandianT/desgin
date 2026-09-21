@@ -108,6 +108,60 @@
   <view class="card"><sb-ai-progress stages="{{stages}}" current="{{genFailStep}}" status="{{genFail}}" bind:retry="onGenFailRetry" /></view>
   <view class="sub">完成</view>
   <view class="card"><sb-ai-progress stages="{{stages}}" current="{{3}}" status="done" /></view>
+
+  <view class="h">分段切换 sb-segmented</view>
+  <view class="row"><sb-segmented options="{{segOpts}}" value="{{seg}}" bind:change="onSeg" /><sb-segmented size="small" options="{{segOpts}}" value="{{seg}}" bind:change="onSeg" /></view>
+
+  <view class="h">日期选择 sb-date-picker</view>
+  <view class="sub">快捷片：今天、本周（周日）、本季（季末）；点一行打开滚轮</view>
+  <sb-date-picker label="下次拜访" required value="{{date}}" bind:change="onDate" />
+  <sb-date-picker label="签约日期" value="2026-09-30" disabled />
+
+  <view class="h">表单单选 sb-select</view>
+  <sb-select label="商机阶段" required value="{{stage}}" options="{{stageOpts}}" bind:change="onStage" />
+  <sb-select label="行业" placeholder="请选择行业" options="{{[]}}" disabled />
+
+  <view class="h">金额输入 sb-amount-input</view>
+  <view class="sub">失焦千分位、聚焦纯数字，只收正数；当前值 {{amount === null ? '空' : amount}}</view>
+  <sb-amount-input label="客户预算" required value="{{amount}}" bind:change="onAmount" />
+  <sb-amount-input label="合同额" unit="元" precision="{{0}}" value="{{null}}" disabled />
+
+  <view class="h">多行文本 sb-textarea</view>
+  <sb-textarea label="拜访摘要" required value="{{summary}}" maxlength="{{200}}" placeholder="口述后由 AI 整理，这里只做人工修改" bind:change="onSummary" />
+
+  <view class="h">指标卡 sb-kpi-card</view>
+  <view class="grid">
+    <sb-kpi-card label="年度合同额" value="{{1880}}" unit="万元" change="{{ { text: '比上季 +12%', tone: 'up', good: true } }}" bind:tap="onKpi" />
+    <sb-kpi-card label="需关注" value="{{5}}" unit="家" change="{{ { text: '比上周 +2 家', tone: 'up', good: true } }}" />
+    <sb-kpi-card label="客户" value="{{24}}" unit="家" change="{{ { text: '比上季 +2 家', tone: 'up' } }}" />
+    <sb-kpi-card label="回款" value="{{null}}" unit="万元" note="财务还没登记" />
+    <sb-kpi-card label="确收" value="{{138}}" unit="万元" loading />
+  </view>
+
+  <view class="h">作战地图 sb-battle-map</view>
+  <view class="sub">点圆点弹名字；点底部数字放大该格；重叠的点聚成圆写数字；当前选中：{{mapSelected || '无'}}</view>
+  <view class="card"><sb-battle-map points="{{mapPoints}}" zoom="{{mapZoom}}" selectedId="{{mapSelected}}" unrated="{{3}}" bind:pointtap="onPoint" bind:clustertap="onCluster" bind:zoomchange="onZoom" bind:unratedtap="onUnrated" /></view>
+  <view class="sub">空态</view>
+  <view class="card"><sb-battle-map points="{{[]}}" bind:emptyaction="onMapEmpty" /></view>
+  <view class="sub">加载中</view>
+  <view class="card"><sb-battle-map loading /></view>
+
+  <view class="h">图表卡片壳 sb-chart-card</view>
+  <view class="sub">图区放 ec-canvas，这里用一段文字代替；点 ⓘ 看口径</view>
+  <view class="card">
+    <sb-chart-card title="本季毛利够不够" scope="本人 · 第三季度" caliber="毛利按确收合同额减成本，未确收不计" summary="7 月 12 万、8 月 15 万、9 月 18 万">
+      <view slot="legend">本期 ▮ 上期 ▯</view>
+      <view class="chart-stub">这里放 ec-canvas</view>
+    </sb-chart-card>
+  </view>
+  <view class="sub">空、失败、加载中</view>
+  <view class="card"><sb-chart-card title="客户排名" state="empty" /></view>
+  <view class="card"><sb-chart-card title="客户排名" state="{{chartState}}" bind:retry="onChartRetry" /></view>
+  <view class="card"><sb-chart-card title="客户排名" state="loading" /></view>
+
+  <view class="h">底部标签栏 sb-tab-bar</view>
+  <view class="sub">默认五个 Tab；演示里不固定在底部，当前：{{tab5}}</view>
+  <sb-tab-bar value="{{tab5}}" fixed="{{false}}" safeArea="{{false}}" bind:change="onTab5" />
   <view class="pad"></view>
 </view>
 <view class="sub">底部操作条：点「切换禁用」看禁用说原因</view><view class="card"><t-button size="small" variant="outline" bind:tap="onBarToggle">切换禁用</t-button></view>

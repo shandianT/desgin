@@ -11,6 +11,6 @@ export default defineConfig({
   build: {
     outDir: resolve(here, 'dist'), emptyOutDir: true, sourcemap: true, cssCodeSplit: false,
     lib: { entry: resolve(here, 'src/index.js'), formats: ['es', 'cjs'], fileName: (f) => (f === 'es' ? 'index.js' : 'index.cjs'), cssFileName: 'style' },
-    rollupOptions: { external: [/^react($|\/)/, /^react-dom($|\/)/, /^antd($|\/)/, /^@ant-design\//, /^@shandiant\//], output: { globals: { react: 'React', 'react-dom': 'ReactDOM', antd: 'antd' } } },
+    rollupOptions: { external: [/^react($|\/)/, /^react-dom($|\/)/, /^antd($|\/)/, /^@ant-design\//, /^@shandiant\//, /^dayjs($|\/)/, /^echarts($|\/)/], output: { globals: { react: 'React', 'react-dom': 'ReactDOM', antd: 'antd' } } },
   },
 });

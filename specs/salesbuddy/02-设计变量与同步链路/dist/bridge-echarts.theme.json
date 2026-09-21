@@ -1,0 +1,104 @@
+{
+  "color": [
+    "#2863CD",
+    "#0E8A8A",
+    "#6B4FBB",
+    "#C7741B",
+    "#7A8A9E"
+  ],
+  "backgroundColor": "transparent",
+  "textStyle": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif",
+    "fontSize": 12,
+    "color": "#5B6C82"
+  },
+  "categoryAxis": {
+    "axisLine": {
+      "show": true,
+      "lineStyle": {
+        "color": "#E2E8F0"
+      }
+    },
+    "axisTick": {
+      "show": false,
+      "lineStyle": {
+        "color": "#E2E8F0"
+      }
+    },
+    "axisLabel": {
+      "color": "#5B6C82",
+      "fontSize": 12
+    },
+    "splitLine": {
+      "show": false
+    }
+  },
+  "valueAxis": {
+    "axisLine": {
+      "show": false,
+      "lineStyle": {
+        "color": "#E2E8F0"
+      }
+    },
+    "axisTick": {
+      "show": false,
+      "lineStyle": {
+        "color": "#E2E8F0"
+      }
+    },
+    "axisLabel": {
+      "color": "#5B6C82",
+      "fontSize": 12
+    },
+    "splitLine": {
+      "show": true,
+      "lineStyle": {
+        "color": "#E2E8F0",
+        "width": 1
+      }
+    }
+  },
+  "legend": {
+    "left": "left",
+    "top": "top",
+    "itemWidth": 12,
+    "itemHeight": 8,
+    "textStyle": {
+      "color": "#5B6C82",
+      "fontSize": 12
+    }
+  },
+  "tooltip": {
+    "backgroundColor": "#FFFFFF",
+    "borderColor": "#E2E8F0",
+    "borderWidth": 1,
+    "borderRadius": 6,
+    "padding": 12,
+    "textStyle": {
+      "color": "#192842",
+      "fontSize": 14
+    },
+    "extraCssText": "box-shadow: 0 8px 28px #1928421a, 0 2px 6px #19284208;"
+  },
+  "bar": {
+    "barMaxWidth": 28,
+    "itemStyle": {
+      "borderRadius": 4
+    }
+  },
+  "line": {
+    "lineStyle": {
+      "width": 2
+    },
+    "symbolSize": 6,
+    "smooth": false
+  },
+  "grid": {
+    "left": 16,
+    "right": 16,
+    "top": 16,
+    "bottom": 16,
+    "containLabel": true
+  },
+  "$comment": "由 build-tokens.mjs 从 bridges.json 生成（建议）；import theme from '@shandiant/tokens/bridge-echarts'; echarts.registerTheme('shandiant', theme); echarts.init(el, 'shandiant', { renderer: 'svg' })"
+}

@@ -14,7 +14,65 @@ const tapFirst = (sel, ev, domSel) => async (comp, simulate) => {
   else { const d = comp.dom.querySelector(domSel || sel); if (!d || !d.__wxElement) throw new Error('找不到 ' + sel); exparser.Event.dispatchEvent(d.__wxElement, exparser.Event.create('tap', {}, { bubbles: true, capturePhase: true, composed: true })); }
   await simulate.sleep(20); return hit;
 };
+// 点 t-* 内部第 n 个真实 DOM 节点（宿主选不到时用），沿 exparser 冒泡
+const tapDomNth = (domSel, ev, n) => async (comp, simulate) => {
+  let hit = false; comp.addEventListener(ev, () => (hit = true));
+  const all = comp.dom.querySelectorAll(domSel); const d = all[n < 0 ? all.length + n : n];
+  if (!d || !d.__wxElement) throw new Error('找不到 ' + domSel + ' 第 ' + n + ' 个');
+  exparser.Event.dispatchEvent(d.__wxElement, exparser.Event.create('tap', {}, { bubbles: true, capturePhase: true, composed: true }));
+  await simulate.sleep(20); return hit;
+};
+// 输入类：模拟器里敲不了键盘，直接调组件里接 t-input／t-textarea／t-picker 事件的方法，再看有没有对外发事件
+const callMethod = (method, detail, ev) => async (comp, simulate) => {
+  let hit = false; comp.addEventListener(ev, () => (hit = true));
+  comp.instance[method]({ detail }); await simulate.sleep(20); return hit;
+};
 module.exports = {
+  'sb-tab-bar': [
+    { title: '默认五个 Tab', data: { value: 'home' }, expect: ['总览', '客户', '商机', '拜访', '我的'], event: tapDomNth('.t-tab-bar-item--t-tab-bar-item__icon', 'change', 1) },
+    { title: '自定义三个', data: { items: [{ key: 'a', label: '看板', icon: 'dashboard', pagePath: 'pages/bi/index' }, { key: 'b', label: '任务', icon: 'task', pagePath: 'pages/tasks/index' }], value: 'b' }, expect: ['看板', '任务'] },
+  ],
+  'sb-date-picker': [
+    { title: '未选带快捷片', data: { label: '下次拜访', required: true }, expect: ['下次拜访', '*', '请选择日期', '今天', '本周', '本季'], event: tapFirst('.sb-chip', 'change') },
+    { title: '已选', data: { label: '签约日期', value: '2026-09-30' }, expect: ['2026-09-30'], event: callMethod('onConfirm', { value: '2026-10-08' }, 'change') },
+    { title: '禁用不出快捷片', data: { label: '签约日期', value: '2026-09-30', disabled: true }, expect: ['2026-09-30'] },
+  ],
+  'sb-select': [
+    { title: '未选', data: { label: '商机阶段', required: true, options: [{ value: 'a', label: '识别' }, { value: 'b', label: '验证', count: 3 }] }, expect: ['商机阶段', '*', '请选择'], event: callMethod('onConfirm', { value: ['b'] }, 'change') },
+    { title: '已选', data: { label: '商机阶段', value: 'a', options: [{ value: 'a', label: '识别' }, { value: 'c', label: '签约', disabled: true }] }, expect: ['识别'] },
+  ],
+  'sb-amount-input': [
+    { title: '有值千分位', data: { label: '预算', value: 1200.5, required: true }, expect: ['预算', '*', '万元'], event: async (comp, simulate) => comp.instance.data.text === '1,200.5' && (await callMethod('onInput', { value: '320' }, 'change')(comp, simulate)) && comp.instance.data.text === '320' },
+    { title: '空值改单位', data: { label: '合同额', unit: '元' }, expect: ['合同额', '元'], event: async (comp, simulate) => { comp.instance.onFocus(); comp.instance.onInput({ detail: { value: '12a.345' } }); await simulate.sleep(10); let hit = false; comp.addEventListener('change', (e) => (hit = e.detail.value === 12.35)); comp.instance.onBlur(); await simulate.sleep(10); return hit && comp.instance.data.text === '12.35'; } },
+  ],
+  'sb-textarea': [
+    { title: '必填带字数', data: { label: '拜访摘要', required: true, value: '已获得 CIO 支持', maxlength: 200 }, expect: ['拜访摘要', '*', '200'], event: callMethod('onInput', { value: '改了' }, 'change') },
+    { title: '禁用', data: { label: '备注', disabled: true, value: '只读内容' }, expect: ['备注'] },
+  ],
+  'sb-segmented': [
+    { title: '中号', data: { options: [{ value: 'map', label: '地图' }, { value: 'list', label: '列表' }], value: 'map' }, expect: ['地图', '列表'], event: tapNth('.sb-seg-item', 'change', -1) },
+    { title: '小号带禁用', data: { size: 'small', options: [{ value: 'q', label: '本季' }, { value: 'y', label: '本年', disabled: true }], value: 'q' }, expect: ['本季', '本年'] },
+  ],
+  'sb-battle-map': [
+    { title: '四格带点与计数', data: { points: [{ id: 1, name: '华宸数据', potential: 8, relationship: 9, tone: 'good', amountBand: 'large' }, { id: 2, name: '北辰智造', potential: 7, relationship: 3, tone: 'watch', amountBand: 'medium' }, { id: 3, name: '云岭', potential: 2, relationship: 2, tone: 'pending', amountBand: 'small' }], selectedId: 1, unrated: 3 }, expect: ['资产', '主攻', '资源', '见单', '华宸数据', '待评估 3 家', '小', '大', '浅', '深'], event: tapFirst('.sb-bmap-hit', 'pointtap') },
+    { title: '重叠聚合', data: { points: [{ id: 1, name: '甲', potential: 8, relationship: 8, tone: 'good' }, { id: 2, name: '乙', potential: 8.2, relationship: 8.1, tone: 'bad' }] }, expect: ['sb-bmap-cluster', '2'], event: tapFirst('.sb-bmap-hit', 'clustertap') },
+    { title: '点数字放大', data: { points: [{ id: 1, name: '甲', potential: 8, relationship: 8, tone: 'good' }] }, expect: ['资产'], event: tapFirst('.sb-bmap-count', 'zoomchange') },
+    { title: '放大一格', data: { zoom: 'attack', points: [{ id: 1, name: '甲', potential: 8, relationship: 8, tone: 'good' }, { id: 2, name: '乙', potential: 8, relationship: 2, tone: 'bad' }] }, expect: ['主攻区', '返回全图'], event: tapFirst('.sb-bmap-back', 'zoomchange') },
+    { title: '空态', data: { points: [{ id: 9, name: '没评', potential: null, relationship: 4 }] }, expect: ['还没有客户进入作战地图', '去客户列表'], event: tapFirst('t-button', 'emptyaction', '.t-button--t-button') },
+    { title: '加载中', data: { loading: true }, expect: ['正在读取'] },
+  ],
+  'sb-kpi-card': [
+    { title: '有值带单位与变化', data: { label: '年度合同额', value: 1880, unit: '万元', change: { text: '比上季 +12%', tone: 'up', good: true } }, expect: ['年度合同额', '1880', '万元', '比上季 +12%', 'tone-good'], event: tapFirst('.sb-kpi', 'tap') },
+    { title: '无好坏灰', data: { label: '客户', value: 24, unit: '家', change: { text: '比上季 +2 家', tone: 'up' } }, expect: ['tone-flat'] },
+    { title: '缺失', data: { label: '回款', value: null, unit: '万元', note: '财务还没登记' }, expect: ['未登记', '财务还没登记'] },
+    { title: '加载中', data: { label: '回款', value: 12, loading: true, note: 'x' }, expect: ['…', '正在读取'] },
+  ],
+  'sb-chart-card': [
+    { title: '正常', data: { title: '本季毛利够不够', scope: '本人 · 第三季度', caliber: '毛利按确收算', summary: '三个月毛利 12、15、18 万' }, expect: ['本季毛利够不够', '第三季度'] },
+    { title: '空', data: { title: '排名', state: 'empty' }, expect: ['这个周期还没有数据'] },
+    { title: '失败可重试', data: { title: '排名', state: 'error' }, expect: ['加载失败', '重试'], event: tapFirst('t-button', 'retry', '.t-button--t-button') },
+    { title: '加载中', data: { title: '排名', state: 'loading' }, expect: ['正在读取'] },
+  ],
   'sb-labeled-select': [
     { title: '未选显示全部', data: { label: '象限', options: [{ value: 'a', label: '主攻区', count: 9 }] }, expect: ['象限', '全部'] },
     { title: '已选', data: { label: '象限', value: 'a', options: [{ value: 'a', label: '主攻区', count: 9 }] }, expect: ['主攻区'], event: tapFirst('.sb-lselect-clear', 'change') },

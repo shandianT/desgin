@@ -1,0 +1,14 @@
+<view class="sb-chart" aria-role="group" aria-label="{{summary || title}}">
+  <view class="sb-chart-head">
+    <text class="sb-chart-title">{{title}}</text>
+    <text wx:if="{{scope}}" class="sb-chart-scope">{{scope}}</text>
+    <view wx:if="{{caliber}}" class="sb-chart-help" bind:tap="onCaliber" aria-role="button" aria-label="统计口径"><t-icon name="info-circle" size="36rpx" /></view>
+  </view>
+  <view wx:if="{{state === 'normal'}}" class="sb-chart-legend"><slot name="legend"></slot></view>
+  <view class="sb-chart-body">
+    <view wx:if="{{state === 'loading'}}" class="sb-chart-state" aria-role="status"><t-loading theme="circular" size="40rpx" text="正在读取" /></view>
+    <view wx:elif="{{state === 'empty'}}" class="sb-chart-state"><view class="sb-chart-state-title">{{emptyTitle}}</view><text class="sb-chart-state-desc">{{emptyDescription}}</text></view>
+    <view wx:elif="{{state === 'error'}}" class="sb-chart-state" aria-role="alert"><view class="sb-chart-state-title">加载失败，网络不通</view><t-button size="small" theme="primary" bind:tap="onRetry">重试</t-button><text class="sb-chart-state-desc">重试不会清除已选条件</text></view>
+    <view wx:else class="sb-chart-plot" aria-label="{{summary}}"><slot></slot></view>
+  </view>
+</view>

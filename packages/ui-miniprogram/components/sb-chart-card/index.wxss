@@ -1,0 +1,12 @@
+.sb-chart { display: flex; flex-direction: column; gap: var(--ui-space-2); padding: var(--ui-card-padding); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); background: var(--ui-surface); }
+.sb-chart-head { display: flex; align-items: baseline; gap: var(--ui-space-2); min-width: 0; }
+.sb-chart-title { font-size: var(--ui-text-section); font-weight: 600; color: var(--ui-ink); }
+.sb-chart-scope { flex: 1; font-size: var(--ui-text-small); color: var(--ui-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-chart-help { margin-left: auto; color: var(--ui-muted); display: inline-flex; align-self: center; }
+.sb-chart-legend { font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.sb-chart-legend:empty { display: none; }
+.sb-chart-body { position: relative; min-height: 360rpx; }
+.sb-chart-plot { width: 100%; min-height: 360rpx; }
+.sb-chart-state { min-height: 360rpx; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--ui-space-2); text-align: center; }
+.sb-chart-state-title { font-size: var(--ui-text-body); color: var(--ui-ink); }
+.sb-chart-state-desc { font-size: var(--ui-text-small); color: var(--ui-muted); }

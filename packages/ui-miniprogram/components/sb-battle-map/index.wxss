@@ -1,0 +1,43 @@
+.sb-bmap { display: flex; flex-direction: column; gap: var(--ui-space-2); }
+.sb-bmap-box { position: relative; width: 100%; padding-bottom: 100%; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); background: var(--ui-surface); overflow: hidden; }
+.sb-bmap-cover { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--ui-space-3); padding: var(--ui-space-6); }
+.sb-bmap-empty-text { text-align: center; font-size: var(--ui-text-body); color: var(--ui-secondary); line-height: 1.5; }
+.sb-bmap-quad { position: absolute; }
+.sb-bmap-quad.full { inset: 0; }
+.sb-bmap-quad.q-asset { background: var(--ui-quadrant-asset, var(--ui-selected)); }
+/* 颜色出现就有意义：向好用主色，只有需关注黄、转差红；待评估空心 */
+.sb-bmap-quad.q-attack { background: var(--ui-quadrant-attack, var(--ui-surface)); }
+.sb-bmap-quad.q-resource { background: var(--ui-quadrant-resource, var(--ui-surface)); }
+.sb-bmap-quad.q-spot { background: var(--ui-quadrant-spot, var(--ui-surface)); }
+.sb-bmap-quad-name { position: absolute; padding: var(--ui-space-1) var(--ui-space-2); font-size: var(--ui-text-small); font-weight: 600; color: var(--ui-secondary); }
+.q-asset .sb-bmap-quad-name, .q-resource .sb-bmap-quad-name { right: 0; }
+.q-attack .sb-bmap-quad-name, .q-spot .sb-bmap-quad-name { left: 0; }
+.q-asset .sb-bmap-quad-name, .q-attack .sb-bmap-quad-name { top: 0; }
+.q-resource .sb-bmap-quad-name, .q-spot .sb-bmap-quad-name { bottom: 0; }
+.sb-bmap-quad.full .sb-bmap-quad-name { left: 0; right: auto; top: 0; }
+.sb-bmap-back { position: absolute; right: 0; top: 0; padding: var(--ui-space-1) var(--ui-space-2); font-size: var(--ui-text-small); color: var(--ui-primary); }
+.sb-bmap-line { position: absolute; border: 0 dashed var(--ui-line); }
+.sb-bmap-line.v { top: 0; bottom: 0; border-left-width: 1px; }
+.sb-bmap-line.h { left: 0; right: 0; border-top-width: 1px; }
+.sb-bmap-hit { position: absolute; width: 72rpx; height: 72rpx; margin-left: -36rpx; margin-bottom: -36rpx; display: flex; align-items: center; justify-content: center; }
+.sb-bmap-dot { border-radius: 50%; border: 2px solid var(--ui-surface); box-sizing: border-box; }
+.sb-bmap-dot.tone-good { background: var(--ui-primary); }
+.sb-bmap-dot.tone-watch { background: var(--ui-warning); }
+.sb-bmap-dot.tone-bad { background: var(--ui-danger); }
+.sb-bmap-dot.tone-pending { background: var(--ui-surface); border-color: var(--ui-neutral); }
+.sb-bmap-hit.on .sb-bmap-dot, .sb-bmap-hit.on .sb-bmap-cluster { box-shadow: 0 0 0 3px var(--ui-primary); }
+.sb-bmap-cluster { display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--ui-secondary); color: var(--ui-on-primary); font-size: var(--ui-text-small); font-weight: 600; border: 2px solid var(--ui-surface); box-sizing: border-box; }
+.sb-bmap-name { position: absolute; left: 100%; top: 50%; transform: translateY(-50%); padding: var(--ui-space-1) var(--ui-space-2); border-radius: var(--ui-radius-control); background: var(--ui-surface); box-shadow: var(--ui-shadow-popup); font-size: var(--ui-text-small); color: var(--ui-ink); white-space: nowrap; }
+.sb-bmap-name.left { left: auto; right: 100%; }
+.sb-bmap-axis { position: absolute; font-size: var(--ui-text-small); color: var(--ui-muted); padding: var(--ui-space-1); }
+.sb-bmap-axis.x-lo { left: var(--ui-space-8); bottom: 0; }
+.sb-bmap-axis.x-hi { right: var(--ui-space-8); bottom: 0; }
+.sb-bmap-axis.y-lo { left: 0; bottom: var(--ui-space-8); }
+.sb-bmap-axis.y-hi { left: 0; top: var(--ui-space-8); }
+.sb-bmap-counts { display: flex; }
+.sb-bmap-count { flex: 1; display: flex; flex-direction: column; align-items: center; gap: var(--ui-space-1); padding: var(--ui-space-2) 0; border-radius: var(--ui-radius-control); }
+.sb-bmap-count.on { background: var(--ui-selected); }
+.sb-bmap-count-num { font-size: var(--ui-text-page); font-weight: 650; color: var(--ui-ink); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.sb-bmap-count.on .sb-bmap-count-num { color: var(--ui-primary); }
+.sb-bmap-count-label { font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.sb-bmap-unrated { font-size: var(--ui-text-small); color: var(--ui-secondary); padding: var(--ui-space-1) 0; }

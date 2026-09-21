@@ -13,4 +13,7 @@ if (pkg.version !== meta.version) { pkg.version = meta.version; writeFileSync(jo
 const bridge = readFileSync(join(here, 'dist', 'bridge-antd.theme.json'), 'utf8');
 writeFileSync(join(here, 'dist', 'bridge-antd.theme.mjs'), `export default ${bridge.trim()};\n`);
 writeFileSync(join(here, 'dist', 'bridge-antd.theme.cjs'), `module.exports = ${bridge.trim()};\n`);
+const echarts = readFileSync(join(here, 'dist', 'bridge-echarts.theme.json'), 'utf8');
+writeFileSync(join(here, 'dist', 'bridge-echarts.theme.mjs'), `export default ${echarts.trim()};\n`);
+writeFileSync(join(here, 'dist', 'bridge-echarts.theme.cjs'), `module.exports = ${echarts.trim()};\n`);
 console.error(`tokens 包 dist 已同步，版本 ${meta.version}`);

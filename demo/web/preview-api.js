@@ -7,7 +7,7 @@
 (function (global) {
   'use strict';
   let KEY = 'sales-web:preview-workspace:v1';
-  const VERSION = 7;
+  const VERSION = 8;
   // Isolated synthetic metadata; live reads always use the authenticated backend.
   const BUSINESS_OPTIONS = {"contract_version": 1, "data_source": "synthetic_preview", "customer": {"industry": ["智能制造", "企业软件", "新能源", "医药健康", "交通物流", "人工智能", "其他"], "customer_type": ["潜在客户", "商机客户", "已成单客户", "新拓客户", "存量客户"], "level_code": ["Tier-1", "Tier-2", "Tier-3"], "source": ["销售自拓", "客户转介绍", "市场活动", "销售线索", "合作伙伴", "公司分配", "自主拓展", "其他"], "contact_role": ["使用者", "影响者", "决策者"]}, "opportunity": {"stages": [{"code": "identified", "label": "意向沟通", "probability": 10, "status": "open", "text": "意向沟通－10%"}, {"code": "qualified", "label": "商机确认", "probability": 30, "status": "open", "text": "商机确认－30%"}, {"code": "solution", "label": "方案沟通", "probability": 50, "status": "open", "text": "方案沟通－50%"}, {"code": "proposal", "label": "商务谈判", "probability": 70, "status": "open", "text": "商务谈判－70%"}, {"code": "negotiation", "label": "客户签约", "probability": 90, "status": "open", "text": "客户签约－90%"}, {"code": "won", "label": "赢单 Won", "probability": 100, "status": "won", "text": "赢单 Won－100%"}, {"code": "lost", "label": "丢单 Lost", "probability": null, "status": "lost", "text": "丢单 Lost"}], "grades": [{"code": "A", "label": "A｜100万以上", "amountLabel": "100万以上", "min": 1000000, "max": null}, {"code": "B", "label": "B｜50万–100万", "amountLabel": "50万–100万", "min": 500000, "max": 1000000}, {"code": "C", "label": "C｜10万–50万", "amountLabel": "10万–50万", "min": 100000, "max": 500000}, {"code": "D", "label": "D｜10万以下", "amountLabel": "10万以下", "min": 0, "max": 100000}]}, "map_amount_ranges": [{"value": "0-50", "label": "0–50 万", "min": 0, "max": 499999.99}, {"value": "50-100", "label": "50–100 万", "min": 500000, "max": 999999.99}, {"value": "100-300", "label": "100–300 万", "min": 1000000, "max": 2999999.99}, {"value": "300-500", "label": "300–500 万", "min": 3000000, "max": 4999999.99}, {"value": "500+", "label": "500 万以上", "min": 5000000, "max": null}]};
   let LABEL = '渠道销售工作区';
@@ -54,7 +54,7 @@
       industry_code: ['制造业', '科技服务', '零售', '物流'][i % 4], level_code: ['A', 'A', 'B', 'C'][i % 4], source_code: ['销售自拓', '客户转介绍', '市场活动', '渠道推荐'][i % 4],
       customer_type_code: i % 3 === 1 ? 'won' : 'opportunity', lifecycle_status: 'active', owner_user_ref_id: actors[i < 6 ? 0 : 1].user_id,
       owner_id: actors[i < 6 ? 0 : 1].user_id, owner_name: actors[i < 6 ? 0 : 1].display_name, owner_team_id: uid(3, 1), team_name: '渠道销售-南区',
-      potential_score: [87, 92, 42, 55][i % 4], relationship_score: [48, 83, 38, 85][i % 4], quadrant_code: quadrants[i % 4],
+      potential_score: [87, 92, 42, 55, 76, 81, 61, 33, 94][i % 9], relationship_score: [48, 83, 38, 85, 32, 91, 52, 76, 63][i % 9], quadrant_code: quadrants[i % 4],
       quadrant_policy: {definition: {potential_threshold: 70, relationship_threshold: 70, inclusive: true}},
       latest_visit_at: date(-[1, 3, 9, 2, 16, 5, 12, 4][i]), weekly_follow_up_count: [3, 2, 0, 1, 0, 2, 0, 1][i], cooperation_years: i % 4,
       address: ['广州市天河区', '深圳市南山区', '上海市浦东新区', '杭州市滨江区'][i % 4], primary_partner_name: i % 2 ? '华南数码渠道' : '直销', attributes: {next_action: '确认下一次方案沟通时间'},
@@ -115,7 +115,16 @@
       simple(54, 0, 2, 'customer_assigned', 'customer', customerRows[5], '客户已下发', customerRows[5].name, {customer_id: customerRows[5].id, first_action: '本周内完成首访并确认试点边界'}),
       simple(55, 2, 2, 'customer_assigned', 'customer', customerRows[6], '客户已下发', customerRows[6].name, {customer_id: customerRows[6].id, first_action: '安排首访'}),
     ];
-    return {version: VERSION, customers: customerRows, opportunities, contacts, visits, tasks, actuals, notifications, claims: [], assignments: [], opportunityEvents: [], risks: [], targets: {}, conversations: {}, runs: {}, advice: {}, idempotency: {}, serial: 100};
+    // 风险：由 Agent 依据已确认事实识别，这里预置三条，两条待解除、一条已解除
+    const riskRows = [
+      {opportunity: opportunities[2], severity_code: 'high', title: '验收范围尚未书面确认', description: '试点已交付两周，客户仍未书面确认验收范围，存在延期确收的可能。', evidence: ['最近一次拜访记录：客户提出补充交付清单。', '预计关单日期在 30 天内，但未登记验收里程碑。'], next_action: '本周内约信息化部负责人确认验收清单和时间，并登记为拜访下一步。', opened: -6},
+      {opportunity: opportunities[5], severity_code: 'medium', title: '两周无高层动作', description: '核心客户连续两周没有高层或技术层面的接触记录，关系深度可能回落。', evidence: ['近 14 天仅有 1 条线上沟通记录，对接人为业务部负责人。', '客户处于主攻区，按规则两周内需有高层或技术动作。'], next_action: '安排一次高层拜访或技术交流，并在拜访确认中登记对接人角色。', opened: -3},
+      {opportunity: opportunities[8], severity_code: 'low', title: '预算口径待核实', description: '客户预算来自口头沟通，未见 IT 计划或采购文件，潜力评估可能偏高。', evidence: ['首访记录中的客户预算字段为口述金额。', '尚无预算文件或立项通知。'], next_action: '', opened: -20, resolved: -4, resolution_note: '客户已提供 2026 年 IT 采购计划，预算 180 万元与口述一致，潜力评估维持不变。'},
+    ].map((r, i) => {const op = r.opportunity, owner = actors.find(a => a.user_id === op.owner_id); return {id: uid(14, i + 1), customer_id: op.customer_id, customer_name: op.customer_name, opportunity_id: op.id, opportunity_name: op.name,
+      owner_id: op.owner_id, owner_name: op.owner_name, team_name: owner?.team_names?.[0] || '渠道销售-南区', title: r.title, description: r.description, evidence: r.evidence, next_action: r.next_action || undefined,
+      severity_code: r.severity_code, risk_type_code: 'follow_up', status: r.resolved ? 'resolved' : 'open', opened_at: date(r.opened), resolved_at: r.resolved ? date(r.resolved) : null,
+      resolved_by_name: r.resolved ? op.owner_name : null, resolution_note: r.resolved ? r.resolution_note : null, data_kind: 'demo'};});
+    return {version: VERSION, customers: customerRows, opportunities, contacts, visits, tasks, actuals, notifications, claims: [], assignments: [], opportunityEvents: [], risks: riskRows, targets: {}, conversations: {}, runs: {}, advice: {}, idempotency: {}, serial: 100};
   }
   let state, baseline;
   async function loadLocal() {
@@ -164,7 +173,7 @@
           }
         }
         else if (saved && saved.version === VERSION) state = saved;
-        else if (!localDataset && saved && (saved.version === 5 || saved.version === 6)) {
+        else if (!localDataset && saved && [5, 6, 7].includes(saved.version)) {
           // v7：内置演示数据换了名字。重新生成内置数据，只保留使用者自己录入的记录，并把旧名字换成新名字。
           const fresh = seed(), legacy = JSON.parse(JSON.stringify(saved).replace(/【示例】/g, '').replace(/示例协作一组/g, '渠道销售-南区').replace(/示例销售主管/g, NAMES[1]).replace(/示例总经理/g, NAMES[2]).replace(/示例FDE主管/g, NAMES[4]).replace(/示例FDE/g, NAMES[3]).replace(/示例销售/g, NAMES[0]).replace(/示例联系人甲/g, '张晓静').replace(/示例联系人乙/g, '刘志强').replace(/示例协作伙伴/g, '华南数码渠道'));
           state = {...legacy, ...fresh, version: VERSION};
@@ -431,6 +440,7 @@
     const dimensions = ['需求理解', '客户关系', '方案推进', '协作执行', '风险识别', '复盘成长'].map((name, i) => ({code: 'preview_' + i, key: 'preview_' + i, name, label: name, short_name: name}));
     const sampleCount = actor ? getState().visits.filter(v => v.recorder_id === actor.user_id).length : 0;
     return {data_source: 'database', today_status: 'not_reviewed', review_status: 'not_reviewed', as_of: now(), sample_count: sampleCount, framework: {dimensions},
+      subject: actor ? {name: actor.display_name, team: actor.team_names[0], account_code: actor.account_code, role_code: actor.role} : null,
       latest: {summary: '画像待 Agent 复盘后生成。', score_summary: {status: 'missing', score: null, reason: '暂未评分'},
         dimension_scores: Object.fromEntries(dimensions.map(d => [d.code, {score: null, assessment: '暂未评分'}])),
         dimensions: dimensions.map(d => ({...d, score: null, assessment: '暂未评分', evidence_count: 0, numerator: null, denominator: null})), overall_score: null, advice: [],
@@ -562,7 +572,7 @@
     }
     let match;
     if (path === '/targets') {const context = targetContext(a, Object.fromEntries(p)), values = targetState(context); return {...context, ...values, pending_requests: [], data_source: 'database'};}
-    if ((match = path.match(/^\/opportunities\/([^/]+)\/demo-scenes$/))) {requireCap(a, 'opportunity.read'); const op = opportunity(a, match[1]); return pagination(demoRows().filter(row => row.opportunity_id === op.id && !row.deleted_at).map(row => sceneView(row, a)), p, {editable: scenePermission(a, op)});}
+    if ((match = path.match(/^\/opportunities\/([^/]+)\/demo-scenes$/))) {requireCap(a, 'opportunity.read'); const op = opportunity(a, match[1]); return pagination(demoRows().filter(row => row.opportunity_id === op.id && !row.deleted_at).map(row => sceneView(row, a)), p, {editable: scenePermission(a, op), data_source: 'database'});}
     if ((match = path.match(/^\/demo-scenes\/([^/]+)(?:\/(history))?$/))) {
       const row = demoRows().find(row => row.id === match[1] && !row.deleted_at); if (!row) error(404, '场景不存在'); requireCap(a, 'opportunity.read');
       const view = sceneView(row, a); return match[2] ? pagination(row.history || [], p) : view;
@@ -615,7 +625,7 @@
     if (path === '/visits' || path === '/fde/activity') {const customerIds = new Set(visibleCustomers(a).map(c => c.id)); let rows = s.visits.filter(v => (localDataset && ['manager','supervisor'].includes(a.role)) || customerIds.has(v.customer_id)); for (const key of ['customer_id', 'opportunity_id']) if (p.get(key)) rows = rows.filter(v => v[key] === p.get(key) || (key === 'opportunity_id' && v.opportunity_ids?.includes(p.get(key)))); if (path === '/fde/activity') {if (!isFde(a)) error(403, '当前身份没有 FDE 活动范围'); const selection = scopeSelection(a, p); rows = rows.filter(v => selection.people.some(person => isFde(person) && person.user_id === v.recorder_id) && inPeriod(v.visit_date || v.interaction_at, p)); if (a.role === 'fde' || p.get('scope') === 'self') rows = rows.filter(v => v.recorder_id === a.user_id); if (p.get('member_id')) rows = rows.filter(v => v.recorder_id === p.get('member_id')); const selected = p.getAll('member_ids'); if (selected.length) rows = rows.filter(v => selected.includes(v.recorder_id));} if (p.get('sort') === 'created_desc') rows = rows.slice().sort((a,b) => Date.parse(b.created_at || 0) - Date.parse(a.created_at || 0) || String(b.id).localeCompare(String(a.id))); return pagination(rows, p, p.get('sort') === 'created_desc' ? {sort: 'created_desc'} : {});}
     if ((match = path.match(/^\/visits\/([^/]+)$/))) {const row = s.visits.find(v => v.id === match[1]); if (!row) error(404, '拜访不存在'); if (!(localDataset && ['manager','supervisor'].includes(a.role))) customer(a, row.customer_id); return row;}
     if (path === '/customer-assets/quarters') {const rows = entriesFor(a, p); return {items: actualQuarters(rows), years: uniq(rows.map(e => Number(e.occurred_on.slice(0, 4)))), as_of: p.get('as_of') || today()};}
-    if (path === '/customer-assets') {const entries = entriesFor(a, p), view = p.get('customer_id') ? 'entries' : 'customers'; const rows = view === 'entries' ? entries : scopedCustomers(a, p).map(c => ({customer_id: c.id, customer_name: c.name, data_kind: 'demo', ...actualSummary(entries.filter(e => e.customer_id === c.id))})); return pagination(rows, p, {view, summary: actualSummary(entries), as_of: p.get('as_of') || today(), can_manage: a.capabilities['actual.manage']});}
+    if (path === '/customer-assets') {const entries = entriesFor(a, p), view = p.get('customer_id') ? 'entries' : 'customers'; const rows = view === 'entries' ? entries : scopedCustomers(a, p).map(c => ({customer_id: c.id, customer_name: c.name, owner_name: c.owner_name || actors.find(x => x.user_id === c.owner_user_ref_id)?.display_name || '', team_name: c.team_name || actors.find(x => x.user_id === c.owner_user_ref_id)?.team_names?.[0] || '', data_kind: 'demo', ...actualSummary(entries.filter(e => e.customer_id === c.id))})); return pagination(rows, p, {view, summary: actualSummary(entries), as_of: p.get('as_of') || today(), can_manage: a.capabilities['actual.manage']});}
     if (path === '/dashboard') return scopedDashboard(a, p);
     if (path === '/dashboard/rankings') return rankings(a, p);
     if (path === '/profile/performance') {
@@ -626,7 +636,8 @@
       return {data_source: 'database', year, target_period: {year, quarter}, actuals: {...totals, recognized: totals.recognized_amount, collection: totals.collection_amount}, targets, supplementals: {followup: null, customers: null, opportunities: null}, retention: {rate: null}, scores: {}, active_opportunity_amount: sum(ops.filter(o => o.status === 'open'), 'amount'), won_amount: sum(ops.filter(o => o.status === 'won'), 'amount'), editable: !isFde(a) && context.editable};
     }
     if (path === '/profile/evaluation') {const dash = scopedDashboard(a, p); return {data_source: 'database', maturity: {active_opportunity_amount: sum(dash.opportunities.filter(o => o.status === 'open'), 'amount'), won_amount: sum(dash.opportunities.filter(o => o.status === 'won'), 'amount'), teams: [], members: []}, efficiency: {followup: {rows: [], periods: {}}, customers: {rows: [], periods: {}}, opportunities: {rows: [], periods: {}}}};}
-    if (path === '/profile/sales-growth' || path === '/profile/sales-growth/scoped' || /^\/profile\/team-members\/[^/]+\/sales-growth$/.test(path)) return growth(a);
+    if (path === '/profile/sales-growth' || path === '/profile/sales-growth/scoped') return growth(a);
+    if ((match = path.match(/^\/profile\/team-members\/([^/]+)\/sales-growth$/))) {const person = actors.find(x => x.account_code === decodeURIComponent(match[1])); if (!person) error(404, '成员不存在'); return growth(person);}
     if (path === '/fde/profile') {
       if (!isFde(a)) error(403, '当前身份没有 FDE 画像');
       const scope = p.get('scope') || 'self', selected = p.get('member_id') ? actors.find(person => person.user_id === p.get('member_id') && isFde(person)) : a;
@@ -654,7 +665,8 @@
       return {data_source: 'database', summary: stats, company_rankings: fdeCompanyRankings(a, p), scope_label: p.get('scope') === 'team' ? 'FDE 团队' : '本人协作', members: actors.filter(person => isFde(person) && (a.capabilities['team.view'] || person.user_id === a.user_id)).map(member), ranking: distribution, recent_visits: visits.slice(0, 8), stages: STAGES.map((code, i) => ({code, label: STAGE_NAMES[i], name: STAGE_NAMES[i], count: ops.filter(o => o.stage_code === code).length, amount: sum(ops.filter(o => o.stage_code === code), 'amount')})), rhythm: [6, 5, 4, 3, 2, 1, 0].map(i => ({date: date(-i).slice(0, 10), visits: visits.filter(v => v.visit_date === date(-i).slice(0, 10)).length})), as_of: now()};
     }
     if (path === '/notifications') return {items: s.notifications.filter(n => n.recipient_user_ref_id === a.user_id || n.recipient_user_id === a.user_id)};
-    if (path === '/risks') return {items: [], total: 0};
+    if (path === '/risks') {const ids = new Set(visibleCustomers(a).map(c => c.id)); const items = s.risks.filter(r => ids.has(r.customer_id)); return {items, total: items.length};}
+    if ((match = path.match(/^\/risks\/([^/]+)$/))) {const ids = new Set(visibleCustomers(a).map(c => c.id)); const row = s.risks.find(r => r.id === match[1] && ids.has(r.customer_id)); if (!row) error(404, '风险不存在或当前身份不可见'); return row;}
     if (path === '/workbench') return {items: [], customers: visibleCustomers(a).map(c => enrichCustomer(c, a)), tasks: taskRows(a), summary: {customer_count: visibleCustomers(a).length, task_count: taskRows(a).length}, source_label: LABEL};
     if ((match = path.match(/^\/agent\/runs\/([^/]+)$/))) {if (!s.runs[match[1]] || s.runs[match[1]].actor_id !== a.user_id) error(404, '运行记录不存在或当前身份不可见'); return s.runs[match[1]];}
     if (path === '/advice/statistics') return {items: [], total: 0};
@@ -853,6 +865,7 @@
     if ((match = path.match(/^\/customer-assets\/([^/]+)\/void$/)) && method === 'POST') {requireCap(a, 'actual.manage'); const row = s.actuals.find(e => e.id === match[1]); if (!row) error(404, '记录不存在'); customer(a, row.customer_id); row.status = 'void'; row.void_reason = body.reason; return row;}
     if (path === '/profile/sales-targets' && method === 'POST') {if (isFde(a)) error(403, 'FDE 不能维护销售目标'); if (!['recognized', 'collection'].includes(body.kind) || !Number.isFinite(Number(body.amount))) error(422, '请输入有效目标'); s.targets[a.user_id] = {...(s.targets[a.user_id] || {recognized: localDataset ? null : 5000000, collection: localDataset ? null : 4000000}), [body.kind]: Number(body.amount)}; return {saved: true, ...s.targets[a.user_id]};}
     if ((path === '/profile/sales-growth/review' || path === '/fde/profile/review') && method === 'POST') error(501, 'Agent 暂未接入，不能生成能力评分');
+    if ((match = path.match(/^\/risks\/([^/]+)\/resolve$/)) && method === 'POST') {const row = s.risks.find(r => r.id === match[1]); if (!row) error(404, '风险不存在'); if (!a.capabilities['risk.resolve']) error(403, '当前身份不能解除风险'); Object.assign(row, {status: 'resolved', resolved_at: now(), resolved_by_name: a.display_name, resolution_note: body.resolution_note || ''}); return row;}
     if ((match = path.match(/^\/notifications\/([^/]+)\/read$/)) && method === 'POST') {const row = s.notifications.find(n => n.id === match[1] && (n.recipient_user_ref_id === a.user_id || n.recipient_user_id === a.user_id)); if (!row) error(404, '通知不存在'); row.read_at ||= now(); return {id: row.id, read: true, read_at: row.read_at};}
     if (path === '/conversations' && method === 'POST') {const id = nextId(20); s.conversations[id] = {...body, id, actor_id: a.user_id}; return {id};}
     if ((match = path.match(/^\/conversations\/([^/]+)\/messages$/)) && method === 'POST') {const conversation = s.conversations[match[1]]; if (!conversation || conversation.actor_id !== a.user_id) error(404, '会话不存在');

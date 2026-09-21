@@ -52,6 +52,18 @@ metadata:
 | 指标横排加周期切换 | SbMetricStrip | sb-metric-strip |
 | 带数量的标签页 | SbTabs | sb-tabs |
 | 表格（操作列、四态、分页） | SbTable | 手机用 sb-list-row |
+| 顶栏（面包屑、状态、日期、新建、帮助刷新） | SbTopBar | 无 |
+| 侧导航（分组、折叠窄条） | SbSideNav | sb-tab-bar |
+| 作战地图（四象限） | SbBattleMap | sb-battle-map |
+| 日期（今天／本周／本季，出字符串） | SbDatePicker | sb-date-picker |
+| 普通选择 | SbSelect | sb-select |
+| 远程搜索选择（选客户、选人） | SbSearchSelect | sb-search 加 sb-list-row |
+| 金额（万元、千分位、只收正数） | SbAmountInput | sb-amount-input |
+| 长文本带字数 | SbTextarea | sb-textarea |
+| 分段切换 | SbSegmented | sb-segmented |
+| 图表卡片壳（标题、口径、四态、数据表） | SbChartCard | sb-chart-card |
+| 指标卡（数字、单位、变化） | SbKpiCard | sb-kpi-card |
+| 条形、柱状、折线（主题来自 tokens 的 bridge-echarts） | SbBarChart、SbLineChart | ec-canvas |
 
 - 图标：用 `SbIcon`（小程序 `sb-icon`），传含义名 name="customer" 不传库里的名字，size sm／md／lg，tone 只给业务状态，tile 带底方块。含义表在 `packages/ui-react/src/icons.js`。图标旁必须有字，见 `specs/salesbuddy/10-图标.md`。
 - 视觉手感（14 章）：一个容器里不再描边，同一层只用边框、底色、留白之一；悬停才出底色；一屏最多两种圆角；汇总数字一行放下（说明左、数字右）；有面包屑的页面不要页头；表格每格一行；汇总页红黄灯只放「需关注」一格和红黄条目的标签，绿色不打。指标条用默认 flat，页面给白卡。

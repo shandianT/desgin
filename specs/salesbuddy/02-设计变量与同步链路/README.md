@@ -30,7 +30,7 @@ tokens.json（唯一维护源，人改）
    ├─ dist/design-tokens.css               电脑网页 + 手机网页（≤600px 用媒体查询覆盖）
    ├─ dist/design-tokens.wxss              微信小程序（page{} 根节点，px 逻辑像素）
    ├─ dist/miniprogram-app.tokens.json     小程序 app.json 的 tabBar／window 颜色片段（原生组件不认 CSS 变量）
-   ├─ dist/bridge-tdesign.wxss／.css、bridge-semi.css、bridge-antd.theme.json、桥接说明.md
+   ├─ dist/bridge-tdesign.wxss／.css、bridge-semi.css、bridge-antd.theme.json、bridge-echarts.theme.json、桥接说明.md
    │                                        上游组件库主题桥接（由 bridges.json 生成；建议，见 ../05-组件生态选型.md）
    ├─ dist/design-tokens.json              原生 App 或其他工具读取的扁平表
    └─ dist/变量对照表.md                    给人看的中文表：每个变量在四端的值、状态、规则编号

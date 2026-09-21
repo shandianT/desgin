@@ -1,0 +1,7 @@
+.sb-amount { display: flex; align-items: center; gap: var(--ui-space-2); min-height: var(--ui-field-height); padding: var(--ui-space-2) var(--ui-page-gutter); background: var(--ui-surface); }
+.sb-amount-label { flex: 0 0 auto; font-size: var(--ui-text-body); color: var(--ui-secondary); }
+.sb-req { color: var(--ui-danger); }
+.sb-amount-control { flex: 1; display: flex; align-items: center; gap: var(--ui-space-1); min-width: 0; }
+.sb-amount-input { flex: 1; min-width: 0; font-variant-numeric: tabular-nums; }
+.sb-amount-unit { flex: 0 0 auto; font-size: var(--ui-text-body); color: var(--ui-secondary); }
+.sb-amount.disabled .sb-amount-unit { color: var(--ui-muted); }

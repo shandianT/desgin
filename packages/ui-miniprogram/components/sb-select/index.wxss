@@ -1,0 +1,7 @@
+.sb-select { display: flex; align-items: center; gap: var(--ui-space-2); min-height: var(--ui-field-height); padding: var(--ui-space-2) var(--ui-page-gutter); background: var(--ui-surface); }
+.sb-select-label { flex: 0 0 auto; font-size: var(--ui-text-body); color: var(--ui-secondary); }
+.sb-req { color: var(--ui-danger); }
+.sb-select-value { flex: 1; text-align: right; font-size: var(--ui-text-body); color: var(--ui-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-select-value.placeholder { color: var(--ui-muted); }
+.sb-select.disabled .sb-select-value { color: var(--ui-muted); }
+.sb-select-arrow { color: var(--ui-muted); display: inline-flex; }
