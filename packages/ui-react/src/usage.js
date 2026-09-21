@@ -124,6 +124,17 @@ import { SbPageHeader } from '${PKG}';
   detailOpen={open} onBack={() => setOpen(false)} />
 // 档位按容器宽度自动判断；演示时可传 tier="desktop" | "rail" | "mobile"`,
 
+  SbIcon: `import { SbIcon, ICONS } from '${PKG}';
+
+// 传含义名，不传 UserOutlined 这种库里的名字。40 个含义在 ICONS 里
+<SbIcon name="customer" />                       // 16px，颜色跟文字
+<SbIcon name="risk" tone="warning" size="md" />  // 20px，警告色
+<SbIcon name="visit" tile tone="primary" size="lg" label="拜访" />  // 带底色方块，48px
+
+// 图标旁要有字；只有图标时给 label
+<Button icon={<SbIcon name="add" />}>记录拜访</Button>
+<Button icon={<SbIcon name="search" label="搜索" />} />`,
+
   SbAiBadge: `import { SbAiBadge } from '${PKG}';
 
 <SbAiBadge state="generating" />

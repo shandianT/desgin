@@ -42,6 +42,7 @@ app.wxss 头两行：
 | sb-search | t-search：value、placeholder、clearable、disabled；t-loading 放 action slot | change、submit、clear |
 | sb-sheet | t-popup：visible、placement=bottom、close-btn、close-on-overlay-click；t-button | visible-change |
 | sb-pagination | t-button：size、variant、disabled、loading | tap |
+| sb-icon | t-icon：name 按 names.js 对照，size 按三档 | — |
 | sb-ai-sources | t-icon：name=chevron-down 或 chevron-up | — |
 | sb-ai-progress | t-progress：theme=line、percentage、color；t-button | tap |
 | sb-state-panel、sb-bottom-bar、sb-ai-field | t-loading、t-skeleton、t-button、t-input | tap、change |

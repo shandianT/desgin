@@ -1,0 +1,10 @@
+.sb-icon-wrap { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
+.sb-icon-inline { color: inherit; }
+.sb-icon-secondary { color: var(--ui-secondary); } .sb-icon-muted { color: var(--ui-muted); } .sb-icon-primary { color: var(--ui-primary); }
+.sb-icon-success { color: var(--ui-success); } .sb-icon-warning { color: var(--ui-warning); } .sb-icon-danger { color: var(--ui-danger); }
+.sb-icon-tile { border-radius: var(--ui-radius-control); background: var(--ui-neutral-soft); color: var(--ui-secondary); flex: none; }
+.sb-icon-tile-sm { width: 56rpx; height: 56rpx; } .sb-icon-tile-md { width: 72rpx; height: 72rpx; } .sb-icon-tile-lg { width: 96rpx; height: 96rpx; border-radius: var(--ui-radius-panel); }
+.sb-icon-tile-primary { background: var(--ui-selected); color: var(--ui-primary); }
+.sb-icon-tile-success { background: var(--ui-success-soft); color: var(--ui-success); }
+.sb-icon-tile-warning { background: var(--ui-warning-soft); color: var(--ui-warning); }
+.sb-icon-tile-danger { background: var(--ui-danger-soft); color: var(--ui-danger); }

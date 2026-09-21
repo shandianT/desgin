@@ -1,0 +1,1 @@
+<view wx:if="{{icon}}" class="sb-icon-wrap {{tile ? 'sb-icon-tile sb-icon-tile-' + size + ' sb-icon-tile-' + tone : 'sb-icon-inline sb-icon-' + tone}}" aria-role="{{label ? 'img' : ''}}" aria-label="{{label}}"><t-icon name="{{icon}}" size="{{px}}" /></view>

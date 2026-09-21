@@ -5,6 +5,9 @@
   <view class="sub">只有标题</view>
   <sb-page-header title="我的" />
 
+  <view class="h">图标 sb-icon</view>
+  <view class="row"><sb-icon name="customer" size="sm" /><sb-icon name="customer" size="md" /><sb-icon name="customer" size="lg" /><sb-icon name="risk" tone="warning" size="md" /><sb-icon name="fail" tone="danger" size="md" /></view>
+  <view class="row"><sb-icon name="customer" tile tone="primary" size="lg" label="客户" /><sb-icon name="opportunity" tile size="md" label="商机" /><sb-icon name="risk" tile tone="warning" size="md" label="风险" /><sb-icon name="ai" tile tone="primary" size="sm" label="AI" /></view>
   <view class="h">状态标签 sb-status-tag</view>
   <view class="row"><sb-status-tag tone="good" /><sb-status-tag tone="watch" /><sb-status-tag tone="bad" /><sb-status-tag tone="pending" /><sb-status-tag tone="unset" /><sb-status-tag tone="watch" reason="一周无跟进" showReason /></view>
 

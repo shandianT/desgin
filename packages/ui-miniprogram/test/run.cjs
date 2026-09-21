@@ -55,7 +55,7 @@ const CASES = require('./cases.cjs');
         let evt = '';
         if (c.event) { try { const ok = await c.event(comp, simulate); evt = ok ? '事件通过' : '事件未触发'; if (ok) events++; } catch (e) { evt = '事件异常：' + e.message; } }
         const missing = (c.expect || []).filter((t) => !html.includes(t));
-        const ok = html.length > 0 && !missing.length && !/事件未|事件异常/.test(evt);
+        const ok = (c.empty ? html.trim().length === 0 : html.length > 0) && !missing.length && !/事件未|事件异常/.test(evt);
         if (!ok) fail++;
         rows.push(`${ok ? '✓' : '✗'} ${c.title}${missing.length ? '，缺 ' + missing.join('、') : ''}${evt ? '，' + evt : ''}`);
         comp.detach();

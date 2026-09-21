@@ -1,6 +1,7 @@
 {
   "usingComponents": {
     "sb-status-tag": "/components/sb-status-tag/index",
+    "sb-icon": "/components/sb-icon/index",
     "sb-state-panel": "/components/sb-state-panel/index",
     "sb-filter-bar": "/components/sb-filter-bar/index",
     "sb-search": "/components/sb-search/index",

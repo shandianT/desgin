@@ -1,4 +1,5 @@
 // 部门 Web 组件库的类型声明。与 src/ 里各组件的属性一一对应，改组件属性时同步改这里；tools/check.mjs 会核对导出名。
+import type React from 'react';
 import type { ReactNode, MouseEventHandler } from 'react';
 import type { ThemeConfig } from 'antd';
 
@@ -173,6 +174,22 @@ export interface SbDetailLayoutProps {
   tier?: SbLayoutTier;
 }
 export declare function SbDetailLayout(props: SbDetailLayoutProps): JSX.Element;
+
+export type SbIconSize = 'sm' | 'md' | 'lg';
+export type SbIconTone = 'default' | 'secondary' | 'muted' | 'primary' | 'success' | 'warning' | 'danger';
+export interface SbIconProps {
+  /** 含义名，见 ICONS：customer、visit、risk… */
+  name: string;
+  size?: SbIconSize;
+  tone?: SbIconTone;
+  /** 套一个带底色的圆角方块 */
+  tile?: boolean;
+  /** 只有图标没有文字时必须给 */
+  label?: string;
+  className?: string;
+  style?: React.CSSProperties;
+}
+export declare function SbIcon(props: SbIconProps): JSX.Element | null;
 
 export interface SbAiBadgeProps {
   state?: SbAiState;

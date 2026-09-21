@@ -1,6 +1,6 @@
 {
   "name": "@shandiant/ui-react",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "部门 Web 组件库：Ant Design 6 与 Ant Design X 之上的组合件与 AI 件，主题来自设计变量的桥接文件",
   "license": "UNLICENSED",
   "type": "module",
@@ -34,7 +34,8 @@
     "react-dom": ">=18",
     "antd": "^6.1.1",
     "@ant-design/x": "^2.3.0",
-    "@shandiant/tokens": ">=1.1.0-draft.1"
+    "@shandiant/tokens": ">=1.1.0-draft.1",
+    "@ant-design/icons": "^6.0.0"
   },
   "devDependencies": {
     "react": "18.3.1",

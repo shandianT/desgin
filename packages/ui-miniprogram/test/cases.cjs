@@ -9,6 +9,12 @@ const tapFirst = (sel, ev, domSel) => async (comp, simulate) => {
   await simulate.sleep(20); return hit;
 };
 module.exports = {
+  'sb-icon': [
+    { title: '三档尺寸', data: { name: 'customer', size: 'lg' } },
+    { title: '语义色', data: { name: 'risk', tone: 'warning', size: 'md' } },
+    { title: '带底方块', data: { name: 'visit', tile: true, tone: 'primary', size: 'lg', label: '拜访' }, expect: ['sb-icon-tile'] },
+    { title: '未知名字不渲染', data: { name: 'nope' }, empty: true },
+  ],
   'sb-status-tag': [
     { title: '向好', data: { tone: 'good' }, expect: ['向好'] },
     { title: '需关注带依据', data: { tone: 'watch', reason: '一周无跟进', showReason: true }, expect: ['需关注', '一周无跟进'] },

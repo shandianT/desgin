@@ -11,6 +11,7 @@ export { SbSheet } from './components/SbSheet.jsx';
 export { SbMetricTile } from './components/SbMetricTile.jsx';
 export { SbPageHeader } from './components/SbPageHeader.jsx';
 export { SbDetailLayout } from './components/SbDetailLayout.jsx';
+export { SbIcon } from './components/SbIcon.jsx';
 export { SbAiBadge } from './components/SbAiBadge.jsx';
 export { SbAiField } from './components/SbAiField.jsx';
 export { SbAiSources } from './components/SbAiSources.jsx';
