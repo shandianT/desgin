@@ -7,7 +7,7 @@
 (function (global) {
   'use strict';
   let KEY = 'sales-web:preview-workspace:v1';
-  const VERSION = 6;
+  const VERSION = 7;
   // Isolated synthetic metadata; live reads always use the authenticated backend.
   const BUSINESS_OPTIONS = {"contract_version": 1, "data_source": "synthetic_preview", "customer": {"industry": ["智能制造", "企业软件", "新能源", "医药健康", "交通物流", "人工智能", "其他"], "customer_type": ["潜在客户", "商机客户", "已成单客户", "新拓客户", "存量客户"], "level_code": ["Tier-1", "Tier-2", "Tier-3"], "source": ["销售自拓", "客户转介绍", "市场活动", "销售线索", "合作伙伴", "公司分配", "自主拓展", "其他"], "contact_role": ["使用者", "影响者", "决策者"]}, "opportunity": {"stages": [{"code": "identified", "label": "意向沟通", "probability": 10, "status": "open", "text": "意向沟通－10%"}, {"code": "qualified", "label": "商机确认", "probability": 30, "status": "open", "text": "商机确认－30%"}, {"code": "solution", "label": "方案沟通", "probability": 50, "status": "open", "text": "方案沟通－50%"}, {"code": "proposal", "label": "商务谈判", "probability": 70, "status": "open", "text": "商务谈判－70%"}, {"code": "negotiation", "label": "客户签约", "probability": 90, "status": "open", "text": "客户签约－90%"}, {"code": "won", "label": "赢单 Won", "probability": 100, "status": "won", "text": "赢单 Won－100%"}, {"code": "lost", "label": "丢单 Lost", "probability": null, "status": "lost", "text": "丢单 Lost"}], "grades": [{"code": "A", "label": "A｜100万以上", "amountLabel": "100万以上", "min": 1000000, "max": null}, {"code": "B", "label": "B｜50万–100万", "amountLabel": "50万–100万", "min": 500000, "max": 1000000}, {"code": "C", "label": "C｜10万–50万", "amountLabel": "10万–50万", "min": 100000, "max": 500000}, {"code": "D", "label": "D｜10万以下", "amountLabel": "10万以下", "min": 0, "max": 100000}]}, "map_amount_ranges": [{"value": "0-50", "label": "0–50 万", "min": 0, "max": 499999.99}, {"value": "50-100", "label": "50–100 万", "min": 500000, "max": 999999.99}, {"value": "100-300", "label": "100–300 万", "min": 1000000, "max": 2999999.99}, {"value": "300-500", "label": "300–500 万", "min": 3000000, "max": 4999999.99}, {"value": "500+", "label": "500 万以上", "min": 5000000, "max": null}]};
   let LABEL = '渠道销售工作区';
@@ -102,10 +102,18 @@
       title, body: `${opportunities[opIndex].customer_name} · ${opportunities[opIndex].name}`, created_at: date(-days, '09:30:00'), read_at: null, data_kind: 'demo',
       payload: {customer_id: opportunities[opIndex].customer_id, opportunity_id: opportunities[opIndex].id, actor_name: NAMES[1], event_type: 'updated', changes,
         change_review: {status: 'completed', color, title, summary, source: 'rules'}}});
+    const forRoles = (row, n, roles) => roles.map((r, k) => ({...row, id: uid(25, n * 10 + k), recipient_user_ref_id: actors[r].user_id}));
+    const simple = (n, recipient, days, template, objectType, row, title, body, payload) => ({id: uid(25, n), recipient_user_ref_id: actors[recipient].user_id, template_code: template, object_type: objectType, object_id: row.id, title, body, payload, created_at: date(-days, '08:40:00'), read_at: null, data_kind: 'demo'});
     const notifications = [
-      changed(1, 0, 2, 'red', '商机推进停滞', '预计关单已过期 12 天，近两周没有跟进记录', [{label: '预计关单', before: '2026-09-09', after: '2026-09-30'}]),
-      changed(2, 1, 5, 'yellow', '关系深度下降', '关键联系人一个月未沟通，关系评分从 83 降到 71', [{label: '关系评分', before: '83', after: '71'}]),
-      changed(3, 2, 1, 'green', '阶段推进', '商机阶段从方案沟通进入商务谈判', [{label: '商机阶段', before: '方案沟通', after: '商务谈判'}]),
+      ...forRoles(changed(0, 0, 2, 'red', '商机推进停滞', '预计关单已过期 12 天，近两周没有跟进记录', [{label: '预计关单', before: '2026-09-09', after: '2026-09-30'}]), 1, [0, 1, 2]),
+      ...forRoles(changed(0, 1, 5, 'yellow', '关系深度下降', '关键联系人一个月未沟通，关系评分从 83 降到 71', [{label: '关系评分', before: '83', after: '71'}]), 2, [0, 1, 2]),
+      ...forRoles(changed(0, 2, 1, 'green', '阶段推进', '商机阶段从方案沟通进入商务谈判', [{label: '商机阶段', before: '方案沟通', after: '商务谈判'}]), 3, [0, 1, 2]),
+      ...forRoles(changed(0, 1, 0, 'yellow', '试点验收延期', '客户要求补充验收标准，交付节点后移两周', [{label: '预计签约', before: '2026-03-25', after: '2026-04-08'}]), 4, [3, 4]),
+      simple(51, 0, 1, 'task_assigned', 'task', tasks[0], '收到新任务', tasks[0].description, {task_id: tasks[0].id, customer_id: tasks[0].customer_id}),
+      simple(52, 3, 0, 'task_assigned', 'task', tasks[22], '收到新任务', tasks[22].description, {task_id: tasks[22].id, customer_id: tasks[22].customer_id}),
+      simple(53, 1, 1, 'task_completed', 'task', tasks[4], '任务已完成', tasks[4].description, {task_id: tasks[4].id, customer_id: tasks[4].customer_id}),
+      simple(54, 0, 2, 'customer_assigned', 'customer', customerRows[5], '客户已下发', customerRows[5].name, {customer_id: customerRows[5].id, first_action: '本周内完成首访并确认试点边界'}),
+      simple(55, 2, 2, 'customer_assigned', 'customer', customerRows[6], '客户已下发', customerRows[6].name, {customer_id: customerRows[6].id, first_action: '安排首访'}),
     ];
     return {version: VERSION, customers: customerRows, opportunities, contacts, visits, tasks, actuals, notifications, claims: [], assignments: [], opportunityEvents: [], risks: [], targets: {}, conversations: {}, runs: {}, advice: {}, idempotency: {}, serial: 100};
   }
@@ -156,9 +164,19 @@
           }
         }
         else if (saved && saved.version === VERSION) state = saved;
-        else if (!localDataset && saved && saved.version === 5) {
-          const fresh = seed(); state = {...fresh, ...saved, version: VERSION, migration_notice: '已保留旧版输入并升级字段；原数据备份在 sales-web:preview-backup:v5。既有客户归属未自动改变。'};
-          try {global.localStorage.setItem('sales-web:preview-backup:v5', raw);} catch (_) {state.migration_notice = '已在当前页面保留旧版输入；浏览器存储空间不足，未能写入备份，请导出数据后清理空间。';}
+        else if (!localDataset && saved && (saved.version === 5 || saved.version === 6)) {
+          // v7：内置演示数据换了名字。重新生成内置数据，只保留使用者自己录入的记录，并把旧名字换成新名字。
+          const fresh = seed(), legacy = JSON.parse(JSON.stringify(saved).replace(/【示例】/g, '').replace(/示例协作一组/g, '渠道销售-南区').replace(/示例销售主管/g, NAMES[1]).replace(/示例总经理/g, NAMES[2]).replace(/示例FDE主管/g, NAMES[4]).replace(/示例FDE/g, NAMES[3]).replace(/示例销售/g, NAMES[0]).replace(/示例联系人甲/g, '张晓静').replace(/示例联系人乙/g, '刘志强').replace(/示例协作伙伴/g, '华南数码渠道'));
+          state = {...legacy, ...fresh, version: VERSION};
+          for (const key of ['customers', 'opportunities', 'contacts', 'visits', 'tasks', 'actuals', 'notifications', 'claims', 'assignments', 'opportunityEvents', 'risks']) {
+            // 内置行的 id 是固定的，新旧一致；不在内置行里的就是使用者自己录入的，保留
+            const own = (Array.isArray(legacy[key]) ? legacy[key] : []).filter(row => row && !(fresh[key] || []).some(r => r.id === row.id));
+            state[key] = [...(fresh[key] || []), ...own];
+          }
+          if (saved.version === 5) {
+            state.migration_notice = '已保留旧版输入并升级字段；原数据备份在 sales-web:preview-backup:v5。既有客户归属未自动改变。';
+            try {global.localStorage.setItem('sales-web:preview-backup:v5', raw);} catch (_) {state.migration_notice = '已在当前页面保留旧版输入；浏览器存储空间不足，未能写入备份，请导出数据后清理空间。';}
+          }
           state.claims ||= []; state.assignments ||= []; state.opportunityEvents ||= [];
           for (const row of state.customers) {
             for (const [flat, canonical] of [['industry', 'industry_code'], ['customer_type', 'customer_type_code'], ['source', 'source_code'], ['partner_name', 'primary_partner_name']]) if (Object.hasOwn(row, flat)) row[canonical] = row[flat];

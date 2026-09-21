@@ -95,10 +95,10 @@
   $('#ai-retry').onclick=()=>aiState('analyzing');aiState('editing');
 
   const activities = [
-    {kind:'商', title:'【示例】智能质检试点', tone:'red', status:'转差', detail:'预计关单：9 月 30 日 → 10 月 30 日', reason:'合成依据：客户评审延期，原定本季度的关单计划顺延。', time:'10:40', action:'查看商机'},
-    {kind:'客', title:'【示例】星河制造', tone:'yellow', status:'需关注', detail:'客户反馈：需补充试点验收指标', reason:'合成依据：本次沟通尚未确认验收范围，需要继续核对。', time:'10:30', action:'查看客户'},
-    {kind:'商', title:'【示例】客服知识库', tone:'green', status:'向好', detail:'商机阶段：30% → 50%', reason:'合成依据：客户已同意开展方案评审，仍需跟踪后续采购安排。', time:'10:20', action:'查看商机'},
-    {kind:'商', title:'【示例】门店助手', tone:'gray', status:'待评估', detail:'跟进记录已更新，变化判断尚未返回', reason:'暂无判断结果。记录更新成功不代表商机向好。', time:'10:10', action:'查看商机'},
+    {kind:'商', title:'智能质检试点', tone:'red', status:'转差', detail:'预计关单：9 月 30 日 → 10 月 30 日', reason:'合成依据：客户评审延期，原定本季度的关单计划顺延。', time:'10:40', action:'查看商机'},
+    {kind:'客', title:'星河制造', tone:'yellow', status:'需关注', detail:'客户反馈：需补充试点验收指标', reason:'合成依据：本次沟通尚未确认验收范围，需要继续核对。', time:'10:30', action:'查看客户'},
+    {kind:'商', title:'客服知识库', tone:'green', status:'向好', detail:'商机阶段：30% → 50%', reason:'合成依据：客户已同意开展方案评审，仍需跟踪后续采购安排。', time:'10:20', action:'查看商机'},
+    {kind:'商', title:'门店助手', tone:'gray', status:'待评估', detail:'跟进记录已更新，变化判断尚未返回', reason:'暂无判断结果。记录更新成功不代表商机向好。', time:'10:10', action:'查看商机'},
     {kind:'任', title:'核对试点验收清单', tone:'green', status:'已完成', detail:'示例销售甲已提交核对结果', reason:'合成完成结果：客户确认首轮试点范围，补充指标另行安排。', time:'10:00', action:'查看任务', completed:true}
   ];
   let feedFilter = 'all';
@@ -138,11 +138,11 @@
     $('#list-count').textContent = `显示 ${rows.length} / ${opportunities.length} 条`;
     $('#stage-picker').textContent = '商机阶段：' + (selectedStages.join('、') || '全部') + ' ⌄';
     $('#list-conditions').innerHTML = (query ? `<button class="chip" data-remove-query>搜索：${esc($('#list-search').value.trim())} ×</button>` : '') + selectedStages.map(stage => `<button class="chip" data-remove-stage="${esc(stage)}">阶段：${esc(stage)} ×</button>`).join('') || '当前无筛选条件 · 显示全部商机';
-    $('#opportunity-rows').innerHTML = rows.map(row => `<tr><td><b>【示例】${row.name}</b><small>【示例】${row.customer}</small></td><td><span class="badge ${row.stage === '已成单' ? 'green':'blue'}">${row.stage}</span></td><td>示例${row.owner}</td><td>${row.date}</td><td class="numeric">${money(row.amount)}</td><td><button class="btn text" data-opportunity="${opportunities.indexOf(row)}" aria-label="查看${row.name}">详情 →</button></td></tr>`).join('');
+    $('#opportunity-rows').innerHTML = rows.map(row => `<tr><td><b>${row.name}</b><small>${row.customer}</small></td><td><span class="badge ${row.stage === '已成单' ? 'green':'blue'}">${row.stage}</span></td><td>示例${row.owner}</td><td>${row.date}</td><td class="numeric">${money(row.amount)}</td><td><button class="btn text" data-opportunity="${opportunities.indexOf(row)}" aria-label="查看${row.name}">详情 →</button></td></tr>`).join('');
     $('#list-empty').hidden = rows.length > 0;
     $$('[data-remove-stage]').forEach(button => button.onclick = () => {selectedStages=selectedStages.filter(stage=>stage!==button.dataset.removeStage);renderList();$('#stage-picker').focus();});
     if ($('[data-remove-query]')) $('[data-remove-query]').onclick = () => {$('#list-search').value='';renderList();$('#list-search').focus();};
-    $$('[data-opportunity]').forEach(button => button.onclick = () => {const row=opportunities[Number(button.dataset.opportunity)];showDialog('【示例】'+row.name, `客户：${row.customer}\n阶段：${row.stage}\n负责人：示例${row.owner}\n预计关单：${row.date}\nACV：${money(row.amount)}\n确收：未登记；回款：未登记。`);});
+    $$('[data-opportunity]').forEach(button => button.onclick = () => {const row=opportunities[Number(button.dataset.opportunity)];showDialog(''+row.name, `客户：${row.customer}\n阶段：${row.stage}\n负责人：示例${row.owner}\n预计关单：${row.date}\nACV：${money(row.amount)}\n确收：未登记；回款：未登记。`);});
   }
   $('#stage-picker').onclick = event => SalesSelect.open({anchor:event.currentTarget,title:'商机列表 · 商机阶段',description:'仅筛选下方商机列表，总览统计不变。',multiple:true,options:stageOptions,selected:selectedStages,commit(values){selectedStages=values;renderList();}});
   $('#list-search').oninput = renderList;
@@ -153,13 +153,13 @@
   function renderDetail() {
     const customer = detailObject === 'customer';
     $('#detail-kind').textContent = customer ? 'CUSTOMER / 客户' : 'OPPORTUNITY / 商机';
-    $('#detail-title').textContent = customer ? '【示例】星河制造' : '【示例】智能质检试点';
+    $('#detail-title').textContent = customer ? '星河制造' : '智能质检试点';
     $('#detail-action').textContent = customer ? '记录客户拜访' : '更新商机';
     $('#detail-metrics').innerHTML = customer ? '<div><span>关联商机</span><b>2</b><small>同一客户下独立管理</small></div><div><span>拜访与跟进</span><b>5</b><small>已归档记录</small></div><div><span>待处理任务</span><b>1</b><small>已有任务记录</small></div>' : '<div><span>当前阶段</span><b>50%</b><small>方案推进中</small></div><div><span>商机 ACV</span><b>¥ 180,000</b><small>不等同于收入</small></div><div><span>已登记确收</span><b class="text-metric">未登记</b><small>尚无确收记录</small></div>';
     $$('[data-object]').forEach(button => {const active=button.dataset.object===detailObject;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});
     $$('[data-detail-tab]').forEach(button => {const active=button.dataset.detailTab===detailTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;});
     const contents = {
-      summary: customer ? '<dl class="detail-facts"><div><dt>客户名称</dt><dd>【示例】星河制造</dd></div><div><dt>客户行业</dt><dd>制造业</dd></div><div><dt>最近跟进</dt><dd>2026-09-16</dd></div><div><dt>关系判断</dt><dd><span class="badge yellow">● 需关注</span></dd></div></dl><h4>经营摘要</h4><p>当前围绕质检场景推进试点，需要与客户核对验收指标和计划。</p>' : '<dl class="detail-facts"><div><dt>所属客户</dt><dd>【示例】星河制造</dd></div><div><dt>商机阶段</dt><dd>50%</dd></div><div><dt>预计关单</dt><dd>2026-09-30</dd></div><div><dt>实际关单</dt><dd>未填写</dd></div></dl><h4>推进摘要</h4><p>先核对试点验收指标，再确认采购评审安排。</p>',
+      summary: customer ? '<dl class="detail-facts"><div><dt>客户名称</dt><dd>星河制造</dd></div><div><dt>客户行业</dt><dd>制造业</dd></div><div><dt>最近跟进</dt><dd>2026-09-16</dd></div><div><dt>关系判断</dt><dd><span class="badge yellow">● 需关注</span></dd></div></dl><h4>经营摘要</h4><p>当前围绕质检场景推进试点，需要与客户核对验收指标和计划。</p>' : '<dl class="detail-facts"><div><dt>所属客户</dt><dd>星河制造</dd></div><div><dt>商机阶段</dt><dd>50%</dd></div><div><dt>预计关单</dt><dd>2026-09-30</dd></div><div><dt>实际关单</dt><dd>未填写</dd></div></dl><h4>推进摘要</h4><p>先核对试点验收指标，再确认采购评审安排。</p>',
       followups:'<h4>9 月 16 日 · 线上沟通</h4><p>示例销售甲与客户核对试点范围，客户提出补充验收指标。</p><details><summary>展开完整跟进记录</summary><p>沟通事实：客户愿意继续评估方案。\n客户反馈：补充准确率与验收周期。\n下一步：9 月 21 日由示例销售甲核对验收清单。</p></details><h4>9 月 10 日 · 客户拜访</h4><p>整理业务场景与现有处理流程。</p>',
       tasks:'<h4>核对试点验收清单 <span class="badge blue">已接受</span></h4><p>负责人：示例销售甲 · 截止：2026-09-21</p><p>接收方已确认接手，尚未提交完成结果。</p><details><summary>查看任务要求</summary><p>整理验收指标、负责人和时间计划，提交核对结果。本任务为合成示例。</p></details>'
     };
