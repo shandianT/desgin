@@ -332,7 +332,7 @@
       loginNotice = ''; sessionStorage.removeItem(`sales-web:login-notice:${SALES_MODE}`);
     }
     document.body.dataset.route = path.split('/')[1];
-    $('preview-visit-guide').hidden = !preview || path !== 'pages/visit-entry/index';
+    $('preview-visit-guide').hidden = true;
     document.body.classList.toggle('web-login', path === 'pages/login/index');
     $('preview-entry-choice').hidden = !preview || path !== 'pages/login/index';
     $('page-title').textContent = tabs.find(t => t.pagePath === path)?.text || detail.title || '工作空间';
