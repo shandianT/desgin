@@ -1,7 +1,7 @@
 /* 旧展示层的补丁：按部门设计规范收口。页名看面包屑，不再放页头；不用渐变；控件圆角统一。 */
 body:not(.web-login) #page-root :is(.hero-eyebrow, h1.claim-title, .actual-heading, .actual-breadcrumb) { display: none; }
 /* 页名型的 hero-title 才藏；任务详情、风险详情的 hero-title 是对象名，保留 */
-body:not(.web-login) :is([data-route=customer-create], [data-route=visit-entry], [data-route=risks], [data-route=customer-assign-confirm], [data-route=opportunity-create]) #page-root .hero-title { display: none; }
+body:not(.web-login):is([data-route=customer-create], [data-route=visit-entry], [data-route=risks], [data-route=customer-assign-confirm], [data-route=opportunity-create]) #page-root .hero-title { display: none; }
 body:not(.web-login)[data-route=opportunities] #page-root .web-insights-titlebar .hero { display: none; }
 body:not(.web-login)[data-route=visit-confirm] #page-root .web-review-record > .hero { display: none; }
 body:not(.web-login) #page-root .version { display: none; }
