@@ -4,7 +4,7 @@
 
 ## 0.6.0（2026-09-21）
 
-- SbSideNav 节奏按运营后台侧栏对齐：顶部留白 28、品牌靠左、分组间距 28、条目高 44、图标 18、当前项左侧加强调色竖条；收起时品牌标居中。
+- SbSideNav 节奏按运营后台侧栏对齐：顶部留白 28、品牌靠左、分组间距 28、条目高 44、图标 18、当前项左侧加强调色竖条；底部链接与收起按钮也左对齐，所有块左右各留 16；收起时全部居中。
 
 - 新增八个组件：SbSideNav 侧导航、SbTopBar 顶栏、SbDatePicker 日期选择、SbSelect 下拉选择、SbSearchSelect 搜索选择、SbAmountInput 金额输入、SbTextarea 多行文本、SbSegmented 分段切换。侧栏与顶栏从 Web 样板（设计评审交付 v2）抽出，颜色只走 --ui-sidebar* 与语义变量；表单壳都是 antd 薄壳，统一 options 结构与「YYYY-MM-DD」「万元」「number | null」这些口径。
 - SbDatePicker 引 dayjs（antd 自带的那份），库构建把 dayjs 设为外部依赖，使用方无需额外安装。

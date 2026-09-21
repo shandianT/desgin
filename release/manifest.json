@@ -14,8 +14,8 @@
       "version": "0.6.0",
       "filename": "shandiant-ui-react-0.6.0.tgz",
       "files": 9,
-      "size": 173344,
-      "sha256": "22616663fa981ec5ac89ddf1f30bf5c07fe23ee642f3899e4d208f5938838b3a"
+      "size": 173486,
+      "sha256": "c903cd0741aadce6fc24c5474c33a7a14d794898ef928f47c151426e2fa1f990"
     },
     {
       "name": "@shandiant/ui-miniprogram",
