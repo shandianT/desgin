@@ -357,6 +357,7 @@ const body = `
 <section data-panel="visual" hidden>
   <h1>视觉基础</h1><p class="lead">换个主色以前要改三端几十处，现在改一个变量。颜色、字号、间距、圆角都是变量。左边改一个值，右边的预览和下面的样板一起变。改完可以生成变更单草稿。这里的修改只在你的浏览器里，不会写回仓库。</p>
   ${tryBox('把左边面板里「主色」改成别的颜色，右边预览和下面样板的按钮、选中项马上变。点「复制为变更单草稿」能拿到一段可以贴进变更单的文字。')}
+  <div class="card brief"><h2>为什么一版舒服一版累</h2><ol><li><b>一层一圈边。</b>一个容器里的东西不再描边，同一层只用边框、底色、留白三者之一。</li><li><b>留白就是分组。</b>同组 8，分组 16，分区 24，不用线。</li><li><b>悬停才出底色。</b>能点的平时和不能点的长得一样。</li><li><b>数字大、说明小、其余没有。</b></li><li><b>一行数字对齐到一条线。</b></li><li><b>一屏最多两种圆角。</b>面板 12，控件 6。</li></ol><p class="note">看一屏时数框、数圆角，超过两圈两种就有多的。全文在 14 章。</p></div>
   <div class="card"><h2>颜色怎么用</h2><p class="note">一共就五种用法。记住这张图，不用记变量名。</p>
     <div class="cmap">
       <div class="cmap-nav"><b>1 导航</b><small>深蓝底，白字，选中项亮蓝</small></div>
@@ -446,7 +447,7 @@ const body = `
   <div class="card brief"><h2>同事怎么开始用</h2>
     <p>仓库 <a href="https://github.com/shandianT/desgin" target="_blank" rel="noopener">shandianT/desgin</a> 是公开的，打好的包在仓库 release/ 目录，直接从网址装，不用申请权限。</p>
     <div class="tbl"><table><tr><th>你是</th><th>做什么</th></tr>
-      <tr><td>做网页</td><td><code>npm i react@18 react-dom@18 antd@6 @ant-design/x@2</code><br><code>npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.5.1.tgz</code></td></tr>
+      <tr><td>做网页</td><td><code>npm i react@18 react-dom@18 antd@6 @ant-design/x@2</code><br><code>npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.5.2.tgz</code></td></tr>
       <tr><td>做小程序</td><td><code>npm i tdesign-miniprogram@1.16.1 https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-miniprogram-0.5.0.tgz</code>，然后开发者工具「构建 npm」，把包里 components/style/ 的两个 wxss 复制到根目录在 app.wxss 引入</td></tr>
       <tr><td>不想自己敲</td><td>把仓库 <code>模板/同事装包-给AI的提示词.md</code> 里那段贴给 Claude Code 或 Cursor，AI 装好并渲染一个标签验证</td></tr>
       <tr><td>想看接入后的真实页面</td><td>Web 样板 <a href="https://shandiant.github.io/desgin/web/?mode=preview#/pages/customers/index" target="_blank" rel="noopener">shandiant.github.io/desgin/web/</a>，总览、客户、任务、创建任务四页已换成组件库，示例数据，右上角能切角色</td></tr>

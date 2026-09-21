@@ -11,11 +11,11 @@
     },
     {
       "name": "@shandiant/ui-react",
-      "version": "0.5.1",
-      "filename": "shandiant-ui-react-0.5.1.tgz",
+      "version": "0.5.2",
+      "filename": "shandiant-ui-react-0.5.2.tgz",
       "files": 9,
-      "size": 71593,
-      "sha256": "b479743da65f796e1eeb5839a345673a55a13ead81907dadeefca9cce597a345"
+      "size": 72199,
+      "sha256": "7f593cfcd4c5ec98bc65798e294035e8633b7e6a88e0255becfb35baedb742d2"
     },
     {
       "name": "@shandiant/ui-miniprogram",

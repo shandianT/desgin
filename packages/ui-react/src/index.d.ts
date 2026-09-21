@@ -201,6 +201,8 @@ export interface SbMetricStripProps {
   caliber?: ReactNode;
   loading?: boolean;
   columns?: number;
+  /** flat 默认：不描边靠留白；card：每张描边 */
+  variant?: 'flat' | 'card';
   className?: string;
 }
 export declare function SbMetricStrip(props: SbMetricStripProps): JSX.Element;

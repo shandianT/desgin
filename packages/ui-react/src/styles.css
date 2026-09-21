@@ -83,6 +83,11 @@
 .sb-mstrip-items { flex: 1; display: grid; grid-template-columns: repeat(var(--sb-mstrip-cols, auto-fit), minmax(150px, 1fr)); gap: var(--ui-space-3); }
 .sb-mstrip-side { display: flex; align-items: center; justify-content: flex-end; gap: var(--ui-space-2); }
 .sb-mstrip-help { border: 0; background: transparent; padding: var(--ui-space-1); cursor: help; border-radius: var(--ui-radius-control); display: inline-flex; } .sb-mstrip-help:focus-visible { outline: 2px solid var(--ui-focus); }
+/* flat：不描边，靠留白分组，悬停才出底色；card：每张描边 */
+.sb-mstrip-flat .sb-metric { border: 0; background: transparent; padding: var(--ui-space-3) var(--ui-space-4); border-radius: var(--ui-radius-control); }
+.sb-mstrip-flat .sb-mstrip-items { gap: var(--ui-space-2); }
+.sb-mstrip-flat .sb-mstrip-link:hover .sb-metric { background: var(--ui-selected); border-color: transparent; }
+.sb-mstrip-flat .sb-mstrip-link-hint { top: var(--ui-space-2); right: var(--ui-space-2); }
 .sb-mstrip-link { position: relative; display: block; width: 100%; padding: 0; border: 0; background: transparent; text-align: left; font: inherit; color: inherit; cursor: pointer; border-radius: var(--ui-radius-panel); }
 .sb-mstrip-link:hover .sb-metric { border-color: var(--ui-focus); } .sb-mstrip-link:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
 .sb-mstrip-link-hint { position: absolute; top: var(--ui-space-3); right: var(--ui-space-3); color: var(--ui-muted); }
