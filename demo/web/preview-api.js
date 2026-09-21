@@ -97,7 +97,17 @@
     customerRows.push({id: uid(10, 9), name: '南海精工机械有限公司', industry_code: '企业软件', customer_type_code: '潜在客户', level_code: 'Tier-2', source_code: '市场活动',
       owner_id: null, owner_user_ref_id: null, owner_name: '', owner_team_id: uid(3, 1), team_name: '渠道销售-南区', ownership_state: 'unassigned', sales_members: [],
       primary_partner_name: '无', potential_score: null, relationship_score: null, attributes: {}, version_no: 1, created_at: date(-2), updated_at: date(-2), data_kind: 'demo'});
-    return {version: VERSION, customers: customerRows, opportunities, contacts, visits, tasks, actuals, notifications: [], claims: [], assignments: [], opportunityEvents: [], risks: [], targets: {}, conversations: {}, runs: {}, advice: {}, idempotency: {}, serial: 100};
+    // 业务动态里的红黄绿：三条已完成评估的业务变化，给总览的「需关注」用
+    const changed = (n, days, opIndex, color, title, summary, changes) => ({id: uid(25, n), recipient_user_ref_id: actors[0].user_id, template_code: 'business_changed', object_type: 'opportunity', object_id: opportunities[opIndex].id,
+      title, body: `${opportunities[opIndex].customer_name} · ${opportunities[opIndex].name}`, created_at: date(-days, '09:30:00'), read_at: null, data_kind: 'demo',
+      payload: {customer_id: opportunities[opIndex].customer_id, opportunity_id: opportunities[opIndex].id, actor_name: NAMES[1], event_type: 'updated', changes,
+        change_review: {status: 'completed', color, title, summary, source: 'rules'}}});
+    const notifications = [
+      changed(1, 0, 2, 'red', '商机推进停滞', '预计关单已过期 12 天，近两周没有跟进记录', [{label: '预计关单', before: '2026-09-09', after: '2026-09-30'}]),
+      changed(2, 1, 5, 'yellow', '关系深度下降', '关键联系人一个月未沟通，关系评分从 83 降到 71', [{label: '关系评分', before: '83', after: '71'}]),
+      changed(3, 2, 1, 'green', '阶段推进', '商机阶段从方案沟通进入商务谈判', [{label: '商机阶段', before: '方案沟通', after: '商务谈判'}]),
+    ];
+    return {version: VERSION, customers: customerRows, opportunities, contacts, visits, tasks, actuals, notifications, claims: [], assignments: [], opportunityEvents: [], risks: [], targets: {}, conversations: {}, runs: {}, advice: {}, idempotency: {}, serial: 100};
   }
   let state, baseline;
   async function loadLocal() {

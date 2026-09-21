@@ -54,7 +54,7 @@ metadata:
 | 表格（操作列、四态、分页） | SbTable | 手机用 sb-list-row |
 
 - 图标：用 `SbIcon`（小程序 `sb-icon`），传含义名 name="customer" 不传库里的名字，size sm／md／lg，tone 只给业务状态，tile 带底方块。含义表在 `packages/ui-react/src/icons.js`。图标旁必须有字，见 `specs/salesbuddy/10-图标.md`。
-- 视觉手感（14 章）：一个容器里不再描边，同一层只用边框、底色、留白之一；悬停才出底色；一屏最多两种圆角；汇总数字一行放下（说明左、数字右）；有面包屑的页面不要页头；表格每格一行。指标条用默认 flat，页面给白卡。
+- 视觉手感（14 章）：一个容器里不再描边，同一层只用边框、底色、留白之一；悬停才出底色；一屏最多两种圆角；汇总数字一行放下（说明左、数字右）；有面包屑的页面不要页头；表格每格一行；汇总页红黄灯只放「需关注」一格和红黄条目的标签，绿色不打。指标条用默认 flat，页面给白卡。
 - Web 页面最外层包一次 `SbProvider`，主题就来自变量，不再手写颜色。
 - 装法：工程根目录 `.npmrc` 写 `@shandiant:registry=https://npm.pkg.github.com`，然后 `npm i @shandiant/tokens@draft @shandiant/ui-react`；小程序 `npm i tdesign-miniprogram@1.16.1 @shandiant/ui-miniprogram` 后在开发者工具构建 npm。没有源就用仓库 `release/` 里的包文件。细节在 `specs/salesbuddy/09-npm包与发布.md`。
 - 缺一个组件时，先在页面里用上游组件拼，并在交回说明里写「建议新增组件：名字、用途、用在几页」，不要在页面里造一个只用一次的。
