@@ -55,7 +55,7 @@ body:not(.web-login) #page-root .web-workflow.web-opportunity-create .opp-form .
 body:not(.web-login) #page-root .web-workflow.web-opportunity-create .opp-form .track .step{height:3px}
 body:not(.web-login) #page-root .web-workflow.web-opportunity-create .opp-form :is(.hint,.error,.chevron,.quarter-text,.forecast-results-head label){font-size:var(--ui-text-small);line-height:1.65}
 body:not(.web-login) #page-root .web-workflow.web-opportunity-create .opp-form .hint{color:var(--ui-muted);margin-top:var(--ui-space-2)}
-body:not(.web-login) #page-root .web-workflow.web-opportunity-create .opp-form .fold{margin:0;padding:var(--ui-space-3) 0 0;border-top:1px solid var(--ui-line);font-size:var(--ui-text-body);min-height:36px}
+body:not(.web-login) #page-root .web-workflow.web-opportunity-create .opp-form .fold{margin:0;padding:var(--ui-space-3) var(--ui-space-4);border-top:0;font-size:var(--ui-text-body);min-height:var(--ui-field-height);align-items:center}
 body:not(.web-login) #page-root .web-workflow.web-opportunity-create .opp-form .fold-text{font-size:var(--ui-text-small);color:var(--ui-primary)}
 body:not(.web-login) #page-root .web-workflow.web-opportunity-create .opp-form .forecast{padding:var(--ui-space-4);margin:0;background:var(--ui-surface-subtle);border:1px solid var(--ui-line);border-radius:var(--ui-radius-control)}
 body:not(.web-login) #page-root .web-workflow.web-opportunity-create .opp-form .forecast>.grid{margin-top:var(--ui-space-4)}

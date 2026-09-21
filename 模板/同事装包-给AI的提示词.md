@@ -14,7 +14,7 @@
 步骤：
 1. 装基础库：npm i react@18 react-dom@18 antd@6 @ant-design/x@2
 2. 装部门的包：
-   npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.5.2.tgz
+   npm i https://github.com/shandianT/desgin/raw/main/release/shandiant-tokens-1.1.0-draft.1.tgz https://github.com/shandianT/desgin/raw/main/release/shandiant-ui-react-0.5.3.tgz
    如果公司网络访问不了 github.com，让我手动下载这两个文件放到工程里，再 npm i ./文件名.tgz。
 3. 验证：写一个最小页面，import '@shandiant/tokens/css' 和 '@shandiant/ui-react/style.css'，最外层用 SbProvider 包一下，里面放一个 <SbStatusTag tone="watch" reason="一周无跟进" showReason />。能渲染出一个黄色的「需关注 · 一周无跟进」标签就算成功。
 4. 以后写样式，颜色字号间距只写 var(--ui-…)，变量名从 node_modules/@shandiant/tokens/dist/design-tokens.css 里查；组件优先用 @shandiant/ui-react 里现成的，属性看包里的 index.d.ts；每个组件的用法和效果在规范站 https://shandiant.github.io/desgin/ 的「组件」章。

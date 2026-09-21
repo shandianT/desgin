@@ -153,6 +153,8 @@ export interface SbMetricTileProps {
   label?: ReactNode;
   note?: ReactNode;
   missingText?: string;
+  /** 跟在说明后面，比如「可点进」的箭头 */
+  labelSuffix?: ReactNode;
 }
 export declare function SbMetricTile(props: SbMetricTileProps): JSX.Element;
 
@@ -199,9 +201,11 @@ export interface SbMetricStripProps {
   onPeriodChange?: (value: any) => void;
   /** 统计口径，显示在提示图标的悬停里 */
   caliber?: ReactNode;
+  /** 放在周期切换左边的额外控件，比如年份下拉 */
+  extra?: ReactNode;
   loading?: boolean;
   columns?: number;
-  /** flat 默认：不描边靠留白；card：每张描边 */
+  /** flat 默认：一行放下，说明在左数字在右；card：每张描边、数字在上 */
   variant?: 'flat' | 'card';
   className?: string;
 }
@@ -235,6 +239,8 @@ export interface SbTableProps<T = any> {
   density?: 'default' | 'compact';
   onRowClick?: (row: T) => void;
   scrollX?: number | string;
+  /** 分组表格时，后面几组传 false，只留第一组的表头 */
+  showHeader?: boolean;
   className?: string;
 }
 export declare function SbTable<T = any>(props: SbTableProps<T>): JSX.Element;

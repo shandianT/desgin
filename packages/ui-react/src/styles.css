@@ -33,7 +33,7 @@
 .sb-metric { border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-card-padding); background: var(--ui-surface); min-width: 160px; }
 .sb-metric b { display: block; font-size: var(--ui-text-metric); font-weight: 650; line-height: 1.2; color: var(--ui-primary); font-variant-numeric: tabular-nums; }
 .sb-metric b.sb-metric-missing { color: var(--ui-muted); font-size: var(--ui-text-page); }
-.sb-metric span { display: block; font-weight: 600; } .sb-metric small { color: var(--ui-muted); font-size: var(--ui-text-small); }
+.sb-metric span { display: block; font-weight: 600; } .sb-metric small { display: block; color: var(--ui-muted); font-size: var(--ui-text-small); }
 .sb-pagehead { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--ui-space-3); flex-wrap: wrap; margin-bottom: var(--ui-space-4); }
 .sb-pagehead h1 { margin: 0; font-size: var(--ui-text-page); font-weight: 650; line-height: 1.4; } .sb-pagehead h1 small { font-size: var(--ui-text-small); color: var(--ui-secondary); font-weight: 400; margin-left: var(--ui-space-2); }
 .sb-pagehead-actions { display: flex; gap: var(--ui-space-2); }
@@ -83,15 +83,30 @@
 .sb-mstrip-items { flex: 1; display: grid; grid-template-columns: repeat(var(--sb-mstrip-cols, auto-fit), minmax(150px, 1fr)); gap: var(--ui-space-3); }
 .sb-mstrip-side { display: flex; align-items: center; justify-content: flex-end; gap: var(--ui-space-2); }
 .sb-mstrip-help { border: 0; background: transparent; padding: var(--ui-space-1); cursor: help; border-radius: var(--ui-radius-control); display: inline-flex; } .sb-mstrip-help:focus-visible { outline: 2px solid var(--ui-focus); }
-/* flat：不描边，靠留白分组，悬停才出底色；card：每张描边 */
-.sb-mstrip-flat .sb-metric { border: 0; background: transparent; padding: var(--ui-space-3) var(--ui-space-4); border-radius: var(--ui-radius-control); }
-.sb-mstrip-flat .sb-mstrip-items { gap: var(--ui-space-2); }
-.sb-mstrip-flat .sb-mstrip-link:hover .sb-metric { background: var(--ui-selected); border-color: transparent; }
-.sb-mstrip-flat .sb-mstrip-link-hint { top: var(--ui-space-2); right: var(--ui-space-2); }
+/* flat：一行放下。说明在左、数字在右，指标之间一条竖线，周期与口径在同一行最右；不描边，悬停才出底色（14 章） */
+.sb-mstrip-flat { flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--ui-space-3) var(--ui-space-4); }
+.sb-mstrip-flat .sb-mstrip-items { order: 1; gap: 0; grid-template-columns: repeat(var(--sb-mstrip-cols, auto-fit), minmax(160px, 1fr)); }
+.sb-mstrip-flat .sb-mstrip-side { order: 2; flex: none; }
+.sb-mstrip-flat .sb-mstrip-items > * + * { border-left: 1px solid var(--ui-line); }
+.sb-mstrip-flat .sb-metric { display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; gap: var(--ui-space-3); min-width: 0; min-height: var(--ui-control-height); border: 0; background: transparent; padding: var(--ui-space-1) var(--ui-space-4); border-radius: var(--ui-radius-control); }
+.sb-mstrip-flat .sb-metric b { flex: none; }
+.sb-mstrip-flat .sb-metric-text { min-width: 0; }
+.sb-mstrip-flat .sb-metric span { display: flex; align-items: center; gap: var(--ui-space-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-mstrip-flat .sb-metric small { display: block; }
+.sb-mstrip-flat .sb-mstrip-link { border-radius: var(--ui-radius-control); }
+.sb-mstrip-flat .sb-mstrip-link:hover .sb-metric { background: var(--ui-selected); }
+.sb-mstrip-flat .sb-mstrip-link-hint { position: static; color: var(--ui-muted); display: inline-flex; }
 .sb-mstrip-link { position: relative; display: block; width: 100%; padding: 0; border: 0; background: transparent; text-align: left; font: inherit; color: inherit; cursor: pointer; border-radius: var(--ui-radius-panel); }
-.sb-mstrip-link:hover .sb-metric { border-color: var(--ui-focus); } .sb-mstrip-link:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+.sb-mstrip-card .sb-mstrip-link:hover .sb-metric { border-color: var(--ui-focus); } .sb-mstrip-link:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
 .sb-mstrip-link-hint { position: absolute; top: var(--ui-space-3); right: var(--ui-space-3); color: var(--ui-muted); }
-@media (max-width: 600px) { .sb-mstrip-items { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) {
+  .sb-mstrip .sb-mstrip-items, .sb-mstrip-flat .sb-mstrip-items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sb-mstrip-flat .sb-mstrip-items > :nth-child(odd) { border-left: 0; }
+  .sb-mstrip-flat .sb-mstrip-items > :nth-child(n + 3) { border-top: 1px solid var(--ui-line); }
+  .sb-mstrip-flat .sb-metric { padding-left: var(--ui-space-2); padding-right: var(--ui-space-2); gap: var(--ui-space-2); }
+  .sb-mstrip-flat .sb-metric span { white-space: normal; }
+  .sb-mstrip-flat .sb-mstrip-side { width: 100%; flex-wrap: wrap; justify-content: flex-start; }
+}
 /* SbTabs：数量小号灰字 */
 .sb-tabs-label small { margin-left: var(--ui-space-1); color: var(--ui-muted); font-size: var(--ui-text-small); font-variant-numeric: tabular-nums; }
 .ant-tabs-tab-active .sb-tabs-label small { color: var(--ui-primary); }
@@ -100,4 +115,5 @@
 .sb-table-default .ant-table-tbody > tr > td { padding-top: var(--ui-space-3); padding-bottom: var(--ui-space-3); }
 .sb-table-compact .ant-table-tbody > tr > td { padding-top: var(--ui-space-2); padding-bottom: var(--ui-space-2); }
 .sb-table .ant-table-empty .ant-table-tbody > tr > td { padding: var(--ui-space-8) var(--ui-space-4); }
+.sb-table-clickable .ant-table-tbody > tr > td { cursor: pointer; }
 .sb-table-foot { display: flex; justify-content: flex-end; padding: var(--ui-space-3) 0 0; }
