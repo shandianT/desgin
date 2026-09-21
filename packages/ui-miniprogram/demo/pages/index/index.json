@@ -30,6 +30,10 @@
     "sb-segmented": "/components/sb-segmented/index",
     "sb-battle-map": "/components/sb-battle-map/index",
     "sb-kpi-card": "/components/sb-kpi-card/index",
-    "sb-chart-card": "/components/sb-chart-card/index"
+    "sb-chart-card": "/components/sb-chart-card/index",
+    "sb-timeline": "/components/sb-timeline/index",
+    "sb-upload": "/components/sb-upload/index",
+    "sb-result": "/components/sb-result/index",
+    "sb-avatar": "/components/sb-avatar/index"
   }
 }

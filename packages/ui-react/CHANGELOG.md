@@ -2,9 +2,19 @@
 
 版本号规则：只改值升修订号，加组件或属性升次版本，改含义或删属性升主版本。每条写「改了什么、对使用方有什么影响」。
 
-## 0.6.0（2026-09-21）
+## 0.7.0（2026-09-21）
 
+- 新增四个薄壳组件 SbTimeline、SbUpload、SbResult、SbAvatar；SbTable 透传排序与勾选；SbPagination 每页条数与加载更多；SbSideNav 节奏对齐；目录页加「基础控件怎么用」「备用控件」两节、图标搜索、Tag 去混淆；配套 15 章组件选型指南。
 - SbSideNav 节奏按运营后台侧栏对齐：顶部留白 28、品牌靠左、分组间距 28、条目高 44、图标 18、当前项左侧加强调色竖条；底部链接与收起按钮也左对齐，所有块左右各留 16；收起时全部居中。
+- SbTable 透传 antd 原生排序与勾选：columns 里的 sorter 照常生效，没写 sortDirections 时默认升、降两档；新增 rowSelection（onChange 回选中 keys 与行）与 onChange（拿 sorter）。四态、分页、操作列固定不受影响。
+- SbPagination 新增每页条数选择：pageSizeOptions 默认 [10, 20, 50]，传了 onPageSizeChange 才显示选择器；新增 mode="more" 加载更多模式（loading、end、onLoadMore），这个模式不显示每页条数。
+- SbStatusTag 的说明补了和 antd Tag 的分工：业务状态用 SbStatusTag，Tag 只做分类标识。目录页 Tag 卡片去掉状态色示例。
+- 新增四个薄壳：SbTimeline 时间轴（antd Timeline，节点色只由 tone 决定，pending 占位、倒序、紧凑、加载、空）、SbUpload 附件上传（antd Upload，列表型或拖拽区，超类型／大小／数量就地红字不弹 toast，request 不传只维护本地列表）、SbResult 结果页（antd Result，图标色走语义变量，主次按钮加 extra）、SbAvatar 头像（antd Avatar，姓名后两字、三档 24／32／40、底色档、方形）。导出 avatarInitials 取字函数。
+- SbSideNav 的账号头像改用 SbAvatar（tone=sidebar）：取字从「前两字」改为「后两字」（王小明 → 小明），传图片地址仍显示图片。品牌名折叠时仍取前两字。
+- 目录页：基础控件加「备用控件：暂无场景，先接好主题」一节，16 个还没有业务场景的 antd 控件（Slider、Upload、Transfer、Tree、Mentions、Image、Popover、Dropdown、Collapse 手风琴、Typography、Space、Grid、Affix、BackTop、QRCode、Carousel）各一张卡，写了可能用在哪。
+- 目录页：基础控件加「基础控件怎么用」一节（Switch、Radio、Checkbox、Steps、Progress、Avatar、Badge、Skeleton、Spin、Divider，各写用在哪）；图标一节加搜索框，按含义名、中文说明、两端图标名过滤，点图标复制 `<SbIcon name="…" />`；顶部说明链接到 15 章组件选型指南。
+
+## 0.6.0（2026-09-21）
 
 - 新增八个组件：SbSideNav 侧导航、SbTopBar 顶栏、SbDatePicker 日期选择、SbSelect 下拉选择、SbSearchSelect 搜索选择、SbAmountInput 金额输入、SbTextarea 多行文本、SbSegmented 分段切换。侧栏与顶栏从 Web 样板（设计评审交付 v2）抽出，颜色只走 --ui-sidebar* 与语义变量；表单壳都是 antd 薄壳，统一 options 结构与「YYYY-MM-DD」「万元」「number | null」这些口径。
 - SbDatePicker 引 dayjs（antd 自带的那份），库构建把 dayjs 设为外部依赖，使用方无需额外安装。

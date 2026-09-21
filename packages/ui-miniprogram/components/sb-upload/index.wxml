@@ -1,0 +1,11 @@
+<view class="sb-upload {{disabled ? 'sb-upload-disabled' : ''}}">
+  <t-upload theme="list" files="{{tFiles}}" max="{{maxCount}}" source="{{source}}" media-type="{{mediaType}}" disabled="{{disabled || full}}" add-btn="{{!disabled}}" add-content="slot" remove-btn="{{!disabled}}" request-method="{{requestMethod}}" bind:success="onSuccess" bind:fail="onFail" bind:remove="onRemove">
+    <view slot="add-content" class="sb-upload-add">
+      <t-button size="small" variant="outline" icon="add" disabled="{{disabled || full}}">{{label}}</t-button>
+      <text wx:if="{{hintText}}" class="sb-upload-hint">{{hintText}}</text>
+    </view>
+  </t-upload>
+  <text wx:if="{{error}}" class="sb-upload-error" aria-role="alert">{{error}}</text>
+  <text wx:elif="{{full}}" class="sb-upload-hint">已到 {{maxCount}} 个上限，删除后才能再加</text>
+  <text wx:elif="{{disabled && hintText}}" class="sb-upload-hint">{{hintText}}</text>
+</view>

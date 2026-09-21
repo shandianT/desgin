@@ -64,6 +64,10 @@ metadata:
 | 图表卡片壳（标题、口径、四态、数据表） | SbChartCard | sb-chart-card |
 | 指标卡（数字、单位、变化） | SbKpiCard | sb-kpi-card |
 | 条形、柱状、折线（主题来自 tokens 的 bridge-echarts） | SbBarChart、SbLineChart | ec-canvas |
+| 跟进历史、业务动态时间轴 | SbTimeline | sb-timeline |
+| 附件上传（超限就地说明） | SbUpload | sb-upload |
+| 操作结果整页（成功、失败、提示、警示） | SbResult | sb-result |
+| 头像（姓名后两字、三档） | SbAvatar | sb-avatar |
 
 - 图标：用 `SbIcon`（小程序 `sb-icon`），传含义名 name="customer" 不传库里的名字，size sm／md／lg，tone 只给业务状态，tile 带底方块。含义表在 `packages/ui-react/src/icons.js`。图标旁必须有字，见 `specs/salesbuddy/10-图标.md`。
 - 视觉手感（14 章）：一个容器里不再描边，同一层只用边框、底色、留白之一；悬停才出底色；一屏最多两种圆角；汇总数字一行放下（说明左、数字右）；有面包屑的页面不要页头；表格每格一行；汇总页红黄灯只放「需关注」一格和红黄条目的标签，绿色不打。指标条用默认 flat，页面给白卡。

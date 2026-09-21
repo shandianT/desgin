@@ -5,5 +5,5 @@
 | 包 | 版本 | 文件 | 文件数 | 大小 | sha256 |
 |---|---|---|---|---|---|
 | @shandiant/tokens | 1.2.0-draft.1 | shandiant-tokens-1.2.0-draft.1.tgz | 20 | 13 KB | e0ef2df604d50b41… |
-| @shandiant/ui-react | 0.6.0 | shandiant-ui-react-0.6.0.tgz | 9 | 169 KB | c903cd0741aadce6… |
-| @shandiant/ui-miniprogram | 0.6.0 | shandiant-ui-miniprogram-0.6.0.tgz | 118 | 28 KB | 854d50b727a14ca0… |
+| @shandiant/ui-react | 0.7.0 | shandiant-ui-react-0.7.0.tgz | 9 | 200 KB | 601c0717b073d681… |
+| @shandiant/ui-miniprogram | 0.7.0 | shandiant-ui-miniprogram-0.7.0.tgz | 134 | 34 KB | 414a4ca4dcf50973… |

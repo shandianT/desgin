@@ -1,15 +1,17 @@
 import React from 'react';
 import { Layout, Menu, Tooltip } from 'antd';
 import { SbIcon } from './SbIcon.jsx';
+import { SbAvatar } from './SbAvatar.jsx';
 /**
  * 侧导航（T-01、T-03、V-01）：深蓝侧栏，从上到下是品牌、工作区切换块、分组导航、底部「运营管理后台」链接与账号块。
  * 用 antd Layout.Sider 加 Menu 包一层，颜色只走 --ui-sidebar* 一组变量（CSS 覆盖，不用 antd 的 theme="dark"）。
- * 宽 232，折叠成 64 的窄条时只留图标，悬停出 antd Menu 自带的提示。
+ * 宽 232，折叠成 64 的窄条时只留图标，悬停出 antd Menu 自带的提示。账号头像用 SbAvatar（tone=sidebar），取字规则见 avatarInitials。
  * groups: [{ title, items: [{ key, label, icon（ReactNode 或 SbIcon 的含义名）, path, hidden }] }]
  */
 const WIDTH = 232, RAIL = 64;
 const renderIcon = (icon) => (typeof icon === 'string' ? <SbIcon name={icon} size="md" /> : icon ?? null);
-const initials = (name = '') => String(name).trim().slice(0, 2) || '我';
+// 品牌名折叠时取前两字（销售小浣熊 → 销售）；账号头像的取字用 SbAvatar 的 avatarInitials（后两字）
+const brandShort = (name = '') => String(name).trim().slice(0, 2) || '我';
 
 export function SbSideNav({ brand, workspace, groups = [], activeKey, onSelect, collapsed = false, onCollapse, footer, account, adminLink, className = '' }) {
   const flat = [];
@@ -18,7 +20,7 @@ export function SbSideNav({ brand, workspace, groups = [], activeKey, onSelect, 
     children: (g.items || []).filter((it) => !it.hidden).map((it) => { flat.push(it); return { key: it.key, label: it.label, icon: renderIcon(it.icon), title: typeof it.label === 'string' ? it.label : undefined }; }),
   }));
   const brandNode = brand && typeof brand === 'object' && !React.isValidElement(brand)
-    ? <a className="sb-sidenav-brand" href={brand.href || '#'} aria-label={brand.alt}>{collapsed && brand.markSrc ? <img src={brand.markSrc} alt={brand.alt || ''} /> : !collapsed && brand.logoSrc ? <img src={brand.logoSrc} alt={brand.alt || ''} /> : <span className="sb-sidenav-brand-text">{collapsed ? initials(brand.alt) : brand.alt}</span>}</a>
+    ? <a className="sb-sidenav-brand" href={brand.href || '#'} aria-label={brand.alt}>{collapsed && brand.markSrc ? <img src={brand.markSrc} alt={brand.alt || ''} /> : !collapsed && brand.logoSrc ? <img src={brand.logoSrc} alt={brand.alt || ''} /> : <span className="sb-sidenav-brand-text">{collapsed ? brandShort(brand.alt) : brand.alt}</span>}</a>
     : brand ? <div className="sb-sidenav-brand">{brand}</div> : null;
   const wsBtn = workspace && (
     <button type="button" className="sb-sidenav-ws" onClick={workspace.onClick} aria-label={collapsed ? `工作区：${workspace.name}` : undefined}>
@@ -29,7 +31,7 @@ export function SbSideNav({ brand, workspace, groups = [], activeKey, onSelect, 
   );
   const accBtn = account && (
     <button type="button" className={`sb-sidenav-account ${account.active ? 'sb-sidenav-account-active' : ''}`} onClick={account.onClick} aria-label={collapsed ? `账号：${account.name}` : undefined}>
-      <span className="sb-sidenav-avatar">{account.avatar && /^(https?:|data:|\/)/.test(account.avatar) ? <img src={account.avatar} alt="" /> : account.avatar || initials(account.name)}</span>
+      <SbAvatar className="sb-sidenav-avatar" size="md" tone="sidebar" name={account.avatar && !/^(https?:|data:|\/)/.test(account.avatar) ? account.avatar : account.name} src={account.avatar && /^(https?:|data:|\/)/.test(account.avatar) ? account.avatar : undefined} />
       {!collapsed && <span className="sb-sidenav-account-text"><b>{account.name}</b><small>{[account.role, account.team].filter(Boolean).join(' · ')}</small></span>}
       {!collapsed && <SbIcon name="expand" size="sm" tone="muted" />}
     </button>

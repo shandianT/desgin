@@ -28,6 +28,8 @@ const src = path.join(pkg, 'node_modules/tdesign-miniprogram/miniprogram_dist'),
 fs.writeFileSync(path.join(dst, 'badge/badge.wxml'), '<view class="t-badge"><slot /></view>');
 // t-tab-bar-item 的 aria-label 里有对象展开 { ...badgeProps }，同样不认，去掉这一段（只影响测试里的读屏文字）
 const tbi = path.join(dst, 'tab-bar-item/tab-bar-item.wxml'); fs.writeFileSync(tbi, fs.readFileSync(tbi, 'utf8').replace(/aria-label="\{\{ ariaLabel \|\|[^}]*\}\) : ''\) \}\}"/, 'aria-label="{{ ariaLabel }}"'));
+// t-grid-item（t-upload 用到）的 aria-label 里同样有 { ...badgeProps }，去掉这一段（只影响测试里的读屏文字）
+const gi = path.join(dst, 'grid-item/grid-item.wxml'); fs.writeFileSync(gi, fs.readFileSync(gi, 'utf8').replace(/aria-label="\{\{ ariaLabel \|\|[^}]*\}\) : ''\) \}\}"/, 'aria-label="{{ ariaLabel }}"'));
 fs.mkdirSync(path.join(work, 'node_modules'), { recursive: true });
 for (const m of ['tslib', 'dayjs']) fs.symlinkSync(path.join(pkg, 'node_modules', m), path.join(work, 'node_modules', m), 'dir');
 const names = fs.readdirSync(path.join(work, 'components')).filter((n) => n.startsWith('sb-'));

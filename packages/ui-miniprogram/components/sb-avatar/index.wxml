@@ -1,0 +1,1 @@
+<view class="sb-avatar sb-avatar-{{tone}} sb-avatar-{{size}}" bind:tap="onTap"><t-avatar t-class-image="sb-avatar-img" t-class-content="sb-avatar-text" image="{{src || ''}}" alt="{{name || ''}}" shape="{{shape === 'square' ? 'round' : 'circle'}}" size="{{px}}" aria-label="{{name || '头像'}}">{{text}}</t-avatar></view>

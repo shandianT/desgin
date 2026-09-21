@@ -36,6 +36,10 @@ app.wxss 头两行：
 | sb-battle-map | 作战地图：自绘四象限，点色表状态、点大小表金额档，重叠聚合，缺潜力的不画进格子，空态给下一步 | points、thresholds、zoom、selectedId、unrated、loading；事件 pointtap、clustertap、zoomchange、unratedtap、emptyaction | 12 章 §2 |
 | sb-kpi-card | 指标卡：数字 32、单位小一号、变化只在有好坏时着色，缺失显示未登记 | label、value、unit、note、change、loading、missingText；事件 tap | 12 章 §3.1、B-03 |
 | sb-chart-card | 图表卡片壳：标题、范围、口径 ⓘ，四态；图放默认 slot，图例放 legend slot | title、scope、caliber、state、emptyTitle、emptyDescription、summary；事件 retry、caliber | 12 章 §3.5、§4 |
+| sb-timeline | 时间轴：跟进历史与业务动态，自绘竖线加圆点，圆点色只由 tone 决定；末尾可放「进行中」占位；空列表不画空轴 | items[{key,time,title,description,tone,actor,tappable}]、pending、reverse、size（default 或 compact）、loading、emptyText；事件 tap（item） | C-05、B-01 |
+| sb-upload | 附件上传：t-upload 列表型薄壳，文件统一 {uid,name,size,status,url}；超类型、超大小、超数量就地红字说明不弹 toast | accept、maxSize（MB）、maxCount、multiple、value、disabled、hint、label、requestMethod；slot 无；事件 change（files、added）、remove（file、index） | C-02、C-06 |
+| sb-result | 结果页：t-result 薄壳，整页反馈；图标色走语义变量；一个主按钮一个次按钮，extra slot 放补充内容 | status（success、error、info、warning）、title、description、primaryLabel、primaryLoading、primaryDisabled、secondaryLabel、secondaryDisabled；slot extra；事件 primary、secondary | C-01、C-06、B-01 |
+| sb-avatar | 头像：t-avatar 薄壳，没有图片用姓名后两字（中文去姓、英文取前两个字母）；三档 48／64／80rpx；底色档默认主色淡底 | name、src、size（sm、md、lg）、tone（primary、neutral、success、warning、danger、sidebar）、shape（circle、square）；事件 tap | V-01、V-04 |
 
 几处和 Web 端不同的地方：
 
@@ -49,6 +53,10 @@ app.wxss 头两行：
 - sb-amount-input 的 change 在输入中就发（值已解析为数字），失焦时再格式化一次；输入非法字符直接过滤。
 - sb-battle-map 的聚合半径按 700rpx 宽的图折算成百分比：点之间距离小于约一个点直径聚成一个，超过 30 个点放宽半径默认聚合。点格子名用 wx.showToast 显示全称。象限底色用 `--ui-quadrant-asset/attack/resource/spot`，后面带同义回退值。
 - sb-chart-card 只做壳：图区用 ec-canvas（echarts-for-weixin），主题文件用 tokens 包的 `bridge-echarts.theme.json`。
+- sb-timeline 的条目要能点时传 `tappable: true`（Web 端是 onClick），tap 事件带 item。tdesign 小程序没有时间轴，这个是自绘。
+- sb-upload 的 `status` 用 Web 端的 uploading／done／error，内部换成 t-upload 认的 loading／done／failed。accept 里有非图片类型时从聊天文件选（`source=messageFile`），只有图片时从相册选。不传 requestMethod 只维护本地列表，页面提交时再 wx.uploadFile；传了就是 t-upload 的 requestMethod。超限文件不进列表，说明写在列表下方，不弹 toast（所以不传 t-upload 的 sizeLimit）。
+- sb-result 的按钮竖排撑满，Web 端是横排居中。extra 用具名 slot。
+- sb-avatar 的方形对应 t-avatar 的 `shape=round`（圆角方形），圆角取 `--ui-radius-control`。取字规则和 Web 端 `avatarInitials` 一样：王小明 → 小明，李雷 → 李雷，zhangjt → ZH，空 → 我。
 
 ## 用了哪些 t-* 组件
 
@@ -67,6 +75,10 @@ app.wxss 头两行：
 | sb-amount-input | t-input：type=digit、value、placeholder、disabled、align=right、borderless | focus、blur、change |
 | sb-textarea | t-textarea：value、placeholder、maxlength、indicator、autosize、disabled、bordered=false | change |
 | sb-battle-map、sb-chart-card | t-loading、t-button、t-icon | tap |
+| sb-timeline | t-skeleton：theme=paragraph（加载中） | — |
+| sb-upload | t-upload：theme=list、files、max、source、media-type、disabled、add-btn、add-content=slot、remove-btn、request-method；t-button | success、fail、remove |
+| sb-result | t-result：theme（default、success、warning、error）、title、description；t-button | tap |
+| sb-avatar | t-avatar：image、alt、shape（circle、round）、size（rpx 值） | — |
 
 属性名与事件名对照 1.16.1 包里各组件的 props.js 与编译后的 js 核过。t-progress 的 status 属性没有用：传了 status 会把百分比换成图标。
 
@@ -83,7 +95,7 @@ app.wxss 头两行：
 
 ## 怎么测（不用开发者工具）
 
-在本目录 `npm i` 然后 `npm test`。用微信官方的 miniprogram-simulate 在 Node 里渲染 28 个组件的每个状态，检查文字在不在、点了会不会对外发事件，用例在 `test/cases.cjs`。它和真机走同一套组件框架，但不是真机：布局、滚动、键盘、安全区这些还是要在开发者工具和真机看。
+在本目录 `npm i` 然后 `npm test`。用微信官方的 miniprogram-simulate 在 Node 里渲染 32 个组件的每个状态，检查文字在不在、点了会不会对外发事件，用例在 `test/cases.cjs`。它和真机走同一套组件框架，但不是真机：布局、滚动、键盘、安全区这些还是要在开发者工具和真机看。
 
 ## 怎么看（仓库内演示工程，不随 npm 包发布）
 
@@ -97,4 +109,4 @@ app.wxss 头两行：
 
 ## 状态
 
-28 个组件代码写好（0.6.0 加了 9 个），与 Web 端 `packages/ui-react/src/meta.js` 的清单一致。t-* 的属性与事件名已对照 1.16.1 包核过；组件本身未在开发者工具与真机跑过。
+32 个组件代码写好（0.6.0 加了 13 个），与 Web 端 `packages/ui-react/src/meta.js` 的清单一致。t-* 的属性与事件名已对照 1.16.1 包核过；组件本身未在开发者工具与真机跑过。

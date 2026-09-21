@@ -146,6 +146,32 @@ module.exports = {
     { title: '展开', data: { items: [{ key: 1, title: '9 月 12 日拜访记录' }], defaultExpanded: true }, expect: ['9 月 12 日拜访记录'], event: tapFirst('.sb-sources-item', 'tap') },
     { title: '无依据', data: { items: [] }, expect: ['依据'] },
   ],
+  'sb-timeline': [
+    { title: '默认四色带记录人', data: { items: [{ key: 1, time: '9 月 19 日', title: '拜访：见了 CIO', description: '预算在四季度审批', tone: 'good', actor: '王小明', tappable: true }, { key: 2, time: '9 月 15 日', title: '任务被拒绝', tone: 'bad' }, { key: 3, title: '转为需关注', tone: 'watch' }] }, expect: ['9 月 19 日', '拜访：见了 CIO', '预算在四季度审批', '王小明', 'sb-tl-good', 'sb-tl-bad', 'sb-tl-watch'], event: tapFirst('.sb-tl-item', 'tap') },
+    { title: '进行中占位与倒序', data: { items: [{ key: 1, title: '甲', tone: 'neutral' }, { key: 2, title: '乙' }], pending: '等待下一次跟进', reverse: true }, expect: ['等待下一次跟进', 'sb-tl-dot-hollow', 'sb-tl-neutral'] },
+    { title: '紧凑不显示说明', data: { items: [{ key: 1, time: '9 月 8 日', title: '进入验证', description: '不该出现' }], size: 'compact' }, expect: ['sb-tl-compact', '进入验证'] },
+    { title: '空', data: { items: [] }, expect: ['还没有记录'] },
+    { title: '加载中', data: { loading: true }, expect: ['sb-tl-skel'] },
+  ],
+  // t-upload 的列表项内容走 <template is>，模拟器不渲染模板，所以只查列表项节点与状态类，文件名要在开发者工具里看
+  'sb-upload': [
+    { title: '本地列表带说明', data: { accept: '.pdf,.jpg', maxSize: 20, maxCount: 5, value: [{ uid: 'a', name: '拜访纪要.pdf', size: 245760, status: 'done', url: 'a' }] }, expect: ['上传附件', '支持 pdf、jpg，单个不超过 20MB', 't-upload__list-item'], event: callMethod('onRemove', { index: 0, file: {} }, 'remove') },
+    { title: '超限就地说明不弹 toast', data: { accept: '.pdf', maxSize: 2, maxCount: 1, value: [] }, expect: ['支持 pdf，单个不超过 2MB'], event: async (comp, simulate) => { let hit = false, changed = null; comp.addEventListener('change', (e) => { hit = true; changed = e.detail.files; }); comp.instance.onSuccess({ detail: { files: [{ name: '照片.jpg', size: 100, url: 'x1' }, { name: '大文件.pdf', size: 3 * 1048576, url: 'x2' }, { name: '合同.pdf', size: 100, url: 'x3' }, { name: '第二份.pdf', size: 100, url: 'x4' }] } }); await simulate.sleep(20); const html = comp.dom.innerHTML; return hit && changed.length === 1 && changed[0].name === '合同.pdf' && html.includes('类型不支持') && html.includes('超过 2MB') && html.includes('最多 1 个文件'); } },
+    { title: '到上限与失败态', data: { maxCount: 1, value: [{ uid: 'b', name: '现场照片.jpg', size: 3145728, status: 'error', url: 'b' }] }, expect: ['t-upload__list-item--fail', '已到 1 个上限'] },
+    { title: '禁用', data: { accept: '.pdf', disabled: true, hint: '归档后不能再改附件', value: [{ uid: 'a', name: '拜访纪要.pdf', size: 10, status: 'done', url: 'a' }] }, expect: ['归档后不能再改附件', 'sb-upload-disabled', 't-upload__list-item'] },
+  ],
+  'sb-result': [
+    { title: '成功带主次按钮', data: { status: 'success', title: '拜访已归档', description: '几分钟后在客户详情里看。', primaryLabel: '查看客户', secondaryLabel: '再记一条' }, expect: ['拜访已归档', '几分钟后在客户详情里看', '查看客户', '再记一条', 'sb-result-success'], event: tapFirst('t-button', 'primary', '.t-button--t-button') },
+    { title: '失败可重试', data: { status: 'error', title: '归档失败', description: '你的输入已保留。', primaryLabel: '重试', secondaryLabel: '存草稿' }, expect: ['归档失败', '重试', 'sb-result-error'], event: tapDomNth('.t-button--t-button', 'secondary', -1) },
+    { title: '警示与未知状态回落 info', data: { status: 'nope', title: '草稿已保存' }, expect: ['sb-result-info', '草稿已保存'] },
+    { title: '主按钮处理中不触发', data: { status: 'warning', title: '还有 3 项必填', primaryLabel: '回去补充', primaryLoading: true }, expect: ['sb-result-warning', '还有 3 项必填'] },
+  ],
+  'sb-avatar': [
+    { title: '中文去姓取后两字', data: { name: '王小明' }, expect: ['小明', 'sb-avatar-primary', 'sb-avatar-md'], event: tapFirst('.sb-avatar', 'tap') },
+    { title: '两字原样与英文', data: { name: '李雷', size: 'sm', tone: 'neutral' }, expect: ['李雷', 'sb-avatar-neutral', 'sb-avatar-sm'] },
+    { title: '英文取前两个大写、方形大号', data: { name: 'zhangjt', size: 'lg', shape: 'square', tone: 'success' }, expect: ['ZH', 'sb-avatar-lg', 'sb-avatar-success'] },
+    { title: '空名显示我', data: { name: '' }, expect: ['我'] },
+  ],
   'sb-ai-progress': [
     { title: '进行中', data: { stages: ['转写语音', '提取字段'], current: 1, status: 'running' }, expect: ['提取字段', '取消'], event: tapFirst('t-button', 'cancel', '.t-button--t-button') },
     { title: '已取消', data: { stages: ['转写语音'], status: 'cancelled' }, expect: ['已取消'] },

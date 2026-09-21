@@ -159,6 +159,34 @@
   <view class="card"><sb-chart-card title="客户排名" state="{{chartState}}" bind:retry="onChartRetry" /></view>
   <view class="card"><sb-chart-card title="客户排名" state="loading" /></view>
 
+  <view class="h">时间轴 sb-timeline</view>
+  <view class="sub">默认：时间、标题、说明、记录人；圆点色由 tone 决定；第一条可点</view>
+  <view class="card"><sb-timeline items="{{tlItems}}" pending="等待下一次跟进，下一步：10 月 8 日前发方案" bind:tap="onTimeline" /></view>
+  <view class="sub">紧凑、倒序</view>
+  <view class="card"><sb-timeline items="{{tlItems}}" size="compact" reverse /></view>
+  <view class="sub">空与加载中</view>
+  <view class="card"><sb-timeline items="{{[]}}" emptyText="还没有跟进记录，记一次拜访后这里会出现。" /><sb-timeline loading /></view>
+
+  <view class="h">附件上传 sb-upload</view>
+  <view class="sub">本地列表：限 pdf、jpg，单个 20MB，最多 3 个；超限就地说明。当前 {{files.length}} 个</view>
+  <view class="card"><sb-upload accept=".pdf,.jpg,.png" maxSize="{{20}}" maxCount="{{3}}" multiple value="{{files}}" bind:change="onFiles" /></view>
+  <view class="sub">上传中与失败</view>
+  <view class="card"><sb-upload accept=".pdf,.jpg" maxSize="{{20}}" value="{{filesBusy}}" /></view>
+  <view class="sub">禁用</view>
+  <view class="card"><sb-upload accept=".pdf" disabled hint="归档后不能再改附件" value="{{files}}" /></view>
+
+  <view class="h">结果页 sb-result</view>
+  <view class="sub">成功：主按钮查看客户、次按钮再记一条，extra 放三个数字</view>
+  <view class="card"><sb-result status="success" title="拜访已归档" description="Agent 正在按已确认事实重算象限与风险，几分钟后在客户详情里看。" primaryLabel="查看客户" secondaryLabel="再记一条" bind:primary="onResultPrimary" bind:secondary="onResultSecondary"><sb-metric-strip slot="extra" items="{{resultMetrics}}" /></sb-result></view>
+  <view class="sub">失败、提示、警示</view>
+  <view class="card"><sb-result status="error" title="归档失败" description="网络或服务暂时不可用，你的输入已保留。" primaryLabel="重试" secondaryLabel="存草稿" /></view>
+  <view class="card"><sb-result status="info" title="草稿已保存" description="回到列表后可以从「我的草稿」继续。" primaryLabel="回到列表" /></view>
+  <view class="card"><sb-result status="warning" title="还有 3 项必填未确认" description="下一步、客户预算、联系人角色。" primaryLabel="回去补充" /></view>
+
+  <view class="h">头像 sb-avatar</view>
+  <view class="sub">取字：中文去姓取后两字，两字原样，英文取前两个字母；三档 48 / 64 / 80rpx</view>
+  <view class="row"><sb-avatar name="王小明" size="sm" /><sb-avatar name="王小明" /><sb-avatar name="王小明" size="lg" /><sb-avatar name="李雷" tone="neutral" /><sb-avatar name="欧阳修文" tone="success" /><sb-avatar name="zhangjt" tone="warning" /><sb-avatar name="" tone="danger" /><sb-avatar name="周玮" shape="square" /></view>
+
   <view class="h">底部标签栏 sb-tab-bar</view>
   <view class="sub">默认五个 Tab；演示里不固定在底部，当前：{{tab5}}</view>
   <sb-tab-bar value="{{tab5}}" fixed="{{false}}" safeArea="{{false}}" bind:change="onTab5" />

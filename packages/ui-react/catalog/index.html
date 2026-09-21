@@ -11,6 +11,7 @@ body { margin: 0; background: var(--ui-background); color: var(--ui-ink); font-f
 .cat-nav h1 { font-size: var(--ui-text-section); color: var(--ui-on-primary); margin: 0 0 var(--ui-space-3); } .cat-nav h1 small { display: block; font-weight: 400; font-size: var(--ui-text-small); color: var(--ui-sidebar-muted); }
 .cat-nav a { display: block; padding: 6px var(--ui-space-2); border-radius: var(--ui-radius-control); color: var(--ui-sidebar-nav); text-decoration: none; font-size: var(--ui-text-body); } .cat-nav a:hover { background: var(--ui-sidebar-hover); color: var(--ui-on-primary); }
 .cat-nav a small { color: var(--ui-sidebar-muted); margin-left: 6px; font-size: var(--ui-text-small); }
+.cat-nav a.cat-nav-sub { padding-left: var(--ui-space-4); font-size: var(--ui-text-small); color: var(--ui-sidebar-muted); }
 .cat-nav-note { margin: var(--ui-space-3) 0 0; padding: 0 var(--ui-space-2); font-size: var(--ui-text-small); color: var(--ui-sidebar-muted); }
 .cat-main { padding: var(--ui-space-4) var(--ui-page-gutter) var(--ui-space-8); max-width: 1180px; }
 .cat-main > p.lead { color: var(--ui-secondary); max-width: 64em; }
@@ -38,7 +39,19 @@ section.comp h2 { margin: 0 0 4px; font-size: var(--ui-text-page); } section.com
 @media (max-width: 900px) { .cat { grid-template-columns: minmax(0, 1fr); } .cat-nav { position: static; height: auto; display: flex; flex-wrap: nowrap; overflow-x: auto; gap: var(--ui-space-2); padding: var(--ui-space-2) var(--ui-page-gutter); align-items: center; } .cat-nav h1 { flex: none; margin: 0 var(--ui-space-2) 0 0; font-size: var(--ui-text-body); } .cat-nav h1 small { display: none; } .cat-nav a { flex: none; white-space: nowrap; } .cat-nav a small { display: none; } .tools { position: static; box-shadow: none; } .tools .tool-only, .tools .tool-search { width: auto; flex: 1 1 140px; } section.comp { scroll-margin-top: var(--ui-space-3); } }
 .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--ui-space-2); }
 .icon-cell { border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); padding: var(--ui-space-2); display: flex; flex-direction: column; gap: 2px; font-size: var(--ui-text-small); }
+.icon-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ui-space-3); margin: 0 0 var(--ui-space-3); } .icon-tools .icon-search { width: 320px; max-width: 100%; }
+.icon-cell { cursor: pointer; } .icon-cell:hover, .icon-cell:focus-visible { border-color: var(--ui-primary); background: var(--ui-selected); outline: none; }
+.icon-cell b .icon-key { margin-left: 6px; color: var(--ui-primary); font-size: var(--ui-text-small); font-weight: 400; }
+.basics-howto { margin-top: var(--ui-space-4); } .states .state.span2 { grid-column: span 2; } @media (max-width: 640px) { .states .state.span2 { grid-column: auto; } } .basics .note { color: var(--ui-secondary); margin: 0 0 var(--ui-space-2); max-width: 64em; }
 .icon-cell .icon-sizes { display: flex; align-items: center; gap: var(--ui-space-3); color: var(--ui-secondary); min-height: 32px; }
+.basics-spare { margin-top: var(--ui-space-4); }
+.grid-cell { padding: var(--ui-space-2); border: 1px dashed var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); text-align: center; font-size: var(--ui-text-small); color: var(--ui-secondary); }
+.affix-box, .backtop-box { position: relative; height: 200px; overflow: auto; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); background: var(--ui-surface); }
+.affix-bar { display: flex; align-items: center; justify-content: space-between; padding: var(--ui-space-1) var(--ui-space-2); background: var(--ui-selected); border-bottom: 1px solid var(--ui-line); font-size: var(--ui-text-small); }
+.affix-fill { height: 560px; padding: var(--ui-space-2); font-size: var(--ui-text-small); color: var(--ui-muted); }
+.carousel-slide { display: flex; align-items: center; justify-content: center; height: 96px; margin: 0 0 var(--ui-space-3); border-radius: var(--ui-radius-control); background: var(--ui-selected); color: var(--ui-primary); font-size: var(--ui-text-body); }
+.result-box { border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); background: var(--ui-surface); }
+.sidebar-chip { display: inline-flex; padding: 4px; border-radius: var(--ui-radius-control); background: var(--ui-sidebar); }
 .icon-cell b { font-size: var(--ui-text-body); } .icon-cell code { color: var(--ui-muted); font-size: var(--ui-text-small); }
 </style>
 </head>

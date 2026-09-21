@@ -39,3 +39,9 @@ export { SbSearchSelect } from './components/SbSearchSelect.jsx';
 export { SbAmountInput } from './components/SbAmountInput.jsx';
 export { SbTextarea } from './components/SbTextarea.jsx';
 export { SbSegmented } from './components/SbSegmented.jsx';
+// 0.6.0：时间轴、附件上传、结果页、头像
+export { SbTimeline } from './components/SbTimeline.jsx';
+export { SbUpload } from './components/SbUpload.jsx';
+export { SbResult } from './components/SbResult.jsx';
+export { SbAvatar } from './components/SbAvatar.jsx';
+export { avatarInitials } from './components/SbAvatar.jsx';

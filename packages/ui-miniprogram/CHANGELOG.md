@@ -2,6 +2,12 @@
 
 版本号规则与 ui-react 一致。每条写「改了什么、对使用方有什么影响」。
 
+## 0.7.0（2026-09-21）
+
+- 新增四个组件：sb-timeline 时间轴（自绘竖线加圆点，圆点色只由 tone 决定，pending 占位、倒序、紧凑、加载、空）、sb-upload 附件上传（t-upload 列表型壳，超类型／大小／数量就地红字不弹 toast，不传 requestMethod 只维护本地列表）、sb-result 结果页（t-result 壳，主次按钮加 extra slot）、sb-avatar 头像（t-avatar 壳，姓名后两字、三档 48／64／80rpx、底色档）。与 Web 端 SbTimeline、SbUpload、SbResult、SbAvatar 同一套属性。
+- 测试：`test/run.cjs` 再把 t-grid-item 读屏文字里的对象展开去掉（t-upload 会引到它），只影响测试；t-upload 列表项内容走 `<template is>`，模拟器不渲染模板，用例只查列表项节点与状态类。
+- 演示页加四段（时间轴、附件上传、结果页、头像）。
+
 ## 0.6.0（2026-09-21）
 
 - 新增九个组件：sb-tab-bar（t-tab-bar 壳）、sb-date-picker（t-date-time-picker 壳）、sb-select（t-picker 壳）、sb-amount-input（t-input 壳）、sb-textarea（t-textarea 壳）、sb-segmented（自绘）、sb-battle-map（自绘四象限，view 绝对定位不用 canvas）、sb-kpi-card（自绘指标卡）、sb-chart-card（图表卡片壳，图区留给 ec-canvas）。

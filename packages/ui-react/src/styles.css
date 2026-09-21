@@ -118,6 +118,8 @@
 .sb-table .ant-table-empty .ant-table-tbody > tr > td { padding: var(--ui-space-8) var(--ui-space-4); }
 .sb-table-clickable .ant-table-tbody > tr > td { cursor: pointer; }
 .sb-table-foot { display: flex; justify-content: flex-end; padding: var(--ui-space-3) 0 0; }
+/* SbPagination：加载更多模式居中 */
+.sb-pagination-more { display: flex; justify-content: center; padding: var(--ui-space-2) 0; }
 /* ---- 作战地图 ---- */
 /* SbBattleMap：SVG 正方形，格子底色用 --ui-quadrant-*，点色用状态色；HTML 只放悬停框、返回按钮、空态、待评估行与手机底部四个数字 */
 .sb-bmap { display: flex; flex-direction: column; gap: var(--ui-space-2); width: 100%; min-width: 0; font-family: var(--ui-font); }
@@ -182,8 +184,7 @@
 .sb-sidenav-bottom { flex: none; display: flex; flex-direction: column; gap: var(--ui-space-2); padding-top: var(--ui-space-3); margin-top: auto; border-top: 1px solid var(--ui-sidebar-hover); }
 .sb-sidenav-admin { display: flex; align-items: center; justify-content: flex-start; gap: var(--ui-space-1); min-height: 32px; padding: 0 var(--ui-space-3); border-radius: var(--ui-radius-control); color: var(--ui-sidebar-accent); font-size: var(--ui-text-small); text-decoration: none; }
 .sb-sidenav-account-active { border-color: var(--ui-sidebar-accent); background: var(--ui-sidebar-active); }
-.sb-sidenav-avatar { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--ui-sidebar-accent); color: var(--ui-sidebar); font-size: var(--ui-text-small); font-weight: 650; }
-.sb-sidenav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.sb-sidenav-avatar { flex: none; }
 .sb-sidenav-toggle { justify-content: flex-start; min-height: 32px; padding: 0 var(--ui-space-3); background: transparent; color: var(--ui-sidebar-muted); font-size: var(--ui-text-small); }
 .sb-sidenav-collapsed .sb-sidenav-ws, .sb-sidenav-collapsed .sb-sidenav-account, .sb-sidenav-collapsed .sb-sidenav-admin, .sb-sidenav-collapsed .sb-sidenav-toggle { justify-content: center; padding: var(--ui-space-1); }
 /* SbTopBar：白底 64 高，下边线 */
@@ -248,3 +249,50 @@
 /* 一行最多四张，手机两张（12 章 §3.1） */
 .sb-kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ui-space-3); }
 @media (max-width: 600px) { .sb-kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* ---- 0.6.0：时间轴、附件上传、结果页、头像 ---- */
+/* SbTimeline：节点色由 tone 决定，内容三行：时间小灰字、标题、说明；compact 行距更紧 */
+.sb-timeline { padding-top: var(--ui-space-1); }
+.sb-timeline-body, .sb-timeline-btn { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sb-timeline-btn { width: 100%; padding: 0; border: 0; background: transparent; text-align: left; font: inherit; color: inherit; cursor: pointer; border-radius: var(--ui-radius-control); }
+.sb-timeline-btn:hover .sb-timeline-title { color: var(--ui-primary); }
+.sb-timeline-btn:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+.sb-timeline-time { font-size: var(--ui-text-small); color: var(--ui-muted); font-variant-numeric: tabular-nums; }
+.sb-timeline-title { font-size: var(--ui-text-body); color: var(--ui-ink); font-weight: 500; }
+.sb-timeline-desc { font-size: var(--ui-text-body); color: var(--ui-secondary); }
+.sb-timeline-actor { font-size: var(--ui-text-small); color: var(--ui-muted); }
+.sb-timeline-pending-text { color: var(--ui-muted); font-weight: 400; }
+.sb-timeline .ant-timeline-item-content { font-size: var(--ui-text-body); }
+.sb-timeline-compact .sb-timeline-body, .sb-timeline-compact .sb-timeline-btn { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: var(--ui-space-2); }
+.sb-timeline-compact .sb-timeline-desc { display: none; }
+.sb-timeline-empty { margin: 0; padding: var(--ui-space-3) 0; font-size: var(--ui-text-body); color: var(--ui-muted); }
+/* SbUpload：按钮旁一句说明；超限就地红字，不弹 toast */
+.sb-upload { display: flex; flex-direction: column; gap: var(--ui-space-1); min-width: 0; }
+.sb-upload-hint { margin: 0; font-size: var(--ui-text-small); color: var(--ui-muted); }
+.sb-upload-inner .sb-upload-hint { margin-left: var(--ui-space-2); }
+.sb-upload-error { margin: 0; font-size: var(--ui-text-small); color: var(--ui-danger); }
+.sb-upload-drag-title { display: flex; align-items: center; justify-content: center; gap: var(--ui-space-2); margin: 0 0 var(--ui-space-1); font-size: var(--ui-text-body); color: var(--ui-ink); }
+.sb-upload .ant-upload-drag { border-radius: var(--ui-radius-panel); background: var(--ui-background); }
+.sb-upload .ant-upload-drag:hover, .sb-upload .ant-upload-drag-hover { border-color: var(--ui-primary); }
+.sb-upload .ant-upload-list-item-name { font-size: var(--ui-text-body); }
+/* SbResult：图标色只走语义变量；主次按钮并排 */
+.sb-result.ant-result { padding: var(--ui-space-8) var(--ui-space-4); }
+.sb-result .ant-result-title { font-size: var(--ui-text-page); color: var(--ui-ink); }
+.sb-result .ant-result-subtitle { font-size: var(--ui-text-body); color: var(--ui-secondary); }
+.sb-result-success .ant-result-icon .anticon { color: var(--ui-success); }
+.sb-result-error .ant-result-icon .anticon { color: var(--ui-danger); }
+.sb-result-info .ant-result-icon .anticon { color: var(--ui-primary); }
+.sb-result-warning .ant-result-icon .anticon { color: var(--ui-warning); }
+.sb-result-actions { display: flex; justify-content: center; gap: var(--ui-space-3); }
+.sb-result-extra { margin-top: var(--ui-space-2); text-align: left; }
+/* SbAvatar：三档 24 / 32 / 40；底色档，文字色随档 */
+.sb-avatar.ant-avatar { flex: none; font-weight: 600; }
+.sb-avatar-sm.ant-avatar { font-size: var(--ui-text-small); }
+.sb-avatar-md.ant-avatar, .sb-avatar-lg.ant-avatar { font-size: var(--ui-text-small); }
+.sb-avatar-lg.ant-avatar { font-size: var(--ui-text-body); }
+.sb-avatar-primary.ant-avatar { background: var(--ui-selected); color: var(--ui-primary); }
+.sb-avatar-neutral.ant-avatar { background: var(--ui-neutral-soft); color: var(--ui-neutral); }
+.sb-avatar-success.ant-avatar { background: var(--ui-success-soft); color: var(--ui-success); }
+.sb-avatar-warning.ant-avatar { background: var(--ui-warning-soft); color: var(--ui-warning); }
+.sb-avatar-danger.ant-avatar { background: var(--ui-danger-soft); color: var(--ui-danger); }
+.sb-avatar-sidebar.ant-avatar { background: var(--ui-sidebar-accent); color: var(--ui-sidebar); }
+.sb-avatar.ant-avatar-square { border-radius: var(--ui-radius-control); }

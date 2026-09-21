@@ -144,6 +144,18 @@ export interface SbPaginationProps {
   total?: number;
   pageSize?: number;
   onChange?: (page: number, pageSize: number) => void;
+  /** 每页条数的档位，默认 [10, 20, 50]；只有传了 onPageSizeChange 才显示选择器 */
+  pageSizeOptions?: number[];
+  /** 传了才显示每页条数选择器；加载更多模式不显示 */
+  onPageSizeChange?: (pageSize: number, page: number) => void;
+  /** page 默认分页；more 是加载更多按钮 */
+  mode?: 'page' | 'more';
+  /** more 模式：正在加载，按钮防重复 */
+  loading?: boolean;
+  /** more 模式：没有更多了 */
+  end?: boolean;
+  onLoadMore?: () => void;
+  className?: string;
 }
 export declare function SbPagination(props: SbPaginationProps): JSX.Element;
 
@@ -222,7 +234,17 @@ export interface SbTabsProps {
 }
 export declare function SbTabs(props: SbTabsProps): JSX.Element;
 
+export interface SbTableRowSelection<T = any> {
+  type?: 'checkbox' | 'radio';
+  selectedRowKeys?: React.Key[];
+  onChange?: (selectedRowKeys: React.Key[], selectedRows: T[]) => void;
+  getCheckboxProps?: (row: T) => { disabled?: boolean; name?: string };
+  columnWidth?: number | string;
+  fixed?: boolean;
+  preserveSelectedRowKeys?: boolean;
+}
 export interface SbTableProps<T = any> {
+  /** antd 列定义原样透传；列上的 sorter 是 antd 原生排序，没写 sortDirections 时默认升、降两档 */
   columns?: any[];
   rows?: T[];
   rowKey?: string | ((row: T) => string);
@@ -241,6 +263,10 @@ export interface SbTableProps<T = any> {
   scrollX?: number | string;
   /** 分组表格时，后面几组传 false，只留第一组的表头 */
   showHeader?: boolean;
+  /** 勾选行：antd rowSelection 原样透传，onChange 回选中的 keys 与行 */
+  rowSelection?: SbTableRowSelection<T>;
+  /** 排序、筛选变化时的回调（antd Table 的 onChange） */
+  onChange?: (pagination: any, filters: any, sorter: any, extra: any) => void;
   className?: string;
 }
 export declare function SbTable<T = any>(props: SbTableProps<T>): JSX.Element;
@@ -611,3 +637,91 @@ export interface SbSegmentedProps {
   [key: string]: any;
 }
 export declare function SbSegmented(props: SbSegmentedProps): JSX.Element;
+
+/* ---- 0.6.0：时间轴、附件上传、结果页、头像 ---- */
+export type SbTimelineTone = 'good' | 'watch' | 'bad' | 'pending' | 'neutral';
+export interface SbTimelineItem {
+  key?: string | number;
+  /** 时间文字，如「9 月 19 日 14:30」 */
+  time?: ReactNode;
+  title: ReactNode;
+  description?: ReactNode;
+  /** 节点色：good 成功、watch 警示、bad 危险、pending 主色、neutral 灰（默认） */
+  tone?: SbTimelineTone;
+  /** 记录人 */
+  actor?: ReactNode;
+  onClick?: (item: SbTimelineItem) => void;
+}
+export interface SbTimelineProps {
+  items?: SbTimelineItem[];
+  /** 末尾「进行中」占位文字 */
+  pending?: ReactNode;
+  reverse?: boolean;
+  size?: 'default' | 'compact';
+  loading?: boolean;
+  emptyText?: ReactNode;
+  className?: string;
+}
+export declare function SbTimeline(props: SbTimelineProps): JSX.Element;
+
+export interface SbUploadFile {
+  uid: string;
+  name: string;
+  size?: number;
+  status?: 'uploading' | 'done' | 'error';
+  url?: string;
+}
+export interface SbUploadProps {
+  /** 同 input accept，如 ".pdf,.jpg" */
+  accept?: string;
+  /** 单个文件上限，MB */
+  maxSize?: number;
+  maxCount?: number;
+  multiple?: boolean;
+  value?: SbUploadFile[];
+  /** value 的别名 */
+  fileList?: SbUploadFile[];
+  onChange?: (files: SbUploadFile[]) => void;
+  onRemove?: (file: SbUploadFile) => void;
+  /** 自定义上传，resolve 的 url 会写回文件；不传就只维护本地列表 */
+  request?: (file: File) => Promise<{ url?: string } | void>;
+  disabled?: boolean;
+  /** 不传时按 accept 与 maxSize 生成「支持 pdf、jpg，单个不超过 20MB」 */
+  hint?: ReactNode;
+  /** 拖拽区 */
+  drag?: boolean;
+  /** 按钮文字，默认「上传附件」 */
+  label?: ReactNode;
+  className?: string;
+}
+export declare function SbUpload(props: SbUploadProps): JSX.Element;
+
+export interface SbResultAction { label: ReactNode; onClick?: () => void; loading?: boolean; disabled?: boolean }
+export interface SbResultProps {
+  status?: 'success' | 'error' | 'info' | 'warning';
+  title: ReactNode;
+  description?: ReactNode;
+  primary?: SbResultAction;
+  secondary?: SbResultAction;
+  /** 补充内容，如 SbMetricStrip */
+  extra?: ReactNode;
+  className?: string;
+}
+export declare function SbResult(props: SbResultProps): JSX.Element;
+
+export interface SbAvatarProps {
+  /** 没有图片时取后两字；中文名去掉姓，英文名取前两个字母 */
+  name?: string;
+  src?: string;
+  /** 24 / 32 / 40 */
+  size?: 'sm' | 'md' | 'lg';
+  /** 底色档，默认主色淡底；sidebar 给深蓝侧栏用 */
+  tone?: 'primary' | 'neutral' | 'success' | 'warning' | 'danger' | 'sidebar';
+  shape?: 'circle' | 'square';
+  alt?: string;
+  className?: string;
+  [key: string]: any;
+}
+export declare function SbAvatar(props: SbAvatarProps): JSX.Element;
+/** 头像取字：王小明 → 小明，李雷 → 李雷，zhang → ZH，空 → 我 */
+export declare function avatarInitials(name?: string): string;

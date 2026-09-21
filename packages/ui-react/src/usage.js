@@ -102,7 +102,14 @@ import { SbSheet } from '${PKG}';
 
   SbPagination: `import { SbPagination } from '${PKG}';
 
-<SbPagination current={page} total={total} pageSize={20} onChange={setPage} />`,
+<SbPagination current={page} total={total} pageSize={20} onChange={setPage} />
+
+// 让用户选每页条数：传 onPageSizeChange 才显示选择器，档位默认 10／20／50
+<SbPagination current={page} total={total} pageSize={size} onChange={setPage}
+  pageSizeOptions={[10, 20, 50]} onPageSizeChange={(s) => { setSize(s); setPage(1); }} />
+
+// 加载更多模式（手机或动态流）：不显示每页条数
+<SbPagination mode="more" loading={loading} end={!hasMore} onLoadMore={loadNext} />`,
 
   SbMetricTile: `import { SbMetricTile } from '${PKG}';
 
@@ -153,7 +160,21 @@ import { Button } from 'antd';
   ]}
   actions={(r) => <Button type="link" onClick={() => open(r)}>查看</Button>}
   pagination={{ current: page, total: 124, pageSize: 20, onChange: setPage }}
-  onRetry={reload} onClear={clearFilters} />`,
+  onRetry={reload} onClear={clearFilters} />
+
+// 可排序：列上写 sorter（antd 原生），默认只有升、降两档；服务端排序时 sorter 传 true，在 onChange 里拿 sorter.field 与 sorter.order
+<SbTable rowKey="id" rows={rows}
+  columns={[
+    { title: '客户', dataIndex: 'name' },
+    { title: '预算（万元）', dataIndex: 'budget', sorter: (a, b) => (a.budget ?? -1) - (b.budget ?? -1) },
+    { title: '最近沟通', dataIndex: 'time', sorter: true },
+  ]}
+  onChange={(_, __, sorter) => reload({ orderBy: sorter.field, order: sorter.order })} />
+
+// 可勾选：rowSelection 原样透传，onChange 回选中的 keys 与行；批量操作放在表格上方
+<SbTable rowKey="id" rows={rows} columns={columns}
+  rowSelection={{ selectedRowKeys: keys, onChange: (k, selectedRows) => setKeys(k) }}
+  actions={(r) => <Button type="link">查看</Button>} />`,
 
   SbIcon: `import { SbIcon, ICONS } from '${PKG}';
 
@@ -313,4 +334,37 @@ const points = [
     unit="%" yMin={15} area />
 </SbChartCard>
 // yMin：不从 0 开始时轴上标最小值；null 断开不连线，点位写「未登记」`,
+  SbTimeline: `import { SbTimeline } from '${PKG}';
+
+<SbTimeline items={[
+  { key: 1, time: '9 月 19 日 14:30', title: '拜访：见了 CIO 张总', description: '预算在四季度审批', tone: 'good', actor: '王小明', onClick: openVisit },
+  { key: 2, time: '9 月 12 日', title: '任务被拒绝', description: '对方意见：时间冲突', tone: 'bad' },
+  { key: 3, time: '9 月 8 日', title: '商机进入验证 30%', tone: 'neutral' },
+]} pending="等待下一次跟进" />
+// tone：good | watch | bad | pending | neutral；size="compact" 一行式；loading 骨架；空列表显示 emptyText`,
+
+  SbUpload: `import { SbUpload } from '${PKG}';
+
+const [files, setFiles] = useState([]);
+<SbUpload accept=".pdf,.jpg,.png" maxSize={20} maxCount={5} multiple
+  value={files} onChange={setFiles}
+  request={(file) => api.upload(file).then((r) => ({ url: r.url }))} />
+// 不传 request 只维护本地列表，页面提交时再上传
+// 超类型、超大小、超数量就地红字说明，不弹 toast；drag 换成拖拽区`,
+
+  SbResult: `import { SbResult, SbMetricStrip } from '${PKG}';
+
+<SbResult status="success" title="拜访已归档" description="Agent 正在按已确认事实重算象限与风险，几分钟后在客户详情里看。"
+  primary={{ label: '查看客户', onClick: openCustomer }}
+  secondary={{ label: '再记一条', onClick: recordAgain }}
+  extra={<SbMetricStrip items={[{ label: '本周拜访', value: 6 }, { label: '待确认', value: 2 }]} />} />
+// status：success | error | info | warning`,
+
+  SbAvatar: `import { SbAvatar, avatarInitials } from '${PKG}';
+
+<SbAvatar name="王小明" />                 // 「小明」，主色淡底，32
+<SbAvatar name="李雷" size="sm" tone="neutral" />
+<SbAvatar name="周玮" src={user.avatarUrl} size="lg" />
+<SbAvatar name="薛佳欣" shape="square" />
+avatarInitials('王小明')  // '小明'`,
 };

@@ -1,0 +1,17 @@
+<view wx:if="{{loading}}" class="sb-tl-skel"><t-skeleton theme="paragraph" animation="gradient" /></view>
+<text wx:elif="{{!list.length && !pending}}" class="sb-tl-empty">{{emptyText}}</text>
+<view wx:else class="sb-tl sb-tl-{{size}}" aria-role="list">
+  <view wx:for="{{list}}" wx:key="key" class="sb-tl-item sb-tl-{{item.tone}} {{item.tappable ? 'sb-tl-tappable' : ''}}" hover-class="{{item.tappable ? 'sb-tl-hover' : ''}}" data-index="{{index}}" bind:tap="onTap" aria-role="{{item.tappable ? 'button' : 'listitem'}}">
+    <view class="sb-tl-rail"><view class="sb-tl-dot"></view><view class="sb-tl-line"></view></view>
+    <view class="sb-tl-body">
+      <text wx:if="{{item.time}}" class="sb-tl-time">{{item.time}}</text>
+      <text class="sb-tl-title">{{item.title}}</text>
+      <text wx:if="{{item.description && size !== 'compact'}}" class="sb-tl-desc">{{item.description}}</text>
+      <text wx:if="{{item.actor}}" class="sb-tl-actor">{{item.actor}}</text>
+    </view>
+  </view>
+  <view wx:if="{{pending}}" class="sb-tl-item sb-tl-pendingnode" aria-role="listitem">
+    <view class="sb-tl-rail"><view class="sb-tl-dot sb-tl-dot-hollow"></view></view>
+    <view class="sb-tl-body"><text class="sb-tl-title sb-tl-pending-text">{{pending}}</text></view>
+  </view>
+</view>
