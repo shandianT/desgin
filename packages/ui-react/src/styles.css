@@ -1,5 +1,6 @@
 /* 组件库自己的样式只引用 --ui-* 变量，不写字面色值。 */
-.sb-tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 var(--ui-space-2); border-radius: 999px; font-size: var(--ui-text-small); line-height: 20px; white-space: nowrap; font-weight: 500; }
+.sb-tag { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 0 var(--ui-space-2); border-radius: 999px; font-size: var(--ui-text-small); line-height: 20px; white-space: nowrap; font-weight: 500; }
+.sb-tag-reason { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .sb-tag-good { background: var(--ui-success-soft); color: var(--ui-success); }
 .sb-tag-watch { background: var(--ui-warning-soft); color: var(--ui-warning); }
 .sb-tag-bad { background: var(--ui-danger-soft); color: var(--ui-danger); }
