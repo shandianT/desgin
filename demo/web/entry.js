@@ -29,7 +29,7 @@
     if (previewOnly && window.SALES_MODE !== 'preview') {
       url.searchParams.set('mode', 'preview');
       url.hash = '/pages/index/index';
-      entryMessage('此地址仅用于示例预览', '这里使用合成示例数据，无需账号和密码。企业账号登录请使用企业工作区地址。', '进入示例体验 →', url.href);
+      entryMessage('销售工作区', '选择身份后进入工作区。企业账号登录请使用企业工作区地址。', '进入工作区 →', url.href);
       return;
     }
     sessionStorage.removeItem('sales-web:mode');

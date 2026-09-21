@@ -49,17 +49,17 @@
     <header class="web-authbar"><a class="web-brand" href="#/pages/login/index"><img class="web-brand-logo" src="assets/brand/raccoon-salesbuddy-horizontal-navy-sidebar.svg" alt="商汤销售小浣熊 · Raccoon SalesBuddy" width="1818" height="368"></a><a href="https://www.ericepc.com/admin" target="_blank" rel="noopener noreferrer">运营管理后台 ↗</a></header>
     <section class="web-auth-intro" aria-label="销售工作空间介绍"><div class="auth-eyebrow"><span></span>企业销售协作空间</div><h1>记录每一次沟通，<br>让 AI 助力销售增长。</h1><div class="auth-flow"><div><span>01</span><b>建立客户关系</b></div><div><span>02</span><b>推进销售商机</b></div><div><span>03</span><b>记录每次拜访</b></div><div><span>04</span><b>落实团队行动</b></div></div></section>
     <div class="web-auth-form-heading"><div class="auth-eyebrow">欢迎回来</div><h2>企业账号登录</h2><div id="login-session-notice" class="web-session-notice" role="status" hidden></div><div id="local-login-choice" class="web-local-login" hidden><button id="local-login-button" class="web-local-login-button">一键进入 · 一线销售 <span>→</span></button><p id="local-login-description">使用本机配置的快捷销售账号，进入企业真实数据。</p><button id="show-account-login" class="web-account-login-link">使用其他企业账号</button></div></div>
-    <div id="preview-notice" hidden class="web-preview-notice"><span><b>示例工作区</b> · 本地合成数据；拜访仅作字段检查，未调用真实 Agent</span><div><select id="preview-role" aria-label="示例身份"><option value="sales">一线销售</option><option value="supervisor">销售主管</option><option value="manager">销售总经理</option><option value="fde">FDE</option><option value="fde_lead">FDE主管</option></select><button id="enter-live">企业账号登录 →</button></div></div>
-    <details id="preview-visit-guide" hidden class="web-workflow-guide"><summary>示例拜访怎么填写</summary><p>文字会按下面的标签整理。普通段落会保留为沟通内容，其余字段可在确认页补充。语音转写需要接入真实服务。</p><pre id="preview-visit-example"></pre></details>
-    <section id="preview-entry-choice" class="web-preview-entry" aria-label="示例体验入口" hidden>
-      <p>示例使用本地数据，无需账号密码。查看真实业务数据，请选择企业账号登录。</p>
-      <label for="preview-entry-role">选择示例身份</label>
+    <div id="preview-notice" hidden class="web-preview-notice"><span></span><div><select id="preview-role" aria-label="身份"><option value="sales">一线销售</option><option value="supervisor">销售主管</option><option value="manager">销售总经理</option><option value="fde">FDE</option><option value="fde_lead">FDE主管</option></select><button id="enter-live">企业账号登录 →</button></div></div>
+    <details id="preview-visit-guide" hidden class="web-workflow-guide"><summary>拜访怎么填写</summary><p>文字会按下面的标签整理。普通段落会保留为沟通内容，其余字段可在确认页补充。语音转写需要接入真实服务。</p><pre id="preview-visit-example"></pre></details>
+    <section id="preview-entry-choice" class="web-preview-entry" aria-label="工作区入口" hidden>
+      <p>选择身份后进入工作区。查看企业数据，请选择企业账号登录。</p>
+      <label for="preview-entry-role">选择身份</label>
       <select id="preview-entry-role"></select>
-      <button id="preview-enter" class="web-preview-enter-button">示例体验 →</button>
+      <button id="preview-enter" class="web-preview-enter-button">进入工作区 →</button>
       <button id="preview-enter-live" class="web-preview-live-button">企业账号登录 →</button>
     </section>
     <main id="page-root" aria-label="业务页面"></main>
-    <div class="web-auth-footer"><button id="cancel-password-change" class="web-account-login-link" hidden>退出此账号，返回登录</button><div id="login-error" class="web-login-error" role="alert" hidden></div><div id="login-connection-status" class="web-connection" role="status">正在检查服务</div><div class="auth-preview-entry"><button id="login-preview">示例体验 →</button></div></div>
+    <div class="web-auth-footer"><button id="cancel-password-change" class="web-account-login-link" hidden>退出此账号，返回登录</button><div id="login-error" class="web-login-error" role="alert" hidden></div><div id="login-connection-status" class="web-connection" role="status">正在检查服务</div><div class="auth-preview-entry"><button id="login-preview">进入工作区 →</button></div></div>
   </div>
   <nav id="mobile-nav" aria-label="主导航"></nav>
   <button id="mobile-actions" hidden aria-label="快捷操作">＋</button>
@@ -77,7 +77,7 @@
     <button id="close-workspace" class="web-dialog-close" aria-label="关闭">×</button>
     <div class="web-workspace-brand"><img class="web-brand-logo" src="assets/brand/raccoon-salesbuddy-horizontal-navy-sidebar.svg" alt="商汤销售小浣熊 · Raccoon SalesBuddy" width="1818" height="368"></div><div class="web-dialog-eyebrow">WORKSPACE</div><h1>选择工作空间</h1><p>企业工作区使用账号授权的数据。<br>示例工作区仅用于了解产品操作。</p>
     <button id="choose-live" class="web-primary-choice"><span><b>企业账号登录</b><small>使用指定业务环境的数据与权限</small></span><span>→</span></button>
-    <button id="choose-preview" class="web-secondary-choice"><span><b>示例体验</b><small>浏览合成示例，熟悉双端工作流程</small></span><span>→</span></button>
+    <button id="choose-preview" class="web-secondary-choice"><span><b>进入工作区</b><small>选择身份，熟悉双端工作流程</small></span><span>→</span></button>
     <div class="web-dialog-foot">小程序与 Web · 共用业务流程与字段规则</div>
   </dialog>
   <dialog id="shortcut-help-dialog" class="web-shortcut-help" aria-labelledby="shortcut-help-title">

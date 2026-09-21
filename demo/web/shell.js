@@ -90,21 +90,21 @@
   const previewOnly = window.SALES_SERVICE?.previewOnly === true;
   if (previewOnly) {
     for (const id of ['enter-live', 'choose-live', 'preview-enter-live']) { $(id).hidden = true; $(id).disabled = true; }
-    $('workspace-status').title = '界面评审预览，仅使用合成示例数据';
-    document.querySelector('#preview-entry-choice > p').textContent = '此地址仅用于示例体验，无需输入账号和密码。选择身份后继续。';
+    $('workspace-status').title = '';
+    document.querySelector('#preview-entry-choice > p').textContent = '选择身份后进入工作区。';
   }
   let crmData = null;
   document.body.dataset.mode = SALES_MODE;
   $('preview-notice').hidden = !preview;
-  $('preview-visit-example').textContent = '沟通内容：今天与客户讨论试点范围，对方希望先评估两条产线。\n下一步计划：明天由我整理试点范围并发送验收清单给客户。\n跟进日期：今天\n对接人：示例联系人甲';
-  $('workspace-status').textContent = preview ? '示例数据' : '企业工作区';
+  $('preview-visit-example').textContent = '沟通内容：今天与客户讨论试点范围，对方希望先评估两条产线。\n下一步计划：明天由我整理试点范围并发送验收清单给客户。\n跟进日期：今天\n对接人：张晓静';
+  $('workspace-status').textContent = preview ? '' : '企业工作区';
   const loginUiKey = `sales-web:login-ui:${SALES_MODE}`;
   let connection = null, localLoginBusy = false, loginTransportBusy = 0, manualLoginOpen = !preview && sessionStorage.getItem(loginUiKey) === 'manual';
   if (preview) sessionStorage.removeItem(loginUiKey);
   let exitIntent = '', loginNotice = sessionStorage.getItem(`sales-web:login-notice:${SALES_MODE}`) || '';
   const roleLabels = {sales: '一线销售', supervisor: '销售主管', manager: '销售总经理', fde: 'FDE', fde_lead: 'FDE主管'};
   for (const option of $('preview-role').options) if (roleLabels[option.value]) option.textContent = roleLabels[option.value];
-  if (preview) document.querySelector('.web-auth-form-heading > h2').textContent = '示例工作区';
+  if (preview) document.querySelector('.web-auth-form-heading > h2').textContent = '销售工作区';
   for (const option of $('preview-role').options) $('preview-entry-role').append(option.cloneNode(true));
   function setPreviewRole(value) {
     const role = Object.hasOwn(roleLabels, value) ? value : 'sales';
@@ -208,7 +208,7 @@
   };
   function updateConnection() {
     const session = SalesRuntime.app?.globalData?.session;
-    const text = preview ? '本地示例' : connection?.reachable ? ('服务已连接' + (!session ? ' · 请登录' : '')) : connection?.configured === false ? '服务尚未配置' : connection ? '服务暂不可用' : '正在检查服务';
+    const text = preview ? '服务已连接' : connection?.reachable ? ('服务已连接' + (!session ? ' · 请登录' : '')) : connection?.configured === false ? '服务尚未配置' : connection ? '服务暂不可用' : '正在检查服务';
     for (const id of ['connection-status', 'login-connection-status']) {
       $(id).textContent = text; $(id).dataset.state = preview ? 'preview' : connection?.reachable ? 'ready' : connection ? 'unavailable' : 'checking';
       $(id).title = [typeof connection?.label === 'string' ? connection.label : typeof connection?.environment === 'string' ? connection.environment : '', connection?.checkedAt ? '检查时间：' + new Date(connection.checkedAt).toLocaleTimeString('zh-CN') : ''].filter(Boolean).join(' · ');
@@ -253,10 +253,10 @@
     if (!session || session.mustChangePassword) return;
     accountTrigger = event.currentTarget;
     $('account-dialog-name').textContent = session.userName || '当前账号';
-    $('account-dialog-title').textContent = preview ? '示例身份' : '账号与登录';
+    $('account-dialog-title').textContent = '账号与登录';
     $('account-dialog-detail').textContent = [session.roleName, session.team || session.scope].filter(Boolean).join(' · ');
-    $('account-switch').firstChild.textContent = preview ? '切换示例身份 ' : '切换账号 ';
-    $('account-logout').textContent = preview ? '退出示例' : '退出登录';
+    $('account-switch').firstChild.textContent = '切换账号 ';
+    $('account-logout').textContent = '退出登录';
     accountTrigger.setAttribute('aria-expanded', 'true'); accountDialog.showModal();
     $('account-profile').focus();
   }
@@ -283,9 +283,9 @@
     if (!session) return;
     exitBusy = true;
     try {
-      const result = await SalesRuntime.wx.showModal({title: preview ? '退出示例体验？' : intent === 'switch' ? '切换到其他账号？' : '退出当前账号？',
-        content: `当前${preview ? '示例身份' : '账号'}：${session.userName || session.account || '已登录账号'}。请先保存需要保留的内容，尚未保存的输入可能丢失。`,
-        confirmText: preview ? '退出示例' : intent === 'switch' ? '切换账号' : '退出登录', cancelText: '继续使用'});
+      const result = await SalesRuntime.wx.showModal({title: intent === 'switch' ? '切换到其他账号？' : '退出当前账号？',
+        content: `当前账号：${session.userName || session.account || '已登录账号'}。请先保存需要保留的内容，尚未保存的输入可能丢失。`,
+        confirmText: intent === 'switch' ? '切换账号' : '退出登录', cancelText: '继续使用'});
       const latest = SalesRuntime.app.globalData.session;
       if (!result.confirm || !latest || latest.userId !== session.userId || latest.workspaceId !== session.workspaceId || latest.loginAt !== session.loginAt) return;
       exitIntent = intent; SalesRuntime.signOut();
@@ -293,7 +293,7 @@
     } finally { exitBusy = false; exitIntent = ''; }
   }
   $('account-switch').onclick = () => {
-    if (preview) { accountFocusAfterClose = $('preview-role'); accountDialog.close(); SalesRuntime.wx.showToast({title: '请在页面顶部选择示例身份'}); }
+    if (preview) { accountFocusAfterClose = $('preview-role'); accountDialog.close(); SalesRuntime.wx.showToast({title: '请在页面顶部选择账号'}); }
     else void requestAccountExit('switch');
   };
   $('account-logout').onclick = () => requestAccountExit('logout');
@@ -302,7 +302,7 @@
     const page = SalesRuntime.current;
     const explicit = exitIntent || page?.route === 'pages/profile/index' && page.data.logoutNavigating;
     if (!preview) { manualLoginOpen = true; sessionStorage.setItem(loginUiKey, 'manual'); }
-    loginNotice = explicit ? (preview ? '已退出示例体验。你可以重新选择示例身份，或使用企业账号登录。' : exitIntent === 'switch' ? '已退出原账号，请登录其他企业账号，身份将由账号自动识别。' : '已退出登录，你可以重新登录或使用其他企业账号。') : '';
+    loginNotice = explicit ? (preview ? '已退出登录。' : exitIntent === 'switch' ? '已退出原账号，请登录其他企业账号，身份将由账号自动识别。' : '已退出登录，你可以重新登录或使用其他企业账号。') : '';
     sessionStorage.setItem(`sales-web:login-notice:${SALES_MODE}`, loginNotice);
     clearLoginError(); if (accountDialog.open) accountDialog.close();
   });
@@ -342,7 +342,7 @@
     const nav = navigationGroups.flatMap(group => group.items.map(item => ({...item, group: group.title}))).find(item => item.pagePath === modulePath);
     if (nav?.pagePath === path) $('page-title').textContent = nav.text;
     $('breadcrumb-group').textContent = nav?.group || (modulePath === 'pages/profile/index' ? '个人中心' : '销售管理');
-    $('workspace-name').textContent = crmData ? (crmData.scope === 'full' ? 'CRM 全量工作空间' : 'CRM 样本工作空间') : preview ? '示例工作空间' : session?.team || '企业工作空间';
+    $('workspace-name').textContent = crmData ? (crmData.scope === 'full' ? 'CRM 全量工作空间' : 'CRM 样本工作空间') : preview ? '渠道销售工作区' : session?.team || '企业工作空间';
     $('workspace-scope').textContent = session?.scope || '客户经营与销售协作';
     $('back-button').hidden = !!tabs.find(t => t.pagePath === path) || path === 'pages/login/index';
     $('account-name').textContent = session?.userName || '尚未登录';
@@ -380,30 +380,30 @@
       const changes = [];
       while (walker.nextNode()) {
         const n = walker.currentNode;
-        let value = crmData ? n.textContent.replace(/数据库/g, 'CRM 本地数据').replace(/真实业务数据/g, 'CRM 数据') : n.textContent.replace(/数据库/g, '示例').replace(/真实业务数据/g, '示例业务数据').replace(/真实经营/g, '示例经营').replace(/真实名次/g, '示例名次');
+        let value = crmData ? n.textContent.replace(/数据库/g, 'CRM 本地数据').replace(/真实业务数据/g, 'CRM 数据') : n.textContent;
         if (crmData && SalesRuntime.current?.route === 'pages/index/index') {
           value = ({'拜访记录录入成功': 'CRM 历史跟进记录', '字段已归档': '来源字段已填写', '待执行': '原文计划'})[value] || value;
         }
         if (['visit-entry', 'visit-confirm'].includes(document.body.dataset.route)) {
           const labels = {
-            'AI 评分': '示例字段完整度', '质量等级': '字段检查结果', 'AI 质量审核': '本地字段检查', '修改前评分': '修改前检查',
+            'AI 评分': '字段完整度', '质量等级': '字段检查结果', 'AI 质量审核': '本地字段检查', '修改前评分': '修改前检查',
             '下一步审核': '下一步字段检查',
             '拜访正文已修改，请重新 AI 审核': '拜访正文已修改，请重新执行本地字段检查',
             '需重新审核': '需重新检查',
             '下一步审核未通过，即使质量评分通过也不能提交。': '下一步日期或行动未补齐，不能提交。',
             '评估本次拜访录入质量，并给出评分与改进建议': '仅检查字段是否填写和下一步日期；未调用真实 Agent，不评估业务质量',
             '执行 AI 审核': '执行本地字段检查', 'AI 质量审核未通过，请按建议完善内容后重新审核。': '本地字段检查未通过，请补齐后重新检查。',
-            '先记下拜访内容，AI 帮你整理沟通内容和下一步计划。': '输入拜访文字，按明确标签整理字段；示例模式不调用真实 Agent。',
+            '先记下拜访内容，AI 帮你整理沟通内容和下一步计划。': '输入拜访文字，按标签整理字段。',
             'AI 将识别必填信息，并在确认页提示补充': '请按字段标签填写，确认页会提示补充',
             'AI 已尝试识别，未识别到的内容请人工补充': '仅提取明确标签的内容，其余请人工补充',
-            'AI 已识别': '标签已提取', 'AI/系统': '示例字段', 'AI 整理': '按标签整理',
-            '转写后可以修改文字，确认无误后再交给 AI 整理。': '示例模式请直接输入文字；语音转写需要接入真实服务。',
-            '文件中的文字会自动提取，录音会自动转写；核对后再交给 AI 整理。': '文件提取和语音转写需要接入真实服务；示例模式请直接输入文字。'
+            'AI 已识别': '标签已提取', 'AI/系统': '系统字段', 'AI 整理': '按标签整理',
+            '转写后可以修改文字，确认无误后再交给 AI 整理。': '请直接输入文字；语音转写待接入。',
+            '文件中的文字会自动提取，录音会自动转写；核对后再交给 AI 整理。': '文件提取和语音转写待接入；请直接输入文字。'
           };
           value = labels[value] || value;
           if (n.parentElement?.classList.contains('metric-number') && /^\d+分$/.test(value)) value = value.replace('分', '%');
           if (n.parentElement?.classList.contains('score-label')) value = value.replace(/^分 · /, '% · ');
-          if (value.startsWith('提交标准：质量评分须')) value = '示例提交标准：必填字段完整，下一步计划包含明确日期和行动。';
+          if (value.startsWith('提交标准：质量评分须')) value = '提交标准：必填字段完整，下一步计划包含明确日期和行动。';
           if (value.startsWith('AI 质量审核须')) value = '本地字段检查尚未通过，请补齐字段后重新检查。';
         }
         if (value !== n.textContent) changes.push([n, value]);

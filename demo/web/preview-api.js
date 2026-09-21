@@ -10,10 +10,10 @@
   const VERSION = 6;
   // Isolated synthetic metadata; live reads always use the authenticated backend.
   const BUSINESS_OPTIONS = {"contract_version": 1, "data_source": "synthetic_preview", "customer": {"industry": ["智能制造", "企业软件", "新能源", "医药健康", "交通物流", "人工智能", "其他"], "customer_type": ["潜在客户", "商机客户", "已成单客户", "新拓客户", "存量客户"], "level_code": ["Tier-1", "Tier-2", "Tier-3"], "source": ["销售自拓", "客户转介绍", "市场活动", "销售线索", "合作伙伴", "公司分配", "自主拓展", "其他"], "contact_role": ["使用者", "影响者", "决策者"]}, "opportunity": {"stages": [{"code": "identified", "label": "意向沟通", "probability": 10, "status": "open", "text": "意向沟通－10%"}, {"code": "qualified", "label": "商机确认", "probability": 30, "status": "open", "text": "商机确认－30%"}, {"code": "solution", "label": "方案沟通", "probability": 50, "status": "open", "text": "方案沟通－50%"}, {"code": "proposal", "label": "商务谈判", "probability": 70, "status": "open", "text": "商务谈判－70%"}, {"code": "negotiation", "label": "客户签约", "probability": 90, "status": "open", "text": "客户签约－90%"}, {"code": "won", "label": "赢单 Won", "probability": 100, "status": "won", "text": "赢单 Won－100%"}, {"code": "lost", "label": "丢单 Lost", "probability": null, "status": "lost", "text": "丢单 Lost"}], "grades": [{"code": "A", "label": "A｜100万以上", "amountLabel": "100万以上", "min": 1000000, "max": null}, {"code": "B", "label": "B｜50万–100万", "amountLabel": "50万–100万", "min": 500000, "max": 1000000}, {"code": "C", "label": "C｜10万–50万", "amountLabel": "10万–50万", "min": 100000, "max": 500000}, {"code": "D", "label": "D｜10万以下", "amountLabel": "10万以下", "min": 0, "max": 100000}]}, "map_amount_ranges": [{"value": "0-50", "label": "0–50 万", "min": 0, "max": 499999.99}, {"value": "50-100", "label": "50–100 万", "min": 500000, "max": 999999.99}, {"value": "100-300", "label": "100–300 万", "min": 1000000, "max": 2999999.99}, {"value": "300-500", "label": "300–500 万", "min": 3000000, "max": 4999999.99}, {"value": "500+", "label": "500 万以上", "min": 5000000, "max": null}]};
-  let LABEL = '示例工作区 · 合成数据';
+  let LABEL = '渠道销售工作区';
   let localDataset = null;
   const ROLES = ['sales', 'supervisor', 'manager', 'fde', 'fde_lead'];
-  const NAMES = ['示例销售', '示例销售主管', '示例总经理', '示例FDE', '示例FDE主管'];
+  const NAMES = ['王新源', '李明哲', '陈国栋', '周思远', '赵文博'];
   const TITLES = ['一线销售', '销售主管', '销售总经理', 'FDE', 'FDE主管'];
   const STAGES = ['identified', 'qualified', 'solution', 'proposal', 'negotiation', 'won', 'lost'];
   const PROBABILITY = [10, 30, 50, 70, 90, 100, null];
@@ -35,36 +35,36 @@
       ['customer.read', 'opportunity.read', 'task.create', 'task.respond', 'visit.create', 'visit.supplement', ...(role === 'fde_lead' ? ['team.view', 'fde.members.manage', 'task.coordinate'] : [])];
     const bound = localDataset?.actors.find(person => person.user_id === localDataset.role_bindings[role]);
     return { user_id: bound?.user_id || uid(1, index + 1), workspace_id: uid(2, 1), account_code: 'PREVIEW_' + role.toUpperCase(), display_name: localDataset ? '本地' + TITLES[index] + '视角' + (bound ? ' · ' + bound.display_name : '') : NAMES[index], role,
-      role_name: TITLES[index], scope_name: sales ? role === 'manager' ? '示例全部团队' : role === 'supervisor' ? '示例直属团队' : '示例本人' : role === 'fde' ? '示例本人协助项目' : '示例FDE团队协助项目',
-      team_ids: [uid(3, 1)], team_names: [localDataset ? '本地样本组（非实际组织）' : '示例协作一组'], permission_version: 'preview-v1', capabilities: Object.fromEntries(CAPS.map(key => [key, open.includes(key)])), demo: true };
+      role_name: TITLES[index], scope_name: sales ? role === 'manager' ? '全部团队' : role === 'supervisor' ? '直属团队' : '仅本人' : role === 'fde' ? '本人协助项目' : 'FDE 团队协助项目',
+      team_ids: [uid(3, 1)], team_names: [localDataset ? '本地样本组（非实际组织）' : '渠道销售-南区'], permission_version: 'preview-v1', capabilities: Object.fromEntries(CAPS.map(key => [key, open.includes(key)])), demo: true };
   }
   let actors = ROLES.map(actorFor);
   function member(actor) { return { id: actor.user_id, user_id: actor.user_id, account_code: actor.account_code, name: actor.display_name, display_name: actor.display_name, role: actor.role, team_id: actor.team_ids[0], team_ids: actor.team_ids.slice(), team_name: actor.team_names[0], team: actor.team_names[0], active: true }; }
   function directoryTeams(actor) {
-    const first = {id: uid(3, 1), parent_id: null, code: 'preview_team_1', name: localDataset ? '本地样本组（非实际组织）' : '示例协作一组', active: true, member_count: actors.length};
-    return [first, ...(actor.capabilities['team.view'] ? [{id: uid(3, 2), parent_id: null, code: 'preview_empty', name: '示例空团队', active: true, member_count: 0}] : [])];
+    const first = {id: uid(3, 1), parent_id: null, code: 'preview_team_1', name: localDataset ? '本地样本组（非实际组织）' : '渠道销售-南区', active: true, member_count: actors.length};
+    return [first, ...(actor.capabilities['team.view'] ? [{id: uid(3, 2), parent_id: null, code: 'preview_empty', name: '渠道销售-北区', active: true, member_count: 0}] : [])];
   }
   function seed() {
     if (localDataset) return {...copy(localDataset.state), version: VERSION};
     const year = yearNow();
-    const customerNames = ['星河制造', '远山科技', '青禾零售', '云帆物流', '晨光能源', '长桥智造', '湖畔教育', '蓝田服务'];
+    const customerNames = ['星河智能制造（广州）有限公司', '远山科技（深圳）有限公司', '青禾零售集团有限公司', '云帆物流股份有限公司', '晨光新能源科技有限公司', '长桥智造（东莞）有限公司', '湖畔教育科技有限公司', '蓝田企业服务有限公司'];
     const productLines = ['智能质检', '知识助理', '客户服务', '经营分析'];
     const quadrants = ['main_attack', 'customer_asset', 'order_driven', 'customer_resource'];
-    const customerRows = customerNames.map((name, i) => ({ id: uid(10, i + 1), name: '【示例】' + name,
-      industry_code: ['制造业', '科技服务', '零售', '物流'][i % 4], level_code: ['A', 'A', 'B', 'C'][i % 4], source_code: '示例手工录入',
+    const customerRows = customerNames.map((name, i) => ({ id: uid(10, i + 1), name,
+      industry_code: ['制造业', '科技服务', '零售', '物流'][i % 4], level_code: ['A', 'A', 'B', 'C'][i % 4], source_code: ['销售自拓', '客户转介绍', '市场活动', '渠道推荐'][i % 4],
       customer_type_code: i % 3 === 1 ? 'won' : 'opportunity', lifecycle_status: 'active', owner_user_ref_id: actors[i < 6 ? 0 : 1].user_id,
-      owner_id: actors[i < 6 ? 0 : 1].user_id, owner_name: actors[i < 6 ? 0 : 1].display_name, owner_team_id: uid(3, 1), team_name: '示例协作一组',
+      owner_id: actors[i < 6 ? 0 : 1].user_id, owner_name: actors[i < 6 ? 0 : 1].display_name, owner_team_id: uid(3, 1), team_name: '渠道销售-南区',
       potential_score: [87, 92, 42, 55][i % 4], relationship_score: [48, 83, 38, 85][i % 4], quadrant_code: quadrants[i % 4],
       quadrant_policy: {definition: {potential_threshold: 70, relationship_threshold: 70, inclusive: true}},
-      latest_visit_at: date(-i), weekly_follow_up_count: Math.max(1, 4 - i % 4), cooperation_years: i % 4,
-      address: '示例城市 · 不对应真实地址', primary_partner_name: i % 2 ? '示例协作伙伴' : '直销', attributes: {next_action: '示例：确认下一次方案沟通时间'},
+      latest_visit_at: date(-[1, 3, 9, 2, 16, 5, 12, 4][i]), weekly_follow_up_count: [3, 2, 0, 1, 0, 2, 0, 1][i], cooperation_years: i % 4,
+      address: ['广州市天河区', '深圳市南山区', '上海市浦东新区', '杭州市滨江区'][i % 4], primary_partner_name: i % 2 ? '华南数码渠道' : '直销', attributes: {next_action: '确认下一次方案沟通时间'},
       version_no: 1, created_at: date(-90), updated_at: date(-i), data_kind: 'demo', sales_members: [member(actors[i < 6 ? 0 : 1])] }));
     const opportunities = customerRows.flatMap((customer, ci) => Array.from({length: 4}, (_, oi) => {
       const index = ci * 4 + oi, stageIndex = [2, 1, 3, 4, 0, 5, 2, 6][index % 8];
       const quarter = 1 + index % 4, amount = [1280000, 480000, 960000, 260000, 1750000, 680000][index % 6];
-      return {id: uid(11, index + 1), customer_id: customer.id, customer_name: customer.name, name: `【示例】${productLines[oi]}${oi === 0 ? '试点' : '项目'}`,
+      return {id: uid(11, index + 1), customer_id: customer.id, customer_name: customer.name, name: `${productLines[oi]}${oi === 0 ? '试点' : '项目'}`,
         amount, stage_code: STAGES[stageIndex], probability: PROBABILITY[stageIndex], status: stageIndex === 5 ? 'won' : stageIndex === 6 ? 'lost' : 'open',
-        expected_close_date: `${year}-${String(quarter * 3).padStart(2, '0')}-25`, won_at: stageIndex === 5 ? `${year}-${String(quarter * 3).padStart(2, '0')}-25` : null, product_line: productLines[oi], partner_name: ci % 2 ? '示例协作伙伴' : '直销',
+        expected_close_date: `${year}-${String(quarter * 3).padStart(2, '0')}-25`, won_at: stageIndex === 5 ? `${year}-${String(quarter * 3).padStart(2, '0')}-25` : null, product_line: productLines[oi], partner_name: ci % 2 ? '华南数码渠道' : '直销',
         sales_channel: ci % 2 ? 'partner' : 'direct', partner_id: ci % 2 ? uid(14, 1) : null,
         owner_id: customer.owner_id, owner_user_ref_id: customer.owner_id, owner_name: customer.owner_name, team_name: customer.team_name, team_id: customer.owner_team_id,
         quarterly_forecasts: [{year, quarter, recognized_amount: Math.round(amount * 0.7), collection_amount: Math.round(amount * 0.5)}],
@@ -72,30 +72,30 @@
         version_no: 1, created_at: date(-30 - index), updated_at: date(-ci), data_kind: 'demo', risk_summary: {open_count: 0} };
     }));
     const contacts = customerRows.flatMap(customer => [1, 2].map(n => ({id: uid(12, Number(customer.id.slice(-12)) * 10 + n), customer_id: customer.id,
-      name: n === 1 ? '示例联系人甲' : '示例联系人乙', title: n === 1 ? '示例项目负责人' : '示例业务负责人', relationship_role_code: n === 1 ? 'decision_maker' : 'user', is_primary: n === 1})));
+      name: n === 1 ? '张晓静' : '刘志强', title: n === 1 ? '信息化部负责人' : '业务部负责人', relationship_role_code: n === 1 ? 'decision_maker' : 'user', is_primary: n === 1})));
     const visits = opportunities.filter((_, i) => i % 2 === 0).map((op, i) => ({id: uid(13, i + 1), customer_id: op.customer_id, customer_name: op.customer_name,
       opportunity_id: op.id, opportunity_name: op.name, recorder_id: i % 3 === 0 ? actors[i % 6 === 0 ? 4 : 3].user_id : op.owner_id, recorder_name: i % 3 === 0 ? actors[i % 6 === 0 ? 4 : 3].display_name : op.owner_name, creator_name: i % 3 === 0 ? actors[i % 6 === 0 ? 4 : 3].display_name : op.owner_name,
       interaction_at: date(-i), visit_date: date(-i).slice(0, 10), created_at: date(-i), created_date: date(-i), customer_type: 'opportunity',
-      follow_up_record: '示例记录：已介绍试点方案，下一次会议将确认验收范围和参与人员。', next_action: '示例：整理试点清单，预约下一次方案沟通。', visit_goal: '示例：确认试点边界',
-      interaction_mode_code: 'online_meeting', expectation_code: 'met', duration_minutes: 45, contact_name_snapshot: '示例联系人甲',
+      follow_up_record: '已介绍试点方案，下一次会议将确认验收范围和参与人员。', next_action: '整理试点清单，预约下一次方案沟通。', visit_goal: '确认试点边界',
+      interaction_mode_code: 'online_meeting', expectation_code: 'met', duration_minutes: 45, contact_name_snapshot: '张晓静',
       partner_name_snapshot: op.partner_name, fde_participants: op.fde_members, fde_participant_ids: op.fde_member_ids, collaborators: [], within_seven_days: i < 7,
       can_read_detail: true, is_first_visit: false, status: 'archived', quality_score: null, follow_up_score: null, data_kind: 'demo', version_no: 1 }));
     const tasks = Array.from({length: 27}, (_, i) => {
       const owner = actors[i < 22 ? 0 : 3], op = opportunities[i % opportunities.length];
       const status = ['pending_confirm', 'pending_execution', 'in_progress', 'pending_execution', 'completed'][i % 5];
-      return {id: uid(15, i + 1), description: `【示例】${['确认试点范围与验收标准', '补充客户需求清单', '整理方案会议材料', '跟进试点反馈', '更新商机推进计划'][i % 5]}`,
+      return {id: uid(15, i + 1), description: `${['确认试点范围与验收标准', '补充客户需求清单', '整理方案会议材料', '跟进试点反馈', '更新商机推进计划'][i % 5]}`,
         status, priority_code: i % 3 ? 'medium' : 'high', due_at: date(i % 5 - 1, '17:00:00'), created_at: date(-i - 1), completed_at: status === 'completed' ? date(0) : null,
         assignee_name: owner.display_name, owner_name: owner.display_name, assignees: [{user_id: owner.user_id, name: owner.display_name, responsibility: 'owner'}],
         creator_user_ref_id: actors[1].user_id, creator_name: actors[1].display_name, customer_id: op.customer_id, customer_name: op.customer_name,
-        opportunity_id: op.id, opportunity_name: op.name, association_kind: 'customer', team_name: '示例协作一组', task_type: 'management', requires_action: status === 'pending_confirm',
+        opportunity_id: op.id, opportunity_name: op.name, association_kind: 'customer', team_name: '渠道销售-南区', task_type: 'management', requires_action: status === 'pending_confirm',
         version_no: 1, can_coordinate: true, handover_required: false, events: [], data_kind: 'demo'};
     });
     const actuals = opportunities.filter((_, i) => i % 4 === 0).flatMap((op, i) => ['recognized', 'collection'].map((kind, k) => ({
       id: uid(16, i * 2 + k + 1), customer_id: op.customer_id, customer_name: op.customer_name, opportunity_id: op.id, opportunity_name: op.name,
       owner_id: op.owner_id, kind, amount: [180000, 120000][k] + i * 20000, occurred_on: `${year}-0${1 + i % 8}-15`, confirmed: true,
-      source_ref: 'PREVIEW-EXAMPLE-' + i, note: '示例实绩，不对应真实交易', created_at: date(-5), created_by_name: '示例销售', status: 'confirmed', data_kind: 'demo' })));
-    customerRows.push({id: uid(10, 9), name: '【示例】待认领企业', industry_code: '企业软件', customer_type_code: '潜在客户', level_code: 'Tier-2', source_code: '市场活动',
-      owner_id: null, owner_user_ref_id: null, owner_name: '', owner_team_id: uid(3, 1), team_name: '示例协作一组', ownership_state: 'unassigned', sales_members: [],
+      source_ref: 'FIN-' + year + '-' + String(i + 1).padStart(3, '0'), note: '财务已确认', created_at: date(-5), created_by_name: NAMES[0], status: 'confirmed', data_kind: 'demo' })));
+    customerRows.push({id: uid(10, 9), name: '南海精工机械有限公司', industry_code: '企业软件', customer_type_code: '潜在客户', level_code: 'Tier-2', source_code: '市场活动',
+      owner_id: null, owner_user_ref_id: null, owner_name: '', owner_team_id: uid(3, 1), team_name: '渠道销售-南区', ownership_state: 'unassigned', sales_members: [],
       primary_partner_name: '无', potential_score: null, relationship_score: null, attributes: {}, version_no: 1, created_at: date(-2), updated_at: date(-2), data_kind: 'demo'});
     return {version: VERSION, customers: customerRows, opportunities, contacts, visits, tasks, actuals, notifications: [], claims: [], assignments: [], opportunityEvents: [], risks: [], targets: {}, conversations: {}, runs: {}, advice: {}, idempotency: {}, serial: 100};
   }
@@ -147,8 +147,8 @@
         }
         else if (saved && saved.version === VERSION) state = saved;
         else if (!localDataset && saved && saved.version === 5) {
-          const fresh = seed(); state = {...fresh, ...saved, version: VERSION, migration_notice: '已保留旧版示例输入并升级字段；原数据备份在 sales-web:preview-backup:v5。既有客户归属未自动改变。'};
-          try {global.localStorage.setItem('sales-web:preview-backup:v5', raw);} catch (_) {state.migration_notice = '已在当前页面保留旧版示例输入；浏览器存储空间不足，未能写入备份，请导出示例数据后清理空间。';}
+          const fresh = seed(); state = {...fresh, ...saved, version: VERSION, migration_notice: '已保留旧版输入并升级字段；原数据备份在 sales-web:preview-backup:v5。既有客户归属未自动改变。'};
+          try {global.localStorage.setItem('sales-web:preview-backup:v5', raw);} catch (_) {state.migration_notice = '已在当前页面保留旧版输入；浏览器存储空间不足，未能写入备份，请导出数据后清理空间。';}
           state.claims ||= []; state.assignments ||= []; state.opportunityEvents ||= [];
           for (const row of state.customers) {
             for (const [flat, canonical] of [['industry', 'industry_code'], ['customer_type', 'customer_type_code'], ['source', 'source_code'], ['partner_name', 'primary_partner_name']]) if (Object.hasOwn(row, flat)) row[canonical] = row[flat];
@@ -187,11 +187,11 @@
   }
   function reset() { state = seed(); save(); return {demo: true, source_label: LABEL}; }
   function error(status, message) { throw Object.assign(new Error(message), {status}); }
-  function requireCap(actor, cap) { if (!actor.capabilities[cap]) error(403, '此示例身份未开放该操作'); }
+  function requireCap(actor, cap) { if (!actor.capabilities[cap]) error(403, '当前身份未开放该操作'); }
   function session(options) {
     const header = options.header || {}, token = header.Authorization || header.authorization || '';
     const role = token.replace(/^Bearer preview-access-/, '');
-    if (!ROLES.includes(role) || !String(token).startsWith('Bearer preview-access-')) error(401, '请先选择示例身份进入示例工作区');
+    if (!ROLES.includes(role) || !String(token).startsWith('Bearer preview-access-')) error(401, '请先登录');
     return actorFor(role);
   }
   function auth(role) { return {access_token: 'preview-access-' + role, refresh_token: 'preview-refresh-' + role, token_type: 'bearer', expires_in: 86400, auth_method: 'password', must_change_password: false, actor: actorFor(role)}; }
@@ -207,11 +207,11 @@
   function scopeSelection(actor, params) {
     const teamId = params.get('team_id'), memberId = params.get('member_id'), memberIds = params.getAll('member_ids');
     const allowed = directoryPeople(actor);
-    if (teamId && !directoryTeams(actor).some(team => team.id === teamId)) error(403, '无权查看该示例团队');
-    if (teamId && !actor.capabilities['team.view']) error(403, '当前示例身份不能选择团队');
+    if (teamId && !directoryTeams(actor).some(team => team.id === teamId)) error(403, '无权查看该团队');
+    if (teamId && !actor.capabilities['team.view']) error(403, '当前身份不能选择团队');
     const ids = memberId ? [memberId] : memberIds;
-    if (ids.some(id => !allowed.some(person => person.user_id === id))) error(403, '无权查看该示例成员');
-    if (teamId && ids.some(id => !allowed.find(person => person.user_id === id).team_ids.includes(teamId))) error(422, '所选成员不属于该示例团队');
+    if (ids.some(id => !allowed.some(person => person.user_id === id))) error(403, '无权查看该成员');
+    if (teamId && ids.some(id => !allowed.find(person => person.user_id === id).team_ids.includes(teamId))) error(422, '所选成员不属于该团队');
     return {teamId, ids, people: allowed.filter(person => (!teamId || person.team_ids.includes(teamId)) && (!ids.length || ids.includes(person.user_id))), active: Boolean(teamId || ids.length)};
   }
   function visibleOpportunities(actor, params = new URLSearchParams()) {
@@ -269,19 +269,19 @@
     if (!isFde(actor) && params.get('scope') === 'self') rows = rows.filter(row => row.owner_id === actor.user_id);
     return rows;
   }
-  function customer(actor, id) { const row = visibleCustomers(actor).find(c => c.id === id); if (!row) error(404, '示例客户不存在或当前身份不可见'); return row; }
-  function opportunity(actor, id) { const row = visibleOpportunities(actor).find(o => o.id === id); if (!row) error(404, '示例商机不存在或当前身份不可见'); return row; }
+  function customer(actor, id) { const row = visibleCustomers(actor).find(c => c.id === id); if (!row) error(404, '客户不存在或当前身份不可见'); return row; }
+  function opportunity(actor, id) { const row = visibleOpportunities(actor).find(o => o.id === id); if (!row) error(404, '商机不存在或当前身份不可见'); return row; }
   function scenePermission(actor, op) { return isFde(actor) ? (op.fde_member_ids || []).includes(actor.user_id) : actor.capabilities['opportunity.edit'] === true; }
   function demoRows() { return getState().demoScenes || (getState().demoScenes = []); }
   function sceneView(row, actor) { const op = opportunity(actor, row.opportunity_id); return {...row, can_edit: row.creator_id === actor.user_id && scenePermission(actor, op)}; }
   function targetContext(actor, input) {
     const scope = input.scope || 'self', period = input.period_type || 'quarter', anchor = input.anchor_date;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(anchor || '') || !Number.isFinite(Date.parse(anchor)) || new Date(anchor).toISOString().slice(0, 10) !== anchor) error(422, '请指定有效目标日期');
-    if (!['self', 'person', 'team', 'department'].includes(scope) || !['week', 'month', 'quarter', 'year'].includes(period)) error(501, '此示例目标范围或周期尚未提供');
+    if (!['self', 'person', 'team', 'department'].includes(scope) || !['week', 'month', 'quarter', 'year'].includes(period)) error(501, '此目标范围或周期尚未提供');
     const selected = scope === 'person' ? actors.find(person => person.user_id === input.user_id) : actor;
-    if (!selected || !directoryPeople(actor).some(person => person.user_id === selected.user_id)) error(403, '无权读取该示例人员目标');
-    if (scope === 'department' && actor.role !== 'manager') error(403, '当前示例身份不能读取部门目标');
-    if (scope === 'team' && (!actor.capabilities['team.view'] || !directoryTeams(actor).some(team => team.id === input.team_id))) error(403, '无权读取该示例团队目标');
+    if (!selected || !directoryPeople(actor).some(person => person.user_id === selected.user_id)) error(403, '无权读取该人员目标');
+    if (scope === 'department' && actor.role !== 'manager') error(403, '当前身份不能读取部门目标');
+    if (scope === 'team' && (!actor.capabilities['team.view'] || !directoryTeams(actor).some(team => team.id === input.team_id))) error(403, '无权读取该团队目标');
     const day = new Date(anchor + 'T00:00:00Z');
     if (period === 'year') day.setUTCMonth(0, 1);
     else if (period === 'quarter') day.setUTCMonth(Math.floor(day.getUTCMonth() / 3) * 3, 1);
@@ -331,7 +331,7 @@
   function enrichCustomer(c, actor) {
     const ops = visibleOpportunities(actor).filter(o => o.customer_id === c.id && o.status === 'open');
     return {...c, opportunity_amount: sum(ops, 'amount'), acv_amount: sum(ops, 'amount'), opportunity_name: (ops[0] || {}).name || '', opportunity_stage: (ops[0] || {}).stage_code || '',
-      agent_plan: localDataset ? null : {year: yearNow(), segment: c.quadrant_code, source: '示例'}, analysis_summary: localDataset ? 'CRM 原始资料，暂无评分' : '示例客户资料与位置，不是真实评分'};
+      agent_plan: localDataset ? null : {year: yearNow(), segment: c.quadrant_code, source: 'agent'}, analysis_summary: localDataset ? 'CRM 原始资料，暂无评分' : '按客户资料与象限位置给出'};
   }
   // Match utils/taskOverview: Beijing-day grouping, missing dates last, stable
   // tie-breaks. Sort the entire authorized scope before applying pagination.
@@ -376,7 +376,7 @@
     if (mode !== 'header') {
       raw.summary = {open_amount: sum(ops.filter(o => o.status === 'open'), 'amount'), opportunity_count: ops.length, contact_count: contacts.length, visit_count: visits.length, task_count: tasks.length,
         task_status_counts: Object.fromEntries(['pending_confirm', 'pending_execution', 'in_progress', 'pending_review', 'completed', 'cancelled'].map(status => [status, tasks.filter(t => t.status === status).length])), latest_visit: visits[0] || null, status_risk: null, open_risk: null};
-      raw.profile = {dimensions: ['客户潜力', '关系深度', '商机成熟', '拜访活跃', '决策链', '风险健康'].map(label => ({label, value: null})), note: '示例不生成真实评分'};
+      raw.profile = {dimensions: ['客户潜力', '关系深度', '商机成熟', '拜访活跃', '决策链', '风险健康'].map(label => ({label, value: null})), note: '待 Agent 复盘后生成'};
     }
     if (mode === 'detail') Object.assign(raw, {opportunities: ops, contacts, visits, tasks});
     return raw;
@@ -403,13 +403,13 @@
     const dimensions = ['需求理解', '客户关系', '方案推进', '协作执行', '风险识别', '复盘成长'].map((name, i) => ({code: 'preview_' + i, key: 'preview_' + i, name, label: name, short_name: name}));
     const sampleCount = actor ? getState().visits.filter(v => v.recorder_id === actor.user_id).length : 0;
     return {data_source: 'database', today_status: 'not_reviewed', review_status: 'not_reviewed', as_of: now(), sample_count: sampleCount, framework: {dimensions},
-      latest: {summary: '示例画像布局，尚未调用真实 Agent，不提供真实能力评分。', score_summary: {status: 'missing', score: null, reason: '示例未评分'},
-        dimension_scores: Object.fromEntries(dimensions.map(d => [d.code, {score: null, assessment: '示例未评分'}])),
-        dimensions: dimensions.map(d => ({...d, score: null, assessment: '示例未评分', evidence_count: 0, numerator: null, denominator: null})), overall_score: null, advice: [],
-        review_date: today(), improvements: ['示例：补全真实业务记录后再运行 Agent 复盘。'], input_snapshot: {visit_count: sampleCount}}, history: []};
+      latest: {summary: '画像待 Agent 复盘后生成。', score_summary: {status: 'missing', score: null, reason: '暂未评分'},
+        dimension_scores: Object.fromEntries(dimensions.map(d => [d.code, {score: null, assessment: '暂未评分'}])),
+        dimensions: dimensions.map(d => ({...d, score: null, assessment: '暂未评分', evidence_count: 0, numerator: null, denominator: null})), overall_score: null, advice: [],
+        review_date: today(), improvements: ['补全业务记录后运行 Agent 复盘。'], input_snapshot: {visit_count: sampleCount}}, history: []};
   }
   function scopedDashboard(actor, params) {
-    if (isFde(actor)) error(403, '请使用示例 FDE 看板');
+    if (isFde(actor)) error(403, '请使用 FDE 看板');
     if (params.has('personal') && !['true', 'false'].includes(params.get('personal'))) error(422, '个人范围参数无效');
     const personal = params.has('personal') ? params.get('personal') === 'true' : ['self','person'].includes(params.get('scope')) || (!['team','department'].includes(params.get('scope')) && actor.role === 'sales');
     const selected = params.get('member_id') ? directoryPeople(actor).find(person => person.user_id === params.get('member_id')) : actor;
@@ -419,10 +419,10 @@
     const groupsFor = person => person && person.team_ids.includes(uid(3, 1)) ? ['team:' + uid(3, 1)] : [];
     const canView = person => person.user_id === actor.user_id || actor.capabilities['team.view'] === true &&
       (actor.role === 'manager' || person.team_ids.some(id => actor.team_ids.includes(id)));
-    if (!selected || !canView(selected)) error(403, '无权选择该示例成员');
-    if (!personal && actor.capabilities['team.view'] !== true) error(403, '无权查看示例团队看板');
+    if (!selected || !canView(selected)) error(403, '无权选择该成员');
+    if (!personal && actor.capabilities['team.view'] !== true) error(403, '无权查看团队看板');
     if (!personal && params.get('member_id') || personal && requestedGroups.length) error(422, '成员与团队范围不能混用');
-    if (requestedGroups.length > 100 || requestedGroups.some(code => !groupCodes.includes(code)) || new Set(requestedGroups).size !== requestedGroups.length) error(422, '示例团队范围无效');
+    if (requestedGroups.length > 100 || requestedGroups.some(code => !groupCodes.includes(code)) || new Set(requestedGroups).size !== requestedGroups.length) error(422, '团队范围无效');
     const teamGroups = personal ? groupsFor(selected) : requestedGroups.length ? requestedGroups.slice().sort() : actor.role === 'manager' ? groupCodes.slice() : groupsFor(actor);
     const owners = new Set(actors.filter(person => !isFde(person) && canView(person) && (personal ? person.user_id === selected.user_id : groupsFor(person).some(code => teamGroups.includes(code)))).map(person => person.user_id));
     const state = getState(), ownerOf = row => row.owner_id || row.owner_user_ref_id;
@@ -437,7 +437,7 @@
     const customers = state.customers.filter(customer => allLocal || owners.has(ownerOf(customer)) || customerIds.has(customer.id)).map(customer => {
       const own = ops.filter(op => op.customer_id === customer.id && op.status === 'open');
       return {...customer, opportunity_amount: sum(own, 'amount'), acv_amount: sum(own, 'amount'), opportunity_name: (own[0] || {}).name || '', opportunity_stage: (own[0] || {}).stage_code || '',
-        agent_plan: localDataset ? null : {year: yearNow(), segment: customer.quadrant_code, source: '示例'}, analysis_summary: localDataset ? 'CRM 原始资料，暂无评分' : '示例客户资料与位置，不是真实评分'};
+        agent_plan: localDataset ? null : {year: yearNow(), segment: customer.quadrant_code, source: 'agent'}, analysis_summary: localDataset ? 'CRM 原始资料，暂无评分' : '按客户资料与象限位置给出'};
     });
     return {data_source: 'database', scope: personal ? selected.user_id === actor.user_id ? 'self' : 'member' : actor.role === 'manager' && teamGroups.length === 2 ? 'department' : 'team',
       selection: {personal, member_id: personal ? selected.user_id : null, cohort_role: personal ? selected.role : null, team_groups: teamGroups}, generated_at: now(),
@@ -474,35 +474,35 @@
       return {rows: result, groups: groups(rows.filter(row => cohortIds.has(owner(row))), value, owner)};
     };
     const partnerOps = ops.filter(op => op.partner_id && (!selection.personal || cohort.some(person => person.user_id === ownerOf(op))));
-    const partners = {rows: ranked([{code: 'preview-partner', name: '示例协作伙伴', ...stats(partnerOps, rows => sum(rows, 'amount'))}]), groups: []};
+    const partners = {rows: ranked([{code: 'preview-partner', name: '华南数码渠道', ...stats(partnerOps, rows => sum(rows, 'amount'))}]), groups: []};
     const regions = groups(ops, rows => sum(rows, 'amount'), ownerOf);
     return {contract_version: 2, data_source: 'database', scope: selection.personal ? 'peer' : 'company_teams', selection, complete: true, year, quarters: quarters.slice().sort((a, b) => a - b),
       opportunity_acv: bucket(ops, rows => sum(rows, 'amount'), ownerOf), active_opportunities: bucket(ops, rows => rows.length, ownerOf),
       followup: bucket(visits, rows => rows.length, visit => visit.recorder_id), partner: partners, partners, partner_acv: partners, region: {rows: regions, groups: regions.map(row => ({...row}))}, generated_at: now()};
   }
   function dispatch(options) {
-    if (global.SALES_MODE !== 'preview') error(403, '示例工作区尚未启用');
+    if (global.SALES_MODE !== 'preview') error(403, '工作区尚未启用');
     const url = new URL(options.url, 'http://preview.invalid'), path = decodeURIComponent(url.pathname.replace(/^.*\/api\/v1(?=\/|$)/, '') || '/'), p = url.searchParams;
     const method = String(options.method || 'GET').toUpperCase(), body = options.data && typeof options.data === 'object' ? options.data : {};
     if (method === 'GET' && options.data) Object.entries(body).forEach(([key, value]) => p.set(key, String(value)));
     const s = getState();
-    if (path === '/auth/password/login' && method === 'POST') { const role = String(body.account_code || '').replace(/^PREVIEW_/i, '').toLowerCase(); if (!ROLES.includes(role)) error(401, '示例账号为 PREVIEW_SALES、PREVIEW_SUPERVISOR、PREVIEW_MANAGER、PREVIEW_FDE 或 PREVIEW_FDE_LEAD'); return auth(role); }
-    if (path === '/auth/refresh' && method === 'POST') {const token = String(body.refresh_token || ''), role = token.replace(/^preview-refresh-/, ''); if (!token.startsWith('preview-refresh-') || !ROLES.includes(role)) error(401, '示例会话无效'); return auth(role);}
+    if (path === '/auth/password/login' && method === 'POST') { const role = String(body.account_code || '').replace(/^PREVIEW_/i, '').toLowerCase(); if (!ROLES.includes(role)) error(401, '账号或密码不正确'); return auth(role); }
+    if (path === '/auth/refresh' && method === 'POST') {const token = String(body.refresh_token || ''), role = token.replace(/^preview-refresh-/, ''); if (!token.startsWith('preview-refresh-') || !ROLES.includes(role)) error(401, '会话已失效，请重新登录'); return auth(role);}
     const a = session(options);
     if (path === '/auth/me' && method === 'GET') return {actor: a};
     if (path === '/auth/logout' && method === 'POST') return {ok: true};
-    if (path === '/auth/password' && method === 'POST') error(501, '示例身份无需密码维护，请在真实接口模式修改密码');
+    if (path === '/auth/password' && method === 'POST') error(501, '当前环境不支持修改密码');
     if (method !== 'GET') {
       const idem = options.header && options.header['Idempotency-Key'];
       const key = idem && [a.user_id, method, path, idem].join(':');
-      if (key && s.idempotency[key]) {if (s.idempotency[key].body !== JSON.stringify(body)) error(409, '示例提交标识已用于其他内容'); return s.idempotency[key].response;}
+      if (key && s.idempotency[key]) {if (s.idempotency[key].body !== JSON.stringify(body)) error(409, '提交标识已用于其他内容'); return s.idempotency[key].response;}
       const result = mutate(a, path, method, body, p);
       if (key) s.idempotency[key] = {body: JSON.stringify(body), response: copy(result)};
       save(); return result;
     }
     if (path === '/assistant/home') {
       const customerIds = new Set(visibleCustomers(a).map(c => c.id)), tasks = taskRows(a);
-      const records = s.visits.filter(v => customerIds.has(v.customer_id)).slice(0, 3).map(v => localDataset ? {...v, archived_at: null, completed_count: ['customer_name', 'customer_type', 'opportunity_name', 'recorder_name', 'visit_date', 'created_date', 'contact_name_snapshot', 'follow_up_record', 'next_action'].filter(key => v[key] != null && v[key] !== '').length, total_count: 9, score: null, grade: '未评分'} : {...v, archived_at: v.created_at, interaction_mode: '线上会议', completed_count: 8, total_count: 8, score: null, grade: '示例未评分'});
+      const records = s.visits.filter(v => customerIds.has(v.customer_id)).slice(0, 3).map(v => localDataset ? {...v, archived_at: null, completed_count: ['customer_name', 'customer_type', 'opportunity_name', 'recorder_name', 'visit_date', 'created_date', 'contact_name_snapshot', 'follow_up_record', 'next_action'].filter(key => v[key] != null && v[key] !== '').length, total_count: 9, score: null, grade: '未评分'} : {...v, archived_at: v.created_at, interaction_mode: '线上会议', completed_count: 8, total_count: 8, score: null, grade: '暂未评分'});
       return {archived_visits: records, display_policy: {definition: {message_order: 'desc'}}, team_summary: {overdue: tasks.filter(t => !['completed', 'cancelled'].includes(t.status) && t.due_at < now()).length, claim: tasks.filter(t => t.status === 'pending_confirm').length, handover: tasks.filter(t => t.handover_required).length}, message: LABEL};
     }
     if (path === '/metadata/business-options') return copy(BUSINESS_OPTIONS);
@@ -524,8 +524,8 @@
         allowed_scopes: a.role === 'manager' ? ['self', 'person', 'team', 'department'] : a.capabilities['team.view'] ? ['self', 'person', 'team'] : ['self'], defaults: {scope: a.role === 'manager' ? 'department' : 'self', member_id: a.user_id, team_id: null}};
     }
     if (path === '/directory/fde-members') return pagination(actors.filter(isFde).map(member), p);
-    if (path === '/directory/task-positions') return {items: [{code: 'self', label: '示例本人', candidate_count: 1, available: true}, {code: 'fde', label: '示例FDE岗位', candidate_count: 1, available: true}]};
-    if (path === '/directory/partners') return pagination((localDataset ? [] : [{id: uid(14, 1), name: '示例协作伙伴', partner_name: '示例协作伙伴', active: true}]).filter(r => r.name.includes(p.get('q') || '')), p);
+    if (path === '/directory/task-positions') return {items: [{code: 'self', label: '本人', candidate_count: 1, available: true}, {code: 'fde', label: 'FDE 岗位', candidate_count: 1, available: true}]};
+    if (path === '/directory/partners') return pagination((localDataset ? [] : [{id: uid(14, 1), name: '华南数码渠道', partner_name: '华南数码渠道', active: true}]).filter(r => r.name.includes(p.get('q') || '')), p);
     if (path === '/customers' || path === '/customer-assets/map' || path === '/customers/claim-pool') {
       let rows = path === '/customers/claim-pool' ? s.customers : scopedCustomers(a, p);
       if (p.get('q')) rows = rows.filter(c => c.name.includes(p.get('q'))); if (p.get('unassigned') === 'true') rows = rows.filter(c => !c.owner_id); if (p.get('level')) rows = rows.filter(c => c.level_code === p.get('level'));
@@ -536,11 +536,11 @@
     if (path === '/targets') {const context = targetContext(a, Object.fromEntries(p)), values = targetState(context); return {...context, ...values, pending_requests: [], data_source: 'database'};}
     if ((match = path.match(/^\/opportunities\/([^/]+)\/demo-scenes$/))) {requireCap(a, 'opportunity.read'); const op = opportunity(a, match[1]); return pagination(demoRows().filter(row => row.opportunity_id === op.id && !row.deleted_at).map(row => sceneView(row, a)), p, {editable: scenePermission(a, op)});}
     if ((match = path.match(/^\/demo-scenes\/([^/]+)(?:\/(history))?$/))) {
-      const row = demoRows().find(row => row.id === match[1] && !row.deleted_at); if (!row) error(404, '示例场景不存在'); requireCap(a, 'opportunity.read');
+      const row = demoRows().find(row => row.id === match[1] && !row.deleted_at); if (!row) error(404, '场景不存在'); requireCap(a, 'opportunity.read');
       const view = sceneView(row, a); return match[2] ? pagination(row.history || [], p) : view;
     }
-    if ((match = path.match(/^\/customers\/([^/]+)\/opportunities\/check-name$/))) {customer(a, match[1]); const duplicate = s.opportunities.some(o => o.customer_id === match[1] && o.name === String(p.get('name') || '').trim() && o.id !== p.get('exclude_id')); return {available: !duplicate, duplicate, exists: duplicate, message: duplicate ? '当前示例客户下已存在同名商机' : '名称可用'};}
-    if ((match = path.match(/^\/customers\/([^/]+)\/opportunities\/([^/]+)\/(header|overview)$/))) {const op = opportunity(a, match[2]); if (op.customer_id !== match[1]) error(404, '示例商机不属于该客户'); return customerDetail(a, match[1], match[2], match[3]);}
+    if ((match = path.match(/^\/customers\/([^/]+)\/opportunities\/check-name$/))) {customer(a, match[1]); const duplicate = s.opportunities.some(o => o.customer_id === match[1] && o.name === String(p.get('name') || '').trim() && o.id !== p.get('exclude_id')); return {available: !duplicate, duplicate, exists: duplicate, message: duplicate ? '当前客户下已存在同名商机' : '名称可用'};}
+    if ((match = path.match(/^\/customers\/([^/]+)\/opportunities\/([^/]+)\/(header|overview)$/))) {const op = opportunity(a, match[2]); if (op.customer_id !== match[1]) error(404, '商机不属于该客户'); return customerDetail(a, match[1], match[2], match[3]);}
     if ((match = path.match(/^\/customers\/([^/]+)\/(header|overview|reference)$/))) return match[2] === 'reference' ? customer(a, match[1]) : customerDetail(a, match[1], null, match[2]);
     if ((match = path.match(/^\/customers\/([^/]+)\/(opportunities|contacts)$/))) {customer(a, match[1]); return pagination(match[2] === 'contacts' ? s.contacts.filter(c => c.customer_id === match[1]) : visibleOpportunities(a).filter(o => o.customer_id === match[1] && (!p.get('q') || o.name.includes(p.get('q')))).map(enrichOpportunity), p);}
     if ((match = path.match(/^\/customers\/([^/]+)$/))) return customerDetail(a, match[1], null, 'detail');
@@ -572,7 +572,7 @@
       return {metrics, total: rows.length, summary: {total: rows.length, open_amount: sum(rows.filter(o => o.status === 'open'), 'amount')}, product_lines: uniq(rows.map(o => o.product_line))};
     }
     if ((match = path.match(/^\/opportunities\/([^/]+)\/(header|overview|detail)$/))) {const op = opportunity(a, match[1]); return customerDetail(a, op.customer_id, op.id, match[2]);}
-    if ((match = path.match(/^\/opportunities\/([^/]+)\/timeline$/))) {const op = opportunity(a, match[1]), events = s.opportunityEvents.filter(e => e.opportunity_id === op.id); return pagination(events.length ? events : [{id: uid(17, 1), key: uid(17, 1), at: op.created_at, type: 'created', title: '示例商机已创建', summary: '示例工作区初始记录', actor_name: op.owner_name, detail: '仅用于演示商机推进时间线', description: '仅用于演示商机推进时间线'}], p);}
+    if ((match = path.match(/^\/opportunities\/([^/]+)\/timeline$/))) {const op = opportunity(a, match[1]), events = s.opportunityEvents.filter(e => e.opportunity_id === op.id); return pagination(events.length ? events : [{id: uid(17, 1), key: uid(17, 1), at: op.created_at, type: 'created', title: '商机已创建', summary: '商机推进时间线起点', actor_name: op.owner_name, detail: '商机建档', description: '商机建档'}], p);}
     if (path === '/tasks/overview') {const rows = taskRows(a), ids = p.getAll('task_ids'); return {items: (ids.length ? rows.filter(t => ids.includes(t.id)) : rows.slice(0, 20)).map(t => taskResponse(t, a)), metrics: {today_completed: rows.filter(t => t.status === 'completed' && (t.completed_at || '').slice(0, 10) === today()).length, today_pending: rows.filter(t => !['completed', 'cancelled'].includes(t.status) && t.due_at.slice(0, 10) === today()).length, all_pending: rows.filter(t => !['completed', 'cancelled'].includes(t.status)).length}};}
     if (path === '/tasks') {
       const all = taskRows(a, p); let rows = all; const tab = p.get('tab'), status = p.get('status');
@@ -583,9 +583,9 @@
       rows = sortTaskRows(rows, p.get('order'));
       return pagination(rows.map(row => taskResponse(row, a)), p, {summary: {total: all.length, pending_count: all.filter(t => !['completed', 'cancelled'].includes(t.status)).length, completed_count: all.filter(t => t.status === 'completed').length, filtered_total: rows.length}});
     }
-    if ((match = path.match(/^\/tasks\/([^/]+)$/))) {const row = taskRows(a).find(t => t.id === match[1]); if (!row) error(404, '示例任务不存在'); return taskResponse(row, a);}
+    if ((match = path.match(/^\/tasks\/([^/]+)$/))) {const row = taskRows(a).find(t => t.id === match[1]); if (!row) error(404, '任务不存在'); return taskResponse(row, a);}
     if (path === '/visits' || path === '/fde/activity') {const customerIds = new Set(visibleCustomers(a).map(c => c.id)); let rows = s.visits.filter(v => (localDataset && ['manager','supervisor'].includes(a.role)) || customerIds.has(v.customer_id)); for (const key of ['customer_id', 'opportunity_id']) if (p.get(key)) rows = rows.filter(v => v[key] === p.get(key) || (key === 'opportunity_id' && v.opportunity_ids?.includes(p.get(key)))); if (path === '/fde/activity') {if (!isFde(a)) error(403, '当前身份没有 FDE 活动范围'); const selection = scopeSelection(a, p); rows = rows.filter(v => selection.people.some(person => isFde(person) && person.user_id === v.recorder_id) && inPeriod(v.visit_date || v.interaction_at, p)); if (a.role === 'fde' || p.get('scope') === 'self') rows = rows.filter(v => v.recorder_id === a.user_id); if (p.get('member_id')) rows = rows.filter(v => v.recorder_id === p.get('member_id')); const selected = p.getAll('member_ids'); if (selected.length) rows = rows.filter(v => selected.includes(v.recorder_id));} if (p.get('sort') === 'created_desc') rows = rows.slice().sort((a,b) => Date.parse(b.created_at || 0) - Date.parse(a.created_at || 0) || String(b.id).localeCompare(String(a.id))); return pagination(rows, p, p.get('sort') === 'created_desc' ? {sort: 'created_desc'} : {});}
-    if ((match = path.match(/^\/visits\/([^/]+)$/))) {const row = s.visits.find(v => v.id === match[1]); if (!row) error(404, '示例拜访不存在'); if (!(localDataset && ['manager','supervisor'].includes(a.role))) customer(a, row.customer_id); return row;}
+    if ((match = path.match(/^\/visits\/([^/]+)$/))) {const row = s.visits.find(v => v.id === match[1]); if (!row) error(404, '拜访不存在'); if (!(localDataset && ['manager','supervisor'].includes(a.role))) customer(a, row.customer_id); return row;}
     if (path === '/customer-assets/quarters') {const rows = entriesFor(a, p); return {items: actualQuarters(rows), years: uniq(rows.map(e => Number(e.occurred_on.slice(0, 4)))), as_of: p.get('as_of') || today()};}
     if (path === '/customer-assets') {const entries = entriesFor(a, p), view = p.get('customer_id') ? 'entries' : 'customers'; const rows = view === 'entries' ? entries : scopedCustomers(a, p).map(c => ({customer_id: c.id, customer_name: c.name, data_kind: 'demo', ...actualSummary(entries.filter(e => e.customer_id === c.id))})); return pagination(rows, p, {view, summary: actualSummary(entries), as_of: p.get('as_of') || today(), can_manage: a.capabilities['actual.manage']});}
     if (path === '/dashboard') return scopedDashboard(a, p);
@@ -602,14 +602,14 @@
     if (path === '/fde/profile') {
       if (!isFde(a)) error(403, '当前身份没有 FDE 画像');
       const scope = p.get('scope') || 'self', selected = p.get('member_id') ? actors.find(person => person.user_id === p.get('member_id') && isFde(person)) : a;
-      if (!selected || (scope === 'team' || selected.user_id !== a.user_id) && !a.capabilities['team.view']) error(403, '无权读取该示例画像范围');
+      if (!selected || (scope === 'team' || selected.user_id !== a.user_id) && !a.capabilities['team.view']) error(403, '无权读取该画像范围');
       if (!['self', 'team'].includes(scope)) error(422, '画像范围无效');
       scopeSelection(a, p);
       const response = growth(scope === 'team' ? null : selected);
       const days = Number(p.get('days') || 30); if (!Number.isInteger(days) || days < 7 || days > 90) error(422, '画像观察窗口须为 7 至 90 天');
       response.sample_count = s.visits.filter(visit => (scope === 'team' ? actors.some(person => isFde(person) && person.user_id === visit.recorder_id && (!p.get('team_id') || person.team_ids.includes(p.get('team_id')))) : visit.recorder_id === selected.user_id) && Date.parse(visit.visit_date || visit.interaction_at) >= Date.now() - days * 86400000 && Date.parse(visit.visit_date || visit.interaction_at) <= Date.now()).length;
       response.latest.input_snapshot.visit_count = response.sample_count;
-      return {...response, scope, member_id: scope === 'team' ? null : selected.user_id, member_name: scope === 'team' ? '示例 FDE 团队' : selected.display_name, can_review: false, overall_score: null};
+      return {...response, scope, member_id: scope === 'team' ? null : selected.user_id, member_name: scope === 'team' ? 'FDE 团队' : selected.display_name, can_review: false, overall_score: null};
     }
     if (path === '/fde/visit-opportunities') return pagination(visibleOpportunities(a).filter(o => (o.fde_member_ids || []).includes(a.user_id) && (!p.get('customer_id') || o.customer_id === p.get('customer_id')) && (!p.get('opportunity_id') || o.id === p.get('opportunity_id'))), p);
     if (path === '/fde/dashboard') {
@@ -623,31 +623,31 @@
       const selectedPeople = actors.filter(person => (!p.get('team_id') || person.team_ids.includes(p.get('team_id'))) && isFde(person) && (p.get('scope') === 'team' && !p.get('member_id') && a.role === 'fde_lead' || person.user_id === (p.get('member_id') || a.user_id)));
       stats.own_demo_scene_count = demoRows().filter(scene => !scene.deleted_at && selectedPeople.some(person => person.user_id === scene.creator_id) && inPeriod(scene.created_at, p)).length;
       const distribution = actors.filter(person => (!p.get('team_id') || person.team_ids.includes(p.get('team_id'))) && isFde(person) && (a.role === 'fde_lead' || person.user_id === a.user_id)).map(person => {const own = visits.filter(visit => visit.recorder_id === person.user_id), projects = ops.filter(op => (op.fde_member_ids || []).includes(person.user_id)); return {...member(person), opportunities: projects.length, open_acv: sum(projects.filter(op => op.status === 'open'), 'amount'), period_visits: own.length, visits: own.length, period_opportunities: uniq(own.map(visit => visit.opportunity_id)).length};});
-      return {data_source: 'database', summary: stats, company_rankings: fdeCompanyRankings(a, p), scope_label: p.get('scope') === 'team' ? '示例FDE团队' : '示例本人协作', members: actors.filter(person => isFde(person) && (a.capabilities['team.view'] || person.user_id === a.user_id)).map(member), ranking: distribution, recent_visits: visits.slice(0, 8), stages: STAGES.map((code, i) => ({code, label: STAGE_NAMES[i], name: STAGE_NAMES[i], count: ops.filter(o => o.stage_code === code).length, amount: sum(ops.filter(o => o.stage_code === code), 'amount')})), rhythm: [6, 5, 4, 3, 2, 1, 0].map(i => ({date: date(-i).slice(0, 10), visits: visits.filter(v => v.visit_date === date(-i).slice(0, 10)).length})), as_of: now()};
+      return {data_source: 'database', summary: stats, company_rankings: fdeCompanyRankings(a, p), scope_label: p.get('scope') === 'team' ? 'FDE 团队' : '本人协作', members: actors.filter(person => isFde(person) && (a.capabilities['team.view'] || person.user_id === a.user_id)).map(member), ranking: distribution, recent_visits: visits.slice(0, 8), stages: STAGES.map((code, i) => ({code, label: STAGE_NAMES[i], name: STAGE_NAMES[i], count: ops.filter(o => o.stage_code === code).length, amount: sum(ops.filter(o => o.stage_code === code), 'amount')})), rhythm: [6, 5, 4, 3, 2, 1, 0].map(i => ({date: date(-i).slice(0, 10), visits: visits.filter(v => v.visit_date === date(-i).slice(0, 10)).length})), as_of: now()};
     }
     if (path === '/notifications') return {items: s.notifications.filter(n => n.recipient_user_ref_id === a.user_id || n.recipient_user_id === a.user_id)};
     if (path === '/risks') return {items: [], total: 0};
     if (path === '/workbench') return {items: [], customers: visibleCustomers(a).map(c => enrichCustomer(c, a)), tasks: taskRows(a), summary: {customer_count: visibleCustomers(a).length, task_count: taskRows(a).length}, source_label: LABEL};
-    if ((match = path.match(/^\/agent\/runs\/([^/]+)$/))) {if (!s.runs[match[1]] || s.runs[match[1]].actor_id !== a.user_id) error(404, '示例运行不存在或当前身份不可见'); return s.runs[match[1]];}
+    if ((match = path.match(/^\/agent\/runs\/([^/]+)$/))) {if (!s.runs[match[1]] || s.runs[match[1]].actor_id !== a.user_id) error(404, '运行记录不存在或当前身份不可见'); return s.runs[match[1]];}
     if (path === '/advice/statistics') return {items: [], total: 0};
-    if ((match = path.match(/^\/advice\/([^/]+)$/))) {if (!s.advice[match[1]]) error(404, '示例建议不存在'); return s.advice[match[1]];}
-    error(501, `示例工作区尚未实现此功能（${method} ${path}），请切换真实接口联调`);
+    if ((match = path.match(/^\/advice\/([^/]+)$/))) {if (!s.advice[match[1]]) error(404, '建议不存在'); return s.advice[match[1]];}
+    error(501, `尚未实现此功能（${method} ${path}）`);
   }
   function mutate(a, path, method, body, p) {
     const s = getState(), nextId = kind => uid(kind, ++s.serial); let match;
     if (path === '/targets' || path === '/targets/batch') {
       if (method !== 'POST') error(405, '目标仅支持 POST 保存');
-      const context = targetContext(a, body); if (!context.editable) error(403, '示例只支持本人填写目标，运营审批请到真实后台联调');
+      const context = targetContext(a, body); if (!context.editable) error(403, '只支持本人填写目标');
       if (!String(body.reason || '').trim() || body.reason.length > 2000) error(422, '请填写目标依据或调整原因');
       const items = path === '/targets' ? [{kind: body.kind, amount: body.amount, version_no: body.version_no ?? null}] : body.items;
       if (!Array.isArray(items) || !items.length || items.length > 6 || new Set(items.map(item => item.kind)).size !== items.length) error(422, '请填写不重复的目标指标');
-      const current = targetState(context); if (current.pending_batches.length) error(409, '已有示例目标申请待运营审批，不能重复提交');
+      const current = targetState(context); if (current.pending_batches.length) error(409, '已有目标申请待运营审批，不能重复提交');
       for (const item of items) {
         const parts = String(item.amount).split('.'), cents = Number(parts[0] + (parts[1] || '').padEnd(2, '0'));
         if (!['recognized', 'collection', 'acv', 'opportunity_count', 'visit_count', 'demo_count'].includes(item.kind) || !/^\d+(?:\.\d{1,2})?$/.test(String(item.amount)) || !(Number(item.amount) > 0) || !Number.isSafeInteger(cents)) error(422, '请填写有效正数目标，金额最多两位小数');
         if (item.kind.endsWith('_count') && !Number.isInteger(Number(item.amount))) error(422, '数量目标必须为正整数');
         const old = current.items.find(row => row.kind === item.kind);
-        if (old ? item.version_no !== old.version_no : item.version_no != null) error(409, '示例目标版本已变化，请刷新');
+        if (old ? item.version_no !== old.version_no : item.version_no != null) error(409, '目标版本已变化，请刷新');
       }
       const changed = items.filter(item => {const old = current.items.find(row => row.kind === item.kind); return !old || Number(old.amount) !== Number(item.amount);});
       if (!changed.length) return {status: 'unchanged', items: current.items};
@@ -659,15 +659,15 @@
       return {status: 'saved', items: current.items};
     }
     if ((match = path.match(/^\/opportunities\/([^/]+)\/demo-scenes$/)) && method === 'POST') {
-      requireCap(a, 'opportunity.read'); const op = opportunity(a, match[1]); if (!scenePermission(a, op)) error(403, '当前身份不能登记该商机的示例场景');
+      requireCap(a, 'opportunity.read'); const op = opportunity(a, match[1]); if (!scenePermission(a, op)) error(403, '当前身份不能登记该商机的场景');
       if (!Array.isArray(body.scenes) || !body.scenes.length || body.scenes.length > 20 || body.scenes.some(row => !String(row.name || '').trim() || row.name.length > 200 || typeof row.description !== 'string' || row.description.length > 5000)) error(422, '每次登记 1 至 20 个场景，名称最多 200 字、说明最多 5000 字');
       const items = body.scenes.map(scene => ({id: nextId(28), opportunity_id: op.id, name: scene.name.trim(), description: scene.description, creator_id: a.user_id, creator_name: a.display_name, created_at: now(), updated_at: now(), version_no: 1, history: [{event_type: 'created', actor_name: a.display_name, created_at: now()}], data_kind: 'demo'}));
       demoRows().push(...items); return {items: items.map(row => sceneView(row, a))};
     }
     if ((match = path.match(/^\/demo-scenes\/([^/]+)$/)) && ['PATCH', 'DELETE'].includes(method)) {
-      const row = demoRows().find(row => row.id === match[1] && !row.deleted_at); if (!row) error(404, '示例场景不存在');
-      if (!sceneView(row, a).can_edit) error(403, '示例仅允许创建人在仍有商机权限时维护自己的场景');
-      if (!Number.isInteger(body.version_no) || body.version_no !== row.version_no) error(409, '示例场景版本已变化，请刷新');
+      const row = demoRows().find(row => row.id === match[1] && !row.deleted_at); if (!row) error(404, '场景不存在');
+      if (!sceneView(row, a).can_edit) error(403, '仅允许创建人在仍有商机权限时维护自己的场景');
+      if (!Number.isInteger(body.version_no) || body.version_no !== row.version_no) error(409, '场景版本已变化，请刷新');
       if (method === 'PATCH' && (!String(body.name || '').trim() || body.name.length > 200 || typeof body.description !== 'string' || body.description.length > 5000)) error(422, '请填写有效场景名称和说明');
       row.history.push({event_type: method === 'DELETE' ? 'deleted' : 'updated', actor_name: a.display_name, created_at: now(), previous: {name: row.name, description: row.description, version_no: row.version_no}});
       Object.assign(row, method === 'DELETE' ? {deleted_at: now()} : {name: body.name.trim(), description: body.description}); row.version_no++; row.updated_at = now();
@@ -680,7 +680,7 @@
     }
     const notify = (recipients, template, objectType, row, payload = {}) => {
       for (const recipient of uniq(recipients)) s.notifications.unshift({id: nextId(25), recipient_user_ref_id: recipient, template_code: template, object_type: objectType, object_id: row.id,
-        title: `【示例】${({task_assigned: '收到新任务', task_accepted: '任务已接受', task_claimed: '岗位任务已领取', task_candidate_declined: '岗位候选人已拒绝', task_completed: '任务已完成', task_rejected: '任务已拒绝', task_reassigned: '任务已转交', task_cancelled: '任务已取消', customer_assigned: '客户已下发'})[template] || '业务更新'}`,
+        title: `${({task_assigned: '收到新任务', task_accepted: '任务已接受', task_claimed: '岗位任务已领取', task_candidate_declined: '岗位候选人已拒绝', task_completed: '任务已完成', task_rejected: '任务已拒绝', task_reassigned: '任务已转交', task_cancelled: '任务已取消', customer_assigned: '客户已下发'})[template] || '业务更新'}`,
         body: row.description || row.name, payload: {task_id: objectType === 'task' ? row.id : undefined, customer_id: row.customer_id || (objectType === 'customer' ? row.id : undefined), ...payload}, created_at: now(), read_at: null, data_kind: 'demo'});
     };
     const assignOwner = (row, owner) => Object.assign(row, {owner_id: owner ? owner.user_id : null, owner_user_ref_id: owner ? owner.user_id : null, owner_name: owner ? owner.display_name : '',
@@ -700,7 +700,7 @@
     if (path === '/customers' && method === 'POST') {
       requireCap(a, 'customer.create');
       for (const key of ['name', 'customer_type', 'level_code', 'source', 'target_team', 'contact_name', 'contact_title', 'contact_role']) if (!String(body[key] || '').trim()) error(422, '请补齐客户建档字段：' + key);
-      const name = String(body.name).trim(); if (s.customers.some(c => c.name === name)) error(409, '示例客户名称已存在，请使用已有客户');
+      const name = String(body.name).trim(); if (s.customers.some(c => c.name === name)) error(409, '客户名称已存在，请使用已有客户');
       const teams = directoryTeams(a), target = body.target_team_id ? teams.find(team => team.id === body.target_team_id) : teams.find(team => team.name === body.target_team);
       if (!target) error(403, '客户归属团队不在授权目录中');
       if (body.target_team && body.target_team !== target.name) error(422, '客户归属团队名称与ID不一致');
@@ -710,21 +710,21 @@
     if ((match = path.match(/^\/customers\/([^/]+)$/)) && method === 'PATCH') {
       requireCap(a, 'customer.edit'); const row = customer(a, match[1]);
       for (const key of ['industry', 'customer_type', 'level_code', 'source', 'partner_name']) if (Object.hasOwn(body, key) && !String(body[key] || '').trim()) error(422, '客户维护字段不能为空：' + key);
-      customerFields(row, body); row.version_no = (row.version_no || 1) + 1; return {...row, message: '示例资料已保存；未运行真实 Agent 重评'};
+      customerFields(row, body); row.version_no = (row.version_no || 1) + 1; return {...row, message: '资料已保存'};
     }
     if ((match = path.match(/^\/customers\/([^/]+)\/claims$/)) && method === 'POST') {
-      requireCap(a, 'customer.claim'); const row = s.customers.find(c => c.id === match[1]); if (!row) error(404, '示例客户不存在');
+      requireCap(a, 'customer.claim'); const row = s.customers.find(c => c.id === match[1]); if (!row) error(404, '客户不存在');
       if (row.owner_id || row.ownership_state === 'legacy_review') error(409, '该客户已有负责人或待运营核对，不能申请认领');
       const previous = s.claims.find(c => c.customer_id === row.id && c.applicant_user_id === a.user_id);
       if (previous && previous.status === 'pending') return previous;
-      const claim = {id: nextId(26), customer_id: row.id, applicant_user_id: a.user_id, applicant_name: a.display_name, status: 'pending', created_at: now(), data_kind: 'demo', message: '示例申请已记录，须由运营审批；此示例未接入运营审批接口'};
+      const claim = {id: nextId(26), customer_id: row.id, applicant_user_id: a.user_id, applicant_name: a.display_name, status: 'pending', created_at: now(), data_kind: 'demo', message: '申请已记录，须由运营审批'};
       s.claims.unshift(claim); return claim;
     }
     if ((match = path.match(/^\/customers\/([^/]+)\/assignments$/)) && method === 'POST') {
-      requireCap(a, 'customer.create'); if (!['manager', 'supervisor'].includes(a.role)) error(403, '只有管理角色可以下发示例客户');
+      requireCap(a, 'customer.create'); if (!['manager', 'supervisor'].includes(a.role)) error(403, '只有管理角色可以下发客户');
       const row = s.customers.find(c => c.id === match[1]), owner = actors.find(m => m.account_code === body.assignee_account_code && m.role === 'sales');
-      if (!row) error(404, '示例客户不存在'); if (!owner || !String(body.first_action || '').trim()) error(422, '请选择有效销售并填写首步行动');
-      if (row.owner_id) error(409, '该示例客户已分配，请刷新客户池');
+      if (!row) error(404, '客户不存在'); if (!owner || !String(body.first_action || '').trim()) error(422, '请选择有效销售并填写首步行动');
+      if (row.owner_id) error(409, '该客户已分配，请刷新客户池');
       assignOwner(row, owner); row.version_no++; row.updated_at = now(); row.attributes = {...row.attributes, first_action: String(body.first_action).trim()};
       const assignment = {id: nextId(27), customer_id: row.id, assignee_user_id: owner.user_id, assignee_account_code: owner.account_code, assigned_by: a.user_id, first_action: row.attributes.first_action, status: 'assigned', created_at: now(), data_kind: 'demo'};
       s.assignments.unshift(assignment); notify([owner.user_id], 'customer_assigned', 'customer', row, {first_action: assignment.first_action, customer_name: row.name, actor_name: a.display_name}); return assignment;
@@ -732,9 +732,9 @@
     if ((match = path.match(/^\/customers\/([^/]+)\/opportunities$/)) && method === 'POST') {
       requireCap(a, 'opportunity.edit'); const c = customer(a, match[1]); if (!String(body.name || '').trim() || !Number.isFinite(Number(body.amount)) || Number(body.amount) <= 0) error(422, '请填写商机名称及大于零的有效金额');
       let row = body.opportunity_id ? opportunity(a, body.opportunity_id) : null;
-      if (row && row.customer_id !== c.id) error(409, '示例商机不属于当前客户，不能转移归属');
-      if (row && Number(body.version_no) !== row.version_no) error(409, '示例商机版本已变化，请刷新后重试');
-      if (s.opportunities.some(o => o.customer_id === c.id && o.name === String(body.name).trim() && (!row || o.id !== row.id))) error(409, '当前示例客户下已存在同名商机');
+      if (row && row.customer_id !== c.id) error(409, '商机不属于当前客户，不能转移归属');
+      if (row && Number(body.version_no) !== row.version_no) error(409, '商机版本已变化，请刷新后重试');
+      if (s.opportunities.some(o => o.customer_id === c.id && o.name === String(body.name).trim() && (!row || o.id !== row.id))) error(409, '当前客户下已存在同名商机');
       const stageIndex = body.status === 'lost' ? 6 : PROBABILITY.indexOf(Number(body.probability)), stage = STAGES[stageIndex];
       if (!stage || !['open', 'won', 'lost'].includes(body.status) || (body.status === 'won') !== (stage === 'won') || !/^\d{4}-\d{2}-\d{2}$/.test(body.expected_close_date || '') || !Number.isFinite(Date.parse(body.expected_close_date))) error(422, '请选择有效商机阶段及预计关单日期');
       if (body.status !== 'open' && (!row || row.status !== body.status) && body.closure_confirmed !== true) error(422, '请确认关闭商机');
@@ -745,10 +745,10 @@
       const started = quarters.filter(q => q.recognized_amount != null || q.collection_amount != null);
       if (Number(body.probability) >= 30 && (!started.length || started.some(q => q.recognized_amount == null || q.collection_amount == null))) error(422, '30%及以上阶段须至少填写一组完整的季度确收和回款，金额为零请填 0');
       const fdeIds = uniq(body.fde_member_ids || row && row.fde_member_ids || []);
-      if (fdeIds.some(id => !actors.some(m => isFde(m) && m.user_id === id))) error(422, '请选择有效示例 FDE 成员');
+      if (fdeIds.some(id => !actors.some(m => isFde(m) && m.user_id === id))) error(422, '请选择有效 FDE 成员');
       const values = {name: String(body.name).trim(), amount: Number(body.amount), expected_close_date: body.expected_close_date, probability: body.status === 'lost' ? null : Number(body.probability),
         stage_code: stage, status: body.status, customer_id: c.id, customer_name: c.name, product_line: String(body.product_line || '').trim(), sales_channel: body.sales_channel, partner_id: body.sales_channel === 'partner' ? body.partner_id : null,
-        owner_id: row ? row.owner_id : c.owner_id || a.user_id, owner_user_ref_id: row ? row.owner_id : c.owner_id || a.user_id, owner_name: row ? row.owner_name : c.owner_name || a.display_name, team_name: c.team_name, team_id: c.owner_team_id, partner_name: body.sales_channel === 'partner' ? '示例协作伙伴' : '直销',
+        owner_id: row ? row.owner_id : c.owner_id || a.user_id, owner_user_ref_id: row ? row.owner_id : c.owner_id || a.user_id, owner_name: row ? row.owner_name : c.owner_name || a.display_name, team_name: c.team_name, team_id: c.owner_team_id, partner_name: body.sales_channel === 'partner' ? '华南数码渠道' : '直销',
         fde_member_ids: fdeIds, quarterly_forecasts: copy(quarters), data_kind: 'demo'};
       values.fde_members = actors.filter(m => values.fde_member_ids.includes(m.user_id)).map(member);
       const changed = !row || ['name', 'amount', 'expected_close_date', 'probability', 'status', 'product_line', 'sales_channel', 'partner_id', 'fde_member_ids', 'quarterly_forecasts'].some(key => JSON.stringify(row[key]) !== JSON.stringify(values[key]));
@@ -757,20 +757,20 @@
       values.won_at = values.status === 'won' ? row && row.status === 'won' && row.won_at || now() : null;
       values.actual_close_date = values.status === 'open' ? null : today(); values.updated_at = now();
       if (row) Object.assign(row, values, {version_no: row.version_no + 1}); else {row = {...values, id: nextId(11), version_no: 1, created_at: now()}; s.opportunities.unshift(row);}
-      s.opportunityEvents.unshift({...event, key: event.id, opportunity_id: row.id, title: `示例商机${({created: '已创建', reopened: '已重新打开', closed: '已关闭', updated: '已更新'})[event.type]}`, summary: row.name, description: `保存后的阶段：${STAGE_NAMES[stageIndex]}`, after: copy(row), data_kind: 'demo'});
+      s.opportunityEvents.unshift({...event, key: event.id, opportunity_id: row.id, title: `商机${({created: '已创建', reopened: '已重新打开', closed: '已关闭', updated: '已更新'})[event.type]}`, summary: row.name, description: `保存后的阶段：${STAGE_NAMES[stageIndex]}`, after: copy(row), data_kind: 'demo'});
       return {...enrichOpportunity(row), opportunity_id: row.id, changed: true, event_id: event.id, version_no: row.version_no};
     }
-    if ((match = path.match(/^\/opportunities\/([^/]+)\/fde-members$/)) && method === 'PUT') {requireCap(a, 'fde.members.manage'); const row = opportunity(a, match[1]); if (Number(body.version_no) !== row.version_no) error(409, '示例商机版本已变化'); row.fde_member_ids = uniq(body.member_ids || []); row.fde_members = actors.filter(m => row.fde_member_ids.includes(m.user_id)).map(member); row.version_no++; return {...row, changed: true, event_id: nextId(17)};}
+    if ((match = path.match(/^\/opportunities\/([^/]+)\/fde-members$/)) && method === 'PUT') {requireCap(a, 'fde.members.manage'); const row = opportunity(a, match[1]); if (Number(body.version_no) !== row.version_no) error(409, '商机版本已变化'); row.fde_member_ids = uniq(body.member_ids || []); row.fde_members = actors.filter(m => row.fde_member_ids.includes(m.user_id)).map(member); row.version_no++; return {...row, changed: true, event_id: nextId(17)};}
     if (path === '/tasks' && method === 'POST') {
       requireCap(a, 'task.create'); if (String(body.description || '').trim().length < 5 || !Number.isFinite(Date.parse(body.due_at)) || Date.parse(body.due_at) <= Date.now()) error(422, '请填写至少五字的任务内容和未来截止时间');
       if (Boolean(body.assignee_account_code) === Boolean(body.target_position)) error(422, '请指定一位同事或一个有效岗位');
       const owner = body.assignee_account_code ? actors.find(m => m.account_code === body.assignee_account_code) : null;
       const candidates = body.target_position === 'self' ? [a] : body.target_position && ['supervisor', 'manager', 'operations', 'fde', 'fde_lead'].includes(body.target_position) ? actors.filter(m => m.role === body.target_position) : [];
-      if (!owner && !candidates.length) error(422, '请选择有效示例任务负责人或岗位');
+      if (!owner && !candidates.length) error(422, '请选择有效任务负责人或岗位');
       const kind = body.association_kind || (body.customer_id || body.opportunity_id ? 'customer' : 'daily');
       if (!['customer', 'daily'].includes(kind) || kind === 'customer' && (!body.customer_id || !body.opportunity_id) || kind === 'daily' && (body.customer_id || body.opportunity_id)) error(422, '客户任务必须同时关联已有客户和商机；日常任务不能包含客户关联');
       const c = body.customer_id ? customer(a, body.customer_id) : null, op = body.opportunity_id ? opportunity(a, body.opportunity_id) : null;
-      if (op && c && op.customer_id !== c.id) error(422, '示例任务的商机必须属于所选客户');
+      if (op && c && op.customer_id !== c.id) error(422, '任务的商机必须属于所选客户');
       const row = {...body, id: nextId(15), status: 'pending_confirm', version_no: 1, created_at: now(), creator_user_ref_id: a.user_id, creator_name: a.display_name,
         title: String(body.description).trim(), description: String(body.description).trim(), priority_code: ['normal', 'medium', 'high'].includes(body.priority_code) ? body.priority_code : 'normal',
         assignees: owner ? [{user_id: owner.user_id, name: owner.display_name, responsibility: 'owner'}] : [], assignee_name: owner ? owner.display_name : '', owner_name: owner ? owner.display_name : '',
@@ -779,17 +779,17 @@
       s.tasks.unshift(row); notify(owner ? [owner.user_id] : row.candidate_user_ids, 'task_assigned', 'task', row, {creator_name: a.display_name, due_at: row.due_at, priority_code: row.priority_code, target_position: row.target_position}); return taskResponse(row, a);
     }
     if ((match = path.match(/^\/tasks\/([^/]+)\/events$/)) && method === 'POST') {
-      const row = taskRows(a).find(t => t.id === match[1]); if (!row) error(404, '示例任务不存在');
-      if (Number(body.version_no) !== row.version_no) error(409, '示例任务版本已变化，请刷新后重试');
+      const row = taskRows(a).find(t => t.id === match[1]); if (!row) error(404, '任务不存在');
+      if (Number(body.version_no) !== row.version_no) error(409, '任务版本已变化，请刷新后重试');
       const event = body.event_type, review = ['approve_completion', 'reject_completion'].includes(event), coordination = ['reassign', 'cancel'].includes(event); if (!review) requireCap(a, coordination ? 'task.coordinate' : 'task.respond');
       const isOwner = row.assignees.some(m => m.user_id === a.user_id && m.responsibility === 'owner');
       const candidate = row.target_position && row.status === 'pending_confirm' && (row.candidate_user_ids || []).includes(a.user_id) && !(row.declined_user_ids || []).includes(a.user_id);
       if (review && (row.creator_user_ref_id !== a.user_id || row.status !== 'pending_review')) error(403, '只有发起人可确认待验收任务');
-      if (!coordination && !review && !isOwner && !candidate) error(403, '只有有效候选人或示例任务负责人可以操作');
-      if (coordination && ['completed', 'cancelled'].includes(row.status)) error(409, '已结束的示例任务不能协调');
+      if (!coordination && !review && !isOwner && !candidate) error(403, '只有有效候选人或任务负责人可以操作');
+      if (coordination && ['completed', 'cancelled'].includes(row.status)) error(409, '已结束的任务不能协调');
       if (row.handover_required && !coordination) error(409, '任务须先由负责人完成交接');
-      if (['accept', 'reject'].includes(event) && row.status !== 'pending_confirm') error(409, '示例任务已处理');
-      if (event === 'complete' && (!isOwner || !['pending_execution', 'in_progress'].includes(row.status))) error(409, '请先由本人接受示例任务');
+      if (['accept', 'reject'].includes(event) && row.status !== 'pending_confirm') error(409, '任务已处理');
+      if (event === 'complete' && (!isOwner || !['pending_execution', 'in_progress'].includes(row.status))) error(409, '请先由本人接受任务');
       if ((['reject', 'complete', 'reject_completion'].includes(event) || coordination) && !String(body.note || '').trim()) error(422, '请填写拒绝或协调原因');
       const previousOwners = row.assignees.filter(p => p.responsibility === 'owner').map(p => p.user_id);
       let template = 'task_' + ({accept: 'accepted', reject: 'rejected', complete: 'completed', approve_completion: 'completed', reject_completion: 'completion_rejected', cancel: 'cancelled', reassign: 'reassigned'})[event];
@@ -809,10 +809,10 @@
       } else if (event === 'approve_completion') {row.status = 'completed'; row.completed_at = now(); row.completion_review_note = body.note || '';}
       else if (event === 'reject_completion') {row.status = 'in_progress'; row.completed_at = null; row.completion_review_note = body.note.trim();}
       else if (event === 'reassign') {
-        const owner = actors.find(m => m.account_code === body.assignee_account_code); if (!owner) error(422, '请选择有效示例负责人');
+        const owner = actors.find(m => m.account_code === body.assignee_account_code); if (!owner) error(422, '请选择有效负责人');
         row.assignees = [{user_id: owner.user_id, name: owner.display_name, responsibility: 'owner'}]; row.assignee_name = owner.display_name; row.owner_name = owner.display_name; row.assignee_account_code = owner.account_code;
         row.target_position = null; row.candidate_user_ids = []; row.declined_user_ids = []; row.status = 'pending_confirm'; row.handover_required = false;
-      } else error(501, '此示例任务操作暂未实现');
+      } else error(501, '此任务操作暂未实现');
       const recordedEvent = event === 'complete' && row.status === 'pending_review' ? 'submit_completion' : event;
       row.last_event_type = recordedEvent; row.last_event_note = body.note || ''; row.version_no++; row.requires_action = row.status === 'pending_confirm';
       row.events.push({id: nextId(17), event_type: recordedEvent, note: body.note || '', occurred_at: now(), created_at: now(), actor_user_id: a.user_id, actor_name: a.display_name, previous_owner_ids: previousOwners, status: row.status});
@@ -820,26 +820,26 @@
         {actor_name: a.display_name, creator_name: row.creator_name, owner_name: row.owner_name, previous_owner_names: actors.filter(a => previousOwners.includes(a.user_id)).map(a => a.display_name), note: body.note || '', comment: body.note || '', completion_note: row.completion_note, status: row.status});
       return taskResponse(row, a);
     }
-    if (path === '/visits' && method === 'POST') error(501, '示例拜访校验模块未加载，不能跳过质检归档');
-    if (path === '/customer-assets' && method === 'POST') {requireCap(a, 'actual.manage'); const c = customer(a, body.customer_id); if (!['recognized', 'collection'].includes(body.kind) || !Number.isFinite(Number(body.amount)) || Number(body.amount) < 0 || body.confirmed !== true) error(422, '请确认有效示例实绩'); const row = {...body, id: nextId(16), customer_name: c.name, owner_id: c.owner_id || a.user_id, amount: Number(body.amount), status: 'confirmed', created_at: now(), created_by_name: a.display_name, data_kind: 'demo'}; s.actuals.unshift(row); return row;}
-    if ((match = path.match(/^\/customer-assets\/([^/]+)\/void$/)) && method === 'POST') {requireCap(a, 'actual.manage'); const row = s.actuals.find(e => e.id === match[1]); if (!row) error(404, '示例记录不存在'); customer(a, row.customer_id); row.status = 'void'; row.void_reason = body.reason; return row;}
-    if (path === '/profile/sales-targets' && method === 'POST') {if (isFde(a)) error(403, '示例FDE不能维护销售目标'); if (!['recognized', 'collection'].includes(body.kind) || !Number.isFinite(Number(body.amount))) error(422, '请输入有效示例目标'); s.targets[a.user_id] = {...(s.targets[a.user_id] || {recognized: localDataset ? null : 5000000, collection: localDataset ? null : 4000000}), [body.kind]: Number(body.amount)}; return {saved: true, ...s.targets[a.user_id]};}
-    if ((path === '/profile/sales-growth/review' || path === '/fde/profile/review') && method === 'POST') error(501, '示例模式未接入真实 Agent，不能生成能力评分');
-    if ((match = path.match(/^\/notifications\/([^/]+)\/read$/)) && method === 'POST') {const row = s.notifications.find(n => n.id === match[1] && (n.recipient_user_ref_id === a.user_id || n.recipient_user_id === a.user_id)); if (!row) error(404, '示例通知不存在'); row.read_at ||= now(); return {id: row.id, read: true, read_at: row.read_at};}
+    if (path === '/visits' && method === 'POST') error(501, '拜访校验模块未加载，不能跳过质检归档');
+    if (path === '/customer-assets' && method === 'POST') {requireCap(a, 'actual.manage'); const c = customer(a, body.customer_id); if (!['recognized', 'collection'].includes(body.kind) || !Number.isFinite(Number(body.amount)) || Number(body.amount) < 0 || body.confirmed !== true) error(422, '请确认有效实绩'); const row = {...body, id: nextId(16), customer_name: c.name, owner_id: c.owner_id || a.user_id, amount: Number(body.amount), status: 'confirmed', created_at: now(), created_by_name: a.display_name, data_kind: 'demo'}; s.actuals.unshift(row); return row;}
+    if ((match = path.match(/^\/customer-assets\/([^/]+)\/void$/)) && method === 'POST') {requireCap(a, 'actual.manage'); const row = s.actuals.find(e => e.id === match[1]); if (!row) error(404, '记录不存在'); customer(a, row.customer_id); row.status = 'void'; row.void_reason = body.reason; return row;}
+    if (path === '/profile/sales-targets' && method === 'POST') {if (isFde(a)) error(403, 'FDE 不能维护销售目标'); if (!['recognized', 'collection'].includes(body.kind) || !Number.isFinite(Number(body.amount))) error(422, '请输入有效目标'); s.targets[a.user_id] = {...(s.targets[a.user_id] || {recognized: localDataset ? null : 5000000, collection: localDataset ? null : 4000000}), [body.kind]: Number(body.amount)}; return {saved: true, ...s.targets[a.user_id]};}
+    if ((path === '/profile/sales-growth/review' || path === '/fde/profile/review') && method === 'POST') error(501, 'Agent 暂未接入，不能生成能力评分');
+    if ((match = path.match(/^\/notifications\/([^/]+)\/read$/)) && method === 'POST') {const row = s.notifications.find(n => n.id === match[1] && (n.recipient_user_ref_id === a.user_id || n.recipient_user_id === a.user_id)); if (!row) error(404, '通知不存在'); row.read_at ||= now(); return {id: row.id, read: true, read_at: row.read_at};}
     if (path === '/conversations' && method === 'POST') {const id = nextId(20); s.conversations[id] = {...body, id, actor_id: a.user_id}; return {id};}
-    if ((match = path.match(/^\/conversations\/([^/]+)\/messages$/)) && method === 'POST') {const conversation = s.conversations[match[1]]; if (!conversation || conversation.actor_id !== a.user_id) error(404, '示例会话不存在');
-      if (['visit_entry', 'opportunity_draft', 'customer_create', 'task_create'].includes(conversation.mode)) error(501, '示例工作区未运行录入 Agent，请使用手工填写；真实 Agent 需联调');
-      const id = nextId(21), result = {title: '示例分析说明', summary: '这是示例工作区的固定说明，尚未调用真实 Agent。请连接业务后端与 Agent 中台后验证真实分析。', text: '示例工作区仅用于验证页面交互与业务对象关系，不提供真实分析、评分或客户建议。', rows: [], metrics: []};
+    if ((match = path.match(/^\/conversations\/([^/]+)\/messages$/)) && method === 'POST') {const conversation = s.conversations[match[1]]; if (!conversation || conversation.actor_id !== a.user_id) error(404, '会话不存在');
+      if (['visit_entry', 'opportunity_draft', 'customer_create', 'task_create'].includes(conversation.mode)) error(501, '录入 Agent 暂未接入，请手工填写');
+      const id = nextId(21), result = {title: '分析说明', summary: 'Agent 中台暂未接入，暂不提供分析结论。', text: '接入 Agent 中台后，这里会给出分析、评分与客户建议。', rows: [], metrics: []};
       s.runs[id] = {id, status: 'succeeded', actor_id: a.user_id, result, demo: true}; return {run_id: id};}
-    if (path === '/advice' && method === 'POST') {const id = nextId(22); const result = {id, status: 'succeeded', subject_kind: body.subject_kind, subject_id: body.subject_id, section: body.section, summary: '示例说明：未调用真实 Agent，未生成实际经营建议。', content: '示例工作区仅展示建议区域与状态，真实结论须在中台联调后验证。', suggestions: [], data_kind: 'demo'}; s.advice[id] = result; return result;}
-    error(501, `示例工作区尚未实现此操作（${method} ${path}），请使用真实接口联调`);
+    if (path === '/advice' && method === 'POST') {const id = nextId(22); const result = {id, status: 'succeeded', subject_kind: body.subject_kind, subject_id: body.subject_id, section: body.section, summary: 'Agent 中台暂未接入，暂无经营建议。', content: '接入 Agent 中台后，这里会给出经营建议。', suggestions: [], data_kind: 'demo'}; s.advice[id] = result; return result;}
+    error(501, `尚未实现此操作（${method} ${path}）`);
   }
   function respond(options, uploaded) {
     let finished = false;
     const timer = global.setTimeout(() => {
       if (finished) return; finished = true;
       let response;
-      try {if (uploaded) error(501, '示例模式不上传文件或音频，请连接真实接口后使用'); const data = dispatch(options); const accepted = /^\/api\/v1\/visit-flow\/(structure|quality)$/.test(new URL(options.url, 'https://preview.invalid').pathname); response = {statusCode: accepted ? 202 : 200, data: {...copy(data), demo: true, data_kind: 'demo', source_label: data.source_label || LABEL, ...(getState().migration_notice ? {migration_notice: getState().migration_notice} : {})}, header: {'X-Sales-Data-Mode': 'preview'}, errMsg: 'request:ok'};}
+      try {if (uploaded) error(501, '当前环境不支持上传文件或音频'); const data = dispatch(options); const accepted = /^\/api\/v1\/visit-flow\/(structure|quality)$/.test(new URL(options.url, 'https://preview.invalid').pathname); response = {statusCode: accepted ? 202 : 200, data: {...copy(data), demo: true, data_kind: 'demo', source_label: data.source_label || LABEL, ...(getState().migration_notice ? {migration_notice: getState().migration_notice} : {})}, header: {'X-Sales-Data-Mode': 'preview'}, errMsg: 'request:ok'};}
       catch (e) {response = {statusCode: e.status || 500, data: {message: e.message, detail: e.message, demo: true, source_label: LABEL}, errMsg: 'request:ok'};}
       if (uploaded) response.data = JSON.stringify(response.data);
       try {if (typeof options.success === 'function') options.success(response);} finally {if (typeof options.complete === 'function') options.complete(response);}
