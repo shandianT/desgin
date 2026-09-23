@@ -1,6 +1,7 @@
 import React from 'react';
 import {Button} from 'antd';
 import {SbBarChart, SbChartCard, SbKpiCard, SbLineChart, SbSegmented, SbSelect, SbStatePanel} from '@shandiant/ui-react';
+import RankingCard from './RankingCard.jsx';
 import './bi.css';
 
 // 经营分析（原 pages/bi/index，非 FDE）：一行范围与季度，两排指标卡，四张图，公共排名。图全部交给组件库的图表件，主题来自 tokens 的 bridge-echarts。
@@ -27,7 +28,6 @@ export default function Bi({page, data: d, invoke}) {
   const kpis = d.kpis || [], primary = kpis.slice(0, 4), secondary = kpis.slice(4);
   const funnel = d.funnel || [], visitDays = d.visitDays || [], timeline = d.timeline || [];
   const chartState = d.loading ? 'loading' : d.loadError ? 'error' : 'normal';
-  const rankState = d.rankingLoading ? 'loading' : d.rankingMessage ? 'error' : 'normal';
   const caliber = '经营数据按所选成员或团队汇总；确收、回款按发生季度统计，预测按已填季度计划乘阶段概率计算，包含 10% 阶段。实际为 0 与未登记分别展示。商机榜和区域榜按所选季度预计关单的在推商机统计。';
   return <section className="ds-bi" aria-label="经营分析">
     <div className="ds-panel ds-bi-bar">
@@ -73,15 +73,8 @@ export default function Bi({page, data: d, invoke}) {
       </div>
       <h2 className="ds-bi-h">公共排名 <small className="ds-muted">{d.rankingSubjectLabel}</small></h2>
       <div className="ds-bi-charts">
-        {(d.rankingCards || []).map(card => {
-          const money = card.key !== 'followup', rows = card.rows || [];
-          return <SbChartCard key={card.key} title={card.title} scope={`${card.subtitle} · ${card.period}`} state={rankState} onRetry={() => call('reloadRankings')} emptyTitle="当前范围暂无排名数据"
-            summary={`${card.title}：${rows.slice(0, 3).map((r, i) => `第 ${i + 1} ${r.name} ${money ? `${wan(r.value)} 万元` : `${r.value} 次`}`).join('，')}`}
-            data={{columns: ['名次', '名称', money ? 'ACV（万元）' : '跟进次数', '说明'], rows: rows.map((r, i) => [i + 1, r.name, money ? wan(r.value) : r.value, r.meta])}}>
-            {rows.length ? <SbBarChart orientation="horizontal" categories={rows.map(r => r.name)} series={[{name: money ? 'ACV' : '跟进', data: rows.map(r => money ? wan(r.value) : r.value)}]} unit={money ? '万元' : '次'} maxItems={10} height={Math.max(160, Math.min(rows.length, 10) * 32 + 60)} />
-              : <SbStatePanel state="empty" title="当前范围暂无排名数据" />}
-          </SbChartCard>;
-        })}
+        {(d.rankingCards || []).map(card => <RankingCard key={card.key} card={card} cohort={card.subtitle} period={card.period}
+          loading={d.rankingLoading} error={d.rankingMessage} onRetry={() => call('reloadRankings')} showChart />)}
       </div>
     </>}
   </section>;

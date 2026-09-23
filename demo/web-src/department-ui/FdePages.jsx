@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Checkbox, Progress } from 'antd';
-import { SbBarChart, SbLabeledSelect, SbListRow, SbMetricStrip, SbSearch, SbSegmented, SbSheet, SbStatePanel, SbStatusTag, SbTable } from '@shandiant/ui-react';
+import { SbBarChart, SbLabeledSelect, SbListRow, SbMetricStrip, SbSearch, SbSegmented, SbStatePanel, SbStatusTag, SbTable } from '@shandiant/ui-react';
+import RankingCard from './RankingCard.jsx';
 import './fde-pages.css';
 
 // FDE 视角的几页都只是原页面包一层子组件：协作看板是 fde-dashboard，商机是 fde-projects。
@@ -13,22 +14,6 @@ const YEAR_LABEL = y => `${y}年`;
 function Bars({ rows, mode }) {
   if (!rows.length) return null;
   return <SbBarChart orientation="vertical" categories={rows.map(r => mode === 'week' && r.endLabel ? `${r.dateLabel}～${r.endLabel}` : r.dateLabel)} series={[{ name: '拜访', data: rows.map(r => r.visits === null || r.visits === undefined ? null : Number(r.visits)) }]} unit="次" height={220} />;
-}
-
-/* 公共排名卡：只显示本人／所选对象那几行，完整榜单放抽屉 */
-function RankingCard({ card, cohort, period, onRetry }) {
-  const [open, setOpen] = useState(false);
-  const rows = card.rows || [], summary = rows.filter(r => r.isSelected);
-  const Row = ({ r }) => <li className={`ds-fd-rank-row ${r.isSelected ? 'is-selected' : ''}`}><span className="ds-fd-rank-no">{r.rank}</span><span className="ds-fd-rank-main"><b>{r.name}{r.isSelected && <small className="ds-muted"> {r.isSelf ? '本人' : '当前查看'}</small>}</b><span className="ds-muted">{r.meta}</span><Progress percent={parseFloat(r.width) || 0} size="small" showInfo={false} strokeColor="var(--ui-primary)" trailColor="var(--ui-line)" /></span><b className="ds-fd-rank-value">{r.displayValue}</b></li>;
-  return <section className="ds-fd-rank">
-    <div className="ds-fd-rank-head"><div><b>{card.title}</b><span className="ds-muted">{cohort} · {period}</span></div><Button type="link" size="small" disabled={Boolean(card.error)} onClick={() => setOpen(true)}>查看详情</Button></div>
-    {card.error ? <p className="ds-fd-error">{card.error} <Button type="link" size="small" onClick={onRetry}>重试</Button></p>
-      : summary.length ? <ol className="ds-fd-rank-list">{summary.map(r => <Row key={r.id} r={r} />)}</ol>
-        : <p className="ds-muted">{rows.length ? '所选对象暂未纳入当前榜单' : '当前范围暂无排名数据'}</p>}
-    <SbSheet open={open} title={<span>{card.title} <small className="ds-muted">{cohort} · 共 {rows.length} 项 · {period}</small></span>} onClose={() => setOpen(false)} footer={<Button onClick={() => setOpen(false)}>完成</Button>}>
-      {rows.length ? <ol className="ds-fd-rank-list">{rows.map(r => <Row key={r.id} r={r} />)}</ol> : <p className="ds-muted">当前范围暂无排名数据</p>}
-    </SbSheet>
-  </section>;
 }
 
 /* 跟进记录列表：记录页的正文，也是看板「查看记录」的落点 */
