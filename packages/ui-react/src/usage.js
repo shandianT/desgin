@@ -288,6 +288,7 @@ const groups = [
 
   SbBattleMap: `// layout="equal"：按阈值分段映射、四区等大；原始分数与象限归属不变。
 // 默认 linear 保持连续比例尺。
+// 默认正方形；页面可用 CSS 给 .sb-bmap-square 分配宽高，SVG 随容器更新，圆点与文字不拉伸。
 import { SbBattleMap } from '${PKG}';
 
 const points = [

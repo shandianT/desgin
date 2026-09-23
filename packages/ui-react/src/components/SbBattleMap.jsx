@@ -10,7 +10,7 @@ import { Button, Skeleton } from 'antd';
  * - 2.4 缺失：没填关系或潜力的客户不画进格子，图下方一行「待评估 N 家」；没有客户时显示空态并保留坐标轴。
  * - 2.5 交互：点象限放大、点客户进详情；象限不可拖动，组件不提供拖拽。
  * - 2.6 手机：容器宽 < 380px 时格子名缩成两个字，底部一行四个数字。
- * 用 SVG 画，viewBox 固定 1000×1000，宽度撑满保持正方形；字号与点径按容器宽度换算成 viewBox 单位，保证屏幕上不小于 12px。
+ * 用 SVG 画，默认正方形；viewBox 随绘图区实际宽高更新，支持页面通过 CSS 分配矩形空间。字号与点径按宽度换算，横纵同一比例，圆点不会被拉伸。
  */
 
 const QUADRANTS = [
@@ -79,28 +79,31 @@ export function SbBattleMap({
   style,
 }) {
   const thresholds = { potential: 5.5, relationship: 5.5, ...(thresholdsProp || {}) };
-  const wrapRef = useRef(null);
-  const [width, setWidth] = useState(600);
+  const plotRef = useRef(null);
+  const [{ width, height }, setSize] = useState({ width: 600, height: 600 });
   const [hoverKey, setHoverKey] = useState(null);
   const [innerZoom, setInnerZoom] = useState(defaultZoomQuadrant);
   const zoom = zoomQuadrant === undefined ? innerZoom : zoomQuadrant;
   const setZoom = (next) => { if (zoomQuadrant === undefined) setInnerZoom(next); onZoomChange?.(next); };
 
   useIsoLayoutEffect(() => {
-    const el = wrapRef.current;
+    const el = plotRef.current;
     if (!el) return undefined;
-    const read = () => { const w = el.getBoundingClientRect().width; if (w > 0) setWidth(w); };
-    read();
+    const read = (w, h) => {
+      if (w > 0 && h > 0) setSize(old => old.width === w && old.height === h ? old : { width: w, height: h });
+    };
+    read(el.clientWidth, el.clientHeight);
     if (typeof ResizeObserver === 'undefined') return undefined;
-    const ro = new ResizeObserver(read);
+    const ro = new ResizeObserver(([entry]) => read(entry.contentRect.width, entry.contentRect.height));
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
   const k = VB / width; // 1 屏幕像素 = k 个 viewBox 单位
+  const viewHeight = height * k;
   const mobile = width < 380;
   const inset = { left: 40 * k, bottom: 36 * k, top: 8 * k, right: 8 * k };
-  const plot = { x0: inset.left, y0: inset.top, x1: VB - inset.right, y1: VB - inset.bottom };
+  const plot = { x0: inset.left, y0: inset.top, x1: VB - inset.right, y1: viewHeight - inset.bottom };
   const zoomed = QUADRANTS.find((q) => q.key === zoom) || null;
   // 当前画的数值范围：全图 1～10；放大时只画那个格子的一半
   const domain = zoomed
@@ -129,7 +132,7 @@ export function SbBattleMap({
   const clusters = useMemo(() => {
     const placed = shown.map((p) => ({ ...p, x: sx(p.potential), y: sy(p.relationship), diameter: (BAND_DIAMETER[p.amountBand] || BAND_DIAMETER.medium) * k }));
     return clusterPoints(placed, shown.length > clusterAfter);
-  }, [shown, clusterAfter, width, zoom, thresholds.potential, thresholds.relationship, layout]);
+  }, [shown, clusterAfter, width, height, zoom, thresholds.potential, thresholds.relationship, layout]);
 
   const summary = `作战地图：${QUADRANTS.map((q) => `${q.name} ${counts[q.key]} 家`).join('，')}${unrated > 0 ? `，待评估 ${unrated} 家` : ''}${zoomed ? `；当前放大${zoomed.name}` : ''}`;
   const font = (px) => px * k;
@@ -158,13 +161,13 @@ export function SbBattleMap({
   const handleCluster = (c) => { if (c.single) onPointClick?.(c.points[0]); else onClusterClick?.(c.points); };
 
   if (loading) {
-    return <div ref={wrapRef} className={`sb-bmap${className ? ` ${className}` : ''}`} style={style}><div className="sb-bmap-square" role="status" aria-label="作战地图正在加载"><Skeleton active paragraph={{ rows: 6 }} /></div></div>;
+    return <div className={`sb-bmap${className ? ` ${className}` : ''}`} style={style}><div ref={plotRef} className="sb-bmap-square" role="status" aria-label="作战地图正在加载"><Skeleton active paragraph={{ rows: 6 }} /></div></div>;
   }
 
   return (
-    <div ref={wrapRef} className={`sb-bmap${mobile ? ' sb-bmap-mobile' : ''}${className ? ` ${className}` : ''}`} style={style}>
-      <div className="sb-bmap-square">
-        <svg className="sb-bmap-svg" viewBox={`0 0 ${VB} ${VB}`} role="img" aria-label={summary} onMouseLeave={() => setHoverKey(null)}>
+    <div className={`sb-bmap${mobile ? ' sb-bmap-mobile' : ''}${className ? ` ${className}` : ''}`} style={style}>
+      <div ref={plotRef} className="sb-bmap-square">
+        <svg className="sb-bmap-svg" viewBox={`0 0 ${VB} ${viewHeight}`} role="img" aria-label={summary} onMouseLeave={() => setHoverKey(null)}>
           {layout === 'equal' && <desc>四象限按分类等分，两侧比例尺不同；客户原始评分和分类阈值不变。</desc>}
           {cells}
           {!zoomed && (
@@ -206,7 +209,7 @@ export function SbBattleMap({
         </svg>
         {zoomed && <Button size="small" className="sb-bmap-back" onClick={() => setZoom(null)}>返回全部象限</Button>}
         {tipText && (
-          <div className="sb-bmap-tip" role="tooltip" style={{ left: `${hovered.x / VB * 100}%`, top: `${(hovered.y - (hovered.single ? hovered.maxDiameter / 2 : 14 * k) - 8 * k) / VB * 100}%` }}>
+          <div className="sb-bmap-tip" role="tooltip" style={{ left: `${hovered.x / VB * 100}%`, top: `${(hovered.y - (hovered.single ? hovered.maxDiameter / 2 : 14 * k) - 8 * k) / viewHeight * 100}%` }}>
             <b>{tipText.title}</b>{tipText.note && <span>{tipText.note}</span>}
           </div>
         )}

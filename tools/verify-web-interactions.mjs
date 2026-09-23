@@ -125,6 +125,48 @@ try {
     await page.waitForFunction(() => document.querySelectorAll('.sb-bmap-cell rect').length === 4 && SalesRuntime.current.data.plotCustomers.length === 6);
     assert.deepEqual(await page.evaluate(() => SalesRuntime.current.data.plotCustomers.map(r => ({ potential: r.potential, relationship: r.relationship }))), raw);
   });
+  await test('地图宽屏占半栏，窗口缩放后圆点和提示位置正确，手机上下排列', async () => {
+    const sizes = [];
+    for (const [width, height] of [[1440, 900], [1920, 900], [1920, 768], [1024, 600], [390, 844]]) {
+      await page.setViewportSize({ width, height });
+      await page.waitForFunction(() => {
+        const svg = document.querySelector('.sb-bmap-svg'), box = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+        return Math.abs(box.width / box.height - vb.width / vb.height) < .001;
+      });
+      const dimensions = await page.evaluate(() => {
+        const box = s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height, bottom: r.bottom, right: r.right }; };
+        return { workspace: box('.ds-customer-workspace'), panel: box('.ds-customer-map-panel'), map: box('.sb-bmap-square'), list: box('.ds-customer-list'),
+          circles: [...document.querySelectorAll('.sb-bmap-points circle')].map(e => { const r = e.getBoundingClientRect(); return { width: r.width, height: r.height }; }),
+          cells: [...document.querySelectorAll('.sb-bmap-cell rect')].map(e => { const r = e.getBoundingClientRect(); return { width: r.width, height: r.height }; }),
+          overflow: document.documentElement.scrollWidth > innerWidth };
+      });
+      assert(!dimensions.overflow);
+      assert(dimensions.circles.every(c => Math.abs(c.width - c.height) < .1));
+      assert(dimensions.cells.every(c => Math.abs(c.width - dimensions.cells[0].width) < .1 && Math.abs(c.height - dimensions.cells[0].height) < .1));
+      if (width > 900) {
+        assert(Math.abs(dimensions.panel.width / dimensions.workspace.width - (width <= 1100 ? .46 : .5)) < .001);
+        assert(dimensions.map.bottom <= height && dimensions.list.bottom <= height);
+        if (width === 1920) assert(dimensions.map.width > dimensions.map.height * 1.4);
+      } else {
+        assert(dimensions.list.y >= dimensions.panel.bottom - 1);
+        assert(Math.abs(dimensions.map.width - dimensions.map.height) < 1);
+      }
+      sizes.push({ viewport: { width, height }, ...dimensions });
+      if (width === 1920 && height === 900) {
+        await page.screenshot({ path: `${out}/battle-map-wide.png` });
+        const point = page.locator('.sb-bmap-point').first();
+        await point.hover();
+        const tip = page.getByRole('tooltip').filter({ has: page.locator('b') });
+        await tip.waitFor();
+        const pointBox = await point.locator('circle').last().boundingBox(), tipBox = await tip.boundingBox();
+        assert(Math.abs(tipBox.x + tipBox.width / 2 - pointBox.x - pointBox.width / 2) < 2);
+        assert(Math.abs(tipBox.y + tipBox.height - (pointBox.y - 8)) < 2);
+        await page.mouse.move(0, 0);
+      }
+    }
+    writeFileSync(`${out}/map-dimensions.json`, JSON.stringify(sizes, null, 2));
+    await page.setViewportSize({ width: 1440, height: 900 });
+  });
   await go('pages/visit-entry/index');
   await page.getByRole('button', { name: '开始录音', exact: true }).waitFor();
   await page.locator('.ds-ve-textarea').fill('测试原始记录：客户希望下周确认方案。');
