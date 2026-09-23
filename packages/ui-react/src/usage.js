@@ -133,8 +133,9 @@ import { SbPageHeader } from '${PKG}';
 
   SbLabeledSelect: `import { SbLabeledSelect } from '${PKG}';
 
-// 多选筛选：勾选暂存，应用才更新；取消、Esc、外部点击保留原条件。
-<SbLabeledSelect label="阶段" mode="multiple" confirmMultiple
+// 多选筛选默认复选框：勾选暂存，应用才更新；取消、Esc、外部点击保留原条件。
+// 只有需兼容即时多选时显式传 confirmMultiple={false}。
+<SbLabeledSelect label="阶段" mode="multiple"
   value={stages} options={stageOptions} onChange={setStages} />
 
 <SbLabeledSelect label="象限" value={q} onChange={setQ}

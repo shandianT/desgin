@@ -228,7 +228,11 @@ export function MemberGrowth({ page, data: d, invoke }) {
 export function supportsOpportunityBoard(page, data = {}) { return Boolean(page && page.route === 'pages/opportunities/index' && !data.isFde); }
 export function OpportunityBoard({ page, data: d, invoke }) {
   const call = use(page, invoke);
-  const changeStages = next => { const prev = d.selectedStages || []; for (const v of new Set([...(next || []), ...prev])) if ((next || []).includes(v) !== prev.includes(v)) call('toggleStage', { dataset: { value: v } }); };
+  const changeStages = (selectedStages = []) => page.setData({
+    selectedStages,
+    stageLabel: selectedStages.length ? `已选${selectedStages.length}项` : '全部阶段',
+    stageOptions: (page.data.stageOptions || []).map(item => ({...item, selected: selectedStages.includes(item.value)})),
+  }, () => call('applyFilters'));
   const cols = [
     { title: '商机 / 客户', key: 'name', width: '32%', render: (_, r) => <div className="ds-sp-two"><b>{r.name}</b><span className="ds-muted">{r.customer_name}</span></div> },
     { title: '阶段', key: 'stage', width: 170, render: (_, r) => <span>{r.stageName}<span className="ds-muted"> · {r.probabilityText}</span></span> },

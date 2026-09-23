@@ -1,0 +1,30 @@
+{
+  "mode": "synthetic-preview",
+  "results": [
+    {
+      "name": "优先级 / mapSelectedLevels",
+      "passed": true
+    },
+    {
+      "name": "阶段 / selectedStages",
+      "passed": true
+    },
+    {
+      "name": "协助成员 / fdeMapMemberIds",
+      "passed": true
+    },
+    {
+      "name": "人员 / memberIds",
+      "passed": true
+    },
+    {
+      "name": "阶段 / selectedStages",
+      "passed": true
+    },
+    {
+      "name": "关单季度 / quarters",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

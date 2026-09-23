@@ -62,7 +62,7 @@ function ConfirmedMultiple({ label, value, options, onChange, placeholder, disab
  * 带标签的下拉筛选（C-04）：标签在框内左侧，值在右侧；没选时显示「全部」，清空回到「全部」。
  * 选项少于 6 个优先用 SbFilterBar 的筛选片；多于 6 个或多组并排时用这个。
  */
-export function SbLabeledSelect({ label, value, options = [], onChange, placeholder = '全部', allowClear = true, disabled = false, mode, confirmMultiple = false, width, className = '' }) {
+export function SbLabeledSelect({ label, value, options = [], onChange, placeholder = '全部', allowClear = true, disabled = false, mode, confirmMultiple = true, width, className = '' }) {
   if (mode === 'multiple' && confirmMultiple) return <ConfirmedMultiple {...{ label, value, options, onChange, placeholder, disabled, width, className }} />;
   return (
     <label className={`sb-lselect ${disabled ? 'sb-lselect-disabled' : ''} ${className}`} style={width ? { width } : undefined}>

@@ -191,7 +191,7 @@ export declare function SbDetailLayout(props: SbDetailLayoutProps): JSX.Element;
 
 export interface SbLabeledSelectOption { value: string | number; label: ReactNode; count?: number; disabled?: boolean }
 export interface SbLabeledSelectProps {
-  /** 多选时勾选暂存，点击应用才触发 onChange；取消、Esc、外部点击放弃本次修改。 */
+  /** 默认 true：多选时勾选暂存，点击应用才触发 onChange；取消、Esc、外部点击放弃本次修改。显式传 false 可保留即时多选。 */
   confirmMultiple?: boolean;
   label: ReactNode;
   value?: string | number | Array<string | number>;

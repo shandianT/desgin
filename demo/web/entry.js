@@ -35,7 +35,7 @@
     sessionStorage.removeItem('sales-web:mode');
     url.searchParams.set('mode', window.SALES_MODE);
     history.replaceState(history.state, '', url.href);
-    for (const source of ['assets/vendor/flatpickr-4.6.13/flatpickr.min.js', 'assets/vendor/flatpickr-4.6.13/zh.js', 'date-picker.js', 'assets/vendor/tom-select-2.6.2/tom-select.complete.min.js', 'select-components.js', 'assets/vendor/echarts-6.1.0/echarts.min.js', 'dashboard-charts.js', 'task-workspace.js', 'home-activity.js', 'detail-workspace.js', 'bundle.js', 'preview-workflow.js', 'preview-api.js', 'crm-preview-ui.js', 'browser-platform.js', 'review-forms.js', 'review-pages.js', 'runtime.js', 'department-ui/app.js?v=185c85830907', 'review-lists.js', 'review-interactions.js', 'shell.js']) {
+    for (const source of ['assets/vendor/flatpickr-4.6.13/flatpickr.min.js', 'assets/vendor/flatpickr-4.6.13/zh.js', 'date-picker.js', 'assets/vendor/tom-select-2.6.2/tom-select.complete.min.js', 'select-components.js', 'assets/vendor/echarts-6.1.0/echarts.min.js', 'dashboard-charts.js', 'task-workspace.js', 'home-activity.js', 'detail-workspace.js', 'bundle.js', 'preview-workflow.js', 'preview-api.js', 'crm-preview-ui.js', 'browser-platform.js', 'review-forms.js', 'review-pages.js', 'runtime.js', 'department-ui/app.js?v=dabedfbfb49a', 'review-lists.js', 'review-interactions.js', 'shell.js']) {
       await new Promise((resolve, reject) => {
         const script = document.createElement('script'); script.src = source;
         script.onload = resolve; script.onerror = () => reject(new Error('业务文件加载失败'));

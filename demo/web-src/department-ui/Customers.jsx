@@ -60,8 +60,12 @@ export default function Customers({page, data: d, invoke}) {
   const picker = method => value => change(method, {detail: {value}});
   const state = d.acvLoading ? 'loading' : !page.visibleCustomers && d.assetError ? 'error' : !count ? 'empty' : 'normal';
   const chooseLevels = selected => {
-    const previous = d.mapSelectedLevels || [];
-    for (const value of new Set([...selected, ...previous])) if (selected.includes(value) !== previous.includes(value)) change('toggleMapLevel', {dataset: {value}});
+    changePage(1);
+    page.setData({
+      mapSelectedLevels: selected,
+      mapLevelOptions: (page.data.mapLevelOptions || []).map(item => ({...item, selected: selected.includes(item.value)})),
+      mapLevelLabel: selected.length ? selected.join('/') : '全部优先级',
+    }, () => invoke('applyFilters'));
   };
   const reset = () => {
     const changedAssetScope = !d.isFde && (d.selectedTeam !== 'all' || d.selectedMember !== 'all');

@@ -157,7 +157,15 @@ export function FdeProjects({ projects, invokeOn }) {
   const on = (name, payload) => invokeOn(projects, name, payload);
   const sq = d.summaryQuarter || { year: '', quarters: [], options: [] };
   const ov = d.overview || {};
-  const toggleSet = (prev, next, fire) => { for (const v of new Set([...(next || []), ...(prev || [])])) if ((next || []).includes(v) !== (prev || []).includes(v)) fire(v); };
+  // 确认多选后一次更新完整条件，沿用原 filter 的查询及分页重置。
+  const applyStages = (selectedStages = []) => projects.setData({
+    selectedStages,
+    stages: (projects.data.stages || []).map(s => ({...s, selected: selectedStages.includes(s.code)})),
+  }, () => on('filter'));
+  const applyQuarters = (quarters = []) => projects.setData({
+    quarters,
+    quarterOptions: (projects.data.quarterOptions || []).map(q => ({...q, selected: quarters.includes(q.value)})),
+  }, () => on('filter'));
   const filterActive = (d.memberIds || []).length || d.query || (d.selectedStages || []).length || (d.quarters || []).length || d.gradeIndex || d.productIndex;
   const listState = d.loading ? 'loading' : d.error ? 'error' : !(d.filtered || []).length ? 'empty' : 'normal';
   const columns = [
@@ -189,9 +197,9 @@ export function FdeProjects({ projects, invokeOn }) {
       <div className="ds-fd-tools">
         <div className="ds-fd-search"><SbSearch value={d.query || ''} placeholder="搜索客户、商机或产品线" loading={Boolean(d.loading)} onChange={value => on('search', { detail: { value } })} /></div>
         {d.canViewTeam && !props.customerId && !props.memberId && <SbLabeledSelect label="人员" mode="multiple" placeholder="全部成员" value={d.memberIds || []} options={(d.members || []).filter(m => m.id).map(m => ({ value: m.id, label: m.name }))} disabled={Boolean(d.membersLoading)} onChange={ids => on('member', { detail: { ids: ids || [] } })} />}
-        <SbLabeledSelect label="阶段" mode="multiple" value={d.selectedStages || []} options={(d.stages || []).map(s => ({ value: s.code, label: s.label }))} onChange={next => toggleSet(d.selectedStages, next, code => on('stage', { dataset: { code } }))} />
+        <SbLabeledSelect label="阶段" mode="multiple" value={d.selectedStages || []} options={(d.stages || []).map(s => ({ value: s.code, label: s.label }))} onChange={applyStages} />
         <SbLabeledSelect label="关单年份" allowClear={false} value={d.yearIndex} options={(d.years || []).map((y, i) => ({ value: i, label: YEAR_LABEL(y) }))} onChange={i => on('year', { detail: { value: i } })} width={130} />
-        <SbLabeledSelect label="关单季度" mode="multiple" value={d.quarters || []} options={(d.quarterOptions || []).map(q => ({ value: q.value, label: `Q${q.value}` }))} onChange={next => toggleSet(d.quarters, next, q => on('quarter', { dataset: { q } }))} />
+        <SbLabeledSelect label="关单季度" mode="multiple" value={d.quarters || []} options={(d.quarterOptions || []).map(q => ({ value: q.value, label: `Q${q.value}` }))} onChange={applyQuarters} />
         <SbLabeledSelect label="等级" value={d.gradeIndex > 0 ? d.gradeIndex : undefined} options={(d.gradeOptions || []).map((o, i) => ({ value: i, label: o })).filter(o => o.value > 0)} onChange={i => on('grade', { detail: { value: i ?? 0 } })} />
         <SbLabeledSelect label="产品线" value={d.productIndex > 0 ? d.productIndex : undefined} options={(d.productOptions || []).map((o, i) => ({ value: i, label: o })).filter(o => o.value > 0)} onChange={i => on('product', { detail: { value: i ?? 0 } })} />
         {filterActive ? <Button type="link" size="small" onClick={() => on('resetFilters')}>重置</Button> : null}
