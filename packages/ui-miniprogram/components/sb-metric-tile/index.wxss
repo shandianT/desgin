@@ -1,5 +1,6 @@
-.sb-metric { display: flex; flex-direction: column; gap: var(--ui-space-1); min-width: 0; padding: var(--ui-card-padding); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); background: var(--ui-surface); }
-.sb-metric-value { font-size: var(--ui-text-metric); font-weight: 650; line-height: 1.2; color: var(--ui-primary); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-metric { display: flex; flex-direction: column; gap: var(--ui-space-1); min-width: 0; padding: var(--ui-card-padding); border: 0; border-radius: var(--ui-radius-panel); background: var(--ui-surface); }
+.sb-metric-value { font-size: var(--ui-text-metric); font-weight: 600; line-height: 1.2; color: var(--ui-primary); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sb-metric-value.missing { font-size: var(--ui-text-page); color: var(--ui-muted); }
 .sb-metric-label { font-size: var(--ui-text-body); font-weight: 600; color: var(--ui-ink); }
 .sb-metric-note { font-size: var(--ui-text-small); color: var(--ui-muted); }
+.sb-metric.is-bordered { border: 1px solid var(--ui-line); }

@@ -28,6 +28,13 @@ const callMethod = (method, detail, ev) => async (comp, simulate) => {
   comp.instance[method]({ detail }); await simulate.sleep(20); return hit;
 };
 module.exports = {
+  'sb-input': [
+    { title: '上下排带框', data: { label: '客户名称', layout: 'stacked', plain: true, required: true, value: '星河智能' }, expect: ['客户名称', '*', 'is-stacked', 'is-plain'] },
+    { title: '错误提示', data: { label: '联系人电话', layout: 'stacked', type: 'number', value: '138', error: '请输入 11 位手机号' }, expect: ['请输入 11 位手机号', 'is-error'] },
+    { title: '单位与说明', data: { label: '年度预算', suffix: '万元', help: '按客户口径填写', value: '80' }, expect: ['万元', '按客户口径填写'] },
+    { title: '密码可切换', data: { label: '密码', type: 'password', passwordVisible: true, value: 'x' }, expect: ['sb-input-eye'] },
+    { title: '输入发事件', data: { label: '名称', value: '' }, event: callMethod('onChange', { value: '华宸' }, 'change') },
+  ],
   'sb-summary-card': [
     { title: '小号加载中', data: { size: 'small', loading: true, title: '今日经营摘要', metrics: [{ label: '今日待办', value: null }] }, expect: ['今日经营摘要', '…', 'small'] },
     { title: '标题加指标', data: { title: '我的待办', subtitle: '每一项都可进入详情', scope: '仅本人', metrics: [{ label: '未完成', value: 18 }, { label: '已完成', value: 4 }, { label: '毛利', value: null }] }, expect: ['我的待办', '仅本人', '18', '未登记'] },
@@ -50,19 +57,26 @@ module.exports = {
     { title: '自定义三个', data: { items: [{ key: 'a', label: '看板', icon: 'dashboard', pagePath: 'pages/bi/index' }, { key: 'b', label: '任务', icon: 'task', pagePath: 'pages/tasks/index' }], value: 'b' }, expect: ['看板', '任务'] },
   ],
   'sb-date-picker': [
+    { title: '可清除带错误', data: { label: '跟进日期', layout: 'stacked', clearable: true, value: '2026-09-22', error: '跟进日期不能晚于今天', shortcuts: ['today', 'yesterday'] }, expect: ['跟进日期不能晚于今天', '昨天', 'sb-dpick-clear'] },
+    { title: '到分钟', data: { label: '截止时间', mode: 'datetime', value: '2026-09-23T09:00:00+08:00' }, expect: ['截止时间', '2026-09-23 09:00'] },
+    { title: '到分钟上下排', data: { label: '截止时间', mode: 'datetime', layout: 'stacked', defaultTime: '17:30', value: '' }, expect: ['请选择日期', 'is-stacked', '17:30'] },
     { title: '未选带快捷片', data: { label: '下次拜访', required: true }, expect: ['下次拜访', '*', '请选择日期', '今天', '本周', '本季'], event: tapFirst('.sb-chip', 'change') },
     { title: '已选', data: { label: '签约日期', value: '2026-09-30' }, expect: ['2026-09-30'], event: callMethod('onConfirm', { value: '2026-10-08' }, 'change') },
     { title: '禁用不出快捷片', data: { label: '签约日期', value: '2026-09-30', disabled: true }, expect: ['2026-09-30'] },
   ],
   'sb-select': [
+    { title: '上下排放进表单卡', data: { label: '商机阶段', layout: 'stacked', plain: true, value: 'b', options: [{ value: 'a', label: '意向沟通' }, { value: 'b', label: '方案沟通' }] }, expect: ['商机阶段', '方案沟通', 'is-stacked', 'is-plain'] },
     { title: '未选', data: { label: '商机阶段', required: true, options: [{ value: 'a', label: '识别' }, { value: 'b', label: '验证', count: 3 }] }, expect: ['商机阶段', '*', '请选择'], event: callMethod('onConfirm', { value: ['b'] }, 'change') },
     { title: '已选', data: { label: '商机阶段', value: 'a', options: [{ value: 'a', label: '识别' }, { value: 'c', label: '签约', disabled: true }] }, expect: ['识别'] },
   ],
   'sb-amount-input': [
+    { title: '字符串精确', data: { label: '确收金额', valueType: 'string', precision: 6, value: '1234.500001' }, expect: ['确收金额'], event: callMethod('onInput', { value: '1234.5000019x' }, 'change') },
+    { title: '上下排', data: { label: '预计金额', layout: 'stacked', value: 128 }, expect: ['预计金额', 'is-stacked', '万元'] },
     { title: '有值千分位', data: { label: '预算', value: 1200.5, required: true }, expect: ['预算', '*', '万元'], event: async (comp, simulate) => comp.instance.data.text === '1,200.5' && (await callMethod('onInput', { value: '320' }, 'change')(comp, simulate)) && comp.instance.data.text === '320' },
     { title: '空值改单位', data: { label: '合同额', unit: '元' }, expect: ['合同额', '元'], event: async (comp, simulate) => { comp.instance.onFocus(); comp.instance.onInput({ detail: { value: '12a.345' } }); await simulate.sleep(10); let hit = false; comp.addEventListener('change', (e) => (hit = e.detail.value === 12.35)); comp.instance.onBlur(); await simulate.sleep(10); return hit && comp.instance.data.text === '12.35'; } },
   ],
   'sb-textarea': [
+    { title: '上下排带框', data: { label: '任务描述', layout: 'stacked', plain: true, value: '补充客户需求清单', maxlength: 500 }, expect: ['任务描述', 'is-stacked'] },
     { title: '必填带字数', data: { label: '拜访摘要', required: true, value: '已获得 CIO 支持', maxlength: 200 }, expect: ['拜访摘要', '*', '200'], event: callMethod('onInput', { value: '改了' }, 'change') },
     { title: '禁用', data: { label: '备注', disabled: true, value: '只读内容' }, expect: ['备注'] },
   ],
@@ -84,6 +98,7 @@ module.exports = {
     { title: '有值带单位与变化', data: { label: '年度合同额', value: 1880, unit: '万元', change: { text: '比上季 +12%', tone: 'up', good: true } }, expect: ['年度合同额', '1880', '万元', '比上季 +12%', 'tone-good'], event: tapFirst('.sb-kpi', 'tap') },
     { title: '无好坏灰', data: { label: '客户', value: 24, unit: '家', change: { text: '比上季 +2 家', tone: 'up' } }, expect: ['tone-flat'] },
     { title: '缺失', data: { label: '回款', value: null, unit: '万元', note: '财务还没登记' }, expect: ['未登记', '财务还没登记'] },
+    { title: '紧凑长金额降一档、不可点无按下态', data: { size: 'compact', label: '总商机 ACV', value: '¥1,234,567,890' }, expect: ['¥1,234,567,890', 'sb-kpi-card--is-long'], absent: ['sb-kpi-hover'] },
     { title: '加载中', data: { label: '回款', value: 12, loading: true, note: 'x' }, expect: ['…', '正在读取'] },
   ],
   'sb-chart-card': [
@@ -93,6 +108,11 @@ module.exports = {
     { title: '加载中', data: { title: '排名', state: 'loading' }, expect: ['正在读取'] },
   ],
   'sb-labeled-select': [
+    { title: '飞书筛选片未选', data: { size: 'small', label: '商机阶段', value: null, options: [{ value: 'a', label: '方案沟通' }] }, expect: ['商机阶段', 'small'] },
+    { title: '飞书筛选片已选', data: { size: 'small', label: '商机阶段', value: 'a', options: [{ value: 'a', label: '方案沟通' }] }, expect: ['方案沟通', 'on'] },
+    { title: '不插全部：默认值显示值文字、灰底不算已选', data: { size: 'small', label: '排序', allOption: false, value: 'due', options: [{ value: 'due', label: '按截止时间' }, { value: 'new', label: '按创建时间' }] }, expect: ['按截止时间'], absent: ['sb-labeled-select--on'] },
+    { title: 'defaultValue：季度片默认当前季度不算已选，其他季度算', data: { size: 'small', label: '季度', allOption: false, value: 'q3', defaultValue: 'q3', options: [{ value: 'q1', label: 'Q1' }, { value: 'q3', label: 'Q3' }] }, expect: ['Q3'], absent: ['sb-labeled-select--on'] },
+    { title: '非默认值为已选', data: { size: 'small', label: '排序', allOption: false, value: 'new', options: [{ value: 'due', label: '按截止时间' }, { value: 'new', label: '按创建时间' }] }, expect: ['按创建时间', 'sb-labeled-select--on'] },
     { title: '未选显示全部', data: { label: '象限', options: [{ value: 'a', label: '主攻区', count: 9 }] }, expect: ['象限', '全部'] },
     { title: '已选', data: { label: '象限', value: 'a', options: [{ value: 'a', label: '主攻区', count: 9 }] }, expect: ['主攻区'], event: tapFirst('.sb-lselect-clear', 'change') },
     { title: '禁用', data: { label: '金额', disabled: true }, expect: ['金额'] },
@@ -104,6 +124,7 @@ module.exports = {
   'sb-tabs': [
     { title: '带数量', data: { items: [{ key: 'todo', label: '待处理', count: 18 }, { key: 'all', label: '全部', count: 122 }], activeKey: 'todo' }, expect: ['待处理', '18', '99+'], event: tapNth('.sb-tabs-tab', 'change', -1) },
     { title: '禁用不触发', data: { items: [{ key: 'a', label: '客户', count: 0 }, { key: 'b', label: '风险', disabled: true }], activeKey: 'a' }, expect: ['风险'] },
+    { title: 'fit 五个页签（窄屏退回横滑的标记）', data: { fit: true, size: 'small', items: [{ key: 'a', label: '全部' }, { key: 'b', label: '主攻' }, { key: 'c', label: '资产' }, { key: 'd', label: '资源' }, { key: 'e', label: 'Demo 场景' }], activeKey: 'a' }, expect: ['is-fit', 'is-many', 'Demo 场景'] },
   ],
   'sb-icon': [
     { title: '三档尺寸', data: { name: 'customer', size: 'lg' } },
@@ -117,6 +138,7 @@ module.exports = {
     { title: '未登记', data: { tone: 'unset' }, expect: ['未登记'] },
   ],
   'sb-state-panel': [
+    { title: '一行失败', data: { state: 'error', size: 'compact', title: '经营汇总暂不可用' }, expect: ['经营汇总暂不可用', '重试'], event: tapFirst('t-button', 'retry', '.t-button--t-button') },
     { title: '加载中', data: { state: 'loading' }, expect: ['正在加载'] },
     { title: '骨架', data: { state: 'loading', skeleton: true } },
     { title: '空', data: { state: 'empty', showClear: true }, expect: ['没有匹配', '清除条件'], event: tapFirst('t-button', 'clear', '.t-button--t-button') },
@@ -147,8 +169,9 @@ module.exports = {
     { title: '错误', data: { label: '下一步', error: '要含时间与目标' }, expect: ['要含时间与目标'] },
     { title: '只读', data: { label: '地盘', readOnly: true, value: 'HB-01' }, expect: ['HB-01'] },
   ],
-  'sb-sheet': [{ title: '打开', data: { visible: true, title: '选择季度', confirmLabel: '应用' }, expect: ['选择季度', '取消', '应用'], event: tapFirst('t-button', 'close', '.t-button--t-button') }, { title: '处理中', data: { visible: true, title: '选择季度', confirmLabel: '应用', confirmLoading: true }, expect: ['处理中'] }],
+  'sb-sheet': [{ title: '说明与禁用确定', data: { visible: true, title: '选择客户', description: '只列出你有权限的客户', confirmLabel: '确定', confirmDisabled: true }, expect: ['只列出你有权限的客户', '确定'] }, { title: '左键自定义', data: { visible: true, title: '选择成员', secondaryLabel: '全部成员', confirmLabel: '确定' }, expect: ['全部成员'], event: tapFirst('t-button', 'secondary', '.t-button--t-button') }, { title: '打开', data: { visible: true, title: '选择季度', confirmLabel: '应用' }, expect: ['选择季度', '取消', '应用'], event: tapFirst('t-button', 'close', '.t-button--t-button') }, { title: '处理中', data: { visible: true, title: '选择季度', confirmLabel: '应用', confirmLoading: true }, expect: ['处理中'] }],
   'sb-pagination': [
+    { title: '加载失败可重试', data: { mode: 'more', total: 24, error: '下一页加载失败' }, expect: ['下一页加载失败', '重试'], event: tapFirst('t-button', 'retry', '.t-button--t-button') },
     { title: '中间页', data: { current: 2, total: 124, pageSize: 20 }, expect: ['共 124', '第 2／7 页'], event: tapFirst('t-button', 'change', '.t-button--t-button') },
     { title: '末页', data: { current: 7, total: 124, pageSize: 20 } },
     { title: '加载更多', data: { mode: 'more', total: 124 }, expect: ['共 124', '加载更多'], event: tapFirst('t-button', 'more', '.t-button--t-button') },

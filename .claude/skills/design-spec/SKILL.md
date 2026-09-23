@@ -46,6 +46,8 @@ metadata:
 | 手机页面顶部摘要卡（替代深色横幅：标题、范围、状态标签、一行指标、进度） | SbPageHeader 加 SbMetricStrip | sb-summary-card |
 | 区块卡片（标题、说明、右侧一个链接） | antd Card（无阴影） | sb-section |
 | 只读「标签：值」清单（空值未填写、必填空值待补充） | antd Descriptions | sb-desc-list |
+| 单行输入（标签、清除、单位、错误） | antd Input | sb-input |
+| 手机页面的视觉参照 | — | 规范 16 章：飞书参照与小程序体验（冲突时以小程序体验为准） |
 | AI 生成标识 | SbAiBadge | sb-ai-badge |
 | AI 待确认字段 | SbAiField | sb-ai-field |
 | AI 依据列表 | SbAiSources | sb-ai-sources |

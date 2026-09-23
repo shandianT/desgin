@@ -37,7 +37,7 @@
 .sb-bmap-counts { display: flex; }
 .sb-bmap-count { flex: 1; display: flex; flex-direction: column; align-items: center; gap: var(--ui-space-1); padding: var(--ui-space-2) 0; border-radius: var(--ui-radius-control); }
 .sb-bmap-count.on { background: var(--ui-selected); }
-.sb-bmap-count-num { font-size: var(--ui-text-page); font-weight: 650; color: var(--ui-ink); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.sb-bmap-count-num { font-size: var(--ui-text-page); font-weight: 600; color: var(--ui-ink); font-variant-numeric: tabular-nums; line-height: 1.2; }
 .sb-bmap-count.on .sb-bmap-count-num { color: var(--ui-primary); }
 .sb-bmap-count-label { font-size: var(--ui-text-small); color: var(--ui-secondary); }
 .sb-bmap-unrated { font-size: var(--ui-text-small); color: var(--ui-secondary); padding: var(--ui-space-1) 0; }

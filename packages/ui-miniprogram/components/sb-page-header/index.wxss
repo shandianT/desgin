@@ -1,4 +1,4 @@
 .sb-pagehead { display: flex; justify-content: space-between; align-items: center; gap: var(--ui-space-3); flex-wrap: wrap; padding: var(--ui-space-4) var(--ui-page-gutter) var(--ui-space-2); background: var(--ui-surface); }
-.sb-pagehead-title { min-width: 0; font-size: var(--ui-text-page); font-weight: 650; line-height: 1.4; color: var(--ui-ink); }
+.sb-pagehead-title { min-width: 0; font-size: var(--ui-text-page); font-weight: 600; line-height: 1.4; color: var(--ui-ink); }
 .sb-pagehead-scope { display: block; font-size: var(--ui-text-small); font-weight: 400; line-height: 1.5; color: var(--ui-secondary); }
 .sb-pagehead-actions { display: flex; gap: var(--ui-space-2); margin-left: auto; }

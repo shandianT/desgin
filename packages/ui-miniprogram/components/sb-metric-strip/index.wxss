@@ -1,7 +1,9 @@
 .sb-mstrip { display: flex; flex-direction: column; gap: var(--ui-space-2); }
 .sb-mstrip-side { display: flex; justify-content: flex-end; align-items: center; gap: var(--ui-space-2); }
 .sb-mstrip-seg { display: inline-flex; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-control); overflow: hidden; background: var(--ui-surface); }
-.sb-mstrip-seg-item { padding: 0 var(--ui-space-3); min-height: 56rpx; line-height: 56rpx; font-size: var(--ui-text-body); color: var(--ui-secondary); }
+.sb-mstrip-seg-item { position: relative; padding: 0 var(--ui-space-3); min-height: 32px; line-height: 32px; font-size: var(--ui-text-body); color: var(--ui-secondary); }
 .sb-mstrip-seg-item.on { background: var(--ui-selected); color: var(--ui-primary); font-weight: 600; }
 .sb-mstrip-help { color: var(--ui-muted); display: inline-flex; padding: var(--ui-space-1); }
 .sb-mstrip-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--ui-space-2); }
+
+.sb-mstrip-seg-item::after { content: ''; position: absolute; left: 0; right: 0; top: calc(50% - 22px); bottom: calc(50% - 22px); } /* 点击区 44px */

@@ -6,7 +6,9 @@
 .sb-filter-clear { color: var(--ui-primary); padding: 6px 0; }
 .sb-filter-scroll { white-space: nowrap; }
 .sb-filter-chips { display: inline-flex; gap: var(--ui-space-2); }
-.sb-chip { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 var(--ui-space-3); border-radius: 999px; border: 1px solid var(--ui-line); background: var(--ui-surface); color: var(--ui-secondary); font-size: var(--ui-text-body); }
-.sb-chip.on { background: var(--ui-selected); border-color: var(--ui-primary); color: var(--ui-primary); font-weight: 600; }
+.sb-chip { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 var(--ui-space-3); border-radius: var(--ui-radius-control); border: 1px solid transparent; background: var(--ui-neutral-soft); color: var(--ui-secondary); font-size: var(--ui-text-body); }
+.sb-chip.on { background: var(--ui-selected); border-color: transparent; color: var(--ui-primary); font-weight: 600; } /* 飞书：灰底无边框，选中浅蓝底主色字 */
 .sb-chip.off { opacity: .55; }
 .sb-chip-count { color: var(--ui-muted); font-size: var(--ui-text-small); }
+.sb-chip { position: relative; }
+.sb-chip::after { content: ''; position: absolute; left: 0; right: 0; top: calc(50% - 22px); bottom: calc(50% - 22px); } /* 点击区扩到 44px */

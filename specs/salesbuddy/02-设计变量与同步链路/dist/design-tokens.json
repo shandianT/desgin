@@ -1,8 +1,8 @@
 {
   "$meta": {
     "name": "部门产品设计变量",
-    "version": "1.2.0-draft.1",
-    "updated": "2026-09-21",
+    "version": "1.3.0-draft.1",
+    "updated": "2026-09-23",
     "status": "草案：基础与语义层的值来自已确认的 SalesBuddy Web V1.0（design-tokens.css）；主色 #2863CD 已于 2026-09-19 决定沿用；标注「建议」的条目与端侧映射尚未登记采用；原生 App 暂不在范围",
     "format": "W3C Design Tokens 社区组格式（DTCG 2025.10）的 Style Dictionary v5 兼容子集：颜色写 #RRGGBB 字符串，尺寸写 \"16px\" 字符串，阴影写 CSS 字符串，用 {路径} 引用另一个变量；每个变量有 $value、$type、$description。顶部 $schema 仅作格式标识：按 2025.10 严格校验，字符串形式的尺寸与阴影不通过，待工具链完整支持后迁移为对象形式",
     "layers": {
@@ -180,6 +180,36 @@
       "type": "color",
       "description": "灰蓝"
     },
+    "color.graphite.100": {
+      "value": "#F2F3F5",
+      "type": "color",
+      "description": "飞书 N100 中性填充（标签底、分段轨道）"
+    },
+    "color.graphite.300": {
+      "value": "#DEE0E3",
+      "type": "color",
+      "description": "飞书 N300 分隔线、输入框边"
+    },
+    "color.graphite.500": {
+      "value": "#8F959E",
+      "type": "color",
+      "description": "飞书 N500；白底 3.02:1，不得用于文字，只给占位、禁用、装饰"
+    },
+    "color.graphite.600": {
+      "value": "#646A73",
+      "type": "color",
+      "description": "飞书 N600 次要文字；白底 5.45:1，满足 D-06"
+    },
+    "color.graphite.700": {
+      "value": "#373C43",
+      "type": "color",
+      "description": "飞书 N700"
+    },
+    "color.graphite.900": {
+      "value": "#1F2329",
+      "type": "color",
+      "description": "飞书 N900 正文（飞书 Universe Design 中性色（npm @semi-bot/semi-theme-feishu 1.0.0，Semi DSM 生成的飞书主题 _palette.scss））"
+    },
     "space.1": {
       "value": "4px",
       "type": "dimension",
@@ -225,6 +255,11 @@
       "type": "dimension",
       "description": ""
     },
+    "font.size.20": {
+      "value": "20px",
+      "type": "dimension",
+      "description": "飞书 header-3（手机页面标题）"
+    },
     "font.size.24": {
       "value": "24px",
       "type": "dimension",
@@ -244,6 +279,11 @@
       "value": "6px",
       "type": "dimension",
       "description": ""
+    },
+    "radius.8": {
+      "value": "8px",
+      "type": "dimension",
+      "description": "飞书 large 圆角（卡片、弹窗）"
     },
     "radius.12": {
       "value": "12px",
@@ -954,15 +994,15 @@
       "chart-5": "#7A8A9E"
     },
     "miniprogram": {
-      "background": "#F3F5F9",
+      "background": "#F5F6F7",
       "surface": "#FFFFFF",
       "sidebar": "#142F54",
-      "ink": "#192842",
-      "secondary": "#5B6C82",
-      "muted": "#617188",
+      "ink": "#1F2329",
+      "secondary": "#646A73",
+      "muted": "#646A73",
       "primary": "#2863CD",
       "primary-hover": "#2055B5",
-      "line": "#E2E8F0",
+      "line": "#DEE0E3",
       "selected": "#EDF3FF",
       "focus": "#5786DC",
       "danger": "#A73F38",
@@ -971,13 +1011,13 @@
       "warning-soft": "#FFF0CF",
       "success": "#27694C",
       "success-soft": "#E8F5EE",
-      "neutral": "#56677E",
-      "neutral-soft": "#EEF2F7",
+      "neutral": "#646A73",
+      "neutral-soft": "#F2F3F5",
       "font": "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif",
       "text-small": "12px",
       "text-body": "16px",
       "text-section": "16px",
-      "text-page": "24px",
+      "text-page": "20px",
       "text-metric": "32px",
       "space-1": "4px",
       "space-2": "8px",
@@ -986,13 +1026,13 @@
       "space-6": "24px",
       "space-8": "32px",
       "radius-control": "6px",
-      "radius-panel": "12px",
+      "radius-panel": "8px",
       "control-height": "36px",
-      "field-height": "40px",
+      "field-height": "44px",
       "icon-sm": "16px",
       "icon-md": "20px",
       "icon-lg": "24px",
-      "shadow-popup": "0 8px 28px #1928421a, 0 2px 6px #19284208",
+      "shadow-popup": "0 0 1px #0000004d, 0 4px 14px #0000001a",
       "page-gutter": "16px",
       "card-padding": "16px",
       "block-gap": "24px",
@@ -1009,7 +1049,7 @@
       "sidebar-active": "#2A568B",
       "sidebar-accent": "#91BAFF",
       "sidebar-focus": "#B9D2FF",
-      "overlay": "#142F5473",
+      "overlay": "#16161A99",
       "quadrant-asset": "#F4F7FD",
       "quadrant-attack": "#F4F7FD",
       "quadrant-resource": "#FFFFFF",

@@ -21,6 +21,7 @@ Component({
     title: String, subtitle: String, meta: String, scope: String, mark: String,
     tags: { type: Array, value: [] }, metrics: { type: Array, value: [] }, metricsTappable: { type: Boolean, value: false },
     progress: { type: null, value: null }, progressLabel: String,
+    bordered: { type: Boolean, value: false }, // 飞书样式：默认无边框，靠灰底与白卡区分；放在白底上时传 bordered
     size: { type: String, value: 'default' }, // small：标题 16px、指标 20px，页面上方已有大标题（问候语）时用
     loading: { type: Boolean, value: false }, // 数据未到：指标显示「…」，不显示「未登记」
   },

@@ -2,6 +2,8 @@
 Component({
   options: { addGlobalClass: true },
   properties: { options: { type: Array, value: [] }, value: { type: null, value: null }, size: { type: String, value: 'middle' },
-    block: { type: Boolean, value: false } }, // block：撑满一行、各项等宽（页签式三项切换用）
-  methods: { onTap(e) { const { value, disabled } = e.currentTarget.dataset; if (disabled || value === this.data.value) return; this.triggerEvent('change', { value }); } },
+    block: { type: Boolean, value: false },
+    disabled: { type: Boolean, value: false }, // 整组禁用
+    emitSame: { type: Boolean, value: false } }, // 点已选中的项也发 change（页面要借此复位时用） // block：撑满一行、各项等宽（页签式三项切换用）
+  methods: { onTap(e) { const { value, disabled } = e.currentTarget.dataset; if (this.data.disabled || disabled || (value === this.data.value && !this.data.emitSame)) return; this.triggerEvent('change', { value }); } },
 });

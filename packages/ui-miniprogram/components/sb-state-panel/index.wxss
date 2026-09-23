@@ -3,3 +3,9 @@
 .sb-state-title { font-size: var(--ui-text-section); color: var(--ui-ink); font-weight: 600; }
 .sb-state-desc { font-size: var(--ui-text-body); }
 .sb-state-note { font-size: var(--ui-text-small); color: var(--ui-muted); }
+.sb-state-line { display: flex; align-items: center; gap: var(--ui-space-2); min-height: 44px; font-size: 14px; color: var(--ui-secondary); }
+.sb-state-line.is-error { color: var(--ui-danger); }
+.sb-state-line-text { flex: 1; min-width: 0; }
+/* 小号按钮 32px：外包一层用伪元素把点击区扩到 44px；t-button 内部 catch 了原生 tap，所以按钮本体与外层都绑同一方法，不会重复触发 */
+.sb-state-hit { position: relative; display: inline-flex; }
+.sb-state-hit::after { content: ''; position: absolute; left: 0; right: 0; top: calc(50% - 22px); bottom: calc(50% - 22px); }

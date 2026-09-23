@@ -1,4 +1,4 @@
-<view class="sb-summary {{size === 'small' ? 'small' : ''}}">
+<view class="sb-summary {{size === 'small' ? 'small' : ''}} {{bordered ? 'is-bordered' : ''}}">
   <view class="sb-summary-head">
     <view wx:if="{{markText}}" class="sb-summary-mark" aria-hidden="true">{{markText}}</view>
     <view class="sb-summary-main">
@@ -18,7 +18,7 @@
     </block>
   </view>
   <view wx:if="{{metricList.length}}" class="sb-summary-metrics">
-    <view wx:for="{{metricList}}" wx:key="label" class="sb-summary-metric" data-index="{{index}}" bind:tap="onMetric">
+    <view wx:for="{{metricList}}" wx:key="label" class="sb-summary-metric" hover-class="{{metricsTappable ? 'sb-pressed' : 'none'}}" data-index="{{index}}" bind:tap="onMetric">
       <view class="sb-summary-value {{item.missing ? 'is-missing' : ''}}">{{item.missing ? (item.missingText || '未登记') : item.text}}<text wx:if="{{!item.missing && !loading && item.unit}}" class="sb-summary-unit">{{item.unit}}</text></view>
       <text class="sb-summary-label">{{item.label}}</text>
     </view>

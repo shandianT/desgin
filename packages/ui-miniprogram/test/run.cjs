@@ -59,13 +59,14 @@ const CASES = require('./cases.cjs');
       for (const c of CASES[name] || [{ title: '默认', data: {} }]) {
         total++;
         const comp = simulate.render(id, c.data || {}); comp.attach(document.createElement('parent-wrapper'));
-        const html = comp.dom.innerHTML;
+        const html = comp.dom.innerHTML; if (process.env.DUMP && c.title.includes(process.env.DUMP)) console.error(html.slice(0, 600));
         let evt = '';
         if (c.event) { try { const ok = await c.event(comp, simulate); evt = ok ? '事件通过' : '事件未触发'; if (ok) events++; } catch (e) { evt = '事件异常：' + e.message; } }
         const missing = (c.expect || []).filter((t) => !html.includes(t));
-        const ok = (c.empty ? html.trim().length === 0 : html.length > 0) && !missing.length && !/事件未|事件异常/.test(evt);
+        const present = (c.absent || []).filter((t) => (t instanceof RegExp ? t.test(html) : html.includes(t))); // 不该出现的片段（如选中类名）
+        const ok = (c.empty ? html.trim().length === 0 : html.length > 0) && !missing.length && !present.length && !/事件未|事件异常/.test(evt);
         if (!ok) fail++;
-        rows.push(`${ok ? '✓' : '✗'} ${c.title}${missing.length ? '，缺 ' + missing.join('、') : ''}${evt ? '，' + evt : ''}`);
+        rows.push(`${ok ? '✓' : '✗'} ${c.title}${missing.length ? '，缺 ' + missing.join('、') : ''}${present.length ? '，不该有 ' + present.join('、') : ''}${evt ? '，' + evt : ''}`);
         comp.detach();
       }
     } catch (e) { fail++; total++; rows.push(`✗ 加载失败：${e.message.split('\n')[0]}`); if (process.env.DEBUG) console.error(e.stack); }

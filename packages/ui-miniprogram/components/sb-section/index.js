@@ -5,6 +5,8 @@
  */
 Component({
   options: { addGlobalClass: true, multipleSlots: true },
-  properties: { title: String, description: String, extraLabel: String, plain: { type: Boolean, value: false } },
+  properties: { title: String, description: String, extraLabel: String, plain: { type: Boolean, value: false },
+    bordered: { type: Boolean, value: false }, // 飞书样式：默认无边框，靠灰底与白卡区分；放在白底上时传 bordered
+  },
   methods: { onExtra() { this.triggerEvent('extra'); } },
 });
