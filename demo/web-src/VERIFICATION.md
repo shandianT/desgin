@@ -75,7 +75,16 @@ node tools/verify-web-interactions.mjs
 node tools/verify-multiple-filters.mjs
 node tools/verify-opportunity-years.mjs
 node tools/verify-ranking-parity.mjs
+node tools/verify-preview-ranking-cohort.mjs
 ```
+
+## 2026-09-24：完整榜单示例人数修复
+
+线上预览的「查看完整榜单」原来只显示 1 人，是因为示例数据每种角色仅有一个账号；弹层本身已能渲染完整返回数组。现在仅给内置合成预览补充标有「示例」的同级成员及对应商机、跟进记录，并在已有本地示例数据上幂等补齐，不覆盖用户自行录入的数据。真实企业模式、CRM 本地导入模式及正式排名接口未改。
+
+已验证（本地）：从真实预览返回数据打开个人榜单弹层，一线销售 6 人、销售主管 3 人、销售总经理 3 人、FDE 4 人、FDE 主管 3 人；重新加载不会重复生成样本，旧版示例存储的其他字段保留。FDE 主管默认团队榜单是 2 个团队，切到个人范围才显示 3 位同级负责人。运行 `node tools/check.mjs`、`verify-preview-ranking-cohort.mjs`、原有五角色排名检查及 Web 交互／多选／年份回归，均通过。真实人员、真实接口和生产验收仍未验证。
+
+![一线销售完整示例榜单，共 6 人](review/ranking-full-peers-20260924.png)
 
 ## 效果图
 
