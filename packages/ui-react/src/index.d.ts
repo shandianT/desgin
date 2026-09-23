@@ -191,6 +191,8 @@ export declare function SbDetailLayout(props: SbDetailLayoutProps): JSX.Element;
 
 export interface SbLabeledSelectOption { value: string | number; label: ReactNode; count?: number; disabled?: boolean }
 export interface SbLabeledSelectProps {
+  /** 默认 true：多选时勾选暂存，点击应用才触发 onChange；取消、Esc、外部点击放弃本次修改。显式传 false 可保留即时多选。 */
+  confirmMultiple?: boolean;
   label: ReactNode;
   value?: string | number | Array<string | number>;
   options?: SbLabeledSelectOption[];
@@ -355,9 +357,11 @@ export interface SbBattleMapPoint {
   /** 悬停或选中时的一行摘要，如「关系 8/10 · 预算 320 万」 */
   summary?: string;
 }
-/** 四个格子：客户资产（右上）、主攻区（左上）、客户资源（右下）、见单打单（左下） */
+/** 四个格子：客户资产（右上）、主攻区（右下）、客户资源（左上）、见单打单（左下） */
 export type SbBattleMapQuadrant = 'asset' | 'attack' | 'resource' | 'spot';
 export interface SbBattleMapProps {
+  /** linear 保持连续比例尺；equal 按业务阈值分段映射，使四个分类区域等大。 */
+  layout?: 'linear' | 'equal';
   points?: SbBattleMapPoint[];
   /** 分界线，默认都是 5.5 */
   thresholds?: { potential?: number; relationship?: number };

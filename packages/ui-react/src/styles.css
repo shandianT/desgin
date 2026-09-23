@@ -79,6 +79,15 @@
 .sb-lselect:focus-within { border-color: var(--ui-focus); box-shadow: 0 0 0 2px var(--ui-selected); }
 .sb-lselect-label { color: var(--ui-secondary); font-size: var(--ui-text-body); white-space: nowrap; margin-right: var(--ui-space-1); }
 .sb-lselect-control { flex: 1; min-width: 80px; } .sb-lselect-disabled { background: var(--ui-background); color: var(--ui-muted); }
+.sb-lselect-confirm { height: auto; padding: var(--ui-space-2) var(--ui-space-3); gap: var(--ui-space-2); justify-content: flex-start; }
+.sb-multifilter-summary { flex: 1; text-align: left; }
+.sb-multifilter { width: min(19rem, calc(100vw - var(--ui-space-8))); display: flex; flex-direction: column; gap: var(--ui-space-3); }
+.sb-multifilter-options { display: flex; flex-direction: column; max-height: 45vh; overflow: auto; gap: var(--ui-space-1); }
+.sb-multifilter-options .ant-checkbox-wrapper { padding: var(--ui-space-2); margin: 0; border-radius: var(--ui-radius-control); }
+.sb-multifilter-options .ant-checkbox-wrapper:hover { background: var(--ui-selected); }
+.sb-multifilter-footer { display: flex; justify-content: flex-end; gap: var(--ui-space-2); padding-top: var(--ui-space-3); border-top: 1px solid var(--ui-line); }
+.sb-multifilter-footer > :first-child { margin-right: auto; }
+.sb-multifilter-empty { color: var(--ui-muted); padding: var(--ui-space-3); }
 /* SbMetricStrip：指标横排，右侧周期与口径 */
 .sb-mstrip { display: flex; flex-direction: column; gap: var(--ui-space-2); }
 .sb-mstrip-items { flex: 1; display: grid; grid-template-columns: repeat(var(--sb-mstrip-cols, auto-fit), minmax(150px, 1fr)); gap: var(--ui-space-3); }

@@ -1,0 +1,23 @@
+{
+  "mode": "synthetic-cross-year-fixture",
+  "productionVerified": false,
+  "results": [
+    {
+      "name": "统计年份支持点选 2023、输入更早年份，全年与全部年份有明确区别",
+      "passed": true
+    },
+    {
+      "name": "列表关单年份实际查询历史记录，分页继续保留所选年份，清空包含未登记日期",
+      "passed": true
+    },
+    {
+      "name": "年份与阶段、搜索组合；无结果、清除和统计失败重试可恢复",
+      "passed": true
+    },
+    {
+      "name": "年份选择在桌面和手机可操作，无整页横向溢出",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

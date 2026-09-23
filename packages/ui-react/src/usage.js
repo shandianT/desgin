@@ -133,6 +133,11 @@ import { SbPageHeader } from '${PKG}';
 
   SbLabeledSelect: `import { SbLabeledSelect } from '${PKG}';
 
+// 多选筛选默认复选框：勾选暂存，应用才更新；取消、Esc、外部点击保留原条件。
+// 只有需兼容即时多选时显式传 confirmMultiple={false}。
+<SbLabeledSelect label="阶段" mode="multiple"
+  value={stages} options={stageOptions} onChange={setStages} />
+
 <SbLabeledSelect label="象限" value={q} onChange={setQ}
   options={[{ value: 'attack', label: '主攻区', count: 9 }, { value: 'asset', label: '客户资产', count: 12 }]} />
 // 不传 value 显示「全部」；清空回到「全部」`,
@@ -281,7 +286,10 @@ const groups = [
 <SbSegmented value={period} onChange={setPeriod} options={[{ value: 'year', label: '本年' }, { value: 'all', label: '历年' }]} />
 // 默认 size="small"；多于 5 项用 SbTabs 或下拉`,
 
-  SbBattleMap: `import { SbBattleMap } from '${PKG}';
+  SbBattleMap: `// layout="equal"：按阈值分段映射、四区等大；原始分数与象限归属不变。
+// 默认 linear 保持连续比例尺。
+// 默认正方形；页面可用 CSS 给 .sb-bmap-square 分配宽高，SVG 随容器更新，圆点与文字不拉伸。
+import { SbBattleMap } from '${PKG}';
 
 const points = [
   { id: 1, name: '华宸数据科技', potential: 8, relationship: 8, tone: 'good', amountBand: 'large', summary: '关系 8/10 · 预算 320 万' },

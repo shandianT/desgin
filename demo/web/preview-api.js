@@ -585,7 +585,8 @@
     if (path === '/opportunities') {const rows = filteredOpportunities(a, p); return pagination(rows, p, {summary: {total: rows.length, open_amount: sum(rows.filter(o => o.status === 'open'), 'amount')}, team_options: directoryTeams(a), facets: {teams: uniq(rows.map(o => o.team_name)), owners: uniq(rows.map(o => o.owner_name)), product_lines: uniq(rows.map(o => o.product_line))}});}
     if (path === '/opportunities/overview') {
       const all = visibleOpportunities(a, p), quarters = p.getAll('quarters').map(Number), year = Number(p.get('year') || yearNow());
-      const selected = value => Boolean(value) && Number(String(value).slice(0, 4)) === year && (!quarters.length || quarters.includes(Math.ceil(Number(String(value).slice(5, 7)) / 3)));
+      // 与原页面 quarterSelection / matchesQuarter 契约一致：空季度表示全部历史。
+      const selected = value => !quarters.length || Boolean(value) && Number(String(value).slice(0, 4)) === year && quarters.includes(Math.ceil(Number(String(value).slice(5, 7)) / 3));
       const unfilteredCrm = localDataset && !quarters.length;
       const rows = unfilteredCrm ? all : all.filter(o => selected(o.expected_close_date));
       const metrics = {total: rows.length, active: rows.filter(o => o.status === 'open').length,

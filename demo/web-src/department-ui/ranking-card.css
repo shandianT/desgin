@@ -1,0 +1,14 @@
+.department-ui .ds-fd-rank { background: var(--ui-surface); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); padding: var(--ui-space-3) var(--ui-space-4); display: flex; flex-direction: column; gap: var(--ui-space-2); min-width: 0; }
+.department-ui .ds-fd-rank-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--ui-space-2); }
+.department-ui .ds-fd-rank-head b { display: block; font-weight: 600; }
+.department-ui .ds-fd-rank-head span { display: block; font-size: var(--ui-text-small); }
+.ds-fd-rank-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--ui-space-2); }
+.ds-fd-rank-row { display: flex; align-items: center; gap: var(--ui-space-3); padding: var(--ui-space-2); border-radius: var(--ui-radius-control); }
+.ds-fd-rank-row.is-selected { background: var(--ui-selected); }
+.ds-fd-rank-no { flex: none; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--ui-background); color: var(--ui-secondary); font-size: var(--ui-text-small); font-weight: 600; font-variant-numeric: tabular-nums; }
+.ds-fd-rank-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ds-fd-rank-main b { font-weight: 600; }
+.ds-fd-rank-main > span { font-size: var(--ui-text-small); color: var(--ui-muted); }
+.ds-fd-rank-main .ant-progress { margin: 0; }
+.ds-fd-rank-value { flex: none; font-weight: 650; font-variant-numeric: tabular-nums; }
+.ds-rank-chart { min-width: 0; }

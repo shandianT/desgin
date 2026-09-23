@@ -28,6 +28,7 @@ jobs:
         run: |
           cd packages/ui-react && npm ci --legacy-peer-deps && cd ../..
           node packages/tokens/sync.mjs
+          node tools/build-web-demo.mjs
           cd packages/ui-react && npm run build && cd ../..
           node tools/build-site.mjs specs/salesbuddy --portable out/site
           cp specs/salesbuddy/站点/评审稿-文案与图表.html out/site/
