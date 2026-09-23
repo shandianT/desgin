@@ -11,6 +11,12 @@ const MAP_POINTS = [
 ];
 Page({
   data: {
+    summaryMetrics: [{ label: '未完成', value: 18 }, { label: '已完成', value: 4 }, { label: '全部任务', value: 22 }],
+    summaryTags: [{ label: '主攻区' }, { label: 'Tier-1' }, { label: '需关注', tone: 'watch' }],
+    descRows: [{ label: '任务类别', value: '客户任务' }, { label: '关联商机', value: '知识助理项目', tappable: true }, { label: '截止时间', value: '2026年9月23日 09:00', tone: 'danger' }, { label: '合作伙伴', value: '' }, { label: '客户来源', value: null, required: true }],
+    descGrid: [{ label: '客户类型', value: '商机客户' }, { label: '客户名称', value: '星河智能制造（广州）有限公司' }, { label: '拜访方式', value: '线上会议' }, { label: '拜访时长', value: '45 分钟' }, { label: '下一步', value: '整理试点清单，预约下一次方案沟通' }, { label: '首次拜访', value: '否' }],
+    descShort: [{ label: '智能质检试点', value: '128 万 · 方案沟通' }, { label: '知识助理项目', value: '48 万 · 商机确认' }],
+
     filter: ['risk'], filterOpts: [{ value: 'risk', label: '有风险', count: 6 }, { value: 'main', label: '主攻区', count: 9 }, { value: 'asset', label: '客户资产', count: 7 }, { value: 'mine', label: '本人负责', count: 24 }],
     rows: [{ name: '华宸数据科技有限公司', summary: '客户资产 · 关系 8/10 · 地盘 HB-01', tone: 'good', reason: '近 30 天有高层拜访', time: '2 天前跟进' }, { name: '北辰智造集团', summary: '主攻区 · 关系 4/10', tone: 'watch', reason: '一周无跟进', time: '9 天前跟进' }],
     search: '', searchLoading: false,

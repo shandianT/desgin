@@ -28,6 +28,23 @@ const callMethod = (method, detail, ev) => async (comp, simulate) => {
   comp.instance[method]({ detail }); await simulate.sleep(20); return hit;
 };
 module.exports = {
+  'sb-summary-card': [
+    { title: '小号加载中', data: { size: 'small', loading: true, title: '今日经营摘要', metrics: [{ label: '今日待办', value: null }] }, expect: ['今日经营摘要', '…', 'small'] },
+    { title: '标题加指标', data: { title: '我的待办', subtitle: '每一项都可进入详情', scope: '仅本人', metrics: [{ label: '未完成', value: 18 }, { label: '已完成', value: 4 }, { label: '毛利', value: null }] }, expect: ['我的待办', '仅本人', '18', '未登记'] },
+    { title: '客户摘要', data: { mark: '星河智能', title: '星河智能制造（广州）有限公司', subtitle: '制造业 · 渠道销售-南区', tags: [{ label: '主攻区' }, { label: '需关注', tone: 'watch' }] }, expect: ['星河智能制造', '主攻区', '需关注'] },
+    { title: '进度', data: { title: '创建新客户', progress: 25, progressLabel: '必填已完成 2／8' }, expect: ['必填已完成 2／8'] },
+    { title: '指标可点', data: { title: '风险中心', metricsTappable: true, metrics: [{ label: '待解除', value: 2 }] }, expect: ['待解除'], event: tapNth('.sb-summary-metric', 'metrictap', 0) },
+  ],
+  'sb-desc-list': [
+    { title: '行式', data: { items: [{ label: '负责人', value: '王新源' }, { label: '截止时间', value: '2026年9月23日 09:00', tone: 'danger' }, { label: '关联商机', value: '知识助理项目', tappable: true }] }, expect: ['负责人', '王新源', '知识助理项目'] },
+    { title: '空值与待补充', data: { items: [{ label: '合作伙伴', value: '' }, { label: '客户来源', value: null, required: true }] }, expect: ['未填写', '待补充'] },
+    { title: '两列', data: { layout: 'grid', items: [{ label: '客户类型', value: '商机客户' }, { label: '拜访方式', value: '线上会议' }] }, expect: ['商机客户', '线上会议'] },
+    { title: '两列可点', data: { layout: 'grid', items: [{ key: 'op', label: '商机', value: '智能质检', tappable: true }] }, expect: ['智能质检'], event: tapNth('.sb-desc-cell', 'tap', 0) },
+  ],
+  'sb-section': [
+    { title: '标题说明链接', data: { title: '当前商机', description: '4 个商机', extraLabel: '查看全部' }, expect: ['当前商机', '4 个商机', '查看全部'], event: tapNth('.sb-section-extra', 'extra', 0) },
+    { title: '无卡片', data: { title: '判断依据', plain: true }, expect: ['判断依据', 'is-plain'] },
+  ],
   'sb-tab-bar': [
     { title: '默认五个 Tab', data: { value: 'home' }, expect: ['总览', '客户', '商机', '拜访', '我的'], event: tapDomNth('.t-tab-bar-item--t-tab-bar-item__icon', 'change', 1) },
     { title: '自定义三个', data: { items: [{ key: 'a', label: '看板', icon: 'dashboard', pagePath: 'pages/bi/index' }, { key: 'b', label: '任务', icon: 'task', pagePath: 'pages/tasks/index' }], value: 'b' }, expect: ['看板', '任务'] },
@@ -50,6 +67,7 @@ module.exports = {
     { title: '禁用', data: { label: '备注', disabled: true, value: '只读内容' }, expect: ['备注'] },
   ],
   'sb-segmented': [
+    { title: '撑满一行', data: { block: true, options: [{ value: 'a', label: '营销成熟度' }, { value: 'b', label: '营销效率' }, { value: 'c', label: '销售画像' }], value: 'a' }, expect: ['营销效率', 'block'] },
     { title: '中号', data: { options: [{ value: 'map', label: '地图' }, { value: 'list', label: '列表' }], value: 'map' }, expect: ['地图', '列表'], event: tapNth('.sb-seg-item', 'change', -1) },
     { title: '小号带禁用', data: { size: 'small', options: [{ value: 'q', label: '本季' }, { value: 'y', label: '本年', disabled: true }], value: 'q' }, expect: ['本季', '本年'] },
   ],
@@ -62,6 +80,7 @@ module.exports = {
     { title: '加载中', data: { loading: true }, expect: ['正在读取'] },
   ],
   'sb-kpi-card': [
+    { title: '紧凑', data: { size: 'compact', label: '已登记确收', value: '¥23,130,000', note: '6 笔已确认记录' }, expect: ['¥23,130,000', 'compact'] },
     { title: '有值带单位与变化', data: { label: '年度合同额', value: 1880, unit: '万元', change: { text: '比上季 +12%', tone: 'up', good: true } }, expect: ['年度合同额', '1880', '万元', '比上季 +12%', 'tone-good'], event: tapFirst('.sb-kpi', 'tap') },
     { title: '无好坏灰', data: { label: '客户', value: 24, unit: '家', change: { text: '比上季 +2 家', tone: 'up' } }, expect: ['tone-flat'] },
     { title: '缺失', data: { label: '回款', value: null, unit: '万元', note: '财务还没登记' }, expect: ['未登记', '财务还没登记'] },
@@ -102,13 +121,14 @@ module.exports = {
     { title: '骨架', data: { state: 'loading', skeleton: true } },
     { title: '空', data: { state: 'empty', showClear: true }, expect: ['没有匹配', '清除条件'], event: tapFirst('t-button', 'clear', '.t-button--t-button') },
     { title: '失败并重试', data: { state: 'error' }, expect: ['重试', '不会清除'], event: tapFirst('t-button', 'retry', '.t-button--t-button') },
+    { title: '失败不带小字', data: { state: 'error', retryNote: '' }, expect: ['重试'] },
     { title: '无权限', data: { state: 'forbidden' }, expect: ['权限'] },
   ],
   'sb-filter-bar': [
     { title: '已选', data: { title: '客户', scope: '本人负责', options: [{ value: 'risk', label: '有风险', count: 6 }, { value: 'main', label: '主攻区', count: 9 }], value: ['risk'], resultCount: 6 }, expect: ['有风险', '已选 1 项', '共 6'], event: tapFirst('.sb-chip', 'change') },
     { title: '禁用', data: { options: [{ value: 'a', label: '甲' }], disabled: true }, expect: ['甲'] },
   ],
-  'sb-search': [{ title: '默认', data: { value: '华宸' } }, { title: '加载中', data: { loading: true } }, { title: '禁用', data: { disabled: true } }],
+  'sb-search': [{ title: '无底色限字数', data: { value: '华宸', plain: true, maxlength: 100 }, expect: ['is-plain'] }, { title: '默认', data: { value: '华宸' } }, { title: '加载中', data: { loading: true } }, { title: '禁用', data: { disabled: true } }],
   'sb-list-row': [
     { title: '默认', data: { name: '华宸数据', summary: '客户资产', tone: 'good', time: '2 天前' }, expect: ['华宸数据', '客户资产', '向好', '2 天前'], event: tapFirst('.sb-row', 'tap') },
     { title: '选中', data: { name: '北辰', selected: true }, expect: ['北辰'] },
@@ -118,8 +138,11 @@ module.exports = {
     { title: '默认', data: { primaryLabel: '归档', secondaryLabel: '存草稿' }, expect: ['归档', '存草稿'], event: tapFirst('t-button', 'secondary', '.t-button--t-button') },
     { title: '处理中', data: { primaryLabel: '归档', loading: true }, expect: ['处理中'] },
     { title: '禁用说原因', data: { primaryLabel: '归档', disabled: true, disabledReason: '还有 3 项必填' }, expect: ['还有 3 项必填'] },
+    { title: '看似禁用仍可点', data: { primaryLabel: '发送任务', inactive: true, disabledReason: '还没选负责人' }, expect: ['还没选负责人', 'sb-bottombar-inactive'], event: tapFirst('t-button', 'primary', '.t-button--t-button') },
+    { title: '按钮上方说明', data: { primaryLabel: '提交完成', note: '提交后由李明哲验收' }, expect: ['提交后由李明哲验收'] },
   ],
   'sb-field': [
+    { title: '放进卡片', data: { label: '任务描述', plain: true }, expect: ['任务描述', 'is-plain'] },
     { title: '必填', data: { label: '客户名称', required: true }, expect: ['客户名称', '*'] },
     { title: '错误', data: { label: '下一步', error: '要含时间与目标' }, expect: ['要含时间与目标'] },
     { title: '只读', data: { label: '地盘', readOnly: true, value: 'HB-01' }, expect: ['HB-01'] },
@@ -130,10 +153,11 @@ module.exports = {
     { title: '末页', data: { current: 7, total: 124, pageSize: 20 } },
     { title: '加载更多', data: { mode: 'more', total: 124 }, expect: ['共 124', '加载更多'], event: tapFirst('t-button', 'more', '.t-button--t-button') },
     { title: '加载更多到底', data: { mode: 'more', total: 124, end: true }, expect: ['已显示全部'] },
+    { title: '自定义说明', data: { mode: 'more', total: 24, summary: '已显示 20／24 个商机', plain: true }, expect: ['已显示 20／24 个商机', 'is-plain'] },
   ],
   'sb-metric-tile': [{ title: '有值', data: { value: 24, label: '客户数' }, expect: ['24', '客户数'] }, { title: '缺失', data: { value: null, label: '毛利' }, expect: ['未登记'] }],
   'sb-page-header': [{ title: '默认', data: { title: '客户', scope: '本人负责 · 24 家' }, expect: ['客户', '24 家'] }],
-  'sb-ai-badge': [{ title: '生成中', data: { state: 'generating' }, expect: ['AI'] }, { title: '待确认', data: { state: 'pending' }, expect: ['待确认'] }, { title: '已确认', data: { state: 'confirmed', confirmedBy: '李鹏程' }, expect: ['李鹏程'] }],
+  'sb-ai-badge': [{ title: '生成中', data: { state: 'generating' }, expect: ['AI'] }, { title: '待确认', data: { state: 'pending' }, expect: ['待确认'] }, { title: '已确认', data: { state: 'confirmed', confirmedBy: '李鹏程' }, expect: ['李鹏程'] }, { title: '建议', data: { state: 'advice' }, expect: ['AI 建议'] }],
   'sb-ai-field': [
     { title: 'AI 原值待确认', data: { label: '联系人角色', value: '张总（CIO）', state: 'ai' }, expect: ['联系人角色', '待确认', '确认'], event: tapFirst('.sb-link', 'confirm') },
     { title: '人已修改', data: { label: '联系人角色', value: '张总', aiValue: '张总（CIO）', state: 'edited' }, expect: ['已由你修改', '恢复'], event: tapFirst('.sb-link', 'restore') },

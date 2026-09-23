@@ -1,4 +1,4 @@
-<view class="sb-kpi" hover-class="sb-kpi-hover" bind:tap="onTap" aria-role="button" aria-label="{{label}}：{{text}}{{missing || loading ? '' : unit}}{{change ? '，' + change.text : ''}}">
+<view class="sb-kpi {{size === 'compact' ? 'compact' : ''}}" hover-class="sb-kpi-hover" bind:tap="onTap" aria-role="button" aria-label="{{label}}：{{text}}{{missing || loading ? '' : unit}}{{change ? '，' + change.text : ''}}">
   <view class="sb-kpi-label">{{label}}</view>
   <view class="sb-kpi-row">
     <text class="sb-kpi-value {{missing ? 'missing' : ''}} {{loading ? 'loading' : ''}}">{{text}}</text>

@@ -3,3 +3,4 @@
 .sb-ai-generating { background: var(--ui-selected); color: var(--ui-primary); }
 .sb-ai-pending { background: var(--ui-warning-soft); color: var(--ui-warning); }
 .sb-ai-confirmed { background: var(--ui-neutral-soft); color: var(--ui-neutral); }
+.sb-ai-advice { background: var(--ui-selected); color: var(--ui-primary); }

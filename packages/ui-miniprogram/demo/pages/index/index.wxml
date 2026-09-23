@@ -183,6 +183,23 @@
   <view class="card"><sb-result status="info" title="草稿已保存" description="回到列表后可以从「我的草稿」继续。" primaryLabel="回到列表" /></view>
   <view class="card"><sb-result status="warning" title="还有 3 项必填未确认" description="下一步、客户预算、联系人角色。" primaryLabel="回去补充" /></view>
 
+  <view class="h">页面摘要卡 sb-summary-card</view>
+  <view class="sub">页面顶部白卡，替代深色横幅：标题、范围、指标一行（缺失写未登记）</view>
+  <view class="card"><sb-summary-card title="我的待办" subtitle="每一项都可进入详情，追踪状态并反馈完成结果" scope="仅本人" metrics="{{summaryMetrics}}" /></view>
+  <view class="sub">客户摘要：首字方块、状态标签；建档进度</view>
+  <view class="card"><sb-summary-card mark="星河智能" title="星河智能制造（广州）有限公司" subtitle="制造业 · 商机客户 · 渠道销售-南区" meta="负责人 王新源 · 更新于 2026-09-23" tags="{{summaryTags}}" /></view>
+  <view class="card"><sb-summary-card title="创建新客户" subtitle="手动填写或语音生成草案，创建后仅归属本人" progress="25" progressLabel="必填已完成 2／8" /></view>
+
+  <view class="h">描述列表 sb-desc-list</view>
+  <view class="sub">行式（t-cell）：可点的行带箭头；空值未填写、必填空值待补充</view>
+  <view class="card"><sb-desc-list items="{{descRows}}" /></view>
+  <view class="sub">两列式：拜访结构化信息</view>
+  <view class="card"><sb-desc-list layout="grid" items="{{descGrid}}" /></view>
+
+  <view class="h">区块卡片 sb-section</view>
+  <view class="sub">标题、说明、右侧一个链接；卡里不再套带边框的小卡</view>
+  <sb-section title="当前商机" description="4 个商机 · 在推 298 万" extraLabel="查看全部"><sb-desc-list items="{{descShort}}" /></sb-section>
+
   <view class="h">头像 sb-avatar</view>
   <view class="sub">取字：中文去姓取后两字，两字原样，英文取前两个字母；三档 48 / 64 / 80rpx</view>
   <view class="row"><sb-avatar name="王小明" size="sm" /><sb-avatar name="王小明" /><sb-avatar name="王小明" size="lg" /><sb-avatar name="李雷" tone="neutral" /><sb-avatar name="欧阳修文" tone="success" /><sb-avatar name="zhangjt" tone="warning" /><sb-avatar name="" tone="danger" /><sb-avatar name="周玮" shape="square" /></view>

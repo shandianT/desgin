@@ -1,5 +1,7 @@
 .sb-seg { display: inline-flex; align-items: stretch; padding: var(--ui-space-1); border-radius: var(--ui-radius-control); background: var(--ui-neutral-soft); max-width: 100%; }
 .sb-seg-item { flex: 1 0 auto; display: inline-flex; align-items: center; justify-content: center; min-height: 56rpx; padding: 0 var(--ui-space-3); border-radius: var(--ui-radius-control); font-size: var(--ui-text-body); color: var(--ui-secondary); white-space: nowrap; }
+.sb-seg.block { display: flex; width: 100%; }
+.sb-seg.block .sb-seg-item { flex: 1 1 0; min-width: 0; }
 .sb-seg.small .sb-seg-item { min-height: 48rpx; padding: 0 var(--ui-space-2); font-size: var(--ui-text-small); }
 .sb-seg-item.on { background: var(--ui-surface); color: var(--ui-primary); font-weight: 600; box-shadow: var(--ui-shadow-popup); }
 .sb-seg-item.disabled { color: var(--ui-muted); }

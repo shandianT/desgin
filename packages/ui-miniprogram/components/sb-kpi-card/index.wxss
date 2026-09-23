@@ -1,4 +1,9 @@
 .sb-kpi { display: flex; flex-direction: column; gap: var(--ui-space-1); min-width: 0; padding: var(--ui-card-padding); border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); background: var(--ui-surface); }
+.sb-kpi.compact { padding: var(--ui-space-3); }
+.sb-kpi.compact .sb-kpi-label { font-size: 14px; }
+.sb-kpi.compact .sb-kpi-value { font-size: 20px; font-weight: 700; }
+.sb-kpi.compact .sb-kpi-value.missing { font-size: var(--ui-text-body); }
+.sb-kpi.compact .sb-kpi-unit { font-size: var(--ui-text-small); }
 .sb-kpi-hover { background: var(--ui-selected); }
 .sb-kpi-label { font-size: var(--ui-text-body); color: var(--ui-secondary); }
 .sb-kpi-row { display: flex; align-items: baseline; gap: var(--ui-space-1); min-width: 0; }

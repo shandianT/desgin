@@ -1,6 +1,6 @@
 # 部门小程序组件库
 
-放在 tdesign-miniprogram 1.16.1 之上的组合件、表单件、图表件与 AI 件，与 Web 端 `packages/ui-react` 一一对应。基础控件（按钮、输入、选择器、日期、弹层、提示）直接用 `t-*`，主题只靠两个文件：
+放在 tdesign-miniprogram 1.16.1 之上的组合件、表单件、图表件与 AI 件（0.8.0 起含从小程序 1.0.8 改版回流的摘要卡、描述列表、区块卡片），与 Web 端 `packages/ui-react` 一一对应。基础控件（按钮、输入、选择器、日期、弹层、提示）直接用 `t-*`，主题只靠两个文件：
 
 ```
 app.wxss 头两行：
@@ -13,17 +13,17 @@ app.wxss 头两行：
 | 组件 | 做什么 | 属性与事件 | 规则 |
 |---|---|---|---|
 | sb-status-tag | 红黄绿灰状态标签，必带文字，可带依据 | tone、label、reason、showReason | B-01 |
-| sb-state-panel | 加载中、空、失败可重试、无权限四态 | state、title、description、skeleton、showClear、retryLabel、clearLabel；事件 retry、clear | C-06 |
+| sb-state-panel | 加载中、空、失败可重试、无权限四态 | state、title、description、skeleton、showClear、retryLabel、clearLabel、retryNote（失败态按钮下的小字，默认「重试不会清除已选条件」，页面没有筛选条件时传空字符串）；事件 retry、clear | C-06 |
 | sb-filter-bar | 筛选栏：标题带范围、筛选片、已选数、结果数、清除 | title、scope、options、value、resultCount、resultLabel、disabled；事件 change | C-04 |
-| sb-search | 搜索框，带清除、占位、加载中、禁用；无结果由四态面板表达 | value、placeholder、clearable、loading、disabled；事件 change、search、clear | C-02、C-04 |
+| sb-search | 搜索框，带清除、占位、加载中、禁用；无结果由四态面板表达 | value、placeholder、clearable、loading、disabled、maxlength、plain（不带白底与页边距）；事件 change、search、clear | C-02、C-04 |
 | sb-list-row | 列表行：名称、摘要、状态、时间位置固定 | name、summary、tone、statusLabel、reason、time、selected、disabled、disabledReason；事件 tap | C-05 |
-| sb-bottom-bar | 底部固定操作条，主次按钮，含安全区 | primaryLabel、loading、loadingLabel、disabled、disabledReason、secondaryLabel、secondaryDisabled；事件 primary、secondary | C-01、X-05 |
-| sb-field | 表单项：标签常显、必填星号、错误就地、只读态；控件放 slot | label、required、error、help、readOnly、value（只读时显示） | C-02 |
+| sb-bottom-bar | 底部固定操作条，主次按钮等分（只有主按钮时撑满），含安全区；按钮上方一行说明或原因 | primaryLabel、loading、loadingLabel、disabled、disabledReason、inactive（看似禁用仍可点，primary 事件带 inactive:true，页面借此提示缺什么）、note、secondaryLabel、secondaryDisabled；事件 primary、secondary | C-01、X-05 |
+| sb-field | 表单项：标签常显、必填星号、错误就地、只读态；控件放 slot | label、required、error、help、readOnly、value（只读时显示）、plain（放进表单白卡时用） | C-02 |
 | sb-sheet | 底部弹层：标题、关闭、可选取消确定；不替代页面级返回 | visible、title、closeOnOverlay、cancelLabel、confirmLabel、confirmLoading；slot 默认与 footer；事件 close、confirm | C-07、X-03 |
-| sb-pagination | 分页或加载更多，显示共 N 条，末页禁用 | current、total、pageSize、mode（page 或 more）、loading、end；事件 change、more | C-05 |
+| sb-pagination | 分页或加载更多，显示共 N 条，末页禁用 | current、total、pageSize、mode（page 或 more）、loading、end、summary（自定义左侧说明）、plain；事件 change、more | C-05 |
 | sb-metric-tile | 指标卡：数字、说明、变化；缺失显示未登记，不显示 0 | value、label、note、missingText | B-03 |
 | sb-page-header | 页面标题、范围名紧邻、主操作放 slot | title、scope | T-02、B-05 |
-| sb-ai-badge | AI 标识，持续显示，含文字 | state、confirmedBy、text | A-02 |
+| sb-ai-badge | AI 标识，持续显示，含文字 | state（generating、pending、confirmed、advice：Agent 建议，仅供参考、不需逐条确认）、confirmedBy、text | A-02 |
 | sb-ai-field | 待确认字段三态，低把握给候选，可恢复 AI 建议 | label、required、value、aiValue、state、confidence、candidates、error；事件 change、confirm、restore | A-01、A-03、A-04 |
 | sb-ai-sources | AI 依据列表，默认折叠，每条可点；没有依据就不展示结论 | items、title、defaultExpanded；事件 tap（带 item） | A-03 |
 | sb-ai-progress | 生成过程：阶段、百分比、可取消并保留已生成部分，失败可重试 | stages、current、status（running、cancelled、failed、done）、detail；事件 cancel、retry | A-09、A-07 |
@@ -32,14 +32,17 @@ app.wxss 头两行：
 | sb-select | 表单单选：一行触发器加单列滚轮；筛选栏用 sb-labeled-select | label、value、options、placeholder、disabled、required；事件 change（value、option） | C-02、C-03 |
 | sb-amount-input | 金额输入：单位在右（默认万元），只收正数，失焦千分位、聚焦纯数字 | label、value、placeholder、unit、disabled、required、precision；事件 change（number 或 null） | C-02、B-03 |
 | sb-textarea | 多行文本：字数（默认 500）、自动增高 | label、value、placeholder、maxlength、disabled、required；事件 change | C-02 |
-| sb-segmented | 分段切换：自绘胶囊，选中白底加阴影与主色字 | options、value、size；事件 change | C-04、T-05 |
+| sb-segmented | 分段切换：自绘胶囊，选中白底加阴影与主色字；block 撑满等宽 | options、value、size、block；事件 change | C-04、T-05 |
 | sb-battle-map | 作战地图：自绘四象限，点色表状态、点大小表金额档，重叠聚合，缺潜力的不画进格子，空态给下一步 | points、thresholds、zoom、selectedId、unrated、loading；事件 pointtap、clustertap、zoomchange、unratedtap、emptyaction | 12 章 §2 |
-| sb-kpi-card | 指标卡：数字 32、单位小一号、变化只在有好坏时着色，缺失显示未登记 | label、value、unit、note、change、loading、missingText；事件 tap | 12 章 §3.1、B-03 |
+| sb-kpi-card | 指标卡：数字 32、单位小一号、变化只在有好坏时着色，缺失显示未登记；compact 为数字 20 | label、value、unit、note、change、loading、missingText、size（default 或 compact）；事件 tap | 12 章 §3.1、B-03 |
 | sb-chart-card | 图表卡片壳：标题、范围、口径 ⓘ，四态；图放默认 slot，图例放 legend slot | title、scope、caliber、state、emptyTitle、emptyDescription、summary；事件 retry、caliber | 12 章 §3.5、§4 |
 | sb-timeline | 时间轴：跟进历史与业务动态，自绘竖线加圆点，圆点色只由 tone 决定；末尾可放「进行中」占位；空列表不画空轴 | items[{key,time,title,description,tone,actor,tappable}]、pending、reverse、size（default 或 compact）、loading、emptyText；事件 tap（item） | C-05、B-01 |
 | sb-upload | 附件上传：t-upload 列表型薄壳，文件统一 {uid,name,size,status,url}；超类型、超大小、超数量就地红字说明不弹 toast | accept、maxSize（MB）、maxCount、multiple、value、disabled、hint、label、requestMethod；slot 无；事件 change（files、added）、remove（file、index） | C-02、C-06 |
 | sb-result | 结果页：t-result 薄壳，整页反馈；图标色走语义变量；一个主按钮一个次按钮，extra slot 放补充内容 | status（success、error、info、warning）、title、description、primaryLabel、primaryLoading、primaryDisabled、secondaryLabel、secondaryDisabled；slot extra；事件 primary、secondary | C-01、C-06、B-01 |
 | sb-avatar | 头像：t-avatar 薄壳，没有图片用姓名后两字（中文去姓、英文取前两个字母）；三档 48／64／80rpx；底色档默认主色淡底 | name、src、size（sm、md、lg）、tone（primary、neutral、success、warning、danger、sidebar）、shape（circle、square）；事件 tap | V-01、V-04 |
+| sb-summary-card | 页面摘要卡：页面顶部白卡，替代深色横幅；标题、副标题、范围小标签、首字方块、状态标签、一行指标（竖线分隔，缺失写未登记）、进度条 | title、subtitle、meta、scope、mark、tags[{label,tone}]、metrics[{label,value,unit,missingText}]、metricsTappable、progress、progressLabel、size（default 或 small）、loading；slot 默认与 side；事件 metrictap（index、item） | T-02、B-03、14 章 |
+| sb-desc-list | 描述列表：只读的「标签：值」清单；行式用 t-cell，两列式自绘；空值写未填写，必填空值写待补充（提醒色） | items[{key,label,value,required,missingText,tone,tappable}]、layout（row 或 grid）、title；事件 tap（key、index、item） | C-05、B-03 |
+| sb-section | 区块卡片：白底一圈细线，标题 16px、说明 14px、右侧一个链接；plain 时只要标题行 | title、description、extraLabel、plain；slot 默认与 extra；事件 extra | 14 章 |
 
 几处和 Web 端不同的地方：
 

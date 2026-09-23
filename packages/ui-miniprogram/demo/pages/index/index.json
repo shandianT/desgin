@@ -34,6 +34,9 @@
     "sb-timeline": "/components/sb-timeline/index",
     "sb-upload": "/components/sb-upload/index",
     "sb-result": "/components/sb-result/index",
-    "sb-avatar": "/components/sb-avatar/index"
+    "sb-avatar": "/components/sb-avatar/index",
+    "sb-summary-card": "/components/sb-summary-card/index",
+    "sb-desc-list": "/components/sb-desc-list/index",
+    "sb-section": "/components/sb-section/index"
   }
 }

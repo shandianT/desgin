@@ -43,6 +43,9 @@ metadata:
 | 分页或加载更多 | SbPagination | sb-pagination |
 | 指标数字（缺失显示未登记） | SbMetricTile | sb-metric-tile |
 | 页面标题加范围名 | SbPageHeader | sb-page-header |
+| 手机页面顶部摘要卡（替代深色横幅：标题、范围、状态标签、一行指标、进度） | SbPageHeader 加 SbMetricStrip | sb-summary-card |
+| 区块卡片（标题、说明、右侧一个链接） | antd Card（无阴影） | sb-section |
+| 只读「标签：值」清单（空值未填写、必填空值待补充） | antd Descriptions | sb-desc-list |
 | AI 生成标识 | SbAiBadge | sb-ai-badge |
 | AI 待确认字段 | SbAiField | sb-ai-field |
 | AI 依据列表 | SbAiSources | sb-ai-sources |

@@ -1,5 +1,5 @@
-<view class="sb-pager" aria-role="navigation" aria-label="分页">
-  <text class="sb-pager-total">共 {{total}} 条</text>
+<view class="sb-pager {{plain ? 'is-plain' : ''}}" aria-role="navigation" aria-label="分页">
+  <text class="sb-pager-total">{{summary || '共 ' + total + ' 条'}}</text>
   <block wx:if="{{mode === 'more'}}">
     <text wx:if="{{end}}" class="sb-pager-end">已显示全部</text>
     <t-button wx:else size="small" variant="outline" loading="{{loading}}" disabled="{{loading}}" bind:tap="onMore">{{loading ? '加载中…' : '加载更多'}}</t-button>

@@ -1,4 +1,4 @@
-<view class="sb-field {{error ? 'error' : ''}} {{readOnly ? 'readonly' : ''}}" aria-role="group" aria-label="{{label}}">
+<view class="sb-field {{plain ? 'is-plain' : ''}} {{error ? 'error' : ''}} {{readOnly ? 'readonly' : ''}}" aria-role="group" aria-label="{{label}}">
   <view class="sb-field-label"><text>{{label}}</text><text wx:if="{{required}}" class="sb-req" aria-label="必填"> *</text><text wx:if="{{readOnly}}" class="sb-field-ro">只读</text></view>
   <view wx:if="{{readOnly}}" class="sb-field-value">{{value || '未填写'}}</view>
   <view wx:else class="sb-field-control"><slot></slot></view>
