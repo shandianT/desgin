@@ -1,0 +1,59 @@
+{
+  "mode": "synthetic-preview",
+  "realTranscriptionVerified": false,
+  "results": [
+    {
+      "name": "连续勾选保持展开，应用前不改变结果；应用只查询一次",
+      "passed": true
+    },
+    {
+      "name": "取消、Esc、点外部均保留生效条件；搜索和键盘勾选可用",
+      "passed": true
+    },
+    {
+      "name": "清空并应用恢复全部，分页继续加载",
+      "passed": true
+    },
+    {
+      "name": "阶段与关键词组合筛选，空结果可恢复",
+      "passed": true
+    },
+    {
+      "name": "作战地图四区等大，70 分分类和原始评分保留",
+      "passed": true
+    },
+    {
+      "name": "录音与拖拽区同时可见；非法文件被拦截且保留文字",
+      "passed": true
+    },
+    {
+      "name": "选文件只触发一次原上传；示例接口失败后可重试且不丢文字",
+      "passed": true
+    },
+    {
+      "name": "拖拽文件只触发一次原上传",
+      "passed": true
+    },
+    {
+      "name": "虚拟麦克风可开始、计时、结束并进入原上传；录音时禁用上传",
+      "passed": true
+    },
+    {
+      "name": "合成状态检查：上传进度、提取成功与处理期间禁用",
+      "passed": true
+    },
+    {
+      "name": "录入页面在窄屏和较矮桌面可操作",
+      "passed": true
+    },
+    {
+      "name": "模拟拒绝麦克风权限后恢复录入操作",
+      "passed": true
+    },
+    {
+      "name": "总览、任务、创建客户页面冒烟，无脚本错误",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

@@ -54,6 +54,10 @@ if (existsSync(join(tokensPkg, 'sync.mjs'))) run('同步 tokens 包产物', 'nod
 const uiReact = join(root, 'packages', 'ui-react');
 if (existsSync(join(uiReact, 'node_modules', 'vite'))) run('构建 Web 组件库目录页', 'npm', ['run', 'build', '--silent'], uiReact);
 else if (existsSync(uiReact)) console.log('· 未安装 packages/ui-react 依赖，跳过组件库构建（cd packages/ui-react && npm i --legacy-peer-deps）');
+if (existsSync(join(root, 'demo/web-src/department-ui'))) {
+  run('Web 展示源码样式检查', 'node', [join(root, 'tools/lint-styles.mjs'), join(root, 'demo/web-src/department-ui')], root);
+  if (existsSync(join(uiReact, 'node_modules/esbuild'))) run('重建 Web 样板', 'node', [join(root, 'tools/build-web-demo.mjs')], root);
+}
 // 类型声明与入口导出一致：index.js 每个 export 在 index.d.ts 里都要有声明，反之亦然
 {
   const idx = join(uiReact, 'src', 'index.js'), dts = join(uiReact, 'src', 'index.d.ts');

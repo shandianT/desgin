@@ -2,6 +2,12 @@
 
 版本号规则：只改值升修订号，加组件或属性升次版本，改含义或删属性升主版本。每条写「改了什么、对使用方有什么影响」。
 
+## 未发布（2026-09-23）
+
+- `SbLabeledSelect` 新增可选 `confirmMultiple`：连续勾选后点击应用才调用 `onChange`；取消、Esc 和外部点击保留原条件，支持搜索与键盘。默认行为不变。
+- `SbBattleMap` 新增可选 `layout="equal"`：按阈值分段映射为四个等大区域，保持原始评分和分类；默认仍为线性布局。
+- GitHub Pages Web 样板直接从组件源码构建采用上述变化。npm 版本仍为 0.7.0，本轮未发布新包。
+
 ## 0.7.0（2026-09-21）
 
 - 新增四个薄壳组件 SbTimeline、SbUpload、SbResult、SbAvatar；SbTable 透传排序与勾选；SbPagination 每页条数与加载更多；SbSideNav 节奏对齐；目录页加「基础控件怎么用」「备用控件」两节、图标搜索、Tag 去混淆；配套 15 章组件选型指南。

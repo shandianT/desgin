@@ -1,0 +1,189 @@
+{
+  "sourceArchive": "SalesBuddy-Web-v10.zip",
+  "archiveSha256": "9ea5483e8a5cd4c0820d54716ff87e0294bccaef8c01a2da4ef074dc276d8ddf",
+  "matchedBaselineCommit": "f6fbd4b36f9695f4f20fa12577677d36c44a7b60",
+  "matchedArtifacts": [
+    "bundle.js",
+    "department-ui/app.js",
+    "department-ui/app.css"
+  ],
+  "originalFiles": [
+    {
+      "path": "department-ui/Bi.jsx",
+      "sha256": "b842ea4a1bded30b4119c9df23582fa6c06534831e7741f03f1261fe04f5baef"
+    },
+    {
+      "path": "department-ui/tasks.css",
+      "sha256": "e48b394812dc30dec132b975543e3fda5e65a5464b9812ebf9312d64b9d18306"
+    },
+    {
+      "path": "department-ui/Tasks.jsx",
+      "sha256": "d7eb6ecbf5344f9b05741a22b7e0ca0eec70aeee921232b9f564a7d8c36741e1"
+    },
+    {
+      "path": "department-ui/FdePages.jsx",
+      "sha256": "e56405e44fbad982d10d2544c3b370cc187d3118184c8aea76e71f57cabe999a"
+    },
+    {
+      "path": "department-ui/TaskDetail.jsx",
+      "sha256": "71b98712870a78b938addd12735edc4419121710bcd7f24ed3172507c79a8ae1"
+    },
+    {
+      "path": "department-ui/Opportunities.jsx",
+      "sha256": "ebaf105e6d662a645e128700fb417fb48c86af530d047d94432d39437458c0c3"
+    },
+    {
+      "path": "department-ui/CustomerCreate.jsx",
+      "sha256": "81678ff6e68bb87979f6f3750ece13adc76558759f4a1eff6838109622967d37"
+    },
+    {
+      "path": "department-ui/Profile.jsx",
+      "sha256": "b8429aed022a919318000fa3d0d49cb2ae16809308abcdcdb079ba996255ea4a"
+    },
+    {
+      "path": "department-ui/visit-entry.css",
+      "sha256": "c808b569c293f4f30e94b553347e7793918cc49e0142413a7ba494c6df344416"
+    },
+    {
+      "path": "department-ui/opportunity-detail.css",
+      "sha256": "a52e54fabafb6b83f5e56bf7c753559b5335d42423b9780be60ed980b09ecd1f"
+    },
+    {
+      "path": "department-ui/profile.css",
+      "sha256": "b186355111447b8241a15db70731d62115bf52d250d0d929f5baff30ab43334c"
+    },
+    {
+      "path": "department-ui/Customers.jsx",
+      "sha256": "9ae3dc0a4d1a4f808a8ebaa1dcf3426d00e336d8633f483d17388e40746a700b"
+    },
+    {
+      "path": "department-ui/fde-visit-opportunity.css",
+      "sha256": "c305b36c79b50eddf3904e0828fd38bff5805812ce265d30727dcb2c162caac1"
+    },
+    {
+      "path": "department-ui/customer-assets.css",
+      "sha256": "d7293aa108a11c377b812a12af244cdef7faf729e3845bc7d8fbf58ee92e0207"
+    },
+    {
+      "path": "department-ui/small-pages.css",
+      "sha256": "c193f3782a6cd4a50ffb66b52557d96caae5e32d8f8f22364329437e0a5501cb"
+    },
+    {
+      "path": "department-ui/SmallPages.jsx",
+      "sha256": "84e51eecfb4f6718dc5b866bc06ccc191b2c669c7f7e3014df8afd6d31dc26ad"
+    },
+    {
+      "path": "department-ui/index.jsx",
+      "sha256": "c9a6078ad25fa7483bf9eb45256ffd1c3b6996a9dc4a8f9842ddd97c6ca0fd73"
+    },
+    {
+      "path": "department-ui/task-detail.css",
+      "sha256": "5651bf9856209d1aba0925cd4d216b5a6d0addd79c8cd948ab1c0123f7762cce"
+    },
+    {
+      "path": "department-ui/TaskCreate.jsx",
+      "sha256": "50761834b367b6030c4668ec70a052e8750661ce5809b4d931a1c637664788ab"
+    },
+    {
+      "path": "department-ui/opportunities.css",
+      "sha256": "e7e9fbc6f6974a03f43337c29061e40f98f737aca2a3be9e97e121aa4301bf5b"
+    },
+    {
+      "path": "department-ui/customers.css",
+      "sha256": "95147fb7b0fdd0ca316cd5382d879b4c2930776824074f17d94e32339bfde9af"
+    },
+    {
+      "path": "department-ui/login.css",
+      "sha256": "300909c64381ba353134645ace1f3f6031fd4ae725d566fd081b994b17d2b50f"
+    },
+    {
+      "path": "department-ui/bi.css",
+      "sha256": "0cdee357a218be6da70247ac948a0ed0b5a09e142445e65f1581d706bda02891"
+    },
+    {
+      "path": "department-ui/opportunity-create.css",
+      "sha256": "847f39f3c12ad6a683d8fadf36569b35cc8d5e085f7b902f2fb16486fe4103d6"
+    },
+    {
+      "path": "department-ui/Frame.jsx",
+      "sha256": "49b17600607e21ce21de18591e65b0692316980f7482e8874c1623027ce43dbd"
+    },
+    {
+      "path": "department-ui/frame.css",
+      "sha256": "97c8ee2fe78e20e3ff6315ee89a8c7b30e6994f1f35b82c89c73b210f97f2dc1"
+    },
+    {
+      "path": "department-ui/shared.css",
+      "sha256": "adff5d7eaab50500d25cd58fdfae05ec1fa16671d5d1aece9b53a78ce4a37086"
+    },
+    {
+      "path": "department-ui/CustomerDetail.jsx",
+      "sha256": "01a87389e09e65eff2faad374fbccff6daf1f11f5d666413587154e29a1fbb77"
+    },
+    {
+      "path": "department-ui/demo-create.css",
+      "sha256": "ec1ba4d53f53e70905f947d5566406663f40df7e1886ac7cdc28f53ef5419056"
+    },
+    {
+      "path": "department-ui/CustomerAssets.jsx",
+      "sha256": "369cd3d9b177e2fead516caf42818d6f92abaaa600347b943c83db97f4083507"
+    },
+    {
+      "path": "department-ui/DemoCreate.jsx",
+      "sha256": "084a77ef71256e3e0921b03ad5624d56a6322aa63e575974d12afbd8cfb41558"
+    },
+    {
+      "path": "department-ui/Home.jsx",
+      "sha256": "395efd288f07eecf6348e26ebee857a0e987bef482a0a5a09b4ba239dd3fd95d"
+    },
+    {
+      "path": "department-ui/Login.jsx",
+      "sha256": "8c9bd3f137ba99f40264e0a8e167c83a333a12c390d49aee3e4928d82d20faba"
+    },
+    {
+      "path": "department-ui/visit-confirm.css",
+      "sha256": "9fd2dc878e622d3f0cede1d343a00cc7ea4242ec2c1a00b660e4b498f9e692fc"
+    },
+    {
+      "path": "department-ui/OpportunityCreate.jsx",
+      "sha256": "30de5665cd7c514bb3cfcde9fb1f7267f310cf7bb9c303b38b7594bdf81944f8"
+    },
+    {
+      "path": "department-ui/customer-detail.css",
+      "sha256": "cbd8ab44a56ec95404177dd174238b249304da6e9c378560bdcf4c9e8ff0071d"
+    },
+    {
+      "path": "department-ui/FdeVisitOpportunity.jsx",
+      "sha256": "549e6034b4f6ed6a84bcc9759d7f4c9cb4720dee30daffdd43b5562f7d375f80"
+    },
+    {
+      "path": "department-ui/customer-create.css",
+      "sha256": "22528e2e509eb831db42389ab0439f29d05f0eeb1f9076ce085413d8c9f3d036"
+    },
+    {
+      "path": "department-ui/VisitEntry.jsx",
+      "sha256": "dc85bc1d2e5b7a0862ec9aafb3a0652cffcb4b020487550ad7ef9aa7af5e4439"
+    },
+    {
+      "path": "department-ui/VisitConfirm.jsx",
+      "sha256": "80c5b04e48834f9c21ca99449d458dc991fccb3ebb50d392b900eb989df3e71d"
+    },
+    {
+      "path": "department-ui/fde-pages.css",
+      "sha256": "14e3f8c5dc45bdbf1971754b6f723c13fafd2cbcce1a04dfd1b00f5db47f5554"
+    },
+    {
+      "path": "department-ui/home.css",
+      "sha256": "d8f35fbf2386ac47911933e6e7f5591e65936794c07dd856af6909c18dc0cfcc"
+    },
+    {
+      "path": "department-ui/OpportunityDetail.jsx",
+      "sha256": "b7d51b70a814e634b939d371f96d263740903728d8012f68743eacd775f117d2"
+    }
+  ],
+  "baselineArtifactSha256": {
+    "bundle.js": "d9e3c85dfcd6035164da5cb2b530b2c9fc927e9f0169dbc407b80b37194689a5",
+    "department-ui/app.js": "96bcd03ae6c18590cf4a90d7c1f16f88beee13ac03360ad1f21e13c6903a9527",
+    "department-ui/app.css": "3c5837fb23027d8609493489df9043ca9ef4bae403413b7b3dfbcdd05841f927"
+  }
+}

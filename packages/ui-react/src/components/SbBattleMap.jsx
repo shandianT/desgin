@@ -5,7 +5,7 @@ import { Button, Skeleton } from 'antd';
 /**
  * 作战地图：关系 × 潜力四象限（12 章第 2 节）。
  * - 2.1 坐标：横轴客户潜力从左到右小到大，纵轴关系深度从下到上浅到深；1～10 直接当坐标，分界线默认 5.5，虚线；轴上不标刻度，只在两端标「小」「大」「浅」「深」。
- * - 2.2 格子：客户资产（右上）、主攻区（左上）、客户资源（右下）、见单打单（左下）；名字与说明写死在组件里，永远显示，不靠图例；底色只分深浅。
+ * - 2.2 格子：客户资产（右上）、主攻区（右下）、客户资源（左上）、见单打单（左下）；名字与说明写死在组件里，永远显示，不靠图例；底色只分深浅。
  * - 2.3 点：一个客户一个圆点；颜色是状态（向好绿、需关注黄、转差红、待评估灰），大小是金额档（直径 12／16／22），白色描边 2；悬停或选中标名字加一行摘要；重叠聚成大圆写数字。
  * - 2.4 缺失：没填关系或潜力的客户不画进格子，图下方一行「待评估 N 家」；没有客户时显示空态并保留坐标轴。
  * - 2.5 交互：点象限放大、点客户进详情；象限不可拖动，组件不提供拖拽。
@@ -19,7 +19,7 @@ const QUADRANTS = [
   { key: 'resource', name: '客户资源', short: '资源', desc: '潜力小 · 关系深', high: [false, true], fill: 'var(--ui-quadrant-resource, var(--ui-surface))' },
   { key: 'spot', name: '见单打单', short: '见单', desc: '潜力小 · 关系浅', high: [false, false], fill: 'var(--ui-quadrant-spot, var(--ui-surface))' },
 ];
-const QUADRANT_ORDER = ['attack', 'asset', 'spot', 'resource']; // 手机底部一行的顺序：左上、右上、左下、右下
+const QUADRANT_ORDER = ['attack', 'asset', 'spot', 'resource']; // 底部统计顺序：主攻、资产、见单、资源
 // 颜色出现就有意义（14 章）：向好用主色，只有需关注黄、转差红两种提示色；待评估空心灰边
 const TONE_FILL = { good: 'var(--ui-primary)', watch: 'var(--ui-warning)', bad: 'var(--ui-danger)', pending: 'var(--ui-surface)' };
 const TONE_STROKE = { pending: 'var(--ui-neutral)' };
@@ -62,6 +62,7 @@ function clusterPoints(placed, aggressive) {
 export function SbBattleMap({
   points = [],
   thresholds: thresholdsProp,
+  layout = 'linear',
   unrated = 0,
   clusterAfter = 30,
   zoomQuadrant,
@@ -106,8 +107,16 @@ export function SbBattleMap({
     ? { px: zoomed.high[0] ? [thresholds.potential, MAX] : [MIN, thresholds.potential], py: zoomed.high[1] ? [thresholds.relationship, MAX] : [MIN, thresholds.relationship] }
     : { px: [MIN, MAX], py: [MIN, MAX] };
   const pad = 14 * k; // 点不贴边
-  const sx = (v) => plot.x0 + pad + (clamp(v, domain.px[0], domain.px[1]) - domain.px[0]) / (domain.px[1] - domain.px[0]) * (plot.x1 - plot.x0 - pad * 2);
-  const sy = (v) => plot.y1 - pad - (clamp(v, domain.py[0], domain.py[1]) - domain.py[0]) / (domain.py[1] - domain.py[0]) * (plot.y1 - plot.y0 - pad * 2);
+  // 分类视图以阈值为中心，两侧分别映射；评分原值、归属和计数仍由业务阈值确定。
+  const fraction = (v, [min, max], split) => {
+    const value = clamp(v, min, max);
+    if (!zoomed && layout === 'equal' && split > min && split < max) {
+      return value < split ? (value - min) / (split - min) / 2 : 0.5 + (value - split) / (max - split) / 2;
+    }
+    return (value - min) / (max - min || 1);
+  };
+  const sx = (v) => plot.x0 + pad + fraction(v, domain.px, thresholds.potential) * (plot.x1 - plot.x0 - pad * 2);
+  const sy = (v) => plot.y1 - pad - fraction(v, domain.py, thresholds.relationship) * (plot.y1 - plot.y0 - pad * 2);
   const divX = sx(thresholds.potential), divY = sy(thresholds.relationship);
 
   const valid = useMemo(() => points.filter((p) => Number.isFinite(p.potential) && Number.isFinite(p.relationship)), [points]);
@@ -120,7 +129,7 @@ export function SbBattleMap({
   const clusters = useMemo(() => {
     const placed = shown.map((p) => ({ ...p, x: sx(p.potential), y: sy(p.relationship), diameter: (BAND_DIAMETER[p.amountBand] || BAND_DIAMETER.medium) * k }));
     return clusterPoints(placed, shown.length > clusterAfter);
-  }, [shown, clusterAfter, width, zoom, thresholds.potential, thresholds.relationship]);
+  }, [shown, clusterAfter, width, zoom, thresholds.potential, thresholds.relationship, layout]);
 
   const summary = `作战地图：${QUADRANTS.map((q) => `${q.name} ${counts[q.key]} 家`).join('，')}${unrated > 0 ? `，待评估 ${unrated} 家` : ''}${zoomed ? `；当前放大${zoomed.name}` : ''}`;
   const font = (px) => px * k;
@@ -156,6 +165,7 @@ export function SbBattleMap({
     <div ref={wrapRef} className={`sb-bmap${mobile ? ' sb-bmap-mobile' : ''}${className ? ` ${className}` : ''}`} style={style}>
       <div className="sb-bmap-square">
         <svg className="sb-bmap-svg" viewBox={`0 0 ${VB} ${VB}`} role="img" aria-label={summary} onMouseLeave={() => setHoverKey(null)}>
+          {layout === 'equal' && <desc>四象限按分类等分，两侧比例尺不同；客户原始评分和分类阈值不变。</desc>}
           {cells}
           {!zoomed && (
             <g className="sb-bmap-dividers" stroke="var(--ui-line)" strokeWidth={1 * k} strokeDasharray={`${6 * k} ${4 * k}`} pointerEvents="none">
