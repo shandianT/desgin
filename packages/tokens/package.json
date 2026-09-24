@@ -1,6 +1,6 @@
 {
   "name": "@shandiant/tokens",
-  "version": "1.3.0-draft.1",
+  "version": "1.4.0-draft.1",
   "description": "部门设计变量：--ui-* 的 CSS、WXSS、JSON 产物，以及给 Ant Design、TDesign、Semi、ECharts 的主题桥接文件。由规范仓库 tokens.json 生成，勿手改",
   "license": "UNLICENSED",
   "files": [

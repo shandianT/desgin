@@ -2,6 +2,10 @@
 
 包的版本永远等于规范仓库 `tokens.json` 的 `$meta.version`。变量本身的增删改看 `dist/变量对照表.md`，这里只记包层面的变化。
 
+## 1.4.0-draft.1（2026-09-24）
+
+- 新增 `--ui-warning-accent`（{color.orange.600} #C7741B，建议）：提醒色条与图形标记用，不作文字色。卡片顶部 3px 状态条（2026-09-24 用户选定）里，`--ui-warning` 深棕做细条发暗，飞书的警示色本来就取橙。旧变量名与值不变。
+
 ## 1.3.0-draft.1（2026-09-23）
 
 - 小程序按飞书 Universe Design 对齐（2026-09-23 用户决定：视觉与交互以飞书为核心参考）。只改 `platforms.miniprogram`，Web 与手机网页的变量名和值不变（check-tokens 与 1.0.0 全部一致）。小程序端：`--ui-background` #F5F6F7（飞书 N50）、`--ui-ink` #1F2329（N900）、`--ui-secondary`／`--ui-muted`／`--ui-neutral` #646A73（N600）、`--ui-line` #DEE0E3（N300）、`--ui-neutral-soft` #F2F3F5（N100）、`--ui-radius-panel` 8px、`--ui-text-page` 20px、`--ui-overlay` 与 `--ui-shadow-popup` 用飞书值。

@@ -36,6 +36,8 @@ module.exports = {
     { title: '输入发事件', data: { label: '名称', value: '' }, event: callMethod('onChange', { value: '华宸' }, 'change') },
   ],
   'sb-summary-card': [
+    { title: 'tone 顶部色条：转差', data: { title: '华宸数据', tone: 'bad', tags: [{ label: '转差', tone: 'bad' }] }, expect: ['sb-summary-card--tone-bad', '转差'] },
+    { title: 'tone 正常不加色条', data: { title: '华宸数据', tone: 'good' }, expect: ['华宸数据'], absent: ['tone-good'] },
     { title: '小号加载中', data: { size: 'small', loading: true, title: '今日经营摘要', metrics: [{ label: '今日待办', value: null }] }, expect: ['今日经营摘要', '…', 'small'] },
     { title: '标题加指标', data: { title: '我的待办', subtitle: '每一项都可进入详情', scope: '仅本人', metrics: [{ label: '未完成', value: 18 }, { label: '已完成', value: 4 }, { label: '毛利', value: null }] }, expect: ['我的待办', '仅本人', '18', '未登记'] },
     { title: '客户摘要', data: { mark: '星河智能', title: '星河智能制造（广州）有限公司', subtitle: '制造业 · 渠道销售-南区', tags: [{ label: '主攻区' }, { label: '需关注', tone: 'watch' }] }, expect: ['星河智能制造', '主攻区', '需关注'] },

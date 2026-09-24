@@ -43,7 +43,7 @@ app.wxss 头两行：
 | sb-upload | 附件上传：t-upload 列表型薄壳，文件统一 {uid,name,size,status,url}；超类型、超大小、超数量就地红字说明不弹 toast | accept、maxSize（MB）、maxCount、multiple、value、disabled、hint、label、requestMethod；slot 无；事件 change（files、added）、remove（file、index） | C-02、C-06 |
 | sb-result | 结果页：t-result 薄壳，整页反馈；图标色走语义变量；一个主按钮一个次按钮，extra slot 放补充内容 | status（success、error、info、warning）、title、description、primaryLabel、primaryLoading、primaryDisabled、secondaryLabel、secondaryDisabled；slot extra；事件 primary、secondary | C-01、C-06、B-01 |
 | sb-avatar | 头像：t-avatar 薄壳，没有图片用姓名后两字（中文去姓、英文取前两个字母）；三档 48／64／80rpx；底色档默认主色淡底 | name、src、size（sm、md、lg）、tone（primary、neutral、success、warning、danger、sidebar）、shape（circle、square）；事件 tap | V-01、V-04 |
-| sb-summary-card | 页面摘要卡：页面顶部白卡，替代深色横幅；标题、副标题、范围小标签、首字方块、状态标签、一行指标（竖线分隔，缺失写未登记）、进度条 | title、subtitle、meta、scope、mark、tags[{label,tone}]、metrics[{label,value,unit,missingText}]、metricsTappable、progress、progressLabel、size（default 或 small）、loading；slot 默认与 side、bordered（飞书样式默认无边框）；事件 metrictap（index、item） | T-02、B-03、14 章 |
+| sb-summary-card | 页面摘要卡：页面顶部白卡，替代深色横幅；标题、副标题、范围小标签、首字方块、状态标签、一行指标（竖线分隔，缺失写未登记）、进度条 | title、subtitle、meta、scope、mark、tags[{label,tone}]、metrics[{label,value,unit,missingText}]、metricsTappable、progress、progressLabel、size（default 或 small）、loading、tone（bad、watch、brand：顶部 3px 色条，只给对象详情页状态异常与看板主卡）；slot 默认与 side、bordered（飞书样式默认无边框）；事件 metrictap（index、item） | T-02、B-03、14 章 |
 | sb-desc-list | 描述列表：只读的「标签：值」清单；行式用 t-cell，两列式自绘；空值写未填写，必填空值写待补充（提醒色） | items[{key,label,value,required,missingText,tone,tappable}]、layout（row 或 grid）、title；事件 tap（key、index、item） | C-05、B-03 |
 | sb-section | 区块卡片：白底一圈细线，标题 16px、说明 14px、右侧一个链接；plain 时只要标题行 | title、description、extraLabel、plain；slot 默认与 extra、bordered；事件 extra | 14 章 |
 

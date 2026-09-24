@@ -1,6 +1,6 @@
 {
   "name": "@shandiant/ui-miniprogram",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "部门小程序组件库：tdesign-miniprogram 之上的 36 个组合件、AI 件、摘要卡与作战地图，样式只用设计变量",
   "license": "UNLICENSED",
   "miniprogram": "components",

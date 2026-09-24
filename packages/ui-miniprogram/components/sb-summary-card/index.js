@@ -24,6 +24,7 @@ Component({
     bordered: { type: Boolean, value: false }, // 飞书样式：默认无边框，靠灰底与白卡区分；放在白底上时传 bordered
     size: { type: String, value: 'default' }, // small：标题 16px、指标 20px，页面上方已有大标题（问候语）时用
     loading: { type: Boolean, value: false }, // 数据未到：指标显示「…」，不显示「未登记」
+    tone: { type: String, value: '' }, // 顶部 3px 色条：bad 转差（红）、watch 需关注（橙）、brand 主色（看板主卡）；good、pending 与不传都不加。只给对象详情页顶卡在状态异常时用，状态仍以标签为准
   },
   data: { tagList: [], metricList: [], hasProgress: false, percent: 0, markText: '' },
   observers: {

@@ -1,4 +1,4 @@
-<view class="sb-summary {{size === 'small' ? 'small' : ''}} {{bordered ? 'is-bordered' : ''}}">
+<view class="sb-summary {{size === 'small' ? 'small' : ''}} {{bordered ? 'is-bordered' : ''}} {{tone === 'bad' || tone === 'watch' || tone === 'brand' ? 'tone-' + tone : ''}}">
   <view class="sb-summary-head">
     <view wx:if="{{markText}}" class="sb-summary-mark" aria-hidden="true">{{markText}}</view>
     <view class="sb-summary-main">

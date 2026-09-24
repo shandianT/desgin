@@ -1,6 +1,6 @@
 # 设计变量对照表（自动生成）
 
-版本 1.3.0-draft.1 · 2026-09-23。由 build-tokens.mjs 从 tokens.json 生成；改值请改 tokens.json。
+版本 1.4.0-draft.1 · 2026-09-24。由 build-tokens.mjs 从 tokens.json 生成；改值请改 tokens.json。
 
 状态说明：「已确认」= 值来自 SalesBuddy Web V1.0 已确认规则；「建议」= 本轮新增或跨端映射，尚未登记采用；端侧列中与电脑网页不同的值用 **加粗** 标出，**加粗的端侧值一律是建议，未登记采用**。
 
@@ -21,6 +21,7 @@
 | `--ui-danger-soft` | 红底 | `color.red.50` | #FBE4DF | #FBE4DF | #FBE4DF | 已确认 | B-01 |
 | `--ui-warning` | 黄：需关注文字 | `color.yellow.700` | #805919 | #805919 | #805919 | 已确认 | B-01 |
 | `--ui-warning-soft` | 黄底 | `color.yellow.50` | #FFF0CF | #FFF0CF | #FFF0CF | 已确认 | B-01 |
+| `--ui-warning-accent` | 提醒色条与图形标记（卡片顶部 3px 状态条等），不作文字色；飞书警示色取橙，--ui-warning 是给文字用的深棕，做细条发暗 | `color.orange.600` | #C7741B | #C7741B | #C7741B | 建议 | 16 章第 10 条；2026-09-24 用户选定顶部色条 |
 | `--ui-success` | 绿：向好文字 | `color.green.700` | #27694C | #27694C | #27694C | 已确认 | B-01 |
 | `--ui-success-soft` | 绿底 | `color.green.50` | #E8F5EE | #E8F5EE | #E8F5EE | 已确认 | B-01 |
 | `--ui-neutral` | 灰：待评估文字 | `color.ink.550` | #56677E | #56677E | **#646A73** | 已确认（电脑值）；端侧覆盖为建议 | B-01 |
