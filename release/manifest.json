@@ -19,11 +19,11 @@
     },
     {
       "name": "@shandiant/ui-miniprogram",
-      "version": "0.9.0",
-      "filename": "shandiant-ui-miniprogram-0.9.0.tgz",
+      "version": "0.9.1",
+      "filename": "shandiant-ui-miniprogram-0.9.1.tgz",
       "files": 150,
-      "size": 53858,
-      "sha256": "0ebc5a56f73ac8cd2efe50d19a88a3e60352f2d50ab0e9dea102cdb07aacbefd"
+      "size": 54142,
+      "sha256": "8dafeaf8c54597393aab55bf880efabd4c9600ce9189f27f3ed4cf54a9ecf2bd"
     }
   ]
 }

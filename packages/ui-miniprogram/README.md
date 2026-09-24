@@ -36,7 +36,7 @@ app.wxss 头两行：
 | sb-segmented | 分段切换：自绘胶囊，选中白底加阴影与主色字；block 撑满等宽；点击高度 44px | options、value、size（small 只缩字号）、block、disabled（整组）、emitSame（点已选项也发）；事件 change | C-04、T-05 |
 | sb-labeled-select | 带标签的下拉筛选：t-picker 选；size=small 为飞书筛选片（灰底无边框、选中浅蓝底主色字，未选只显示标签、选中只显示值；allOption=false 时默认第一项显示值但不算选中；点击区扩到 44px） | label、value、options[{value,label,count}]、placeholder、allowClear、disabled、size（default 或 small）、allOption、title、defaultValue（allOption=false 时的默认值，灰底）、useLabelSlot（slot label）；事件 change（value、option） | C-04 |
 | sb-tabs | 带数量的下划线页签，超过 99 显示 99+，选中主色 2px 下划线；一页只一组 | items[{key,label,count,disabled}]、activeKey、size（small 14px）、plain（不画整行底线）、fit（按文字宽度分满一行，5 个及以上在窄于 360px 的屏上退回横滑）；页签点击高度 44px；事件 change（key） | C-05 |
-| sb-battle-map | 作战地图：自绘四象限，点色表状态、点大小表金额档，重叠聚合，缺潜力的不画进格子，空态给下一步 | points、thresholds、zoom、selectedId、unrated、loading；事件 pointtap、clustertap、zoomchange、unratedtap、emptyaction | 12 章 §2 |
+| sb-battle-map | 作战地图：自绘四象限，点一律主色、只用大小表金额档（状态点开再看），重叠聚合，缺潜力的不画进格子，空态给下一步 | points、thresholds、zoom、selectedId、unrated、loading；事件 pointtap、clustertap、zoomchange、unratedtap、emptyaction | 12 章 §2 |
 | sb-kpi-card | 指标卡：数字 32、单位小一号、变化只在有好坏时着色，缺失显示未登记；compact 为数字 20（超过 11 个字符自动 16） | label、value、unit、note、change、loading、missingText、size（default 或 compact）、bordered、tappable（可点时才有按下态）；事件 tap | 12 章 §3.1、B-03 |
 | sb-chart-card | 图表卡片壳：标题、范围、口径 ⓘ，四态；图放默认 slot，图例放 legend slot | title、scope、caliber、state、emptyTitle、emptyDescription、summary；事件 retry、caliber | 12 章 §3.5、§4 |
 | sb-timeline | 时间轴：跟进历史与业务动态，自绘竖线加圆点，圆点色只由 tone 决定；末尾可放「进行中」占位；空列表不画空轴 | items[{key,time,title,description,tone,actor,tappable}]、pending、reverse、size（default 或 compact）、loading、emptyText；事件 tap（item） | C-05、B-01 |

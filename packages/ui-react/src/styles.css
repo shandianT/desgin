@@ -130,7 +130,7 @@
 /* SbPagination：加载更多模式居中 */
 .sb-pagination-more { display: flex; justify-content: center; padding: var(--ui-space-2) 0; }
 /* ---- 作战地图 ---- */
-/* SbBattleMap：SVG 正方形，格子底色用 --ui-quadrant-*，点色用状态色；HTML 只放悬停框、返回按钮、空态、待评估行与手机底部四个数字 */
+/* SbBattleMap：SVG 正方形，格子底色用 --ui-quadrant-*，点一律主色、只用点径表示金额档；HTML 只放悬停框、返回按钮、空态、待评估行与手机底部四个数字 */
 .sb-bmap { display: flex; flex-direction: column; gap: var(--ui-space-2); width: 100%; min-width: 0; font-family: var(--ui-font); }
 .sb-bmap-square { position: relative; width: 100%; aspect-ratio: 1 / 1; border: 1px solid var(--ui-line); border-radius: var(--ui-radius-panel); background: var(--ui-surface); overflow: hidden; }
 .sb-bmap-square > .ant-skeleton { padding: var(--ui-space-4); }

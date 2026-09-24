@@ -6,7 +6,7 @@ import { Button, Skeleton } from 'antd';
  * 作战地图：关系 × 潜力四象限（12 章第 2 节）。
  * - 2.1 坐标：横轴客户潜力从左到右小到大，纵轴关系深度从下到上浅到深；1～10 直接当坐标，分界线默认 5.5，虚线；轴上不标刻度，只在两端标「小」「大」「浅」「深」。
  * - 2.2 格子：客户资产（右上）、主攻区（右下）、客户资源（左上）、见单打单（左下）；名字与说明写死在组件里，永远显示，不靠图例；底色只分深浅。
- * - 2.3 点：一个客户一个圆点；颜色是状态（向好绿、需关注黄、转差红、待评估灰），大小是金额档（直径 12／16／22），白色描边 2；悬停或选中标名字加一行摘要；重叠聚成大圆写数字。
+ * - 2.3 点：一个客户一个圆点；一律主色（2026-09-24 起不再按状态上色，状态写在悬停提示与客户卡里），大小是金额档（直径 12／16／22），白色描边 2；悬停或选中标名字加一行摘要；重叠聚成大圆写数字。
  * - 2.4 缺失：没填关系或潜力的客户不画进格子，图下方一行「待评估 N 家」；没有客户时显示空态并保留坐标轴。
  * - 2.5 交互：点象限放大、点客户进详情；象限不可拖动，组件不提供拖拽。
  * - 2.6 手机：容器宽 < 380px 时格子名缩成两个字，底部一行四个数字。
@@ -20,9 +20,8 @@ const QUADRANTS = [
   { key: 'spot', name: '见单打单', short: '见单', desc: '潜力小 · 关系浅', high: [false, false], fill: 'var(--ui-quadrant-spot, var(--ui-surface))' },
 ];
 const QUADRANT_ORDER = ['attack', 'asset', 'spot', 'resource']; // 底部统计顺序：主攻、资产、见单、资源
-// 颜色出现就有意义（14 章）：向好用主色，只有需关注黄、转差红两种提示色；待评估空心灰边
-const TONE_FILL = { good: 'var(--ui-primary)', watch: 'var(--ui-warning)', bad: 'var(--ui-danger)', pending: 'var(--ui-surface)' };
-const TONE_STROKE = { pending: 'var(--ui-neutral)' };
+// 点一律主色实心，只用大小表示金额档；状态不再上色，悬停提示与点开后的客户卡里仍写状态（2026-09-24 决定，12 章 2.3）
+const DOT_FILL = 'var(--ui-primary)';
 const TONE_TEXT = { good: '向好', watch: '需关注', bad: '转差', pending: '待评估' };
 const BAND_DIAMETER = { small: 12, medium: 16, large: 22 };
 const VB = 1000;
@@ -156,7 +155,7 @@ export function SbBattleMap({
   });
 
   const hovered = clusters.find((c) => c.key === hoverKey) || (selectedId != null ? clusters.find((c) => c.single && c.points[0].id === selectedId) : null);
-  const tipText = hovered ? (hovered.single ? { title: hovered.points[0].name, note: hovered.points[0].summary || TONE_TEXT[hovered.points[0].tone] || '' } : { title: `${hovered.points.length} 家客户重叠`, note: hovered.points.slice(0, 3).map((p) => p.name).join('、') + (hovered.points.length > 3 ? '…' : '') + ' · 点开展开列表' }) : null;
+  const tipText = hovered ? (hovered.single ? { title: hovered.points[0].name, note: [TONE_TEXT[hovered.points[0].tone], hovered.points[0].summary].filter(Boolean).join(' · ') } : { title: `${hovered.points.length} 家客户重叠`, note: hovered.points.slice(0, 3).map((p) => p.name).join('、') + (hovered.points.length > 3 ? '…' : '') + ' · 点开展开列表' }) : null;
 
   const handleCluster = (c) => { if (c.single) onPointClick?.(c.points[0]); else onClusterClick?.(c.points); };
 
@@ -192,7 +191,7 @@ export function SbBattleMap({
               const p = c.points[0];
               const r = single ? c.maxDiameter / 2 : Math.max(14 * k, c.maxDiameter / 2 + 4 * k);
               const active = hoverKey === c.key || (single && selectedId != null && p.id === selectedId);
-              const label = single ? `${p.name}${p.summary ? ` · ${p.summary}` : ''}` : `${c.points.length} 家客户重叠，点开展开列表`;
+              const label = single ? [p.name, TONE_TEXT[p.tone], p.summary].filter(Boolean).join(' · ') : `${c.points.length} 家客户重叠，点开展开列表`; // 点不再用颜色表示状态，状态写进读屏文字与悬停提示
               return (
                 <g key={c.key} className={`sb-bmap-point${active ? ' is-active' : ''}${!single ? ' sb-bmap-cluster' : ''}`} role="button" tabIndex={0} aria-label={label} aria-pressed={single && selectedId != null && p.id === selectedId ? true : undefined}
                   onMouseEnter={() => setHoverKey(c.key)} onMouseLeave={() => setHoverKey(null)} onFocus={() => setHoverKey(c.key)} onBlur={() => setHoverKey(null)}
@@ -200,7 +199,7 @@ export function SbBattleMap({
                   <circle cx={c.x} cy={c.y} r={Math.max(r, 14 * k)} fill="transparent" />
                   {active && <circle cx={c.x} cy={c.y} r={r + 4 * k} fill="none" stroke="var(--ui-focus)" strokeWidth={2 * k} />}
                   {single
-                    ? <circle cx={c.x} cy={c.y} r={r} fill={TONE_FILL[p.tone] || TONE_FILL.pending} stroke={TONE_STROKE[p.tone] || 'var(--ui-surface)'} strokeWidth={2 * k} />
+                    ? <circle cx={c.x} cy={c.y} r={r} fill={DOT_FILL} stroke="var(--ui-surface)" strokeWidth={2 * k} />
                     : <><circle cx={c.x} cy={c.y} r={r} fill="var(--ui-primary)" stroke="var(--ui-surface)" strokeWidth={2 * k} /><text x={c.x} y={c.y + font(12) * 0.36} textAnchor="middle" fontSize={font(12)} fontWeight="600" fill="var(--ui-on-primary)" fontFamily="var(--ui-font)" pointerEvents="none">{c.points.length}</text></>}
                 </g>
               );

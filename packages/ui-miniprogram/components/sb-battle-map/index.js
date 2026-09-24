@@ -1,4 +1,4 @@
-/** 作战地图（12 章 §2、§2.6）：自绘四象限，view 绝对定位不用 canvas。横轴潜力左小右大，纵轴关系下浅上深；点色表示状态、点大小表示金额档；重叠聚合、超过 30 个点默认聚合；缺关系或潜力的不画进格子。
+/** 作战地图（12 章 §2、§2.6）：自绘四象限，view 绝对定位不用 canvas。横轴潜力左小右大，纵轴关系下浅上深；点一律主色，只用大小表示金额档（状态在 pointtap 后的客户卡里看）；重叠聚合、超过 30 个点默认聚合；缺关系或潜力的不画进格子。
  *  事件 pointtap：{ point }；clustertap：{ points }；zoomchange：{ zoom }；unratedtap；emptyaction */
 const QUADS = [
   { key: 'asset', name: '客户资产', short: '资产', hiP: true, hiR: true },

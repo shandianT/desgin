@@ -5,7 +5,7 @@
 .sb-bmap-quad { position: absolute; }
 .sb-bmap-quad.full { inset: 0; }
 .sb-bmap-quad.q-asset { background: var(--ui-quadrant-asset, var(--ui-selected)); }
-/* 颜色出现就有意义：向好用主色，只有需关注黄、转差红；待评估空心 */
+/* 点一律主色，只用大小表示金额档（2026-09-24 起不按状态上色） */
 .sb-bmap-quad.q-attack { background: var(--ui-quadrant-attack, var(--ui-surface)); }
 .sb-bmap-quad.q-resource { background: var(--ui-quadrant-resource, var(--ui-surface)); }
 .sb-bmap-quad.q-spot { background: var(--ui-quadrant-spot, var(--ui-surface)); }
@@ -20,13 +20,9 @@
 .sb-bmap-line.v { top: 0; bottom: 0; border-left-width: 1px; }
 .sb-bmap-line.h { left: 0; right: 0; border-top-width: 1px; }
 .sb-bmap-hit { position: absolute; width: 72rpx; height: 72rpx; margin-left: -36rpx; margin-bottom: -36rpx; display: flex; align-items: center; justify-content: center; }
-.sb-bmap-dot { border-radius: 50%; border: 2px solid var(--ui-surface); box-sizing: border-box; }
-.sb-bmap-dot.tone-good { background: var(--ui-primary); }
-.sb-bmap-dot.tone-watch { background: var(--ui-warning); }
-.sb-bmap-dot.tone-bad { background: var(--ui-danger); }
-.sb-bmap-dot.tone-pending { background: var(--ui-surface); border-color: var(--ui-neutral); }
+.sb-bmap-dot { border-radius: 50%; border: 2px solid var(--ui-surface); box-sizing: border-box; background: var(--ui-primary); } /* 点一律主色实心，只用大小表示金额档；状态在点开后的客户卡里看（2026-09-24 决定，12 章 2.3）。tone-* 类名保留给页面做钩子，组件不再按它上色 */
 .sb-bmap-hit.on .sb-bmap-dot, .sb-bmap-hit.on .sb-bmap-cluster { box-shadow: 0 0 0 3px var(--ui-primary); }
-.sb-bmap-cluster { display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--ui-secondary); color: var(--ui-on-primary); font-size: var(--ui-text-small); font-weight: 600; border: 2px solid var(--ui-surface); box-sizing: border-box; }
+.sb-bmap-cluster { display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--ui-primary); color: var(--ui-on-primary); font-size: var(--ui-text-small); font-weight: 600; border: 2px solid var(--ui-surface); box-sizing: border-box; }
 .sb-bmap-name { position: absolute; left: 100%; top: 50%; transform: translateY(-50%); padding: var(--ui-space-1) var(--ui-space-2); border-radius: var(--ui-radius-control); background: var(--ui-surface); box-shadow: var(--ui-shadow-popup); font-size: var(--ui-text-small); color: var(--ui-ink); white-space: nowrap; }
 .sb-bmap-name.left { left: auto; right: 100%; }
 .sb-bmap-axis { position: absolute; font-size: var(--ui-text-small); color: var(--ui-muted); padding: var(--ui-space-1); }

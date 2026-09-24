@@ -350,7 +350,7 @@ export interface SbBattleMapPoint {
   potential: number;
   /** 关系深度 1～10，纵轴 */
   relationship: number;
-  /** 当前状态，决定点的颜色：向好、需关注、转差、待评估 */
+  /** 当前状态：向好、需关注、转差、待评估。不影响点色（点一律主色），写进悬停提示与读屏文字 */
   tone?: 'good' | 'watch' | 'bad' | 'pending';
   /** 金额档，决定点的直径 12／16／22 */
   amountBand?: 'small' | 'medium' | 'large';

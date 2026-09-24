@@ -283,7 +283,7 @@ function SegmentedDemo() {
   return <div className="states"><State title="默认 small"><SbSegmented options={[{ value: 'year', label: '本年' }, { value: 'all', label: '历年' }]} value={p} onChange={setP} /></State><State title="带禁用项"><SbSegmented options={[{ value: 'list', label: '列表' }, { value: 'map', label: '地图' }, { value: 'kanban', label: '看板', disabled: true }]} value="list" /></State><State title="中号、撑满"><SbSegmented size="middle" block options={[{ value: 'mine', label: '本人' }, { value: 'team', label: '团队' }, { value: 'dept', label: '部门' }]} value="team" /></State></div>;
 }
 
-// 作战地图：24 个点四种状态三种档位，含几组重叠；放大态受控；空态；手机 360px
+// 作战地图：24 个点三种金额档位（状态只在悬停提示里），含几组重叠；放大态受控；空态；手机 360px
 const BMAP_NAMES = ['华宸数据科技', '北辰智造集团', '金桥制造股份', '泰和银行数据中心', '云启物流', '海晟半导体', '恒润能源', '中科智算', '广汇建设', '星河教育', '嘉信医疗', '远达通信', '博源化工', '润泽水务', '联创汽车', '鼎新食品', '盛世传媒', '天成地产', '瑞丰农业', '安泰保险', '凌云航空', '国泰纺织', '锦程酒店', '正大电子'];
 const BMAP_POINTS = BMAP_NAMES.map((name, i) => {
   const grid = [[8, 8], [8, 8], [8.2, 7.9], [9, 9], [7, 7], [6, 9], [8, 3], [8, 3], [7, 4], [9, 2], [6, 5], [7, 2], [3, 8], [2, 9], [3, 8.1], [4, 7], [5, 6], [2, 2], [3, 3], [4, 2], [2, 4], [5, 5], [1, 1], [3, 5]];
@@ -295,7 +295,7 @@ function BattleMapDemo() {
   const [selected, setSelected] = useState(4);
   const [last, setLast] = useState('');
   return <div className="states">
-    <State title="默认：24 家，四种状态、三档金额，三组重叠聚成数字；点客户选中"><SbBattleMap points={BMAP_POINTS} unrated={3} selectedId={selected} onPointClick={(p) => { setSelected(p.id); setLast(`点了 ${p.name}`); }} onClusterClick={(list) => setLast(`展开 ${list.length} 家：${list.map((p) => p.name).join('、')}`)} onUnratedClick={() => setLast('打开待评估列表')} /><p className="cat-nav-note">{last || '点一个点、一个数字圆或「待评估」看回调'}</p></State>
+    <State title="默认：24 家，三档金额，三组重叠聚成数字；悬停看状态，点客户选中"><SbBattleMap points={BMAP_POINTS} unrated={3} selectedId={selected} onPointClick={(p) => { setSelected(p.id); setLast(`点了 ${p.name}`); }} onClusterClick={(list) => setLast(`展开 ${list.length} 家：${list.map((p) => p.name).join('、')}`)} onUnratedClick={() => setLast('打开待评估列表')} /><p className="cat-nav-note">{last || '点一个点、一个数字圆或「待评估」看回调'}</p></State>
     <State title="放大一个象限（受控 zoomQuadrant）"><div className="inline" style={{ marginBottom: 8 }}>{[['asset', '客户资产'], ['attack', '主攻区'], ['resource', '客户资源'], ['spot', '见单打单'], [null, '全部']].map(([v, l]) => <Button key={String(v)} size="small" type={zoom === v ? 'primary' : 'default'} onClick={() => setZoom(v)}>{l}</Button>)}</div><SbBattleMap points={BMAP_POINTS} zoomQuadrant={zoom} onZoomChange={setZoom} onPointClick={(p) => setLast(`点了 ${p.name}`)} /></State>
     <State title="等分分类布局：阈值 7，四区相同大小；评分和分类不变"><SbBattleMap points={BMAP_POINTS} thresholds={{potential: 7, relationship: 7}} layout="equal" /></State>
     <State title="空：坐标轴照画"><SbBattleMap points={[]} emptyAction={{ onClick: () => setLast('去客户列表') }} /></State>

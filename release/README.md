@@ -6,4 +6,4 @@
 |---|---|---|---|---|---|
 | @shandiant/tokens | 1.3.0-draft.1 | shandiant-tokens-1.3.0-draft.1.tgz | 20 | 14 KB | ad9fa61ad761c9b8… |
 | @shandiant/ui-react | 0.7.0 | shandiant-ui-react-0.7.0.tgz | 9 | 200 KB | 29cf5d42a8f9b28a… |
-| @shandiant/ui-miniprogram | 0.9.0 | shandiant-ui-miniprogram-0.9.0.tgz | 150 | 53 KB | 0ebc5a56f73ac8cd… |
+| @shandiant/ui-miniprogram | 0.9.1 | shandiant-ui-miniprogram-0.9.1.tgz | 150 | 53 KB | 8dafeaf8c5459739… |

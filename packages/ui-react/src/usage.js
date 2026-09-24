@@ -300,7 +300,7 @@ const points = [
   selectedId={current?.id} onPointClick={(p) => navigate(\`/customers/\${p.id}\`)}
   onClusterClick={(list) => openList(list)} onUnratedClick={() => openUnrated()}
   emptyAction={{ label: '去客户列表', onClick: () => navigate('/customers') }} />
-// 横轴潜力、纵轴关系，都是 1～10，分界线默认 5.5；tone 决定点色，amountBand 决定点径；象限不可拖动`,
+// 横轴潜力、纵轴关系，都是 1～10，分界线默认 5.5；点一律主色，tone 只写进悬停提示与读屏、不影响点色，amountBand 决定点径；象限不可拖动`,
 
   SbChartCard: `import { SbChartCard, SbBarChart } from '${PKG}';
 
