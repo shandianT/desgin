@@ -1,4 +1,4 @@
-/* 电脑端固定一屏，地图和列表各占一半。地图按剩余宽高绘制矩形，圆点与文字不拉伸；列表每页条数按剩余高度算。 */
+/* 电脑端固定一屏，地图占 43%、列表占 57%。地图按剩余宽高绘制矩形，圆点与文字不拉伸；列表每页条数按剩余高度算。 */
 .department-ui[data-department-page="pages/customers/index"] { height: 100%; padding: var(--ui-space-4); }
 .department-ui .ds-customers { display: flex; flex-direction: column; gap: var(--ui-space-3); height: 100%; min-height: 0; }
 .department-ui .ds-customers .sb-pagehead { margin: 0; align-items: center; flex-shrink: 0; }
@@ -11,7 +11,7 @@
 .department-ui .ds-customer-tools > .ant-alert { flex-basis: 100%; }
 .department-ui .ds-customer-reset { flex: 0 0 auto; padding-inline: 4px; }
 .department-ui .ds-customer-workspace-wrap { flex: 1; min-height: 0; display: flex; }
-.department-ui .ds-customer-workspace { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); flex: 1; min-height: 0; }
+.department-ui .ds-customer-workspace { display: grid; grid-template-columns: minmax(0,43fr) minmax(0,57fr); flex: 1; min-height: 0; }
 .department-ui .ds-customer-map-panel { padding: var(--ui-space-3); display: flex; gap: var(--ui-space-3); flex-direction: column; min-height: 0; min-width: 0; }
 .department-ui .ds-customer-map-panel header,.department-ui .ds-customer-list header,.department-ui .ds-customer-list footer { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-space-2); flex-shrink: 0; }
 .department-ui .ds-customer-map-panel header { height: 28px; }
@@ -39,9 +39,6 @@
 .ds-map-candidate { margin-top: var(--ui-space-3); height: auto; white-space: normal; text-align: left; }
 @media (min-width:901px) {
   .department-ui .ds-customer-map-panel .sb-bmap-square { flex: 1; min-height: 0; aspect-ratio: auto; }
-}
-@media (max-width:1100px) and (min-width:901px) {
-  .department-ui .ds-customer-workspace { grid-template-columns: minmax(0,46fr) minmax(0,54fr); }
 }
 @media (max-width:900px) {
   .department-ui[data-department-page="pages/customers/index"] { height: auto; }
