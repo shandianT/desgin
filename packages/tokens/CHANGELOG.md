@@ -2,6 +2,11 @@
 
 包的版本永远等于规范仓库 `tokens.json` 的 `$meta.version`。变量本身的增删改看 `dist/变量对照表.md`，这里只记包层面的变化。
 
+## 1.5.0-draft.1（2026-09-26）
+
+- 小程序端状态色学飞书（2026-09-26 用户确认）：新增基础色板 `color.lark.*`（飞书红、橙、绿的 1／5／7／8 档）；`platforms.miniprogram` 覆盖 `--ui-danger`、`--ui-danger-soft`、`--ui-warning`、`--ui-warning-soft`、`--ui-warning-accent`、`--ui-success`、`--ui-success-soft`。文字色全部 ≥4.5:1；主色 #2863CD 不变（飞书蓝对比度不足）。Web 端值不变。
+- 新增 `--ui-danger-accent`：转差色条与图形标记用，不作文字色。Web 与 --ui-danger 同色，小程序为飞书鲜红 #F54A45。
+
 ## 1.4.0-draft.1（2026-09-24）
 
 - 新增 `--ui-warning-accent`（{color.orange.600} #C7741B，建议）：提醒色条与图形标记用，不作文字色。卡片顶部 3px 状态条（2026-09-24 用户选定）里，`--ui-warning` 深棕做细条发暗，飞书的警示色本来就取橙。旧变量名与值不变。

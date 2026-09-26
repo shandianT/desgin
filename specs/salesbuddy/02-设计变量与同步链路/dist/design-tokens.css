@@ -1,4 +1,4 @@
-/* 部门产品设计变量 1.4.0-draft.1 · 2026-09-24
+/* 部门产品设计变量 1.5.0-draft.1 · 2026-09-26
  * 由 build-tokens.mjs 从 tokens.json 生成，请勿手工修改；改 tokens.json 后重新生成。
  * 目标：电脑网页与手机网页（同一份文件，≤600px 覆盖）。状态：草案：基础与语义层的值来自已确认的 SalesBuddy Web V1.0（design-tokens.css）；主色 #2863CD 已于 2026-09-19 决定沿用；标注「建议」的条目与端侧映射尚未登记采用；原生 App 暂不在范围
  */
@@ -17,6 +17,7 @@
   --ui-focus: #5786DC;
   --ui-danger: #A73F38;
   --ui-danger-soft: #FBE4DF;
+  --ui-danger-accent: #A73F38;
   --ui-warning: #805919;
   --ui-warning-soft: #FFF0CF;
   --ui-warning-accent: #C7741B;

@@ -1,6 +1,6 @@
 # 设计变量对照表（自动生成）
 
-版本 1.4.0-draft.1 · 2026-09-24。由 build-tokens.mjs 从 tokens.json 生成；改值请改 tokens.json。
+版本 1.5.0-draft.1 · 2026-09-26。由 build-tokens.mjs 从 tokens.json 生成；改值请改 tokens.json。
 
 状态说明：「已确认」= 值来自 SalesBuddy Web V1.0 已确认规则；「建议」= 本轮新增或跨端映射，尚未登记采用；端侧列中与电脑网页不同的值用 **加粗** 标出，**加粗的端侧值一律是建议，未登记采用**。
 
@@ -17,13 +17,14 @@
 | `--ui-line` | 边线 | `color.gray.200` | #E2E8F0 | #E2E8F0 | **#DEE0E3** | 已确认（电脑值）；端侧覆盖为建议 | V-01 |
 | `--ui-selected` | 选中底色 | `color.blue.50` | #EDF3FF | #EDF3FF | #EDF3FF | 已确认 | V-01 |
 | `--ui-focus` | 键盘焦点轮廓 | `color.blue.400` | #5786DC | #5786DC | #5786DC | 已确认 | V-04 |
-| `--ui-danger` | 红：转差／错误文字 | `color.red.700` | #A73F38 | #A73F38 | #A73F38 | 已确认 | B-01 |
-| `--ui-danger-soft` | 红底 | `color.red.50` | #FBE4DF | #FBE4DF | #FBE4DF | 已确认 | B-01 |
-| `--ui-warning` | 黄：需关注文字 | `color.yellow.700` | #805919 | #805919 | #805919 | 已确认 | B-01 |
-| `--ui-warning-soft` | 黄底 | `color.yellow.50` | #FFF0CF | #FFF0CF | #FFF0CF | 已确认 | B-01 |
-| `--ui-warning-accent` | 提醒色条与图形标记（卡片顶部 3px 状态条等），不作文字色；飞书警示色取橙，--ui-warning 是给文字用的深棕，做细条发暗 | `color.orange.600` | #C7741B | #C7741B | #C7741B | 建议 | 16 章第 10 条；2026-09-24 用户选定顶部色条 |
-| `--ui-success` | 绿：向好文字 | `color.green.700` | #27694C | #27694C | #27694C | 已确认 | B-01 |
-| `--ui-success-soft` | 绿底 | `color.green.50` | #E8F5EE | #E8F5EE | #E8F5EE | 已确认 | B-01 |
+| `--ui-danger` | 红：转差／错误文字 | `color.red.700` | #A73F38 | #A73F38 | **#AC2F28** | 已确认（电脑值）；端侧覆盖为建议 | B-01 |
+| `--ui-danger-soft` | 红底 | `color.red.50` | #FBE4DF | #FBE4DF | **#FDE2E2** | 已确认（电脑值）；端侧覆盖为建议 | B-01 |
+| `--ui-danger-accent` | 转差色条与图形标记，不作文字色；Web 与 --ui-danger 同色，小程序取飞书红 5 档 | `color.red.700` | #A73F38 | #A73F38 | **#F54A45** | 建议（电脑值）；端侧覆盖为建议 | 16 章；2026-09-26 用户确认小程序状态色学飞书 |
+| `--ui-warning` | 黄：需关注文字 | `color.yellow.700` | #805919 | #805919 | **#8F4F04** | 已确认（电脑值）；端侧覆盖为建议 | B-01 |
+| `--ui-warning-soft` | 黄底 | `color.yellow.50` | #FFF0CF | #FFF0CF | **#FEEAD2** | 已确认（电脑值）；端侧覆盖为建议 | B-01 |
+| `--ui-warning-accent` | 提醒色条与图形标记（卡片顶部 3px 状态条等），不作文字色；飞书警示色取橙，--ui-warning 是给文字用的深棕，做细条发暗 | `color.orange.600` | #C7741B | #C7741B | **#FF8800** | 建议（电脑值）；端侧覆盖为建议 | 16 章第 10 条；2026-09-24 用户选定顶部色条 |
+| `--ui-success` | 绿：向好文字 | `color.green.700` | #27694C | #27694C | **#237B19** | 已确认（电脑值）；端侧覆盖为建议 | B-01 |
+| `--ui-success-soft` | 绿底 | `color.green.50` | #E8F5EE | #E8F5EE | **#D9F5D6** | 已确认（电脑值）；端侧覆盖为建议 | B-01 |
 | `--ui-neutral` | 灰：待评估文字 | `color.ink.550` | #56677E | #56677E | **#646A73** | 已确认（电脑值）；端侧覆盖为建议 | B-01 |
 | `--ui-neutral-soft` | 灰底 | `color.gray.100` | #EEF2F7 | #EEF2F7 | **#F2F3F5** | 已确认（电脑值）；端侧覆盖为建议 | B-01 |
 | `--ui-font` | 系统中文字体 | `font.family.system` | 系统字体 | 系统字体 | 系统字体 | 已确认 | V-02 |

@@ -1,6 +1,6 @@
 ---
 type: packaging
-status: 已发布。2026-09-20 三个包第一次发到 GitHub Packages：tokens 1.1.0-draft.1（draft 标签）、ui-react 0.5.5、ui-miniprogram 0.5.0。2026-09-21 发布 tokens 1.2.0-draft.1、ui-react 0.7.0、ui-miniprogram 0.7.0（release/ 同步）。2026-09-23 发布 ui-miniprogram 0.8.0（小程序 1.0.8 改版回流）；同日发布 tokens 1.3.0-draft.1（小程序端飞书值）与 ui-miniprogram 0.9.0（飞书样式、表单件 stacked／plain、sb-input、第三轮控件替换回流）。2026-09-24 发布 ui-miniprogram 0.9.1（作战地图客户点一律主色），同日发布 tokens 1.4.0-draft.1 与 ui-miniprogram 0.10.0（卡片顶部 3px 色条）。发布触发：打 v* 标签，或 main 上任一包的 package.json 版本号变化；已发过的版本自动跳过
+status: 已发布。2026-09-20 三个包第一次发到 GitHub Packages：tokens 1.1.0-draft.1（draft 标签）、ui-react 0.5.5、ui-miniprogram 0.5.0。2026-09-21 发布 tokens 1.2.0-draft.1、ui-react 0.7.0、ui-miniprogram 0.7.0（release/ 同步）。2026-09-23 发布 ui-miniprogram 0.8.0（小程序 1.0.8 改版回流）；同日发布 tokens 1.3.0-draft.1（小程序端飞书值）与 ui-miniprogram 0.9.0（飞书样式、表单件 stacked／plain、sb-input、第三轮控件替换回流）。2026-09-24 发布 ui-miniprogram 0.9.1（作战地图客户点一律主色），同日发布 tokens 1.4.0-draft.1 与 ui-miniprogram 0.10.0（卡片顶部 3px 色条）。2026-09-26 发布 tokens 1.5.0-draft.1 与 ui-miniprogram 0.11.0（小程序状态色学飞书、加载态与窄屏页签修复）。发布触发：打 v* 标签，或 main 上任一包的 package.json 版本号变化；已发过的版本自动跳过
 updated: 2026-09-20
 ---
 
@@ -54,7 +54,7 @@ npm i tdesign-miniprogram@1.16.1 @shandiant/ui-miniprogram
 
 tokens 现在是草案号，装的时候写 `@draft`，定稿后去掉。小程序还要多做一步：构建 npm 只复制包里的 `components/`，变量和桥接两个 wxss 要从 `node_modules/@shandiant/ui-miniprogram/components/style/` 复制到小程序根目录再 `@import`。
 
-没有 token、或者还没发布，用文件装：`npm i ./release/shandiant-tokens-1.4.0-draft.1.tgz ./release/shandiant-ui-react-0.7.0.tgz`，小程序是 `./release/shandiant-ui-miniprogram-0.10.0.tgz`。用法见各包的 README 和规范站「组件」章每张卡片的「用法」。
+没有 token、或者还没发布，用文件装：`npm i ./release/shandiant-tokens-1.5.0-draft.1.tgz ./release/shandiant-ui-react-0.7.0.tgz`，小程序是 `./release/shandiant-ui-miniprogram-0.11.0.tgz`。用法见各包的 README 和规范站「组件」章每张卡片的「用法」。
 
 ## 4｜怎么发
 
