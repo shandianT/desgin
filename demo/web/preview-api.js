@@ -38,23 +38,7 @@
       role_name: TITLES[index], scope_name: sales ? role === 'manager' ? '全部团队' : role === 'supervisor' ? '直属团队' : '仅本人' : role === 'fde' ? '本人协助项目' : 'FDE 团队协助项目',
       team_ids: [uid(3, 1)], team_names: [localDataset ? '本地样本组（非实际组织）' : '渠道销售-南区'], permission_version: 'preview-v1', capabilities: Object.fromEntries(CAPS.map(key => [key, open.includes(key)])), demo: true };
   }
-  // The five switchable identities are not the whole department. Give the
-  // synthetic workspace a visible peer cohort so "full ranking" has peers.
-  function demoPeerActors() {
-    const names = {
-      sales: ['示例销售 A', '示例销售 B', '示例销售 C', '示例销售 D', '示例销售 E'],
-      supervisor: ['示例主管 A', '示例主管 B'],
-      manager: ['示例总经理 A', '示例总经理 B'],
-      fde: ['示例 FDE A', '示例 FDE B', '示例 FDE C'],
-      fde_lead: ['示例 FDE 主管 A', '示例 FDE 主管 B'],
-    };
-    let serial = 100;
-    return Object.entries(names).flatMap(([role, labels]) => labels.map(display_name => ({
-      ...actorFor(role), user_id: uid(1, ++serial), account_code: `PREVIEW_PEER_${serial}`,
-      display_name, preview_rank_peer: true,
-    })));
-  }
-  let actors = [...ROLES.map(actorFor), ...demoPeerActors()];
+  let actors = ROLES.map(actorFor);
   function member(actor) { return { id: actor.user_id, user_id: actor.user_id, account_code: actor.account_code, name: actor.display_name, display_name: actor.display_name, role: actor.role, team_id: actor.team_ids[0], team_ids: actor.team_ids.slice(), team_name: actor.team_names[0], team: actor.team_names[0], active: true }; }
   function directoryTeams(actor) {
     const first = {id: uid(3, 1), parent_id: null, code: 'preview_team_1', name: localDataset ? '本地样本组（非实际组织）' : '渠道销售-南区', active: true, member_count: actors.length};
@@ -142,42 +126,6 @@
       resolved_by_name: r.resolved ? op.owner_name : null, resolution_note: r.resolved ? r.resolution_note : null, data_kind: 'demo'};});
     return {version: VERSION, customers: customerRows, opportunities, contacts, visits, tasks, actuals, notifications, claims: [], assignments: [], opportunityEvents: [], risks: riskRows, targets: {}, conversations: {}, runs: {}, advice: {}, idempotency: {}, serial: 100};
   }
-  function includeDemoPeerRecords(snapshot) {
-    if (localDataset || snapshot.preview_rank_peers_v1) return;
-    const peers = actors.filter(person => person.preview_rank_peer);
-    const baseOps = snapshot.opportunities.filter(op => op.status === 'open');
-    const visitTemplate = snapshot.visits[0];
-    if (!baseOps.length || !visitTemplate) return;
-    const year = yearNow(), quarter = Math.ceil(Number(today().slice(5, 7)) / 3);
-    const amounts = [1420000, 960000, 1780000, 720000, 1130000, 1530000, 870000, 1240000, 640000];
-    const appendVisit = (person, op, id, offset, fde = false) => {
-      const when = date(-offset);
-      snapshot.visits.push({...copy(visitTemplate), id, customer_id: op.customer_id, customer_name: op.customer_name,
-        opportunity_id: op.id, opportunity_name: op.name, recorder_id: person.user_id, recorder_name: person.display_name,
-        creator_name: person.display_name, interaction_at: when, visit_date: when.slice(0, 10), created_at: when,
-        created_date: when.slice(0, 10), fde_participants: fde ? [member(person)] : [],
-        fde_participant_ids: fde ? [person.user_id] : [], within_seven_days: true});
-    };
-    const salesPeers = peers.filter(person => !isFde(person));
-    salesPeers.forEach((person, index) => {
-      const source = baseOps[index % baseOps.length], amount = amounts[index];
-      const op = {...copy(source), id: uid(31, index + 1), name: `${person.display_name} · 演示商机`, amount,
-        owner_id: person.user_id, owner_user_ref_id: person.user_id, owner_name: person.display_name,
-        expected_close_date: `${year}-${String(quarter * 3).padStart(2, '0')}-25`, won_at: null,
-        quarterly_forecasts: [{year, quarter, recognized_amount: Math.round(amount * 0.7), collection_amount: Math.round(amount * 0.5)}],
-        fde_members: [], fde_member_ids: [], created_at: date(-21 - index), updated_at: date(-index)};
-      snapshot.opportunities.push(op);
-      for (let visit = 0; visit <= index % 3; visit++) appendVisit(person, op, uid(32, index * 3 + visit + 1), (index + visit) % 6);
-    });
-    peers.filter(isFde).forEach((person, index) => {
-      const op = snapshot.opportunities.find(row => row.id === uid(31, index + 1));
-      op.fde_member_ids.push(person.user_id);
-      op.fde_members.push(member(person));
-      for (let visit = 0; visit <= index % 2; visit++) appendVisit(person, op, uid(33, index * 2 + visit + 1), (index + visit) % 6, true);
-    });
-    snapshot.preview_rank_peers_v1 = true;
-    try {global.localStorage.setItem(KEY, JSON.stringify(snapshot));} catch (_) {}
-  }
   let state, baseline;
   async function loadLocal() {
     if (global.SALES_MODE !== 'preview') return null;
@@ -256,7 +204,6 @@
         }
       } catch (_) {}
       if (!state) state = seed();
-      if (!localDataset) includeDemoPeerRecords(state);
     }
     return state;
   }
@@ -540,7 +487,8 @@
     const dash = scopedDashboard(actor, params), selection = dash.selection, year = Number(params.get('year')), quarters = params.getAll('quarters').map(Number);
     if (!Number.isInteger(year) || year < 2000 || year > 2100 || !quarters.length || quarters.length > 4 || quarters.some(quarter => !Number.isInteger(quarter) || quarter < 1 || quarter > 4) || new Set(quarters).size !== quarters.length) error(422, '请选择有效年份与季度');
     const people = actors.filter(person => !isFde(person)), byId = new Map(people.map(person => [person.user_id, person]));
-    const cohort = people.filter(person => person.role === selection.cohort_role);
+    const publicSales = params.get('ranking_scope') === 'department_sales';
+    const cohort = people.filter(person => publicSales ? ['sales', 'supervisor', 'manager'].includes(person.role) : person.role === selection.cohort_role);
     const groupDefinitions = directoryTeams(actor).map(team => ({code: 'team:' + team.id, name: team.name}));
     const groupFor = id => byId.has(id) && byId.get(id).team_ids.includes(uid(3, 1)) ? 'team:' + uid(3, 1) : null;
     const state = getState(), ownerOf = row => row.owner_id || row.owner_user_ref_id;
@@ -567,7 +515,7 @@
     const partnerOps = ops.filter(op => op.partner_id && (!selection.personal || cohort.some(person => person.user_id === ownerOf(op))));
     const partners = {rows: ranked([{code: 'preview-partner', name: '华南数码渠道', ...stats(partnerOps, rows => sum(rows, 'amount'))}]), groups: []};
     const regions = groups(ops, rows => sum(rows, 'amount'), ownerOf);
-    return {contract_version: 2, data_source: 'database', scope: selection.personal ? 'peer' : 'company_teams', selection, complete: true, year, quarters: quarters.slice().sort((a, b) => a - b),
+    return {contract_version: 2, data_source: 'database', scope: selection.personal ? publicSales ? 'department_sales' : 'peer' : 'company_teams', selection, complete: true, year, quarters: quarters.slice().sort((a, b) => a - b),
       opportunity_acv: bucket(ops, rows => sum(rows, 'amount'), ownerOf), active_opportunities: bucket(ops, rows => rows.length, ownerOf),
       followup: bucket(visits, rows => rows.length, visit => visit.recorder_id), partner: partners, partners, partner_acv: partners, region: {rows: regions, groups: regions.map(row => ({...row}))}, generated_at: now()};
   }

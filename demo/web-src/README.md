@@ -1,5 +1,17 @@
 # GitHub Pages Web 样板的可编辑展示源码
 
+## 当前发布：SalesBuddy-Web-20260924（2026-09-27 上传）
+
+用户指定该运行包更新现有 `/web/` 地址。`demo/web/` 的 70 个运行文件与 ZIP 逐字节一致，来源及 SHA-256 见 [package-20260924.json](package-20260924.json)。Pages 直接发布已提交的 Web 运行文件；规范站仍按既有流程构建。后续修改 Web 时先在本地构建并提交运行文件，再发布。
+
+本版客户地图占 42%、列表占 58%；销售、主管、总经理共用部门全员榜，未展开时只显示本人摘要及本人图表，展开显示完整榜单。示例数据沿用包内版本。真实部门排名接口、真实登录、跨端写回未验证。
+
+同步了同版本工程的 `RankingCard.jsx`、`customers.css` 和 `business/` 中两个排名模块。`tools/build-web-demo.mjs` 将这两个模块写入业务 bundle，其余业务模块保留；组件依赖沿用当前仓库，因此后续重新构建可能产生新的资源哈希。`package-20260924.json` 固定记录本次原包，只用于核对本发布版本。
+
+采用既有 C-07、T-02、T-05，不新增规范变量。ZIP CRC、74 项包内哈希、70 项导入文件哈希通过。旧 `verify-preview-ranking-cohort.mjs` 针对之前的同级示例扩容；本版专项检查为 `verify-ranking-parity.mjs`，不能沿用旧人数断言作为新版验收。
+
+## 展示源码来源与既往修改
+
 本目录恢复自 `SalesBuddy-Web-v10.zip`。其 `bundle.js`、`department-ui/app.js`、`department-ui/app.css` 与仓库基线 `f6fbd4b` 的 `demo/web/` 文件逐字节一致，来源哈希见 `source-provenance.json`。只恢复展示层 JSX/CSS，既有业务运行时与 API 处理仍在原 Web 工程维护。
 
 三项调整及全部现有多选筛选的统一已实现并完成本地验证，效果图、检查结果和未验证范围见 [交付与验证](VERIFICATION.md)。下文保留实施前的计划，便于核对范围。

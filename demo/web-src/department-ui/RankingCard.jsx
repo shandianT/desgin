@@ -36,9 +36,9 @@ export default function RankingCard({card, cohort, period, onRetry, loading = fa
           description={noRank ? '请选择适用的查看对象。' : '请检查当前范围后重试。'} onRetry={noRank ? undefined : onRetry} />
         : summary.length ? <ol className="ds-fd-rank-list">{summary.map((row, index) => <Row key={row.id || row.user_id || index} row={row} index={index} />)}</ol>
           : <p className="ds-muted">{rows.length ? card.emptySummary || '所选对象暂未纳入当前榜单' : '当前范围暂无排名数据'}</p>}
-    {showChart && !loading && !message && rows.length > 0 && <div className="ds-rank-chart"><SbBarChart orientation="horizontal"
-      categories={rows.map(row => row.name)} series={[{name:money ? 'ACV' : '跟进', data:rows.map(row => money ? moneyInWan(row.value) : row.value)}]}
-      unit={money ? '万元' : '次'} maxItems={10} height={Math.max(160, Math.min(rows.length, 10) * 32 + 60)} /></div>}
+    {showChart && !loading && !message && summary.length > 0 && <div className="ds-rank-chart"><SbBarChart orientation="horizontal"
+      categories={summary.map(row => row.name)} series={[{name:money ? 'ACV' : '跟进', data:summary.map(row => money ? moneyInWan(row.value) : row.value)}]}
+      unit={money ? '万元' : '次'} maxItems={10} height={Math.max(160, Math.min(summary.length, 10) * 32 + 60)} /></div>}
     <SbSheet open={open} title={<span>{card.title} <small className="ds-muted">{cohort} · 共 {rows.length} 项 · {period}</small></span>}
       onClose={() => setOpen(false)} footer={<Button onClick={() => setOpen(false)}>完成</Button>}>
       {rows.length ? <ol className="ds-fd-rank-list">{rows.map((row, index) => <Row key={row.id || row.user_id || index} row={row} index={index} detail />)}</ol>
