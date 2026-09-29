@@ -15,7 +15,7 @@ const rawBundle = readFileSync(bundlePath, 'utf8');
 const prefix = 'window.SALES_BUNDLE=';
 if (!rawBundle.startsWith(prefix)) throw Error('Unexpected business bundle format');
 const bundle = JSON.parse(rawBundle.slice(prefix.length).trim().replace(/;$/, ''));
-for (const id of ['pages/bi/index', 'utils/publicRankings']) {
+for (const id of ['pages/bi/index', 'utils/publicRankings', 'utils/opportunity', 'utils/opportunityAmount', 'components/opportunity-form/index']) {
   bundle.modules[id] = readFileSync(join(root, `demo/web-src/business/${id}.js`), 'utf8');
 }
 writeFileSync(bundlePath, prefix + JSON.stringify(bundle) + ';\n');
@@ -26,6 +26,21 @@ await build({
   format: 'iife', platform: 'browser', target: ['es2022'],
   define: { 'process.env.NODE_ENV': '"production"' }, legalComments: 'linked',
   nodePaths: [join(pkg, 'node_modules')],
+  plugins: [{
+    name: 'web-baseline-battle-map',
+    setup(builder) {
+      // AMT-01 preserves the renderer shipped in the user's Web 20260924 ZIP.
+      // The snapshot records its source commit/hash; reconcile in the map item.
+      builder.onLoad({ filter: /[/\\]components[/\\]SbBattleMap\.jsx$/ }, args => {
+        if (resolve(args.path) !== join(pkg, 'src/components/SbBattleMap.jsx')) return;
+        return {
+          contents: readFileSync(join(root, 'demo/web-src/baseline/SbBattleMap-20260924.jsx'), 'utf8'),
+          loader: 'jsx',
+          resolveDir: dirname(args.path),
+        };
+      });
+    },
+  }],
   alias: {
     '@shandiant/ui-react/style.css': join(pkg, 'src/styles.css'),
     '@shandiant/ui-react': join(pkg, 'src/index.js'),

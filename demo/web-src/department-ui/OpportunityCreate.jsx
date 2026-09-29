@@ -3,6 +3,7 @@ import { Button, Checkbox, Input, Steps } from 'antd';
 import dayjs from 'dayjs';
 import { SbAmountInput, SbBottomBar, SbDatePicker, SbField, SbLabeledSelect, SbListRow, SbSearch, SbSegmented, SbSheet, SbStatePanel } from '@shandiant/ui-react';
 import './opportunity-create.css';
+import { formatWanInput } from './amount-input.mjs';
 // 金额控件收数字，页面里的字符串先转一下
 const toAmount = v => (v === '' || v == null || Number.isNaN(Number(v))) ? null : Number(v);
 
@@ -62,8 +63,8 @@ export function OpportunityForm({ form, picker, invokeOn, disabled }) {
         <SbLabeledSelect label="阶段" allowClear={false} placeholder="请选择阶段" width="100%" disabled={disabled || !stages.length} value={stageIndex >= 0 ? stageIndex : undefined} options={stages.map((s, i) => ({ value: i, label: s.text }))} onChange={i => on('stage', { detail: { value: i } })} />
         {stages.length > 0 && <ol className={`ds-oc-track ${lost ? 'is-lost' : ''}`} aria-hidden="true">{stages.map((s, i) => <li key={s.code} className={stageIndex >= i && !lost && s.status !== 'lost' ? 'is-active' : ''} />)}</ol>}
       </SbField>
-      <SbField label="ACV（万元）" required>
-        <SbAmountInput value={toAmount(num(v.amount))} placeholder="请输入金额" disabled={disabled} width="100%" onChange={value => input('amount', value === null ? '' : String(value))} />
+      <SbField label="ACV（万元）" required error={f.amountError ? <span id="opportunity-amount-help" role="alert">{f.amountError}</span> : undefined} help={<span id="opportunity-amount-help" aria-live="polite">{f.amountPreview || '输入单位为万元，最多六位小数（精确到分）'}</span>}>
+        <SbAmountInput aria-label="ACV（万元）" aria-describedby="opportunity-amount-help" aria-invalid={Boolean(f.amountError)} stringMode precision={null} min={null} keyboard={false} changeOnBlur={false} parser={value => String(value).replace(/,/g, '')} formatter={(value, info) => formatWanInput(v.amount, info)} value={v.amount === '' || v.amount == null ? null : String(v.amount)} placeholder="请输入金额" disabled={disabled} width="100%" onInput={value => input('amount', String(value).replace(/,/g, ''))} />
       </SbField>
       <SbField label="预计关单日期" required help={f.dateHint}>
         <SbDatePicker value={v.expected_close_date || null} allowClear={false} disabled={disabled} placeholder="选择日期" width="100%" onChange={s => on('date', { detail: { value: s } })} />

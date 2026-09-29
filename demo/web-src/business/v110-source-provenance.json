@@ -1,0 +1,27 @@
+{
+  "item": "AMT-01",
+  "upstream_revision": "5f022c53432ace4f22958f12f3f61fbc7511fec7",
+  "web_baseline": "0fdf890bf82cae89d243e33f9abd1e405cd2581f",
+  "modules": [
+    {
+      "id": "utils/opportunity",
+      "upstream_sha256": "b4eeeda3cec106317c5d73a48e8e067515de6094cb2642cc238bb92e19294aea",
+      "mode": "partial port: amount conversion and preview only",
+      "adapted_sha256": "490570b2d5e8b853c21ceed4c1e60b03e11b8dc6beaa0bb9f8ba10748b4db594"
+    },
+    {
+      "id": "utils/opportunityAmount",
+      "upstream_sha256": "42c8c023bba95e8b851b869d6bdd851cca391888dce4c4ad8923bfcdda0b562f",
+      "mode": "exact source; preview functions wired in this item",
+      "adapted_sha256": "42c8c023bba95e8b851b869d6bdd851cca391888dce4c4ad8923bfcdda0b562f"
+    },
+    {
+      "id": "components/opportunity-form/index",
+      "upstream_sha256": "643c24015521ffda05629d29b7d7cf4de4a8ce5144594b8713ab047f850ad182",
+      "mode": "partial port: amount conversion and preview only",
+      "adapted_sha256": "d0745be7eeb1043838089191ce27833b98f7844b43c82fd3e88705a08f8c372f"
+    }
+  ],
+  "review_status": "AMT-01 implemented locally; awaiting user review; remaining 1.1.0 migration pending",
+  "design_direction": "Preserve existing Web layout and interactions; port functionality and logic, using department rules for consistency."
+}
