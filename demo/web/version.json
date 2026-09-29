@@ -1,6 +1,11 @@
 {
-  "frontend_revision": "6b8aa7a8a5e5bed99341551986f3525df54197dc",
+  "version": "1.1.0-web",
+  "frontend_revision": "5f022c53432ace4f22958f12f3f61fbc7511fec7",
+  "web_revision": "v1.1.0-web-alignment",
+  "web_build": "91e95af72231",
   "pages": 26,
-  "components": 14,
-  "source_files_verified": 256
+  "components": 16,
+  "business_modules": 96,
+  "owned_sources_verified": 63,
+  "verification_scope": "Local generated code and synthetic preview; real API and production business acceptance not verified."
 }
