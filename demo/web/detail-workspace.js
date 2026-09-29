@@ -6,12 +6,12 @@
   }
   function canEditOpportunity(page){
     const s=global.SalesRuntime?.app?.globalData?.session,d=page.data,o=d.opportunity;
-    // Same capability/ownership rule as the shared opportunity list. FDE-list
-    // maintenance and readonly (actuals) are separate permissions.
-    return Boolean(s?.capabilities?.['opportunity.edit']===true && !d.accessBlocked
+    // Follow the shared list: modern permission plus server record-level grant.
+    const granted=global.SalesRuntime?.app?.can('opportunity.update');
+    const recordAllowed=o?.can_edit===true || (!s?.permissions && (s?.role!=='sales' || (s.userId && o?.owner_id===s.userId)));
+    return Boolean(granted && recordAllowed && !d.accessBlocked
       && !d.opportunityLoading && !d.opportunityError && d.customerId && d.opportunityId
-      && o?.id===d.opportunityId && (!o.customer_id || o.customer_id===d.customerId)
-      && (s.role!=='sales' || (s.userId && o.owner_id===s.userId)));
+      && o?.id===d.opportunityId && (!o.customer_id || o.customer_id===d.customerId));
   }
   function configureOpportunity(page){
     page.data.webCanEditOpportunity=canEditOpportunity(page);

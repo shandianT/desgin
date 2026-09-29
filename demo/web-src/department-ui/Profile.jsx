@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, Progress } from 'antd';
-import { SbAmountInput, SbField, SbLabeledSelect, SbSegmented, SbSheet, SbTextarea } from '@shandiant/ui-react';
+import { Button, Modal, Progress } from 'antd';
+import { SbAmountInput, SbField, SbSegmented, SbSheet, SbTextarea } from '@shandiant/ui-react';
 import { SbAiBadge, SbMetricStrip, SbStatePanel, SbStatusTag, SbTable, SbTabs } from '@shandiant/ui-react';
 import './profile.css';
+import {ControlledPersonPicker} from './TaskDialogs.jsx';
 // 金额控件收数字，页面里的字符串先转一下
 const toAmount = v => (v === '' || v == null || Number.isNaN(Number(v))) ? null : Number(v);
 
@@ -12,14 +13,36 @@ export function supportsProfile(page) {
   return Boolean(page && page.route === 'pages/profile/index');
 }
 Profile.subcomponents = (page, d) => {
-  if (!d.isFde) return [];
+  const scope = {selector: '#profileScopePicker', required: d.isFde ? Boolean(d.canViewFdeTeam) : Boolean(d.profileScopeOptions?.length), props: d.isFde
+    ? {modes: d.fdeScopeModes || [], mode: d.fdeProfileScope === 'team' ? 'team' : 'person', members: d.fdeScopeMembers || [], teams: d.fdeScopeTeams || [], teamId: d.fdeTeamId || '', defaultTeamId: d.fdePickerDefaultTeamId || '', error: d.fdeMembersError || '', memberId: d.fdeMemberId || d.ownUserId || '', label: d.fdeProfileScope === 'team' ? d.fdeTeamLabel || '团队' : d.fdeMemberName || `${d.userName}（本人）`}
+    : {modes: d.profileScopeOptions || [], mode: d.profileScopeMode || 'self', members: d.scopeMembers || [], teams: d.scopeTeams || [], defaultTeamId: d.profilePickerDefaultTeamId || '', loading: Boolean(d.directoryLoading), error: d.directoryError || '', memberId: d.profileSelectedMemberId || '', teamId: d.profileTeamId || '', label: d.profileScopeLabel || ''}};
+  if (!d.isFde) return [scope];
   const fp = page.selectComponent('fde-profile'), f = fp?.data || {};
   const person = d.fdeProfileScope === 'self';
   return [
+    scope,
     { selector: 'fde-profile', required: d.activeProfileTab !== 'efficiency', props: { chartsHidden: Boolean(d.scopePickerOpen), embedded: true, identityKey: d.viewerIdentity || '', profileScope: d.fdeProfileScope || 'self', selectedTeamId: d.fdeTeamId || '', selectedMemberId: person ? d.fdeMemberId || '' : '', selectedMemberName: person ? d.fdeMemberName || '' : '', section: d.activeProfileTab || 'maturity', userName: d.userName, roleName: d.roleName, team: d.team, account: d.account, initial: d.initial } },
-    { selector: '#fdeQuarterTarget', parent: 'fde-profile', required: Boolean(fp && d.activeProfileTab === 'maturity' && f.metricsLoading === false && !f.metricsError), props: { scope: d.fdeProfileScope === 'team' ? 'team' : (person && d.fdeMemberId) ? 'person' : 'self', teamId: d.fdeTeamId || '', subjectId: person ? d.fdeMemberId || '' : '', subjectLabel: (person && d.fdeMemberName) || d.userName || '', year: f.metricYear || 0, quarter: f.metricQuarter || 0, editable: Boolean(f.canEditOwnTargets), contextKey: f.targetContextKey || '' } },
+    { selector: '#fdeQuarterTarget', parent: 'fde-profile', required: Boolean(fp && f.canReadTargets && d.activeProfileTab === 'maturity' && f.metricsLoading === false && !f.metricsError), props: { scope: d.fdeProfileScope === 'team' ? 'team' : (person && d.fdeMemberId) ? 'person' : 'self', teamId: d.fdeTeamId || '', subjectId: person ? d.fdeMemberId || '' : '', subjectLabel: (person && d.fdeMemberName) || d.userName || '', year: f.metricYear || 0, quarter: f.metricQuarter || 0, editable: Boolean(f.canEditOwnTargets), contextKey: f.targetContextKey || '' } },
   ];
 };
+
+function ProfileScopeControls({picker, invokeOn}) {
+  if (!picker) return null;
+  const p = picker.properties, d = picker.data;
+  const call = (name, payload = {}) => invokeOn(picker, name, payload);
+  return <>
+    <div className="ds-pf-scope">
+      <SbSegmented value={p.mode} options={(p.modes || []).map(mode => ({value: mode.value, label: mode.label}))} onChange={mode => call('switchMode', {dataset: {mode}})} />
+      {['person', 'team'].includes(p.mode) && <Button onClick={() => call('show')}>{p.mode === 'team' ? '选择团队' : '选择成员'}</Button>}
+      <span className="ds-muted">当前：{p.label}</span>
+    </div>
+    <ControlledPersonPicker open={Boolean(d.open && d.selecting === 'person')} title="选择查看成员" members={p.members || []} teams={p.teams || []} defaultTeamId={p.defaultTeamId || ''} selectedIds={d.personSelected || []} loading={Boolean(p.loading)} error={p.error || ''} onClose={() => call('close')} onRetry={() => call('retry')} onConfirm={detail => call('confirmPerson', {detail})} />
+    <Modal rootClassName="department-ui department-task-choice-modal" title="选择查看团队" open={Boolean(d.open && d.selecting === 'team')} onCancel={() => call('close')} footer={<Button onClick={() => call('close')}>取消</Button>} destroyOnHidden>
+      <SbStatePanel state={p.error ? 'error' : p.loading ? 'loading' : !p.teams?.length ? 'empty' : 'normal'} description={p.error || '当前没有可查看的团队'} onRetry={() => call('retry')} />
+      {!p.loading && !p.error && <div className="department-task-choice-results">{(p.teams || []).map(team => <Button key={team.id} className="department-task-selector-row" onClick={() => call('select', {dataset: {id: team.id}})}><span>{team.name}</span><span>{team.id === p.teamId ? '当前团队' : '选择'}</span></Button>)}</div>}
+    </Modal>
+  </>;
+}
 
 /* 六维雷达：缺样本的维度按 0 画，文字标未评估 */
 function Radar({ dimensions }) {
@@ -68,7 +91,7 @@ function FdeProfileSection({ fp, qt, invokeOn, section, scopeLabel }) {
   if (section === 'maturity') return <>
     <div className="ds-pf-section-head"><h2>{scopeLabel} · 项目成效</h2><div className="ds-pf-score ds-pf-score-pending ds-pf-score-static"><b>—</b><span>分</span><small>待评估 · 总分 / 100</small></div></div>
     {f.metricsLoading ? <p className="ds-muted">正在加载项目成效…</p> : f.metricsError ? <p><span className="ds-pf-error" role="alert">{f.metricsError}</span> <Button type="link" size="small" onClick={() => on('loadMetrics')}>重试</Button></p> : <>
-      <QuarterTarget qt={qt} invokeOn={invokeOn} />
+      {f.canReadTargets && <QuarterTarget qt={qt} invokeOn={invokeOn} />}
       <div className="ds-pf-board">{(f.performanceBoard || []).map(m => <div key={m.kind} className="ds-pf-metric">
         <div className="ds-pf-metric-head"><b>{m.name}</b><span className="ds-muted">{m.rateText}</span></div>
         <div className="ds-pf-metric-value"><span className="ds-muted">当季度已登记</span><b>{m.completedText}</b></div>
@@ -150,12 +173,7 @@ export default function Profile({ page, data: d, invoke, invokeOn, select }) {
     </div>
     <div className="ds-panel ds-pf-main">
       <SbTabs activeKey={tab} onChange={key => call('selectProfileTab', { dataset: { tab: key } })} items={(d.profileTabs || []).map(t => ({ key: t.key, label: t.label }))} />
-      {d.role !== 'sales' && <div className="ds-pf-scope">
-        <SbSegmented value={d.profileScopeMode} options={(d.profileScopeOptions || []).map(o => ({ value: o.value, label: o.label }))} onChange={mode => call('selectProfileScope', { detail: { mode } })} />
-        {d.profileScopeMode === 'team' && (d.scopeTeams || []).length > 1 && <SbLabeledSelect label="团队" allowClear={false} value={d.profileTeamId || undefined} options={(d.scopeTeams || []).map(t => ({ value: t.id, label: t.name }))} onChange={id => call('changeProfileSubject', { detail: { kind: 'team', id } })} width={220} />}
-        {d.profileScopeMode === 'person' && <SbLabeledSelect label="成员" allowClear={false} value={d.profileSelectedMemberId || undefined} options={(d.scopeMembers || []).map(m => ({ value: m.id, label: m.team ? `${m.name}（${m.team}）` : m.name }))} onChange={id => call('changeProfileSubject', { detail: { kind: 'person', id } })} width={260} />}
-        <span className="ds-muted">当前：{d.profileScopeLabel}</span>
-      </div>}
+      {d.profileScopeOptions?.length > 0 && <ProfileScopeControls picker={select('#profileScopePicker')} invokeOn={invokeOn} />}
       <div className="ds-pf-body">
         {d.directoryLoading && <p className="ds-muted">正在加载查看范围…</p>}
         {d.directoryError && <p><span role="alert" className="ds-pf-error">{d.directoryError}</span> <Button type="link" size="small" onClick={() => call('loadProfileDirectory')}>重试</Button></p>}
@@ -235,13 +253,7 @@ function FdeProfile({ d, call, invokeOn, select, tab }) {
     </div>
     <div className="ds-panel ds-pf-main">
       <SbTabs activeKey={tab} onChange={key => call('selectProfileTab', { dataset: { tab: key } })} items={(d.profileTabs || []).map(t => ({ key: t.key, label: t.label }))} />
-      {d.isFdeLead && <div className="ds-pf-scope">
-        <SbSegmented value={team ? 'team' : 'person'} options={(d.fdeScopeModes || []).map(o => ({ value: o.value, label: o.label }))} onChange={mode => call('changeFdeScopeMode', { detail: { mode } })} />
-        {team && (d.fdeScopeTeams || []).length > 1 && <SbLabeledSelect label="团队" allowClear={false} value={d.fdeTeamId || undefined} options={(d.fdeScopeTeams || []).map(t => ({ value: t.id, label: t.name }))} onChange={id => call('changeFdeScopeSubject', { detail: { kind: 'team', id } })} width={220} />}
-        {!team && <SbLabeledSelect label="成员" allowClear={false} value={d.fdeMemberId || d.ownUserId || undefined} options={(d.fdeScopeMembers || []).map(m => ({ value: m.id, label: m.teamLabel ? `${m.name}（${m.teamLabel}）` : m.name }))} onChange={id => call('changeFdeScopeSubject', { detail: { kind: 'person', id } })} width={260} />}
-        <span className="ds-muted">当前：{team ? d.fdeTeamLabel : d.fdeMemberName || `${d.userName}（本人）`}</span>
-        {d.fdeMembersError && <span><span className="ds-pf-error" role="alert">{d.fdeMembersError}</span> <Button type="link" size="small" onClick={() => call('loadFdeMembers')}>重试</Button></span>}
-      </div>}
+      {d.canViewFdeTeam && <ProfileScopeControls picker={select('#profileScopePicker')} invokeOn={invokeOn} />}
       <div className="ds-pf-body">
         {tab === 'efficiency' && <>
           <div className="ds-pf-section-head"><h2>{team ? '团队协作效率' : d.fdeMemberName ? `${d.fdeMemberName} · 协作效率` : '我的协作效率'}</h2><ScoreTile score={d.efficiencyScore} info={d.efficiencyScoreInfo} kind="efficiency" call={call} /></div>

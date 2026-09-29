@@ -47,7 +47,8 @@ export default function VisitEntry({ page, data: d, invoke, invokeOn, select }) 
   const fde = Boolean(d.isFde);
   const picker = fde && d.customerConfirmed ? select('#fdeVisitOpportunity') : null;
   const submitLabel = !d.customerConfirmed ? '请先选择客户' : fde && !d.fdeOpportunityVerified ? '请先选择本人参与的商机' : !d.transcript ? '请先录入拜访内容' : '提交结构化';
-  const importText = d.importStatus === 'uploading' ? `${d.uploadProgress}%` : d.importStatus === 'succeeded' ? '文字已提取' : d.importStatus === 'failed' ? '处理失败' : '上传完成，正在提取文字…';
+  const temporaryPending = d.localFileTemporary && !d.isProcessing && !d.importId;
+  const importText = temporaryPending ? '文件未保存，等待处理' : d.importStatus === 'saving' ? '正在保存文件' : d.importStatus === 'save_failed' ? '文件保存失败' : d.importStatus === 'uploading' ? `${d.uploadProgress}%` : d.importStatus === 'succeeded' ? '文字已提取' : d.importStatus === 'failed' ? d.importId ? '处理失败' : '上传失败' : '上传完成，正在提取文字…';
   return <section className="ds-ventry" aria-label="记录客户拜访">
     <aside className="ds-panel ds-ve-side">
       <h2 className="ds-ve-h">选择客户 <small className="ds-ve-required">必填</small></h2>
@@ -65,7 +66,7 @@ export default function VisitEntry({ page, data: d, invoke, invokeOn, select }) 
         </div>
       </>}
       {fde && d.customerConfirmed && <FdeVisitOpportunity picker={picker} invokeOn={invokeOn} selectedId={d.opportunityId} />}
-      {!fde && <label className="ds-ve-first"><Checkbox checked={Boolean(d.isFirstVisit)} disabled={Boolean(d.isProcessing)} onChange={e => call('toggleFirstVisit', { detail: { value: e.target.checked ? ['first'] : [] } })} /><span><b>首次拜访</b><small className="ds-muted">会多出主营业务、需求、预算、联系人角色四项，确认页提示补充</small></span></label>}
+      {d.canFirstVisit && <label className="ds-ve-first"><Checkbox checked={Boolean(d.isFirstVisit)} disabled={Boolean(d.isProcessing)} onChange={e => call('toggleFirstVisit', { detail: { value: e.target.checked ? ['first'] : [] } })} /><span><b>首次拜访</b><small className="ds-muted">会多出主营业务、需求、预算、联系人角色四项，确认页提示补充</small></span></label>}
     </aside>
     <section className="ds-panel ds-ve-main">
       <div className="ds-ve-note-head"><h2 className="ds-ve-h">拜访原始记录 <small className="ds-muted">键盘输入或语音转写</small></h2><span className="ds-muted ds-ve-count">{(d.transcript || '').length} / 50000</span>{(d.transcript || '').length > 0 && <Button type="link" size="small" disabled={d.isRecording || d.isStarting || d.isStopping} onClick={() => call('clearTranscript')}>一键清空</Button>}</div>
@@ -82,14 +83,14 @@ export default function VisitEntry({ page, data: d, invoke, invokeOn, select }) 
           </div>
           <span className="ds-ve-timer" aria-label={`录音时长 ${d.recordingTime || '00:00'}`}>{d.isRecording || d.isStopping ? d.recordingTime : '00:00'}</span>
           <Button type={d.isRecording ? 'default' : 'primary'} danger={Boolean(d.isRecording)} icon={d.isRecording ? <SbIcon name="confirm" /> : <SbIcon name="voice" />}
-            loading={Boolean(d.isStarting || d.isStopping)} disabled={Boolean(d.isProcessing)} onClick={startOrStop}>
+            loading={Boolean(d.isStarting || d.isStopping)} disabled={Boolean(d.isProcessing) || !d.canTranscribe} onClick={startOrStop}>
             {d.isStarting ? '正在启动' : d.isStopping ? '正在结束' : d.isRecording ? '结束并转写' : '开始录音'}
           </Button>
           <small className="ds-muted">最长 10 分钟，结束后自动转写，可继续修改文字。</small>
         </section>
         <section className="ds-ve-upload" aria-label="上传拜访材料">
           <Upload.Dragger accept=".mp3,.wav,.m4a,.aac,.ogg,.flac,.amr,.webm,.pdf,.docx,.pptx,.md,.txt" multiple={false}
-            disabled={Boolean(busy)} beforeUpload={receiveFile} showUploadList={false}>
+            disabled={Boolean(busy) || !d.canUploadVisit} beforeUpload={receiveFile} showUploadList={false}>
             <SbIcon name="file" size="lg" />
             <b>拖入材料，或点击选择文件</b>
             <span className="ds-muted">音频最大 100MB、最长 60 分钟</span>
@@ -99,9 +100,9 @@ export default function VisitEntry({ page, data: d, invoke, invokeOn, select }) 
       </div>
       {uploadError && <Alert type="error" showIcon title={uploadError} />}
       {d.fileName && <div className="ds-ve-file">
-        <div className="ds-ve-file-line"><b>{d.fileName}</b><span className={d.importStatus === 'failed' ? 'ds-ve-error' : 'ds-muted'}>{importText}</span></div>
+        <div className="ds-ve-file-line"><b>{d.fileName}</b><span className={d.importStatus === 'failed' || d.importStatus === 'save_failed' ? 'ds-ve-error' : 'ds-muted'}>{importText}</span></div>
         {d.importStatus === 'uploading' && <Progress percent={Number(d.uploadProgress) || 0} size="small" showInfo={false} strokeColor="var(--ui-primary)" trailColor="var(--ui-line)" />}
-        {!d.isProcessing && <div className="ds-ve-file-actions">{d.importStatus !== 'succeeded' && <Button type="link" size="small" onClick={() => call('retryImport')}>重试</Button>}<Button type="link" size="small" onClick={() => call('removeFile')}>移除附件</Button></div>}
+        {!d.isProcessing && <div className="ds-ve-file-actions">{d.importStatus !== 'succeeded' && d.canRetryImport && <Button type="link" size="small" onClick={() => call('retryImport')}>{temporaryPending ? '重试保存' : '重试'}</Button>}{temporaryPending && d.canUploadVisit && <Button type="link" size="small" onClick={() => call('uploadTemporaryFile')}>直接上传临时文件</Button>}<Button type="link" size="small" onClick={() => call('removeFile')}>移除附件</Button></div>}
       </div>}
       <div className="ds-ve-bar"><SbBottomBar reason="语音识别失败不影响手工录入；点「提交结构化」后才进入字段确认页" primary={{ label: submitLabel, disabled: !d.canSubmit || busy, disabledReason: busy ? '先等这一步完成' : '', onClick: () => call('submitTranscript') }} /></div>
     </section>

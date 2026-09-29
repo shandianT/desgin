@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Button, Segmented } from 'antd';
 import { SbLabeledSelect, SbStatePanel, SbStatusTag, SbTable, SbTabs } from '@shandiant/ui-react';
 import './tasks.css';
+import { TaskCancelDialog } from './TaskDialogs.jsx';
 
 const toneFor = signal => ({green: 'good', yellow: 'watch', red: 'bad', gray: 'pending'})[signal?.tone] || 'pending';
 // B-02：任务状态是对象状态，用文字；只有业务判断（逾期、转差）才用红黄绿灰标签，且带依据
 const TONE_LABEL = {good: '向好', watch: '需关注', bad: '转差', pending: '待评估'};
 
 /** Presentation only. The shared page owns scope, state, sorting and cursor paging. */
-export default function Tasks({ page, data, invoke }) {
+Tasks.subcomponents = (page, d) => [{selector: '#taskCancellation', props: {open: Boolean(d.cancelOpen), taskId: d.cancelTaskId || '', taskVersion: d.cancelTaskVersion || 0}}];
+export default function Tasks({ page, data, invoke, invokeOn }) {
   const rows = data.webTaskRows || [];
   const query = JSON.stringify([data.activeTab, data.overviewFilter, data.sortIndex, data.taskView, data.fdeTaskMemberId, data.completedYear, data.completedQuarters, data.opportunityOnly, page.teamFilter, page.memberFilter]);
   const [pagination, setPagination] = useState(() => ({query: page._departmentTaskQuery || query, current: page._departmentTaskPage || 1}));
@@ -49,11 +51,12 @@ export default function Tasks({ page, data, invoke }) {
         </div>
         <SbTable className="department-task-table" rowKey="id" density="compact" columns={columns} rows={visibleRows} state={data.loadError ? 'error' : busy ? 'loading' : !rows.length ? 'empty' : 'normal'}
           emptyTitle={data.loadError ? '加载失败' : data.overviewEmptyTitle || (data.activeTab === 'pending' ? '没有待处理的任务' : '没有匹配的任务')} emptyDescription={data.loadError || undefined} onRetry={() => call('loadTasks')} onClear={data.overviewFilter ? () => tab(data.activeTab) : undefined}
-          actions={row => <Button type="link" onClick={() => call('openTask', {dataset: {id: row.id}})}>{row.webAction || '查看'}</Button>} actionsWidth={112} scrollX={992}
+          actions={row => <><Button type="link" onClick={() => call('openTask', {dataset: {id: row.id}})}>{row.webAction || '查看'}</Button>{row.canCancel && <Button type="link" danger onClick={() => call('openCancellation', {dataset: {id: row.id}})}>取消</Button>}</>} actionsWidth={150} scrollX={992}
           pagination={{current, pageSize, total: rows.length, onChange: changePage}}
           expandable={{rowExpandable: row => Boolean(row.webDescription), expandedRowRender: row => <div className="department-task-expanded"><strong>完整任务描述</strong><p>{row.webDescription}</p><span>{row.sourceLabel}</span></div>, columnTitle: <span className="department-task-sr-only">展开说明</span>, columnWidth: 32}} />
         {!busy && !data.loadError && rows.length > 0 && (data.hasMore || data.moreError || data.loadingMore) && <div className="department-task-pagination" aria-live="polite">{Number.isInteger(data.filteredTotal) && data.filteredTotal > rows.length && <span>还有 {data.filteredTotal - rows.length} 项没加载</span>}{data.moreError && <span role="alert">{data.moreError}</span>}<Button loading={data.loadingMore} onClick={() => call('loadMore')}>{data.moreError ? '重试' : '加载更多'}</Button></div>}
       </div>
+      <TaskCancelDialog dialog={page.selectComponent('#taskCancellation')} invokeOn={invokeOn} />
     </section>
   );
 }

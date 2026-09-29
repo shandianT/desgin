@@ -5,6 +5,70 @@
   let activeRecorder = null;
   let localLoginScope = null;
 
+  // v110: combine ordinary links and hash routes without silently accepting
+  // duplicate or conflicting company selectors. companyEntry validates values.
+  function companyEntryOptions(href = global.location.href) {
+    const url = new URL(href), query = {};
+    const hash = new URL(url.hash.slice(1) || '/', url.origin);
+    for (const key of ['company', 'scene']) {
+      const values = [...url.searchParams.getAll(key), ...hash.searchParams.getAll(key)];
+      if (values.length) query[key] = values.length === 1 ? values[0] : values;
+    }
+    return Object.keys(query).length ? {query} : null;
+  }
+
+  function hasCompanyLoginContext(page) {
+    return page?.route === 'pages/login/index' && Boolean(page._entryExplicit || page.data?.workspace || page.data?.companySwitchRequired || page.data?.editingCompany);
+  }
+  function canOpenPage(app, path) {
+    const session = app?.globalData?.session;
+    if (!session || session.mustChangePassword || typeof app.pageAllowed !== 'function') return false;
+    const url = new URL(path, 'https://sales.local/');
+    return app.pageAllowed(url.pathname.replace(/^\/?pages\//, '').replace(/\/index$/, ''), Object.fromEntries(url.searchParams));
+  }
+  function availableActions(app, actions) {
+    const session = app?.globalData?.session;
+    return actions.filter(action => canOpenPage(app, action.path) && (!action.capability || app.can(action.capability)) &&
+      (session.permissions || !action.legacyRoles || action.legacyRoles.includes(session.role)));
+  }
+  function adminLink(app, preview) {
+    const session = app?.globalData?.session;
+    if (preview || !session || session.mustChangePassword || !app.can('console.access')) return null;
+    const url = new URL('/admin', global.location.href);
+    if (session.companyCode) url.searchParams.set('company', session.companyCode);
+    return {label: '运营管理后台', href: url.href};
+  }
+
+  function migrateLoginLabels() {
+    const scopes = new Map();
+    for (const key of Object.keys(localStorage)) {
+      const match = /^(sales-web:(?:live|preview):v1:)(remembered-login|account-history):(.*)$/.exec(key);
+      if (!match) continue;
+      const destination = `${match[1]}account-history:${match[3]}`;
+      const group = scopes.get(destination) || {legacy: [], current: []};
+      let value;
+      try { value = JSON.parse(localStorage.getItem(key)); } catch (_) {}
+      // Remove legacy credentials before any migration write can fail.
+      localStorage.removeItem(key);
+      const entries = value?.version === 1 ? [value] : Array.isArray(value?.entries) ? value.entries : [];
+      group[match[2] === 'remembered-login' ? 'legacy' : 'current'].push(...entries);
+      scopes.set(destination, group);
+    }
+    for (const [key, group] of scopes) {
+      const entries = [];
+      for (const item of [...group.legacy, ...group.current]) {
+        if (!item || typeof item.baseUrl !== 'string' || !item.baseUrl || typeof item.account !== 'string') continue;
+        const account = item.account.trim().toUpperCase();
+        if (!account || account.length > 128) continue;
+        const workspace = typeof item.workspace === 'string' ? item.workspace.trim().toLowerCase() : '';
+        const duplicate = entries.findIndex(entry => entry.baseUrl === item.baseUrl && entry.workspace === workspace && entry.account === account);
+        if (duplicate >= 0) entries.splice(duplicate, 1);
+        entries.push({baseUrl: item.baseUrl, workspace, account});
+      }
+      if (entries.length) localStorage.setItem(key, JSON.stringify({version: 3, entries: entries.slice(-20)}));
+    }
+  }
+
   function withLocalLogin(callback) {
     const host = new URL(global.location.href).hostname;
     if (global.SALES_MODE === 'preview' || !['localhost', '127.0.0.1', '[::1]'].includes(host)) throw new Error('一键登录仅可在本机企业工作区使用');
@@ -29,10 +93,13 @@
     const prefix = `sales-web:${mode}:v1:`;
     // Only the shared login page's explicit opt-in record persists between browser sessions.
     // Tokens, session identity and drafts keep the existing sessionStorage boundary.
-    const rememberedLoginKey = 'salesRememberedLoginV1';
-    const rememberedLoginStorageKey = `${prefix}remembered-login:${encodeURIComponent(new URL('/api/v1', global.location.href).href)}`;
-    const storageFor = key => key === rememberedLoginKey ? localStorage : sessionStorage;
-    const storageKey = key => key === rememberedLoginKey ? rememberedLoginStorageKey : prefix + key;
+    const endpoint = encodeURIComponent(new URL('/api/v1', global.location.href).href);
+    const loginStorageKeys = {salesRememberedLoginV1: `${prefix}remembered-login:${endpoint}`,
+      salesAccountHistoryV3: `${prefix}account-history:${endpoint}`};
+    const storageFor = key => Object.hasOwn(loginStorageKeys, key) ? localStorage : sessionStorage;
+    const storageKey = key => loginStorageKeys[key] || prefix + key;
+    try { migrateLoginLabels(); }
+    catch (_) { hooks.toast?.('旧凭据清理未完成，请清除此网站的本地数据后重新登录'); }
     let savedFilesDatabase;
     const savedScope = () => {
       const session = wx.getStorageSync('salesSession');
@@ -158,7 +225,7 @@
     };
     wx.setStorageSync = (key, value) => { if (key !== 'salesApiBaseUrl') storageFor(key).setItem(storageKey(key), JSON.stringify(value)); };
     wx.removeStorageSync = key => storageFor(key).removeItem(storageKey(key));
-    wx.clearStorageSync = () => { Object.keys(sessionStorage).filter(key => key.startsWith(prefix)).forEach(key => sessionStorage.removeItem(key)); localStorage.removeItem(rememberedLoginStorageKey); };
+    wx.clearStorageSync = () => { Object.keys(sessionStorage).filter(key => key.startsWith(prefix)).forEach(key => sessionStorage.removeItem(key)); Object.values(loginStorageKeys).forEach(key => localStorage.removeItem(key)); };
     wx.request = options => transport(options, false);
     wx.uploadFile = options => transport(options, true);
     wx.env = { USER_DATA_PATH: `browser-files:${mode}` };
@@ -285,5 +352,5 @@
     };
     return wx;
   }
-  global.SalesPlatform = { install, registerLocalFile, withLocalLogin };
+  global.SalesPlatform = { install, registerLocalFile, withLocalLogin, companyEntryOptions, hasCompanyLoginContext, canOpenPage, availableActions, adminLink };
 })(window);

@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "全部待办",
+  "navigationBarBackgroundColor": "#F6FAFE",
+  "navigationBarTextStyle": "black",
+  "homeButton": true,
+  "usingComponents": {
+    "task-cancel-dialog": "/components/task-cancel-dialog/index"
+  }
+}

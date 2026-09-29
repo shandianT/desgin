@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Checkbox, Progress } from 'antd';
 import { SbBarChart, SbLabeledSelect, SbListRow, SbMetricStrip, SbSearch, SbSegmented, SbStatePanel, SbStatusTag, SbTable } from '@shandiant/ui-react';
 import RankingCard from './RankingCard.jsx';
+import {ControlledPersonPicker} from './TaskDialogs.jsx';
 import './fde-pages.css';
 
 // FDE 视角的几页都只是原页面包一层子组件：协作看板是 fde-dashboard，商机是 fde-projects。
@@ -51,7 +52,7 @@ export function FdeDashboard({ dash, invokeOn, compact }) {
         <div><h2>{props.memberId ? `${d.memberLabel || '成员'}的看板` : '协作看板'}</h2><span className="ds-muted">{d.memberLabel || d.scopeLabel} · {d.periodLabel}{d.asOf ? ` · ${d.asOf}` : ''}</span></div>
         <div className="ds-fd-controls">
           {teamScope && <SbSegmented value={d.scope} options={[{ value: 'team', label: '团队' }, { value: 'self', label: '个人' }]} onChange={scope => on('scope', { dataset: { scope } })} />}
-          {teamScope && d.scope === 'self' && <SbLabeledSelect label="成员" allowClear={false} value={(d.pickerSelected || [])[0] ?? ''} options={(d.pickerOptions || []).map(m => ({ value: m.id, label: m.group && m.group !== '授权成员' ? `${m.name}（${m.group}）` : m.name }))} onChange={id => on('selectMember', { detail: { ids: [id] } })} width={220} />}
+          {teamScope && d.scope === 'self' && <Button onClick={() => on('openMemberPicker')}>{d.memberLabel || '本人'} · 选择成员</Button>}
           <Button size="small" onClick={() => on('toggleFilter')}>{d.periodLabel} {d.filterOpen ? '收起' : '更改'}</Button>
         </div>
       </div>
@@ -104,11 +105,12 @@ export function FdeDashboard({ dash, invokeOn, compact }) {
       {d.rankingPeriodLoading ? <p className="ds-muted">正在加载团队统计…</p> : d.rankingPeriodError ? <p className="ds-fd-error">{d.rankingPeriodError}</p>
         : <SbTable rowKey="user_id" density="compact" columns={rankCols} rows={d.ranking || []} state={(d.ranking || []).length ? 'normal' : 'empty'} emptyTitle="当前范围暂无成员记录" onRowClick={r => on('openMember', { dataset: { id: r.user_id } })} />}
     </section>}
-    {d.ready && !compact && <section className="ds-fd-public">
+    {d.ready && !compact && (d.companyCards || []).length > 0 && <section className="ds-fd-public">
       <h3 className="ds-fd-h">公共排名 <small className="ds-muted">{d.rankingCohort}</small></h3>
       <div className="ds-fd-rank-grid">{(d.companyCards || []).map(card => <RankingCard key={card.key} card={card} cohort={d.rankingCohort} period={d.periodLabel} onRetry={() => on('load')} />)}</div>
     </section>}
     {d.activityOpen && <section className="ds-panel ds-fd-card"><ActivityList dash={dash} on={on} /></section>}
+    <ControlledPersonPicker open={Boolean(d.memberPickerOpen)} title="选择查看成员" members={d.pickerMembers || []} teams={d.pickerTeams || []} defaultTeamId={d.pickerDefaultTeamId || ''} selectedIds={d.pickerSelected || []} loading={Boolean(d.pickerLoading)} error={d.pickerError || ''} onClose={() => on('closeMemberPicker')} onRetry={() => on('loadPickerDirectory')} onConfirm={detail => on('selectMember', {detail})} />
   </div>;
 }
 
@@ -181,7 +183,7 @@ export function FdeProjects({ projects, invokeOn }) {
     <section className="ds-panel ds-fd-card">
       <div className="ds-fd-tools">
         <div className="ds-fd-search"><SbSearch value={d.query || ''} placeholder="搜索客户、商机或产品线" loading={Boolean(d.loading)} onChange={value => on('search', { detail: { value } })} /></div>
-        {d.canViewTeam && !props.customerId && !props.memberId && <SbLabeledSelect label="人员" mode="multiple" placeholder="全部成员" value={d.memberIds || []} options={(d.members || []).filter(m => m.id).map(m => ({ value: m.id, label: m.name }))} disabled={Boolean(d.membersLoading)} onChange={ids => on('member', { detail: { ids: ids || [] } })} />}
+        {d.canViewTeam && !props.customerId && !props.memberId && <Button disabled={Boolean(d.membersLoading || d.membersError)} onClick={() => on('openMemberPicker')}>{d.memberIds?.length ? `已选 ${d.memberIds.length} 人` : '全部成员'} · 选择人员</Button>}
         <SbLabeledSelect label="阶段" mode="multiple" value={d.selectedStages || []} options={(d.stages || []).map(s => ({ value: s.code, label: s.label }))} onChange={applyStages} />
         <SbLabeledSelect label="关单年份" allowClear={false} value={d.yearIndex} options={(d.years || []).map((y, i) => ({ value: i, label: YEAR_LABEL(y) }))} onChange={i => on('year', { detail: { value: i } })} width={130} />
         <SbLabeledSelect label="关单季度" mode="multiple" value={d.quarters || []} options={(d.quarterOptions || []).map(q => ({ value: q.value, label: `Q${q.value}` }))} onChange={applyQuarters} />
@@ -197,6 +199,7 @@ export function FdeProjects({ projects, invokeOn }) {
         onRetry={() => on('load')} onClear={filterActive ? () => on('resetFilters') : undefined} onRowClick={r => on('open', { dataset: { id: r.id } })} />
       {listState === 'normal' && (d.hasMore || d.loadingMore || d.moreError) && <div className="ds-fd-more"><span className="ds-muted">已显示 {(d.filtered || []).length} / {d.count} 个项目</span>{d.moreError && <span className="ds-fd-error">{d.moreError}</span>}<Button size="small" loading={Boolean(d.loadingMore)} onClick={() => on('loadMore')}>{d.moreError ? '重试' : '加载更多'}</Button></div>}
     </section>
+    <ControlledPersonPicker open={Boolean(d.memberPickerOpen)} title="筛选协助人员" members={(d.members || []).filter(member => member.id)} teams={d.memberTeams || []} defaultTeamId={d.memberDefaultTeamId || ''} selectedIds={d.memberIds || []} multiple allowAll loading={Boolean(d.membersLoading)} error={d.membersError || ''} onClose={() => on('closeMemberPicker')} onRetry={() => on('retryMembers')} onConfirm={detail => on('confirmMemberPicker', {detail})} />
   </div>;
 }
 const projectProps = d => ({ initialScope: d.fdeScope || '', memberId: d.fdeMemberId || '', customerId: d.fdeCustomerId || '' });

@@ -738,6 +738,14 @@
     const url = new URL(String(path).replace(/^#/, ''), 'https://sales.local/');
     const id = url.pathname.replace(/^\//, '');
     if (!bundle.pages[id]) { const error = new Error('交付包中没有此页面：' + id); toast(error.message); throw error; }
+    // v110 company-entry bridge: preserve duplicates for validation and keep the
+    // current identity until the login page's explicit company-switch dialog.
+    const entryOptions = window.SalesPlatform.companyEntryOptions(url.href);
+    if (entryOptions) {
+      app._pendingCompanyEntry = requireModule('utils/companyEntry').parse(entryOptions);
+      pendingDeepLink = ''; sessionStorage.removeItem(sessionKey('pending-path'));
+      if (id !== 'pages/login/index') return route('/pages/login/index', {reset: true});
+    }
     const hasSession = authenticated();
     if (hasSession) sessionStorage.removeItem(sessionKey('signed-out'));
     if (pendingDeepLink && hasSession && id === bundle.config.tabBar?.list?.[0]?.pagePath) {
@@ -859,6 +867,7 @@
       const finish = (confirm, restoreFocus = true, dismissed = false) => {
         if (finished) return; finished = true;
         activeModals.delete(record); document.removeEventListener('keydown', trapKeys, true); document.removeEventListener('focusin', trapFocus, true); mask.remove();
+        window.dispatchEvent(new CustomEvent('sales-native-modal-change'));
         const result = {confirm: !dismissed && confirm, cancel: !dismissed && !confirm, content: input ? input.value : '', ...(dismissed ? {errMsg: 'showModal:fail page changed'} : {})};
         try { if (dismissed) options.fail?.(result); else options.success?.(result); options.complete?.(result); } catch (error) { report(error); }
         resolvePromise(result);
@@ -867,7 +876,14 @@
       const record = {owner, finish};
       const isTop = () => [...activeModals].at(-1) === record;
       const controls = () => [...box.querySelectorAll('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex="0"]')];
-      const trapFocus = event => { if (isTop() && !mask.contains(event.target)) controls()[0]?.focus({preventScroll: true}); };
+      let restoringNativeFocus = false;
+      const trapFocus = event => {
+        if (!restoringNativeFocus && isTop() && !mask.contains(event.target)) {
+          restoringNativeFocus = true;
+          try { controls()[0]?.focus({preventScroll: true}); }
+          finally { restoringNativeFocus = false; }
+        }
+      };
       const trapKeys = event => {
         if (!isTop()) return;
         if (event.key === 'Escape' && options.showCancel !== false) { event.preventDefault(); event.stopPropagation(); finish(false); }
@@ -881,7 +897,9 @@
       const add = (label, confirm) => { const button = document.createElement('button'); button.textContent = label; button.onclick = () => finish(confirm); buttons.append(button); };
       if (options.showCancel !== false) add(options.cancelText || '取消', false); add(options.confirmText || '确定', true);
       box.append(heading, content, buttons); mask.append(box); overlays.append(mask);
-      activeModals.add(record); document.addEventListener('keydown', trapKeys, true); document.addEventListener('focusin', trapFocus, true);
+      activeModals.add(record);
+      window.dispatchEvent(new CustomEvent('sales-native-modal-change'));
+      document.addEventListener('keydown', trapKeys, true); document.addEventListener('focusin', trapFocus, true);
       requestAnimationFrame(() => (input || buttons.lastChild).focus());
     });
   }
@@ -952,9 +970,16 @@
     window.SalesPlatform.install(wx, {toast, report, windowInfo: runtimeWindowInfo});
     // A browser reload creates a new page instance; replay only its source greeting.
     if (!documentBooted) { wx.removeStorageSync('homeGreetingShownLogin'); documentBooted = true; }
-    requireModule('app'); installSessionBoundary(); await lifecycle(app, 'onLaunch'); resize(); lifecycle(app, 'onShow');
+    requireModule('app'); installSessionBoundary(); await lifecycle(app, 'onLaunch'); resize();
+    // v110: browser ?company/scene and hash-route parameters survive ensureLogin.
+    const entryOptions = window.SalesPlatform.companyEntryOptions();
+    lifecycle(app, 'onShow', entryOptions || {});
     const desired = location.hash.slice(1), first = '/' + (bundle.config.pages && bundle.config.pages[0] || bundle.config.tabBar.list[0].pagePath);
     pendingDeepLink = sessionStorage.getItem('sales-web:pending-path:' + (window.SALES_MODE || 'live')) || '';
+    if (entryOptions) {
+      pendingDeepLink = ''; sessionStorage.removeItem(sessionKey('pending-path'));
+      return route('/pages/login/index', {reset: true});
+    }
     if (!app.globalData.session && !sessionStorage.getItem(sessionKey('signed-out')) && desired && !desired.startsWith('/pages/login/') && bundle.pages[desired.split('?')[0].replace(/^\//, '')]) {
       pendingDeepLink = desired;
       sessionStorage.setItem('sales-web:pending-path:' + (window.SALES_MODE || 'live'), desired);
@@ -964,7 +989,7 @@
   }
   window.SalesRuntime = {boot, route, replacePageQuery, userRoute(path, options) { return userNavigation(() => route(path, options)); }, back(delta) { return userNavigation(() => back(delta)); }, signOut() { app.logout(); return route('/pages/login/index', {reset: true}); }, refresh() { const path = current?._url; return path && userNavigation(() => route(path, {replace: true})); },
     businessOptions() { return requireModule('utils/businessOptions'); },
-    get app() { return app; }, get current() { return current; }, get wx() { return wx; }, get errors() { return errors.slice(); }};
+    get app() { return app; }, get current() { return current; }, get wx() { return wx; }, get errors() { return errors.slice(); }, get nativeModalOpen() { return activeModals.size > 0; }};
   window.addEventListener('resize', () => { resize(); const {windowWidth, windowHeight} = wx.getSystemInfoSync(); lifecycle(current, 'onResize', {size: {windowWidth, windowHeight}}); });
   if (window.ResizeObserver) new ResizeObserver(resize).observe(root);
   function onPageScroll(event) {

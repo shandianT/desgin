@@ -59,6 +59,9 @@ export function OpportunityForm({ form, picker, invokeOn, disabled }) {
       <SbField label="商机名称" required error={f.error ? <button type="button" className="ds-oc-errlink" onClick={() => on('retryCatalog')}>{f.error}</button> : undefined} help={f.checking ? '正在检查名称…' : undefined}>
         <Input value={v.name || ''} maxLength={200} placeholder="填写项目名，可用部门、场景区分" disabled={disabled} onChange={e => input('name', e.target.value)} />
       </SbField>
+      {f.requiresOwnerTeam && <SbField label="所属团队" required error={f.ownerTeamsError ? <span>{f.ownerTeamsError} <Button type="link" size="small" onClick={() => on('loadOwnerTeams')}>重试</Button></span> : undefined}>
+        <SbLabeledSelect label="团队" allowClear={false} placeholder="请选择所属团队" width="100%" disabled={disabled || f.ownerTeamsLoading} value={v.owner_team_id || undefined} options={(f.ownerTeams || []).map(t => ({value: t.id, label: t.name}))} onChange={id => on('changeOwnerTeam', {detail: {value: f.ownerTeams.findIndex(t => t.id === id)}})} />
+      </SbField>}
       <SbField label="商机阶段" required>
         <SbLabeledSelect label="阶段" allowClear={false} placeholder="请选择阶段" width="100%" disabled={disabled || !stages.length} value={stageIndex >= 0 ? stageIndex : undefined} options={stages.map((s, i) => ({ value: i, label: s.text }))} onChange={i => on('stage', { detail: { value: i } })} />
         {stages.length > 0 && <ol className={`ds-oc-track ${lost ? 'is-lost' : ''}`} aria-hidden="true">{stages.map((s, i) => <li key={s.code} className={stageIndex >= i && !lost && s.status !== 'lost' ? 'is-active' : ''} />)}</ol>}
@@ -96,10 +99,10 @@ export function OpportunityForm({ form, picker, invokeOn, disabled }) {
       </div>
       <div className="ds-oc-grid">
         <SbField label="回款（万元）" required={Boolean(f.forecastRequired)}>
-          <SbAmountInput value={toAmount(num(f.collection))} placeholder="未填写" disabled={disabled} width="100%" onChange={value => on('forecast', { dataset: { key: 'collection' }, detail: { value: value === null ? '' : String(value) } })} />
+          <SbAmountInput aria-label="季度回款（万元）" stringMode precision={null} min={null} keyboard={false} changeOnBlur={false} parser={value => String(value).replace(/,/g, '')} formatter={(value, info) => formatWanInput(f.collection, info)} value={f.collection === '' ? null : String(f.collection)} placeholder="未填写" disabled={disabled} width="100%" onInput={value => on('forecast', { dataset: { key: 'collection' }, detail: { value: String(value).replace(/,/g, '') } })} />
         </SbField>
         <SbField label="确收（万元）" required={Boolean(f.forecastRequired)}>
-          <SbAmountInput value={toAmount(num(f.recognized))} placeholder="未填写" disabled={disabled} width="100%" onChange={value => on('forecast', { dataset: { key: 'recognized' }, detail: { value: value === null ? '' : String(value) } })} />
+          <SbAmountInput aria-label="季度确收（万元）" stringMode precision={null} min={null} keyboard={false} changeOnBlur={false} parser={value => String(value).replace(/,/g, '')} formatter={(value, info) => formatWanInput(f.recognized, info)} value={f.recognized === '' ? null : String(f.recognized)} placeholder="未填写" disabled={disabled} width="100%" onInput={value => on('forecast', { dataset: { key: 'recognized' }, detail: { value: String(value).replace(/,/g, '') } })} />
         </SbField>
         <div className="ds-oc-calc"><span className="ds-muted">预测回款（万元）</span><b>{f.predictedCollection}</b></div>
         <div className="ds-oc-calc"><span className="ds-muted">预测确收（万元）</span><b>{f.predictedRecognized}</b></div>

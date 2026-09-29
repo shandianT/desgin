@@ -1,3 +1,5 @@
+const access = require('../../utils/access');
+const {normalizeMembers, normalizeTeams, candidateTeam, assertPersonDirectory} = require('../../utils/personPicker');
 const { defaultQuarterKeys, selectedQuarters, matchesSelectedQuarter } = require('../../utils/dashboardQuarters');
 const { beijingDateParts } = require('../../utils/opportunityQuarter');
 const apiClient = require("../../utils/apiClient");
@@ -137,7 +139,7 @@ Page({
   data: {
     loading:true,loadError:'',role:'sales',viewMode:'personal',isFde:false,
     selectedMemberId:'',selectedTeamGroups:[],selectedTeamChoice:'all',teamPickerSelected:['all'],
-    memberOptions:[],teamOptions:[],optionsLoading:false,optionsError:'',memberLabel:'本人',teamLabel:'部门合计',
+    memberPickerOpen:false,memberPickerTeams:[],memberPickerDefaultTeamId:'',memberOptions:[],teamOptions:[],optionsLoading:false,optionsError:'',memberLabel:'本人',teamLabel:'部门合计',
     quarterIndex:0,quarterOptions:[],selectedQuarterKeys:[],quarterFilterDirty:false,showQuarterFilter:false,
     quarterYears:[],quarterYearIndex:0,quarterChoices:[],selectedQuarter:{label:'--'},
     countdown:{days:'--',hours:'--',minutes:'--',sentence:'季度计划'},
@@ -145,27 +147,33 @@ Page({
     funnel:[],visitDays:[],weeklyVisitCount:0,timeline:[],sourceDate:'--',dataModeLabel:'实时数据',
     rankingLoading:false,rankingMessage:'',rankingCards:[],ownIds:[],ownRegionCodes:[],cohortLabel:'',
   },
-  identityKey(){const app=getApp(),session=app.globalData.session || {};return [session.workspaceId,session.userId,app.globalData.role].join(':');},
-  onUnload(){this._loadId=(this._loadId||0)+1;this._rankingLoadId=(this._rankingLoadId||0)+1;this._optionsLoadId=(this._optionsLoadId||0)+1;},
+  identityKey(){return access.identity(getApp().globalData.session);},
+  onHide(){this.closeMemberPicker();},
+  onUnload(){this.closeMemberPicker();this._loadId=(this._loadId||0)+1;this._rankingLoadId=(this._rankingLoadId||0)+1;this._optionsLoadId=(this._optionsLoadId||0)+1;},
   onShow(){
     const app=getApp();
     if(app.guardPage&&!app.guardPage(this,'bi'))return;
-    if(['fde','fde_lead'].includes(app.globalData.role)){this.onUnload();this.setData({isFde:true});return;}
+    const options=access.presentationOptions(app.globalData.session,'bi');
+    const selected=options.find(row=>row.value===this.data.presentation)||options.find(row=>row.value===(access.isFde(app.globalData.role)?'fde':'sales'))||options[0];
+    this.setData({presentationOptions:options,presentation:selected&&selected.value});
+    if(selected&&selected.value==='fde'){this.onUnload();this.setData({isFde:true});return;}
     if(!app.ensureLogin())return;
     this.setData({isFde:false});return this.loadData();
   },
+  changePresentation(e){const choice=e.currentTarget.dataset.kind;if(!this.data.presentationOptions.some(row=>row.value===choice))return;this.setData({presentation:choice});return this.onShow();},
   loadData(){
     const app=getApp(),role=app.globalData.role,context=this.identityKey();
+    this.setData({canViewTeam:access.canViewTeam(app.globalData.session,'dashboard.read')});
     if(context!==this._context){
       this.onUnload();this._context=context;
-      this.setData({role,viewMode:role==='manager'?'team':'personal',selectedMemberId:'',selectedTeamGroups:[],selectedTeamChoice:'all',teamPickerSelected:['all'],
-        memberOptions:[],teamOptions:[],memberLabel:app.globalData.session.userName||'本人',teamLabel:'部门合计',
+      this.setData({role,viewMode:access.canViewTeam(app.globalData.session,'dashboard.read')&&role==='manager'?'team':'personal',selectedMemberId:'',selectedTeamGroups:[],selectedTeamChoice:'all',teamPickerSelected:['all'],
+        memberPickerOpen:false,memberPickerTeams:[],memberPickerDefaultTeamId:'',memberOptions:[],teamOptions:[],memberLabel:app.globalData.session.userName||'本人',teamLabel:'部门合计',
         selectedQuarterKeys:defaultQuarterKeys(),quarterFilterDirty:false,showQuarterFilter:false,rankingCards:[]});
     }
     this._nativeRankings=null;this._nativeRankingKey=null;this._rankingPending=null;this._rankingPendingKey=null;
     this._rankingLoadId=(this._rankingLoadId||0)+1;
     this.setData({quarterOptions:buildQuarterOptions([],this.data.quarterOptions)});this.syncQuarterFilter();
-    if(!['supervisor','manager'].includes(role))return Promise.all([this.loadFacts(),this.loadRankingData()]);
+    if(!this.data.canViewTeam)return Promise.all([this.loadFacts(),this.loadRankingData()]);
     const options=this.loadOptions(false),optionsSerial=this._optionsLoadId;
     return options.then(()=>{
       if(optionsSerial!==this._optionsLoadId||context!==this.identityKey())return;
@@ -173,7 +181,7 @@ Page({
     });
   },
   factsQuery(){return {personal:this.data.viewMode==='personal',member_id:this.data.viewMode==='personal'?this.data.selectedMemberId:'',
-    team_groups:this.data.viewMode==='team'&&this.data.role==='manager'?this.data.selectedTeamGroups.slice().sort():[]};},
+    team_groups:this.data.viewMode==='team'&&this.data.canViewTeam?this.data.selectedTeamGroups.slice().sort():[]};},
   loadFacts(){
     const query=this.factsQuery(),key=JSON.stringify(query),context=this.identityKey(),serial=this._loadId=(this._loadId||0)+1;
     this._raw=null;this.setData({loading:true,loadError:'',kpis:[],totalAcv:'—',sourceDate:'--',funnel:[],visitDays:[],timeline:[]});
@@ -205,21 +213,26 @@ Page({
     }).finally(()=>{if(serial===this._loadId)wx.hideNavigationBarLoading();});
   },
   loadOptions(reload=true){
-    if(!['supervisor','manager'].includes(this.data.role))return Promise.resolve();
+    if(!this.data.canViewTeam)return Promise.resolve();
     const serial=this._optionsLoadId=(this._optionsLoadId||0)+1,context=this.identityKey();
     this.setData({optionsLoading:true,optionsError:''});
     return apiClient.getDashboardOptions().then(response=>{
       if(serial!==this._optionsLoadId||context!==this.identityKey())return;
       if(!response||!Array.isArray(response.members)||!Array.isArray(response.team_groups))throw Error('可选范围加载失败');
+      assertPersonDirectory(response.members,response.teams,response.defaults);
       const selfId=getApp().globalData.session.userId;
-      const memberOptions=response.members.map(row=>({...row,group:row.team||'未分组',name:row.name+(row.id===selfId?'（本人）':''),meta:row.account_code||''}));
+      const memberPickerTeams=normalizeTeams(response.teams || []);
+      const memberOptions=normalizeMembers(response.members,memberPickerTeams).map(row=>({...row,group:row.teamLabel||'未分组',name:row.name+(row.id===selfId?'（本人）':''),meta:row.account_code||''}));
+      const memberPickerDefaultTeamId=candidateTeam(memberPickerTeams,(response.defaults||{}).team_id);
+      const previousMember=this.data.selectedMemberId;
+      const selectedMemberId=memberOptions.some(row=>row.id===previousMember)?previousMember:'';
       const teams=response.team_groups.map(row=>({id:row.code,name:row.name,kind:row.kind||''}));
       const teamOptions=[{id:'all',name:'全部团队'},...teams];
       const previousTeams=this.data.selectedTeamGroups.slice();
       const selectedTeamChoice=teams.some(row=>row.id===this.data.selectedTeamChoice)?this.data.selectedTeamChoice:'all';
       const nextTeams=selectedTeamChoice==='all'?teams.map(row=>row.id):[selectedTeamChoice];
-      this.setData({optionsLoading:false,memberOptions,teamOptions,selectedTeamChoice,selectedTeamGroups:nextTeams});this.updateSelectionLabels();
-      if(reload&&this.data.role==='manager'&&this.data.viewMode==='team'&&JSON.stringify(nextTeams)!==JSON.stringify(previousTeams)){
+      this.setData({optionsLoading:false,memberOptions,memberPickerTeams,memberPickerDefaultTeamId,selectedMemberId,teamOptions,selectedTeamChoice,selectedTeamGroups:nextTeams});this.updateSelectionLabels();
+      if(reload&&this.data.canViewTeam&&((this.data.viewMode==='team'&&JSON.stringify(nextTeams)!==JSON.stringify(previousTeams))||(this.data.viewMode==='personal'&&previousMember!==selectedMemberId))){
         return Promise.all([this.loadFacts(),this.loadRankingData()]);
       }
     }).catch(error=>{if(serial===this._optionsLoadId&&context===this.identityKey())this.setData({optionsLoading:false,optionsError:error.message||'可选范围加载失败'});});
@@ -230,25 +243,33 @@ Page({
     this.setData({memberLabel:member?member.name:this.data.selectedMemberId?'所选成员':'本人',
       memberSelected:[id],teamPickerSelected:[this.data.selectedTeamChoice],teamLabel:this.data.selectedTeamChoice==='all'?'部门合计 · 全部团队':(this.data.teamOptions.find(row=>row.id===this.data.selectedTeamChoice)||{}).name||'所选团队'});
   },
+  memberPickerVisibility(event){const open=!!event.detail.open;if(open){if(wx.hideTabBar)wx.hideTabBar({animation:false});}else if(wx.showTabBar)wx.showTabBar({animation:false});},
+  openMemberPicker(){if(!access.canViewTeam(getApp().globalData.session,'dashboard.read')||!this.data.canViewTeam||this.data.viewMode!=='personal'||this.data.isFde)return;this._memberPickerIdentity=this.identityKey();this.setData({memberPickerOpen:true});this.memberPickerVisibility({detail:{open:true}});},
+  closeMemberPicker(){this._memberPickerIdentity=null;if(!this.data.memberPickerOpen)return;this.setData({memberPickerOpen:false});this.memberPickerVisibility({detail:{open:false}});},
+  confirmMember(event){if(!this.data.memberPickerOpen||this._memberPickerIdentity!==this.identityKey()||this.data.viewMode!=='personal'||this.data.isFde||!access.canViewTeam(getApp().globalData.session,'dashboard.read'))return;return this.selectMember(event);},
   selectMember(event){
-    const id=event.detail.ids[0];if(!this.data.memberOptions.some(row=>row.id===id))return;
+    const ids=event.detail.ids;if(!Array.isArray(ids)||ids.length!==1||!this.data.canViewTeam||this.data.optionsLoading||this.data.optionsError)return;
+    const id=ids[0];if(!this.data.memberOptions.some(row=>row.id===id))return;
+    this.closeMemberPicker();
     this.setData({selectedMemberId:id===getApp().globalData.session.userId?'':id});this.updateSelectionLabels();return Promise.all([this.loadFacts(),this.loadRankingData()]);
   },
   selectTeams(event){
     const ids=event.detail.ids;
-    if(this.data.role!=='manager'||!Array.isArray(ids)||ids.length!==1||!this.data.teamOptions.some(row=>row.id===ids[0]))return;
+    if(!this.data.canViewTeam||!Array.isArray(ids)||ids.length!==1||!this.data.teamOptions.some(row=>row.id===ids[0]))return;
     const selectedTeamChoice=ids[0];
     const selectedTeamGroups=selectedTeamChoice==='all'?this.data.teamOptions.filter(row=>row.id!=='all').map(row=>row.id):[selectedTeamChoice];
     this.setData({selectedTeamChoice,selectedTeamGroups:selectedTeamGroups.sort()});this.updateSelectionLabels();return Promise.all([this.loadFacts(),this.loadRankingData()]);
   },
   changeView(event){
     const mode=event.currentTarget.dataset.mode;
-    if(!['personal','team'].includes(mode)||mode===this.data.viewMode||this.data.role==='sales')return;
-    this.setData({viewMode:mode});this.updateSelectionLabels();return Promise.all([this.loadFacts(),this.loadRankingData()]);
+    if(!['personal','team'].includes(mode)||mode===this.data.viewMode||!this.data.canViewTeam)return;
+    this.closeMemberPicker();this.setData({viewMode:mode});this.updateSelectionLabels();return Promise.all([this.loadFacts(),this.loadRankingData()]);
   },
   rankingQuery(){const quarter=selectedQuarters(this.data.quarterOptions,this.data.selectedQuarterKeys);return quarter?{year:quarter.year,quarters:quarter.quarters,personal:true,member_id:getApp().globalData.session.userId}:null;},
   reloadRankings(){return this.loadRankingData(true);},
   loadRankingData(force=false){
+    const session=getApp().globalData.session;
+    if(session.permissions&&!access.can(session,'dashboard.ranking')){this._nativeRankings=null;this._rankingLoadId=(this._rankingLoadId||0)+1;this.setData({rankingLoading:false,rankingMessage:'',rankingCards:[]});return Promise.resolve();}
     const query=this.rankingQuery();if(!query)return Promise.resolve();
     const key=JSON.stringify(query),context=this.identityKey();
     if(!force&&this._nativeRankings&&key===this._nativeRankingKey){this.rebuildRankingCards();return Promise.resolve();}
@@ -308,7 +329,7 @@ Page({
     const max=Math.max(1,...funnel.map(row=>row.value));
     funnel.forEach(row=>{row.width=`${Math.max(row.value?36:24,Math.round(row.value/max*88))}%`;});
     const visits=recentVisits(raw.recent_visits||[]);
-    this.setData({kpis,totalAcv:money(total),opportunityCount:opportunities.length,activeOpportunityCount:opportunities.length,
+    this.setData({kpis,totalAcv:money(total),opportunityCount:opportunities.length,
       quarterEmpty:!opportunities.length&&!quarterRows.length&&!actual.recognized_count&&!actual.collection_count,
       funnel,visitDays:sevenDayVisits(visits),weeklyVisitCount:visits.length,timeline:quarterTimeline(opportunities,selected),
       sourceDate:sourceTime((raw.summary||{}).source_date),dataModeLabel:'数据库实时统计'});

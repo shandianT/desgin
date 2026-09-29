@@ -175,11 +175,11 @@ function request(options) {
 }
 
 // Native login verifies the password on the server and returns a real bearer session.
-function loginWithAccount(accountCode, password, role) {
+function loginWithAccount(accountCode, password, role, workspace) {
   invalidateSession();
   const session = currentSession();
   return requestRaw({path: "/auth/password/login", method: "POST",
-    data: {account_code: accountCode, password, role}, baseUrl: session.baseUrl,
+    data: {account_code: accountCode, password, role, ...(workspace ? {workspace} : {})}, baseUrl: session.baseUrl,
   }).then((auth) => { assertCurrentSession(session); saveAuth(auth); return auth; });
 }
 function changePassword(oldPassword, newPassword) {
@@ -187,6 +187,13 @@ function changePassword(oldPassword, newPassword) {
   return request({path: "/auth/password", method: "POST", data: {old_password:oldPassword,new_password:newPassword}})
     .then(result => { assertCurrentSession(session); const auth=getAuth();
       if(auth)writeAuth({...auth,must_change_password:false});return result; });
+}
+function getCompanyEntry(companyCode) {
+  const session = currentSession();
+  // Public exact lookup, never a company directory or authenticated request.
+  return requestRaw({path:'/auth/company-entry?company_code='+encodeURIComponent(companyCode),baseUrl:session.baseUrl})
+    .then(result => { assertCurrentSession(session); return result; })
+    .catch(error => { assertCurrentSession(session); throw error; });
 }
 
 // BACKEND-CONTRACT：先清本地 auth，再异步 POST /auth/logout 撤销服务端会话；失败被吞掉。
@@ -312,8 +319,14 @@ function listCustomers(options = {}) {
 
 // Company reference directory only; total includes every matching claim state.
 // Legacy listCustomers callers keep their first-page contract and scope rules.
-function listCustomerClaimPool({ q = '', pageSize = 50, offset = 0 } = {}) {
-  return request({ path: `/customers/claim-pool?q=${encodeURIComponent(q)}&page_size=${Number(pageSize)}&offset=${Number(offset)}` });
+function listCustomerClaimPool({ q = '', pageSize = 50, offset = 0, industry = '', claimStatus = '' } = {}) {
+  const filters = (industry ? `&industry=${encodeURIComponent(industry)}` : '')
+    + (claimStatus ? `&claim_status=${encodeURIComponent(claimStatus)}` : '');
+  return request({ path: `/customers/claim-pool?q=${encodeURIComponent(q)}&page_size=${Number(pageSize)}&offset=${Number(offset)}${filters}` });
+}
+
+function listCustomerClaimOptions() {
+  return request({ path: '/customers/claim-pool/options' });
 }
 
 // BACKEND-CONTRACT：客户详情直接消费聚合对象（contacts/opportunities/tasks/visits/risks 等）。
@@ -394,6 +407,7 @@ function listOpportunities(options = {}) {
   if (options.memberId) params.push(`member_id=${encodeURIComponent(options.memberId)}`);
   if (options.includeClosed) params.push("include_closed=true");
   if (options.customerId) params.push(`customer_id=${encodeURIComponent(options.customerId)}`);
+  if (options.ownerId) params.push(`owner_id=${encodeURIComponent(options.ownerId)}`);
   if (options.owner && options.owner !== 'all') params.push(`owner=${encodeURIComponent(options.owner)}`);
   if (options.probability) params.push(`probability=${Number(options.probability)}`);
   if (options.stage) params.push(`stage=${encodeURIComponent(options.stage)}`);
@@ -499,22 +513,21 @@ function respondTask(taskId, eventType, note, versionNo) {
 
 // BACKEND-CONTRACT：due_at 转 ISO 时间；关联 customer_id/opportunity_id 缺失时明确传 null。
 // priority 中文普通/中/高 -> normal/medium/high；其他值当前回退 normal。
-function createTask({ description, assigneeAccount, targetPosition, dueAt, priority, customerId, opportunityId, associationKind }) {
-  const priorityMap = { 普通: "normal", 中: "medium", 高: "high" };
-  return request({
-    path: "/tasks",
-    method: "POST",
-    data: {
-      description,
-      association_kind: associationKind,
-      assignee_account_code: targetPosition ? null : assigneeAccount,
-      target_position: targetPosition || null,
-      due_at: new Date(dueAt).toISOString(),
-      priority_code: priorityMap[priority] || "normal",
-      customer_id: customerId || null,
-      opportunity_id: opportunityId || null,
-    },
-  });
+function taskCreateBody({ description, assigneeAccount, targetPosition, dueAt, priority, customerId, opportunityId, associationKind }) {
+  return {
+    description, association_kind: associationKind,
+    assignee_account_code: targetPosition ? null : assigneeAccount,
+    target_position: targetPosition || null,
+    due_at: new Date(dueAt).toISOString(),
+    priority_code: ({ 普通: "normal", 中: "medium", 高: "high" })[priority] || "normal",
+    customer_id: customerId || null, opportunity_id: opportunityId || null,
+  };
+}
+function createTask(input) {
+  return request({path: "/tasks", method: "POST", data: taskCreateBody(input)});
+}
+function createTasks(inputs) {
+  return request({path: "/tasks/batch", method: "POST", data: {tasks: inputs.map(taskCreateBody)}});
 }
 
 // BACKEND-CONTRACT：通知 GET 与已读 POST 独立；当前自动已读操作失败静默，不保证全部已落库。
@@ -578,6 +591,8 @@ module.exports = {
   saveAuth,
   request,
   loginWithAccount,
+  cancelPendingLogin: invalidateSession,
+  getCompanyEntry,
   logout,
   queryChatBI,
   queryTodayTasks,
@@ -593,6 +608,7 @@ module.exports = {
   getMemberSalesGrowth,
   listCustomers,
   listCustomerClaimPool,
+  listCustomerClaimOptions,
   getCustomer,
   getDirectoryMembers,
   getTaskAssignees,
@@ -616,6 +632,8 @@ module.exports = {
   completeTask,
   respondTask,
   createTask,
+  createTasks,
+  taskCreateBody,
   listNotifications,
   markNotificationRead,
   listRisks,
@@ -630,6 +648,7 @@ function assetQuery(options = {}) {
   return Object.keys(options).filter(k=>options[k] !== null && options[k] !== undefined && options[k] !== '').flatMap(k=>(Array.isArray(options[k])?options[k]:[options[k]]).map(value=>`${encodeURIComponent(k)}=${encodeURIComponent(value)}`)).join('&');
 }
 module.exports.getCustomerMap = (options={}) => request({path:'/customer-assets/map'+(Object.keys(options).length?'?'+assetQuery(options):'')});
+module.exports.refreshCustomerMap = (options={}) => request({path:'/customer-assets/map/refresh'+(Object.keys(options).length?'?'+assetQuery(options):''),method:'POST'});
 module.exports.getCustomerAssets = options => request({path:`/customer-assets?${assetQuery(options)}`});
 // BACKEND-CONTRACT：实绩登记 amount 为元字符串，带 request_id、source_ref、confirmed=true；作废保留原记录。
 // 实绩 request_id 是业务提交标识；并行存在自动传输 Idempotency-Key，二者不可混同。
@@ -670,10 +689,10 @@ module.exports.queryBusinessAdvice = async (subjectKind,subjectId,section='overv
   const identity=()=>{const a=getAuth();return a&&a.actor?`${a.actor.workspace_id}:${a.actor.user_id}:${a.actor.role}`:'';};
   const owner=identity();
   let result=await request({path:'/advice',method:'POST',data:{subject_kind:subjectKind,subject_id:subjectId,section,retry}});
-  const started=Date.now();
+  const started=Date.now();let poll=0;
   while(['queued','running'].includes(result.status)){
     if(Date.now()-started>65000)throw Error('仍在后台分析，可稍后查看');
-    await new Promise(resolve=>setTimeout(resolve,1200));
+    await new Promise(resolve=>setTimeout(resolve,Math.min(1200+poll++*800,5000)));
     assertCurrentSession(session);
     if(identity()!==owner)throw Error('登录身份已变化');
     result=await module.exports.getBusinessAdvice(result.id);
@@ -776,5 +795,8 @@ const catalogReads=['getWorkbench','getDashboard','listOpportunities','getOpport
  'getFdeDashboard','getFdeProfile','listCustomerOpportunities','listFdeVisitOpportunities'];
 catalogReads.forEach(name=>{const read=module.exports[name];if(read)module.exports[name]=(...args)=>getBusinessOptions().then(()=>read(...args));});
 
-// Read the current company's amount policy for each save attempt.
+module.exports.getOpportunityCreateOptions=()=>request({path:'/opportunities/create-options'});
+// Saving a new/changed amount must use a fresh policy for the current company.
 module.exports.getCompanyPresentation=()=>request({path:'/company-rules/presentation',fresh:true});
+
+module.exports.getTaskReassignmentOptions=(taskId,options={})=>request({path:`/tasks/${encodeURIComponent(taskId)}/reassignment-options?${assetQuery(options)}`});

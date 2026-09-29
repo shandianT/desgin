@@ -44,7 +44,7 @@ function SideNav({frame}) {
     workspace={{name: frame.workspaceName, scope: frame.workspaceScope, onClick: frame.onWorkspace}}
     groups={groups} activeKey={frame.activeKey} onSelect={(key, item) => frame.onSelect?.(item?.path || key)}
     collapsed={collapsed} onCollapse={value => { collapsed = value; try { localStorage.setItem(COLLAPSE_KEY, value ? '1' : '0'); } catch (_) {} applyWidth(); render(frame); }}
-    adminLink={{label: '运营管理后台', href: 'https://www.ericepc.com/admin'}}
+    adminLink={frame.adminLink || undefined}
     account={{name: frame.accountName, role: frame.accountRole, team: frame.accountTeam, avatar: frame.accountAvatar, active: frame.accountActive, onClick: frame.onAccount}} />;
 }
 

@@ -2,6 +2,8 @@ import React from 'react';
 import { Button, Progress } from 'antd';
 import { SbAiBadge, SbLabeledSelect, SbMetricStrip, SbSegmented, SbStatePanel, SbStatusTag, SbTable, SbTabs } from '@shandiant/ui-react';
 import './opportunity-detail.css';
+import { FdePicker } from './OpportunityCreate.jsx';
+import AdviceActions, {adviceActionEntries, adviceActionSelector} from './AdviceActions.jsx';
 
 // 商机详情（原 pages/customer-assets/index 带 opportunity_id 的形态）。FDE 视角多出录入拜访、创建 Demo 两个入口，Demo 场景页签，跟进记录里可切到本人归档记录。
 export function supportsOpportunityDetail(page, data = {}) {
@@ -18,16 +20,16 @@ function PageMore({ state, section, call }) {
   return null;
 }
 
-export default function OpportunityDetail({ page, data: d, invoke }) {
+export default function OpportunityDetail({ page, data: d, invoke, invokeOn, select }) {
   const call = (name, payload = {}) => invoke(name, payload);
   const o = d.opportunity;
   const tab = d.opportunityTab || 'overview';
   const advice = (d.opportunityAdvice || {})[tab] || {};
   const pages = d.detailPages || {};
   const summary = d.detailSummary || {};
-  const tabs = d.isFde ? (d.opportunityTabs || []) : (d.opportunityTabs || []).filter(t => t.key !== 'demo');
+  const tabs = (d.opportunityTabs || []).filter(t => t.key !== 'demo' || d.canReadDemo);
   const fde = Boolean(d.isFde);
-  const facts = [['商机名称', o.name], ['商机阶段', o.stageText], ['阶段概率', `${o.probability ?? '—'}%`], ['ACV（商机金额）', o.amount], ['预计签约', o.expectedDate], ['所属伙伴', o.partner_name || '未填写'], ['产品线', o.product_line || '未填写'], ['负责人', o.ownerLabel], ['所属团队', o.teamLabel], ['创建时间', o.createdLabel], ['更新时间', o.updatedLabel]];
+  const facts = [['商机名称', o.name], ['商机阶段', o.stageText], ['阶段概率', o.probability == null ? '未填写' : `${o.probability}%`], ['ACV（商机金额）', o.amount], ['预计签约', o.expectedDate], ['关联伙伴', o.associatedPartnersText || '未填写'], ['签单方式', o.signingMethodText || '未填写'], ['转售伙伴', o.resalePartnerText || '未填写'], ['产品线', o.product_line || '未填写'], ['负责人', o.ownerLabel], ['所属团队', o.teamLabel], ['创建时间', o.createdLabel], ['更新时间', o.updatedLabel]];
   const taskCols = [
     { title: '任务', key: 'title', render: (_, r) => <div className="ds-od-two"><b>{r.title}</b>{r.description && <span className="ds-muted">{r.description}</span>}</div> },
     { title: '状态', key: 'status', width: 130, render: (_, r) => <SbStatusTag tone={toneOf(r.signal?.tone)} label={`${r.signal?.label || ''} · ${r.statusLabel}`} /> },
@@ -51,7 +53,7 @@ export default function OpportunityDetail({ page, data: d, invoke }) {
       </div>
       <div className="ds-od-actions">
         {d.webCanEditOpportunity && <Button type="primary" onClick={() => call('webEditOpportunity')}>编辑商机</Button>}
-        {fde && d.canRecordThisOpportunity && <><Button type="primary" onClick={() => call('recordFdeVisit')}>录入拜访</Button><Button onClick={() => call('openDemoScenes')}>创建 Demo</Button></>}
+        {fde && d.canRecordThisOpportunity && <Button type="primary" onClick={() => call('recordFdeVisit')}>录入拜访</Button>}{d.canCreateDemoHere && <Button onClick={() => call('openDemoScenes')}>创建 Demo</Button>}
         <Button onClick={() => call('openProfile')}>客户档案</Button>
         <Button onClick={() => call('showAllOpportunities')}>客户全部实绩</Button>
       </div>
@@ -61,28 +63,30 @@ export default function OpportunityDetail({ page, data: d, invoke }) {
         <div><dt>预计签约</dt><dd>{o.expectedDate || '未登记'}</dd></div>
         <div><dt>负责人</dt><dd>{o.ownerLabel} · {o.teamLabel}</dd></div>
       </dl>
-      {fde && !d.canRecordThisOpportunity && <p className="ds-muted ds-od-note">当前商机仅可查看，不在本人协助名单内</p>}
+      {fde && !d.canRecordThisOpportunity && <p className="ds-muted ds-od-note">当前账号暂不能在这条商机下录入拜访。</p>}
     </aside>
     <section className="ds-panel ds-od-main">
       <SbTabs activeKey={tab} onChange={key => call('selectOpportunityTab', { dataset: { tab: key } })} items={tabs.map(t => ({ key: t.key, label: t.label }))} />
       <div className="ds-od-body">
         {tab !== 'demo' && !summary.loaded && <p className="ds-od-summary ds-muted">{summary.loading ? '经营汇总加载中，其他资料可继续查看' : summary.error ? '经营汇总暂不可用，已加载资料不受影响' : '经营汇总按需加载'}{!summary.loading && <Button type="link" size="small" onClick={() => call('retryOpportunitySummary')}>{summary.error ? '重试' : '加载'}</Button>}</p>}
-        {tab !== 'demo' && <div className="ds-od-ai">
-          <div className="ds-od-ai-head"><SbAiBadge state={advice.status === 'loading' ? 'generating' : 'pending'} text={advice.status === 'loading' ? 'AI 生成中' : fde ? 'AI 生成 · FDE 专业建议' : 'AI 生成 · 销售专家建议'} /><span className="ds-muted">{o.name} · {tabs.find(t => t.key === tab)?.label}</span><Button type="link" size="small" onClick={() => call('loadOpportunityAdvice')}>{advice.status === 'loading' ? '分析中' : advice.status === 'ready' ? '检查更新' : '生成建议'}</Button></div>
+        {tab !== 'demo' && d.canOpportunityAdvice && <div className="ds-od-ai">
+          <div className="ds-od-ai-head"><SbAiBadge state={advice.status === 'loading' ? 'generating' : 'pending'} text={advice.status === 'loading' ? 'AI 生成中' : fde ? 'AI 生成 · FDE 专业建议' : 'AI 生成 · 销售专家建议'} /><span className="ds-muted">{o.name} · {tabs.find(t => t.key === tab)?.label}</span><Button type="link" size="small" disabled={Boolean(advice.checking || advice.status === 'loading')} onClick={() => call('loadOpportunityAdvice')}>{advice.checking ? '检查中' : advice.status === 'loading' ? '分析中' : advice.status === 'ready' ? '检查更新' : '生成建议'}</Button></div>
           {advice.status === 'loading' && <p className="ds-muted">正在分析当前商机的关联资料…</p>}
           {advice.status === 'error' && <p role="alert" className="ds-od-error">{advice.error}</p>}
           {advice.status === 'ready' && <>
             <p className="ds-od-ai-summary">{advice.summary}</p>
-            <ol className="ds-od-ai-rows">{(advice.rows || []).map((row, i) => <li key={i}><b>{row.title}</b><span className="ds-muted">{row.detail}</span></li>)}</ol>
+            {(advice.checking || advice.checkError) && <p className="ds-muted" role="status">{advice.checkError || '正在核对资料变化，暂显示上次建议'}</p>}
+            <Button type="link" size="small" onClick={() => call('toggleAdvice')}>{d.adviceExpanded?.[tab] ? '收起建议' : '查看完整建议'}</Button>
+            {d.adviceExpanded?.[tab] && <ol className="ds-od-ai-rows">{(advice.rows || []).map((row, i) => <li key={row.id || i}><b>{row.title}</b><span className="ds-muted">{row.detail}</span>{row.id && !advice.checking && !advice.needsCheck && <AdviceActions actions={select(adviceActionSelector('opportunityAdvice', row))} invokeOn={invokeOn} />}</li>)}</ol>}
             <p className="ds-muted ds-od-ai-source">基于当前商机关联资料生成 · 建议供参考{advice.updatedAt ? ` · ${advice.updatedAt}` : ''}</p>
           </>}
           {!advice.status && <p className="ds-muted">还没有生成建议。</p>}
         </div>}
-        {tab === 'demo' && fde && <>
-          <div className="ds-od-demo-head"><h3 className="ds-od-h">Demo 场景 <small>{d.demoTotal} 个场景 · 关联当前商机，登记人和修改记录可追溯</small></h3>{d.canRecordThisOpportunity && <Button size="small" onClick={() => call('openDemoScenes')}>创建 Demo</Button>}</div>
+        {tab === 'demo' && d.canReadDemo && <>
+          <div className="ds-od-demo-head"><h3 className="ds-od-h">Demo 场景 <small>{d.demoTotal} 个场景 · 关联当前商机，登记人和修改记录可追溯</small></h3>{d.canCreateDemoHere && <Button size="small" onClick={() => call('openDemoScenes')}>创建 Demo</Button>}</div>
           {d.demoError ? <p role="alert" className="ds-od-error">{d.demoError} <Button type="link" size="small" onClick={() => call('loadDemoScenes')}>重试</Button></p>
             : d.demosLoading && !(d.demos || []).length ? <p className="ds-muted">正在读取场景…</p>
-              : !(d.demos || []).length ? <SbStatePanel state="empty" title="还没有 Demo 场景" description="点「创建 Demo」添加该商机的演示场景" />
+              : !(d.demos || []).length ? <SbStatePanel state="empty" title="还没有 Demo 场景" description={d.canCreateDemoHere ? '点「创建 Demo」添加该商机的演示场景' : '已登记的商机演示场景会显示在这里。'} />
                 : <ol className="ds-od-demos">{(d.demos || []).map((s, i) => <li key={s.id}><button type="button" onClick={() => call('viewDemoScene', { dataset: { id: s.id } })}><span className="ds-od-demo-no">{i + 1}</span><b>{s.name}</b><span className="ds-muted">{s.creator_name || ''}</span></button></li>)}</ol>}
           {d.demosMore && !d.demosLoading && <Button size="small" onClick={() => call('moreDemoScenes')}>加载更多场景</Button>}
         </>}
@@ -90,9 +94,10 @@ export default function OpportunityDetail({ page, data: d, invoke }) {
           <h3 className="ds-od-h">商机完整信息</h3>
           <dl className="ds-od-grid">{facts.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
           <h3 className="ds-od-h">协助 FDE</h3>
-          <div className="ds-od-fde">{(d.fdeMembers || []).length ? (d.fdeMembers || []).map(m => <span key={m.id || m.user_id || m.name} className="ds-od-chip">{m.name || m.display_name}</span>) : <span className="ds-muted">未指定</span>}<span className="ds-muted ds-od-fde-note">协助名单由有权人员维护</span></div>
+          <div className="ds-od-fde">{(d.fdeMembers || []).length ? (d.fdeMembers || []).map(m => <span key={m.id || m.user_id || m.name} className="ds-od-chip">{m.name || m.display_name}</span>) : <span className="ds-muted">未指定</span>}<span className="ds-muted ds-od-fde-note">协助名单由有权人员维护</span></div>{d.canManageFdeRelation && d.canManageFde && <><FdePicker picker={select('#detailFdePicker')} selected={d.fdeMembers} disabled={d.fdeRelationSaving} invokeOn={invokeOn} hint="保存后更新此商机的协助名单" />{d.fdeRelationDirty && <Button loading={d.fdeRelationSaving} onClick={() => call('saveFdeMembers')}>保存协助名单</Button>}{d.fdeRelationError && <p role="alert">{d.fdeRelationError}</p>}</>}
           <h3 className="ds-od-h">季度预测</h3>
           {(o.quarterDetails || []).length ? <dl className="ds-od-grid">{o.quarterDetails.map(q => <div key={q.label}><dt>{q.label}</dt><dd>含税确收 {q.recognized} · 回款 {q.collection}</dd></div>)}</dl> : <p className="ds-muted">未填写季度预测</p>}
+          {!!o.historicalPeriodRecords?.length && <><h3 className="ds-od-h">历史季度原值</h3><p className="ds-muted">保留原始期间、单位、税口径和来源，不并入季度预测或已确认实绩。</p><dl className="ds-od-grid">{o.historicalPeriodRecords.map(record => <div key={record.key}><dt>{record.period} · {record.kindText}</dt><dd>{record.amountText} · {record.taxBasisText}{record.sourceFieldText ? ` · 来源：${record.sourceFieldText}` : ''}</dd></div>)}</dl></>}
           <div className="ds-od-actual">
             <div className="ds-od-actual-head"><h3 className="ds-od-h">季度实绩</h3>{(d.quarterActualOptions || []).length > 0 && <SbLabeledSelect label="季度" allowClear={false} value={d.quarterActualIndex} options={(d.quarterActualOptions || []).map((q, i) => ({ value: i, label: q.label }))} onChange={i => call('changeActualQuarter', { detail: { value: i } })} width={150} />}</div>
             {d.quarterActualLoading ? <p className="ds-muted">正在汇总季度实绩…</p> : d.quarterActualError ? <p role="alert" className="ds-od-error">{d.quarterActualError} <Button type="link" size="small" onClick={() => call('loadQuarterActuals')}>重新加载</Button></p> : <>
@@ -138,3 +143,11 @@ export default function OpportunityDetail({ page, data: d, invoke }) {
     </section>
   </section>;
 }
+
+OpportunityDetail.subcomponents = (page,d) => {
+  const tab=d.opportunityTab||'overview',advice=d.opportunityAdvice?.[tab]||{};
+  return [
+    {selector:'#detailFdePicker',required:!!(d.opportunity && !d.opportunityLoading && !d.opportunityError && tab==='overview'),props:{selected:d.fdeMembers||[],restrictToTeams:d.fdeRestrictToTeams,allowedTeamIds:d.fdeAllowedTeamIds||[],disabled:!d.canManageFdeRelation || d.canManageFde===false || d.fdeRelationSaving}},
+    ...adviceActionEntries('opportunityAdvice',advice.id,advice.rows,Boolean(d.canOpportunityAdvice && d.opportunity && !d.opportunityLoading && !d.opportunityError && tab!=='demo' && d.adviceExpanded?.[tab] && advice.status==='ready' && !advice.checking && !advice.needsCheck)),
+  ];
+};

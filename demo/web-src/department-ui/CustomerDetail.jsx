@@ -42,6 +42,7 @@ export default function CustomerDetail({ page, data: d, invoke }) {
     if (st.error) return <p><span role="alert">{st.error}</span> <Button type="link" size="small" onClick={() => call('retryVisitDetail')}>重试</Button></p>;
     if (r.isSummary || !st.ready) return <Button type="link" size="small" onClick={() => call('retryVisitDetail')}>点击读取完整记录</Button>;
     const rows = [['客户名称', r.customerName], ['客户类型', r.customerType], ['商机名称', r.opportunityName], ['伙伴名称', r.partnerName], ['对接人', r.contactNames], ['拜访目标', r.visitGoal], ['沟通内容', r.followUpRecord], ['下一步计划', r.nextAction], ['拜访时间', r.date], ['创建时间', r.createdAt], ['创建人', r.creator], ['跟进人', r.owner], ['协同人', r.collaborators], ['拜访方式', r.mode], ['拜访时长', r.duration], ['达成结果', r.expectation], ['是否首次拜访', r.firstVisitText], ['是否七天内', r.sevenDaysText], ['地点', r.location],
+      ...(r.originalRecorderName ? [['原记录人', r.originalRecorderName]] : []), ...(r.managerName ? [['所属经理', r.managerName]] : []),
       ...(r.isFirstVisit ? [['客户主营业务', r.customerMainBusiness], ['客户需求', r.customerNeeds], ['客户预算', r.customerBudget], ['联系人角色', r.contactRole]] : [])];
     return <div className="ds-cd-visit">
       <dl className="ds-cd-dl">{rows.map(([k, v]) => <div key={k} className={k === '下一步计划' ? 'is-next' : ''}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
@@ -71,8 +72,8 @@ export default function CustomerDetail({ page, data: d, invoke }) {
         <h2>象限判断依据</h2>
         <p>{c.quadrantDefinition}，建议{c.quadrantAction}</p>
         {[['客户潜力', c.potential, c.potentialEvidence], ['关系深度', c.relationship, c.relationshipEvidence]].map(([label, score, evidence]) => <div key={label} className="ds-cd-score">
-          <div className="ds-cd-score-head"><span>{label}</span><b>{score}</b></div>
-          <Progress percent={Number(score) || 0} size="small" showInfo={false} strokeColor="var(--ui-primary)" trailColor="var(--ui-line)" />
+          <div className="ds-cd-score-head"><span>{label}</span><b>{score ?? '待评估'}</b></div>
+          {typeof score === 'number' && Number.isFinite(score) && <Progress percent={score} size="small" showInfo={false} strokeColor="var(--ui-primary)" trailColor="var(--ui-line)" />}
           <ul className="ds-muted">{(evidence || []).map(item => <li key={item}>{item}</li>)}</ul>
         </div>)}
         <p className="ds-muted ds-cd-rule">象限由事实数据自动计算；修改客户事实后，系统重新评估。</p>
@@ -108,15 +109,21 @@ export default function CustomerDetail({ page, data: d, invoke }) {
           <PageMore state={pages.visits} section="visits" call={call} more="moreSection" retry="retrySection" />
         </>}
         {d.activeTab === 'opportunity' && <>
-          {d.canEditOpportunity && <div className="ds-cd-toolbar"><Button type="primary" onClick={() => call('createOpportunity')}>新增商机</Button></div>}
+          {d.canCreateOpportunity && <div className="ds-cd-toolbar"><Button type="primary" onClick={() => call('createOpportunity')}>新增商机</Button></div>}
           {(c.opportunities || []).map(o => <article key={o.id} className="ds-cd-opp">
-            <header><div><span className="ds-cd-eyebrow">{o.status === 'won' ? '已赢单' : o.status === 'lost' ? '已丢单' : '推进中'}</span><h4>{o.name}</h4></div><div className="ds-cd-opp-right"><b>{o.amount}</b>{d.canEditOpportunity && <Button type="link" size="small" onClick={() => call('editOpportunity', { dataset: { id: o.id } })}>编辑</Button>}</div></header>
+            <header><div><span className="ds-cd-eyebrow">{o.status === 'won' ? '已赢单' : o.status === 'lost' ? '已丢单' : '推进中'}</span><h4>{o.name}</h4></div><div className="ds-cd-opp-right"><b>{o.amount}</b>{d.canUpdateOpportunity && o.can_edit && <Button type="link" size="small" onClick={() => call('editOpportunity', { dataset: { id: o.id } })}>编辑</Button>}</div></header>
             <ol className="ds-cd-steps">{(o.stageSteps || []).map(s => <li key={s.label} className={`is-${s.status}`}>{s.label}</li>)}</ol>
             <dl className="ds-cd-dl ds-cd-dl-inline">
-              <div><dt>所属伙伴</dt><dd>{o.partner_name || '未填写'}</dd></div>
+              <div><dt>关联伙伴</dt><dd>{o.associatedPartnersText || '未填写'}</dd></div>
+              <div><dt>签单方式</dt><dd>{o.signingMethodText || '未填写'}</dd></div>
+              <div><dt>转售伙伴</dt><dd>{o.resalePartnerText || '未填写'}</dd></div>
+              <div><dt>预计签约</dt><dd>{o.expectedDate || '待确认'}</dd></div>
               <div><dt>产品线</dt><dd>{o.product_line || '未填写'}</dd></div>
-              {(o.quarterDetails || []).map(q => <div key={q.label}><dt>{q.label} 预测</dt><dd>含税确收 {q.recognized} · 回款 {q.collection}</dd></div>)}
+              {o.originalOwnerName && <div><dt>原商机负责人</dt><dd>{o.originalOwnerName}</dd></div>}
+              {o.ownershipResolutionText && <div><dt>当前归属状态</dt><dd>{o.ownershipResolutionText}</dd></div>}
+              {(o.quarterDetails || []).map(q => <div key={q.label}><dt>{q.label} 预测</dt><dd>含税确收 {q.recognized} · 回款 {q.collection}{q.collectionConfidenceText ? ` · 回款信心度 ${q.collectionConfidenceText}` : ''}</dd></div>)}
             </dl>
+            {!!o.historicalPeriodRecords?.length && <><h5>历史季度原值</h5><p className="ds-muted">保留历史填报值，未计入季度实绩或预测</p><dl className="ds-cd-dl ds-cd-dl-inline">{o.historicalPeriodRecords.map(record => <div key={record.key}><dt>{record.period} · {record.kindText}</dt><dd>{record.amountText} · {record.taxBasisText}{record.sourceFieldText ? ` · 来源：${record.sourceFieldText}` : ''}</dd></div>)}</dl></>}
           </article>)}
           {pages.opportunities?.loaded && !c.opportunities?.length && <SbStatePanel state="empty" title="暂无商机" />}
           <PageMore state={pages.opportunities} section="opportunities" call={call} more="moreSection" retry="retrySection" />

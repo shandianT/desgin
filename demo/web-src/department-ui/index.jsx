@@ -2,7 +2,8 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import {flushSync} from 'react-dom';
 import {App} from 'antd';
-import {SbProvider} from '@shandiant/ui-react';
+import NativeModalFocusBoundary from './NativeModalFocusBoundary.jsx';
+import {SbProvider, SbSegmented} from '@shandiant/ui-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import '@shandiant/tokens/css';
@@ -123,7 +124,7 @@ globalThis.SalesDepartmentUI = Object.freeze({
     };
     const invoke = (name, payload) => invokeOn(page, name, payload);
     const select = (selector, parent) => resolve(page, {selector, parent});
-    flushSync(() => mounted.render(<SbProvider><App><main className="department-ui" data-department-page={page.route}><Component key={page._id} page={page} data={data} invoke={invoke} invokeOn={invokeOn} select={select}/></main></App></SbProvider>));
+    flushSync(() => mounted.render(<SbProvider><NativeModalFocusBoundary><App><main className="department-ui" data-department-page={page.route}>{(data.presentationOptions || []).length > 1 && <div className="ds-panel"><SbSegmented aria-label="工作视角" options={data.presentationOptions} value={data.presentation} onChange={kind => invoke('changePresentation', {dataset:{kind}})} /></div>}<Component key={page._id} page={page} data={data} invoke={invoke} invokeOn={invokeOn} select={select}/></main></App></NativeModalFocusBoundary></SbProvider>));
     return true;
   },
   unmount,

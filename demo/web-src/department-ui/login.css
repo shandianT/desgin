@@ -15,3 +15,4 @@
 .department-ui .ds-login-note { margin: 0; text-align: center; }
 /* 示例模式下壳层用「选择身份」入口代替账号表单（workspace-frame.css 的约定），页面容器不显示 */
 .web-login[data-mode=preview] #page-root.department-host { display: none !important; }
+.web-login[data-mode=preview][data-company-entry=true] #page-root.department-host { display: block !important; }

@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { SbAiBadge, SbBottomBar, SbDatePicker, SbField, SbLabeledSelect, SbListRow, SbMetricStrip, SbSearch, SbSheet, SbStatePanel, SbStatusTag, SbTextarea } from '@shandiant/ui-react';
 import { OpportunityForm } from './OpportunityCreate.jsx';
 import { FdeVisitOpportunity } from './FdeVisitOpportunity.jsx';
+import AdviceActions, {adviceActionEntries, adviceActionSelector} from './AdviceActions.jsx';
 import './visit-confirm.css';
 
 // 核对拜访记录（原 pages/visit-confirm/index）。三步：核对内容、AI 质检、确认保存；补充跟进信息也走这页。
@@ -15,6 +16,7 @@ VisitConfirm.subcomponents = (page, d) => {
   if (d.isFde) return [{ selector: '#fdeVisitOpportunity', required: Boolean(d.customerConfirmed && !d.editing), props: { customerId: d.customerId || '', selectedId: d.opportunityId || '', disabled: Boolean(d.busy) } }];
   const form = page.selectComponent('#visitOpportunityForm');
   return [
+    ...adviceActionEntries('archiveAdvice', d.advice?.id, d.advice?.suggestions, Boolean(d.archived && d.showAdvice && !d.adviceBusy && !d.adviceError)),
     { selector: '#visitOpportunityForm', required: Boolean(!d.editing && d.customerConfirmed && d.opportunityEditing), props: { visitContext: true, customerId: d.customerId || '', existing: d.selectedOpportunity || null, savedDraft: d.opportunityDraft || null, disabled: Boolean(d.busy) } },
     { selector: '#opportunityFdePicker', parent: '#visitOpportunityForm', required: false, props: { selected: form?.data?.form?.visit_fde_members || [], disabled: Boolean(d.busy) } },
   ];
@@ -37,6 +39,7 @@ export default function VisitConfirm({ page, data: d, invoke, invokeOn, select }
         <SbMetricStrip columns={3} items={[{ key: 'count', label: '字段已归档', value: d.archivedCount }, { key: 'score', label: '质量评分', value: d.score == null ? null : `${d.score} 分`, missingText: '暂未评分' }, { key: 'grade', label: '质量等级', value: d.grade, missingText: '暂未评分' }]} />
         <div className="ds-vc-next"><b>下一步行动</b><p>{values.next_action || '未记录'}</p></div>
         <div className="ds-vc-done-actions">
+          <Button onClick={() => call('openVisit')}>查看本次跟进</Button>
           {!fde && (d.advice || d.adviceBusy || d.adviceError) && <Button onClick={() => call('openAdvice')}>查看本次待办建议</Button>}
           <Button type="primary" disabled={busy} onClick={() => call('openCustomer')}>查看客户档案</Button>
         </div>
@@ -48,7 +51,7 @@ export default function VisitConfirm({ page, data: d, invoke, invokeOn, select }
             : d.adviceError ? <p><span className="ds-vc-error" role="alert">{d.adviceError}</span> <Button type="link" size="small" onClick={() => call('loadAdvice')}>重新获取建议</Button></p>
             : d.advice ? <>
               <p className="ds-vc-advice-summary">{d.advice.summary}</p>
-              {!(d.advice.suggestions || []).length ? <p className="ds-muted">本次没有需要补充的待办建议</p> : <ol className="ds-vc-advice-list">{d.advice.suggestions.map((s, i) => <li key={s.id || i}><b>{s.title}</b><span className="ds-muted">{s.evidence}</span><span>{s.action}</span></li>)}</ol>}
+              {!(d.advice.suggestions || []).length ? <p className="ds-muted">本次没有需要补充的待办建议</p> : <ol className="ds-vc-advice-list">{d.advice.suggestions.map((s, i) => <li key={s.id || i}><b>{s.title}</b><span className="ds-muted">{s.evidence}</span><span>{s.action}</span>{s.id && <AdviceActions actions={select(adviceActionSelector('archiveAdvice', s))} invokeOn={invokeOn} />}</li>)}</ol>}
             </> : null}
         </div>
       </SbSheet>
@@ -81,7 +84,7 @@ export default function VisitConfirm({ page, data: d, invoke, invokeOn, select }
         </>}
       </SbField>}
       {inlineForm && <div className="ds-vc-span ds-vc-inline-form"><div className="ds-vc-inline-head"><b>在此更新商机 <small className="ds-muted">{d.selectedOpportunity?.name}</small></b><span className="ds-muted">随拜访一起保存，保存前会再确认</span></div><OpportunityForm form={inlineForm} picker={inlinePicker} invokeOn={invokeOn} disabled={busy} /></div>}
-      <SbField label={<span>伙伴名称 <small className="ds-muted">选填</small></span>}><Input value={values.partner_name || ''} maxLength={300} placeholder="未涉及伙伴可留空" disabled={busy} onChange={e => field('partner_name', e.target.value)} /></SbField>
+      <SbField label={<span>伙伴名称 <small className="ds-muted">{!editing && d.opportunityId ? '随关联商机' : '选填'}</small></span>} help={!editing && d.opportunityId ? '伙伴信息随商机读取；修改商机渠道后同步更新。' : undefined}><Input value={!editing && d.opportunityId ? d.linkedPartnerName || '' : values.partner_name || ''} maxLength={300} placeholder="未涉及伙伴可留空" disabled={busy || (!editing && Boolean(d.opportunityId))} onChange={e => field('partner_name', e.target.value)} /></SbField>
       <SbField label="跟进日期"><div className="ds-vc-date"><SbDatePicker value={d.visitDate || null} disabled={busy} placeholder="选择跟进日期" onChange={s => (s ? call('selectVisitDate', { detail: { value: s } }) : call('clearVisitDate'))} /><span className="ds-muted">{d.sevenLabel} · 系统按跟进日期判断最近七天，含今天</span></div></SbField>
       <SbField label="对接人"><Input value={values.contact_name || ''} maxLength={300} placeholder="填写本次沟通的客户对接人" disabled={busy} onChange={e => field('contact_name', e.target.value)} /></SbField>
     </div>
@@ -99,8 +102,8 @@ export default function VisitConfirm({ page, data: d, invoke, invokeOn, select }
     <div className="ds-vc-grid">
       <SbField label="创建时间"><SbDatePicker value={d.createdDate || null} disabled={busy} placeholder="选择填写日期" onChange={s => (s ? call('selectCreatedDate', { detail: { value: s } }) : call('clearCreatedDate'))} /></SbField>
       <SbField label="跟进人"><div className="ds-vc-readonly">{d.recorderName || '未记录'}</div></SbField>
-      {!fde && <SbField label={<span>协同人 <small className="ds-muted">选填</small></span>}>
-        <button type="button" className="ds-vc-picker" onClick={() => call('toggleColleagues')}><span className={d.collaboratorNames ? '' : 'ds-muted'}>{d.collaboratorNames || '选择参与本次拜访的同事'}</span><span className="ds-vc-picker-link">{d.showColleagues ? '收起' : '选择'}</span></button>
+      {d.canManageAttendance && <SbField label={<span>协同人 <small className="ds-muted">选填</small></span>}>
+        <button type="button" className="ds-vc-picker" disabled={busy} onClick={() => call('toggleColleagues')}><span className={d.collaboratorNames ? '' : 'ds-muted'}>{d.collaboratorNames || '选择参与本次拜访的同事'}</span><span className="ds-vc-picker-link">{d.showColleagues ? '收起' : '选择'}</span></button>
         {d.showColleagues && <div className="ds-vc-colleagues">
           <Input placeholder="搜索同事姓名或账号" value={d.colleagueQuery || ''} onChange={e => call('inputColleagueQuery', { detail: { value: e.target.value } })} />
           <Checkbox.Group value={(d.colleagues || []).filter(c => c.selected).map(c => c.id)} disabled={busy} onChange={ids => call('selectColleagues', { detail: { value: ids } })}>{(d.colleagues || []).map(c => <Checkbox key={c.id} value={c.id}>{c.name}</Checkbox>)}</Checkbox.Group>

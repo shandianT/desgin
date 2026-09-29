@@ -9,6 +9,8 @@
 .department-ui .ds-customer-search > .ant-input-search { width: 100%; }
 .department-ui .ds-customer-filters { display: contents; }
 .department-ui .ds-customer-tools > .ant-alert { flex-basis: 100%; }
+.department-ui .ds-customer-scope { padding: var(--ui-space-2) var(--ui-space-3); margin: 0; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-text-small); }
+.department-ui .ds-customer-map-state { flex: 1; min-height: 0; display: grid; align-items: center; overflow: auto; }
 .department-ui .ds-customer-reset { flex: 0 0 auto; padding-inline: 4px; }
 .department-ui .ds-customer-workspace-wrap { flex: 1; min-height: 0; display: flex; }
 .department-ui .ds-customer-workspace { display: grid; grid-template-columns: minmax(0,42fr) minmax(0,58fr); flex: 1; min-height: 0; }

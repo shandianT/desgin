@@ -2,6 +2,7 @@ import React from 'react';
 import {Button} from 'antd';
 import {SbBarChart, SbChartCard, SbKpiCard, SbLineChart, SbSegmented, SbSelect, SbStatePanel} from '@shandiant/ui-react';
 import RankingCard from './RankingCard.jsx';
+import {ControlledPersonPicker} from './TaskDialogs.jsx';
 import './bi.css';
 
 // 经营分析（原 pages/bi/index，非 FDE）：一行范围与季度，两排指标卡，四张图，公共排名。图全部交给组件库的图表件，主题来自 tokens 的 bridge-echarts。
@@ -23,8 +24,8 @@ function kpiProps(item) {
 
 export default function Bi({page, data: d, invoke}) {
   const call = (name, payload = {}) => invoke(name, payload);
-  const manager = d.role === 'manager', canScope = ['supervisor', 'manager'].includes(d.role);
-  const scopeLabel = `${d.viewMode === 'personal' ? d.memberLabel : manager ? d.teamLabel : '本团队'} · ${d.selectedQuarter?.label || ''}`;
+  const canScope = Boolean(d.canViewTeam);
+  const scopeLabel = `${d.viewMode === 'personal' ? d.memberLabel : d.teamLabel || '本团队'} · ${d.selectedQuarter?.label || ''}`;
   const kpis = d.kpis || [], primary = kpis.slice(0, 4), secondary = kpis.slice(4);
   const funnel = d.funnel || [], visitDays = d.visitDays || [], timeline = d.timeline || [];
   const chartState = d.loading ? 'loading' : d.loadError ? 'error' : 'normal';
@@ -32,8 +33,8 @@ export default function Bi({page, data: d, invoke}) {
   return <section className="ds-bi" aria-label="经营分析">
     <div className="ds-panel ds-bi-bar">
       {canScope && <SbSegmented value={d.viewMode} options={[{value: 'team', label: '团队'}, {value: 'personal', label: '个人'}]} onChange={mode => call('changeView', {dataset: {mode}})} />}
-      {canScope && d.viewMode === 'personal' && <SbSelect width={220} showSearch optionFilterProp="label" value={d.memberSelected?.[0]} loading={d.optionsLoading} disabled={d.optionsLoading} options={(d.memberOptions || []).map(m => ({value: m.id, label: m.name}))} onChange={id => call('selectMember', {detail: {ids: [id]}})} />}
-      {manager && d.viewMode === 'team' && <SbSelect width={220} value={d.teamPickerSelected?.[0]} loading={d.optionsLoading} disabled={d.optionsLoading} options={(d.teamOptions || []).map(t => ({value: t.id, label: t.name}))} onChange={id => call('selectTeams', {detail: {ids: [id]}})} />}
+      {canScope && d.viewMode === 'personal' && <Button onClick={() => call('openMemberPicker')}>{d.memberLabel || '选择成员'} · 选择成员</Button>}
+      {canScope && d.viewMode === 'team' && <SbSelect width={220} value={d.teamPickerSelected?.[0]} loading={d.optionsLoading} disabled={d.optionsLoading || Boolean(d.optionsError)} options={(d.teamOptions || []).map(t => ({value: t.id, label: t.name}))} onChange={id => call('selectTeams', {detail: {ids: [id]}})} />}
       {d.optionsError && <Button type="link" size="small" onClick={() => call('loadData')}>{d.optionsError} · 重试</Button>}
       <div className="ds-bi-quarter">
         <SbSelect width={110} value={d.quarterYearIndex} options={(d.quarterYears || []).map((y, i) => ({value: i, label: `${y}年`}))} onChange={i => call('changeQuarterYear', {detail: {value: i}})} />
@@ -53,7 +54,7 @@ export default function Bi({page, data: d, invoke}) {
       {secondary.length > 0 && <div className="ds-bi-kpis ds-bi-kpis-secondary">
         {secondary.map((item, i) => <SbKpiCard key={`${item.label}-${i}`} label={item.label} loading={d.loading} {...kpiProps(item)} />)}
       </div>}
-      <div className="ds-bi-countdown ds-muted">{d.countdown?.sentence} · 季度总商机 {d.totalAcv} · {d.activeOpportunityCount === null ? '—' : d.activeOpportunityCount} 个活跃商机</div>
+      <div className="ds-bi-countdown ds-muted">{d.countdown?.sentence} · 季度总商机 {d.totalAcv} · {d.loading || d.loadError ? '—' : d.opportunityCount} 个在推商机</div>
       <div className="ds-bi-charts">
         {!d.quarterEmpty && <SbChartCard title="各阶段商机 ACV 有多少" scope={scopeLabel} caliber={caliber} state={chartState} onRetry={() => call('loadFacts')} emptyTitle="这个季度还没有在推商机"
           summary={`各阶段商机 ACV：${funnel.map(r => `${r.name} ${wan(number(r.value)) ?? '未登记'} 万元`).join('，')}`}
@@ -71,11 +72,12 @@ export default function Bi({page, data: d, invoke}) {
           <SbBarChart orientation="vertical" categories={timeline.map(r => r.month)} series={[{name: 'ACV', data: timeline.map(r => wan(number(r.value)))}]} unit="万元" height={240} />
         </SbChartCard>}
       </div>
-      <h2 className="ds-bi-h">公共排名 <small className="ds-muted">{d.rankingSubjectLabel}</small></h2>
+      {(d.rankingCards || []).length > 0 && <h2 className="ds-bi-h">公共排名 <small className="ds-muted">{d.rankingSubjectLabel}</small></h2>}
       <div className="ds-bi-charts">
         {(d.rankingCards || []).map(card => <RankingCard key={card.key} card={card} cohort={card.subtitle} period={card.period}
           loading={d.rankingLoading} error={d.rankingMessage} onRetry={() => call('reloadRankings')} showChart />)}
       </div>
     </>}
+    <ControlledPersonPicker open={Boolean(d.memberPickerOpen)} title="选择查看成员" members={d.memberOptions || []} teams={d.memberPickerTeams || []} defaultTeamId={d.memberPickerDefaultTeamId || ''} selectedIds={d.memberSelected || []} loading={Boolean(d.optionsLoading)} error={d.optionsError || ''} onClose={() => call('closeMemberPicker')} onRetry={() => call('loadOptions')} onConfirm={detail => call('confirmMember', {detail})} />
   </section>;
 }

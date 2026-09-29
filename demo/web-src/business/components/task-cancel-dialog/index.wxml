@@ -1,0 +1,13 @@
+<root-portal wx:if="{{open}}"><view class="cancel-layer" catchtouchmove="noop"><view class="cancel-mask" catchtap="close"></view><view class="cancel-sheet" catchtap="noop">
+  <view class="cancel-heading"><text class="cancel-title">取消任务</text><button class="cancel-close" size="mini" bindtap="close">关闭</button></view>
+  <text class="cancel-help">误建或无需继续的任务可在此取消，任务和操作记录会保留。</text>
+  <view wx:if="{{loading}}" class="cancel-state">正在读取任务最新状态…</view>
+  <block wx:else>
+    <view wx:if="{{task}}" class="cancel-task-title">{{task.title || task.description}}</view>
+    <view class="cancel-field-label">取消原因<text>{{note.length || 0}}/500</text></view>
+    <textarea class="cancel-note" value="{{note}}" maxlength="500" disabled="{{submitting || confirming}}" placeholder="请说明误建或无需继续的原因" placeholder-class="cancel-placeholder" bindinput="inputNote" />
+  </block>
+  <view wx:if="{{error}}" class="cancel-error">{{error}}</view>
+  <button wx:if="{{needsRefresh}}" class="cancel-refresh" disabled="{{loading || submitting || confirming}}" bindtap="refresh">刷新任务状态</button>
+  <view class="cancel-actions"><button class="cancel-back" bindtap="close">返回</button><button class="cancel-submit" loading="{{submitting}}" disabled="{{loading || submitting || confirming || !canSubmit || needsRefresh}}" bindtap="submit">{{submitting ? '正在取消' : '取消任务'}}</button></view>
+</view></view></root-portal>

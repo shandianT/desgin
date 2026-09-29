@@ -34,13 +34,13 @@
   <link rel="stylesheet" href="review-pages.css">
   <link rel="stylesheet" href="review-interactions.css">
   <link rel="stylesheet" href="legacy.css">
-  <link rel="stylesheet" href="department-ui/app.css?v=8914bbd4ef63">
+  <link rel="stylesheet" href="department-ui/app.css?v=91e95af72231">
 </head>
 <body class="web-login">
   <aside class="web-sidebar" id="frame-sidenav" aria-label="工作空间导航"></aside>
   <div class="web-main">
     <header class="web-topbar" id="frame-topbar"></header><button id="shortcut-help-button" hidden aria-label="键盘操作" aria-haspopup="dialog" aria-controls="shortcut-help-dialog"></button>
-    <header class="web-authbar"><a class="web-brand" href="#/pages/login/index"><img class="web-brand-logo" src="assets/brand/raccoon-salesbuddy-horizontal-navy-sidebar.svg" alt="商汤销售小浣熊 · Raccoon SalesBuddy" width="1818" height="368"></a><a href="https://www.ericepc.com/admin" target="_blank" rel="noopener noreferrer">运营管理后台 ↗</a></header>
+    <header class="web-authbar"><a class="web-brand" href="#/pages/login/index"><img class="web-brand-logo" src="assets/brand/raccoon-salesbuddy-horizontal-navy-sidebar.svg" alt="商汤销售小浣熊 · Raccoon SalesBuddy" width="1818" height="368"></a><a id="login-admin-link" href="/admin" target="_blank" rel="noopener noreferrer" hidden>运营管理后台 ↗</a></header>
     <section class="web-auth-intro" aria-label="销售工作空间介绍"><div class="auth-eyebrow"><span></span>企业销售协作空间</div><h1>记录每一次沟通，<br>让 AI 助力销售增长。</h1><div class="auth-flow"><div><span>01</span><b>建立客户关系</b></div><div><span>02</span><b>推进销售商机</b></div><div><span>03</span><b>记录每次拜访</b></div><div><span>04</span><b>落实团队行动</b></div></div></section>
     <div class="web-auth-form-heading"><div class="auth-eyebrow">欢迎回来</div><h2>企业账号登录</h2><div id="login-session-notice" class="web-session-notice" role="status" hidden></div><div id="local-login-choice" class="web-local-login" hidden><button id="local-login-button" class="web-local-login-button">一键进入 · 一线销售 <span>→</span></button><p id="local-login-description">使用本机配置的快捷销售账号，进入企业真实数据。</p><button id="show-account-login" class="web-account-login-link">使用其他企业账号</button></div></div>
     <div id="preview-notice" hidden class="web-preview-notice"><span></span><div><select id="preview-role" aria-label="身份"><option value="sales">一线销售</option><option value="supervisor">销售主管</option><option value="manager">销售总经理</option><option value="fde">FDE</option><option value="fde_lead">FDE主管</option></select><button id="enter-live">企业账号登录 →</button></div></div>

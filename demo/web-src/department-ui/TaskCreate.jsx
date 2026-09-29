@@ -3,26 +3,29 @@ import { Button, DatePicker, Form, Input, Modal, Radio } from 'antd';
 import dayjs from 'dayjs';
 import { SbBottomBar, SbField, SbSelect, SbStatePanel, SbTextarea } from '@shandiant/ui-react';
 import './tasks.css';
+import { PersonPicker } from './TaskDialogs.jsx';
 
-const handlers = ['changeTaskType', 'inputDescription', 'changeAssignee', 'selectPriority', 'changeDueDate', 'changeDueTime', 'submitTask', 'toggleTaskVoice', 'openTaskSelector', 'closeTaskSelector', 'searchTaskChoices', 'chooseTaskLink', 'loadTaskChoices', 'moreTaskChoices', 'hydrateTaskLink', 'retryRecipients'];
+const handlers = ['changeTaskType', 'inputDescription', 'confirmRecipients', 'selectPriority', 'changeDueDate', 'changeDueTime', 'submitTask', 'toggleTaskVoice', 'openTaskSelector', 'closeTaskSelector', 'searchTaskChoices', 'chooseTaskLink', 'loadTaskChoices', 'moreTaskChoices', 'hydrateTaskLink', 'retryRecipients'];
 
 /** A newer upstream shape should use the existing renderer instead of a partial form. */
 export function supportsTaskCreate(page, data = page?.data) {
   return Boolean(page && data && handlers.every(name => typeof page[name] === 'function') && Array.isArray(data.priorities) && Array.isArray(data.members));
 }
 
-export default function TaskCreate({ page, data, invoke }) {
+TaskCreate.subcomponents = (page, d) => [{selector: '#personPicker', props: {open: Boolean(d.recipientOpen), members: d.members || [], teams: d.recipientTeams || [], defaultTeamId: d.recipientDefaultTeamId || '', selected: d.selectedRecipientIds || [], multiple: true, allowAll: false, maxSelected: 100, title: '选择任务负责人', loading: Boolean(d.recipientLoading), error: d.recipientError || ''}}];
+
+export default function TaskCreate({ page, data, invoke, invokeOn }) {
   const [attempted, setAttempted] = useState(false);
   const call = (name, payload = {}) => invoke(name, payload);
   const voiceBusy = Boolean(data.isStarting || data.isRecording || data.isStopping || data.isParsing);
-  const locked = Boolean(data.submitting);
+  const locked = Boolean(data.submitting || data.submissionPending);
   const customerTask = data.taskType === 'customer';
   // Directory/voice updates must not reset an in-progress date picker edit.
   const due = useMemo(() => data.customDueDate && data.customDueTime ? dayjs(`${data.customDueDate}T${data.customDueTime}`) : null, [data.customDueDate, data.customDueTime]);
   const badDue = !due?.isValid() || due.valueOf() <= Date.now();
   const errors = {
     description: attempted && String(data.description || '').trim().length < 5 ? '任务描述要写清做什么，至少 5 个字' : '',
-    member: attempted && !data.selectedMember ? '任务要有负责人' : '',
+    member: attempted && !data.selectedMembers?.length ? '任务要有负责人' : '',
     customer: attempted && customerTask && !data.customerId ? '先选一个客户' : '',
     opportunity: attempted && customerTask && data.customerId && !data.opportunityId ? '先选这个客户的商机' : '',
     due: (attempted || due?.isValid()) && badDue ? '截止时间要晚于现在' : '',
@@ -33,12 +36,6 @@ export default function TaskCreate({ page, data, invoke }) {
     if (!value?.isValid()) return;
     call('changeDueDate', {detail: {value: value.format('YYYY-MM-DD')}});
     call('changeDueTime', {detail: {value: value.format('HH:mm')}});
-  };
-  const selectedRecipientId = data.selectedMember ? String(data.selectedMember.id) : undefined;
-  const selectRecipient = id => {
-    // Resolve the current directory by stable ID; do not persist a picker index.
-    const index = (page.data.members || []).findIndex(person => String(person.id) === String(id));
-    if (index >= 0) call('changeAssignee', {detail: {value: index}});
   };
   if (data.accessBlocked) return <SbStatePanel state="forbidden" title="此功能暂不可用" description={data.accessMessage} />;
   return (
@@ -66,8 +63,8 @@ export default function TaskCreate({ page, data, invoke }) {
           </section>
           <aside className="department-task-form-panel department-task-settings" aria-label="负责人和执行设置">
             <h2>执行设置</h2>
-            <SbField label="任务负责人" required error={errors.member || data.recipientError}>
-              <SbSelect aria-label="任务负责人" value={selectedRecipientId} loading={data.recipientLoading} disabled={locked || data.recipientLoading || !data.members.length} showSearch optionFilterProp="label" placeholder={data.recipientLoading ? '正在加载公司人员…' : data.members.length ? '任务要有负责人' : '没有可选的负责人'} options={data.members.map(person => ({value: String(person.id), label: person.pickerLabel || `${person.name} · ${person.roleLabel} · ${person.team || person.team_name || '未填写部门'}`}))} onChange={selectRecipient} />
+            <SbField label="任务负责人" required error={errors.member || data.recipientError} help="可选择多人，每人各一条待办，独立接受与完成。">
+              <Button className="department-task-choice" aria-label="选择任务负责人" disabled={locked} onClick={() => call('openRecipients')}>{data.selectedNames || (data.recipientLoading ? '正在加载公司人员…' : '选择任务负责人')}<span aria-hidden>⌄</span></Button>
             </SbField>
             {data.recipientError && <Button type="link" onClick={() => call('retryRecipients')}>重新加载负责人</Button>}
             <SbField label="优先级" required><SbSelect aria-label="任务优先级" value={data.selectedPriority} disabled={locked} options={data.priorities.map(value => ({value, label: value}))} onChange={value => call('selectPriority', {dataset: {value}})} /></SbField>
@@ -75,10 +72,10 @@ export default function TaskCreate({ page, data, invoke }) {
               {/* 截止时间要到时分，SbDatePicker 只出日期，这里仍用 antd DatePicker */}
               <DatePicker aria-label="任务截止时间" placeholder="选择截止时间" value={due?.isValid() ? due : null} format="YYYY-MM-DD HH:mm" showTime={{format: 'HH:mm'}} allowClear={false} disabled={locked} status={errors.due ? 'error' : undefined} onChange={changeDue} disabledDate={value => Boolean((data.minDueDate && value.format('YYYY-MM-DD') < data.minDueDate) || (data.maxDueDate && value.format('YYYY-MM-DD') > data.maxDueDate))} />
             </SbField>
-            {data.selectedMember && <div className="department-task-delivery"><strong>将发送给 {data.selectedMember.name}</strong><p>{data.selectedMember.team || data.selectedMember.team_name || '未填写部门'} · {data.selectedPriority}优先级</p><p>截止 {data.selectedDue}</p></div>}
+            {data.selectedMembers?.length > 0 && <div className="department-task-delivery"><strong>将创建 {data.selectedMembers.length} 条待办</strong><p>{data.selectedNames} · {data.selectedPriority}优先级</p><p>截止 {data.selectedDue}</p></div>}
           </aside>
         </div>
-        <SbBottomBar primary={{label: '下发任务', loading: locked, loadingLabel: '下发中…', disabled: voiceBusy || Boolean(data.adviceLoading || data.adviceError), disabledReason: voiceBusy ? '先录完这段语音' : data.adviceLoading ? '正在读取建议' : data.adviceError || undefined, onClick: send}} reason={data.adviceError || undefined} />
+        <SbBottomBar primary={{label: data.submissionPending && !data.submitting ? '重试确认发送结果' : '下发任务', loading: Boolean(data.submitting), loadingLabel: '下发中…', disabled: voiceBusy || Boolean(data.adviceLoading || data.adviceError), disabledReason: voiceBusy ? '先录完这段语音' : data.adviceLoading ? '正在读取建议' : data.adviceError || undefined, onClick: send}} reason={data.submissionPending && !data.submitting ? '发送结果尚未确认，保留本次内容重试，避免重复派发。' : data.adviceError || undefined} />
       </Form>
       <Modal rootClassName="department-ui department-task-choice-modal" title={data.selectorKind === 'customer' ? '选择客户' : '选择商机'} open={Boolean(data.selectorOpen)} onCancel={() => call('closeTaskSelector')} footer={null} destroyOnHidden width={600}>
         <Input aria-label={data.selectorKind === 'customer' ? '搜索客户名称' : '搜索当前客户的商机'} value={data.selectorQuery || ''} allowClear maxLength={100} placeholder={data.selectorKind === 'customer' ? '搜索客户名称' : '搜索当前客户的商机'} onChange={event => call('searchTaskChoices', {detail: {value: event.target.value}})} />
@@ -88,6 +85,7 @@ export default function TaskCreate({ page, data, invoke }) {
           {data.selectorMore && !data.selectorLoading && !data.selectorError && <Button className="department-task-selector-more" onClick={() => call('moreTaskChoices')}>加载更多</Button>}
         </div>
       </Modal>
+      <PersonPicker picker={page.selectComponent('#personPicker')} invokeOn={invokeOn} />
     </section>
   );
 }

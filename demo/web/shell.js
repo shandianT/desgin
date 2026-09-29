@@ -48,26 +48,25 @@
     b.querySelector('span').textContent = t.text;
     b.dataset.path = t.pagePath;
     if (t.capability) b.dataset.capability = t.capability;
-    b.onclick = () => SalesRuntime.userRoute('/' + t.pagePath, {tab: tabs.some(tab => tab.pagePath === t.pagePath)});
+    b.onclick = () => { if (SalesPlatform.canOpenPage(SalesRuntime.app, t.pagePath)) SalesRuntime.userRoute('/' + t.pagePath, {tab: tabs.some(tab => tab.pagePath === t.pagePath)}); };
     if (small) b.setAttribute('aria-label', t.text);
     return b;
   }
   frame.groups = navigationGroups;
-  frame.onSelect = path => SalesRuntime.userRoute('/' + path, {tab: tabs.some(tab => tab.pagePath === path)});
+  frame.onSelect = path => { if (SalesPlatform.canOpenPage(SalesRuntime.app, path)) SalesRuntime.userRoute('/' + path, {tab: tabs.some(tab => tab.pagePath === path)}); };
   tabs.forEach((t, i) => {
     const module = navigationGroups.flatMap(group => group.items).find(item => item.pagePath === t.pagePath);
     $('mobile-nav').append(navButton(module || t, i, true));
   });
   const quick = [
     {text: '记录客户拜访', path: 'pages/visit-entry/index', capability: 'visit.create', icon: '<path d="M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 10v2a7 7 0 0014 0v-2M12 19v3M8 22h8"/>'},
-    {text: '新增商机', path: 'pages/opportunity-create/index', capability: 'opportunity.edit', roles: ['sales', 'supervisor', 'manager'], icon: icons[2]},
+    {text: '新增商机', path: 'pages/opportunity-create/index', capability: 'opportunity.create', icon: icons[2]},
     {text: '创建任务', path: 'pages/management-task-create/index', capability: 'task.create', icon: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 12h8M12 8v8"/>'},
-    {text: '客户建档', path: 'pages/customer-create/index', capability: 'customer.create', roles: ['sales', 'supervisor', 'manager'], icon: '<path d="M3 21V5h12v16M7 9h4M7 13h4M7 17h4M18 5v8M14 9h8"/>'},
-    {text: '建档并下发', path: 'pages/customer-assign-confirm/index', capability: 'customer.create', roles: ['supervisor', 'manager'], icon: '<path d="M3 21V5h12v16M7 9h4M7 13h4M16 14h6m-3-3l3 3-3 3"/>'}
+    {text: '客户建档', path: 'pages/customer-create/index', capability: 'customer.create', icon: '<path d="M3 21V5h12v16M7 9h4M7 13h4M7 17h4M18 5v8M14 9h8"/>'},
+    {text: '建档并下发', path: 'pages/customer-assign-confirm/index', capability: 'customer.create', legacyRoles: ['supervisor', 'manager'], icon: '<path d="M3 21V5h12v16M7 9h4M7 13h4M16 14h6m-3-3l3 3-3 3"/>'}
   ];
   const availableQuickActions = () => {
-    const session = SalesRuntime.app?.globalData?.session;
-    return session && !session.mustChangePassword ? quick.filter(t => (!t.capability || SalesRuntime.app.can(t.capability)) && (!t.roles || t.roles.includes(session.role))) : [];
+    return SalesPlatform.availableActions(SalesRuntime.app, quick);
   };
   function renderQuickActions() {
     const actions = $('mobile-quick-actions'), available = availableQuickActions();
@@ -146,10 +145,13 @@
     if (open) focusEmptyLoginAccount();
   }
   function localLoginAvailable() {
-    return !preview && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && connection?.localQuickLogin?.available === true && connection.localQuickLogin.role === 'sales';
+    return !preview && !SalesPlatform.hasCompanyLoginContext(SalesRuntime.current) && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && connection?.localQuickLogin?.available === true && connection.localQuickLogin.role === 'sales';
   }
   function updateLocalLogin() {
     const page = SalesRuntime.current;
+    const companyEntry = SalesPlatform.hasCompanyLoginContext(page);
+    document.body.dataset.companyEntry = String(companyEntry);
+    $('preview-entry-choice').hidden = !preview || page?.route !== 'pages/login/index' || companyEntry;
     const available = localLoginAvailable() && page?.route === 'pages/login/index' && !page.data.mustChangePassword;
     const busy = localLoginBusy || loginTransportBusy > 0 || !!page?.data.loading;
     $('local-login-choice').hidden = !available;
@@ -256,7 +258,7 @@
     $('account-switch').firstChild.textContent = '切换账号 ';
     $('account-logout').textContent = '退出登录';
     accountTrigger.setAttribute('aria-expanded', 'true'); accountDialog.showModal();
-    $('account-profile').focus();
+    ($('account-profile').hidden ? $('account-switch') : $('account-profile')).focus();
   }
   frame.onAccount = openAccount; $('mobile-account-button').onclick = openAccount;
   $('close-account').onclick = () => accountDialog.close();
@@ -273,7 +275,7 @@
     const index = buttons.indexOf(document.activeElement);
     event.preventDefault(); buttons[(index + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length].focus();
   });
-  $('account-profile').onclick = () => { accountDialog.close(); SalesRuntime.userRoute('/pages/profile/index', {tab: true}); };
+  $('account-profile').onclick = () => { if (!SalesPlatform.canOpenPage(SalesRuntime.app, 'pages/profile/index')) return; accountDialog.close(); SalesRuntime.userRoute('/pages/profile/index', {tab: true}); };
   async function requestAccountExit(intent) {
     if (exitBusy || localLoginBusy || loginTransportBusy || SalesRuntime.current?.data.loading && SalesRuntime.current?.route === 'pages/login/index') return;
     if (accountDialog.open) accountDialog.close();
@@ -341,7 +343,7 @@
     const nav = navigationGroups.flatMap(group => group.items.map(item => ({...item, group: group.title}))).find(item => item.pagePath === modulePath);
     if (nav?.pagePath === path) frame.title = nav.text;
     frame.crumbGroup = nav?.group || (modulePath === 'pages/profile/index' ? '个人中心' : '销售管理');
-    frame.workspaceName = crmData ? (crmData.scope === 'full' ? 'CRM 全量工作空间' : 'CRM 样本工作空间') : preview ? '渠道销售工作区' : session?.team || '企业工作空间';
+    frame.workspaceName = crmData ? (crmData.scope === 'full' ? 'CRM 全量工作空间' : 'CRM 样本工作空间') : preview ? '渠道销售工作区' : session?.companyName || session?.team || '企业工作空间';
     frame.workspaceScope = session?.scope || '客户经营与销售协作';
     frame.showBack = !(tabs.find(t => t.pagePath === path) || path === 'pages/login/index');
     frame.accountName = session?.userName || '尚未登录';
@@ -356,12 +358,18 @@
     const mobileModulePath = tabs.some(tab => tab.pagePath === modulePath) ? modulePath : 'pages/index/index';
     frame.activeKey = modulePath;
     document.querySelectorAll('#mobile-nav [data-path]').forEach(b => {
+      const allowed = SalesPlatform.canOpenPage(SalesRuntime.app, b.dataset.path);
+      b.hidden = !allowed; b.disabled = !allowed; b.style.display = allowed ? '' : 'none';
       const active = b.dataset.path === mobileModulePath;
       b.classList.toggle('active', active);
       if (active) b.setAttribute('aria-current', b.dataset.path === path ? 'page' : 'location'); else b.removeAttribute('aria-current');
     });
     frame.accountActive = modulePath === 'pages/profile/index';
-    frame.groups = navigationGroups.map(group => ({...group, items: group.items.map(item => ({...item, hidden: !session || (!!item.capability && !SalesRuntime.app?.can(item.capability))}))}));
+    frame.groups = navigationGroups.map(group => ({...group, items: group.items.map(item => ({...item, hidden: !SalesPlatform.canOpenPage(SalesRuntime.app, item.pagePath)}))}));
+    $('account-profile').hidden = !SalesPlatform.canOpenPage(SalesRuntime.app, 'pages/profile/index');
+    frame.adminLink = SalesPlatform.adminLink(SalesRuntime.app, preview);
+    $('login-admin-link').hidden = !frame.adminLink;
+    if (frame.adminLink) $('login-admin-link').href = frame.adminLink.href;
     if ($('quick-dialog').open) {
       if (!hasActions) $('quick-dialog').close();
       else renderQuickActions();
@@ -434,7 +442,7 @@
     if (preview) {
       const role = $('preview-role').value;
       const session = SalesRuntime.app.globalData.session;
-      if ((!session || session.role !== role) && !sessionStorage.getItem(`sales-web:signed-out:${SALES_MODE}`)) {
+      if ((!session || session.role !== role) && !SalesPlatform.hasCompanyLoginContext(SalesRuntime.current) && !sessionStorage.getItem(`sales-web:signed-out:${SALES_MODE}`)) {
         await SalesRuntime.app.loginWithApi(role, 'PREVIEW_' + role.toUpperCase(), 'preview');
         // switchTab lets the runtime restore a protected deep link captured before login.
         SalesRuntime.route('/pages/index/index', {tab: true});

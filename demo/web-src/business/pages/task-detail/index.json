@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "待办详情",
+  "navigationBarBackgroundColor": "#F7FAFE",
+  "navigationBarTextStyle": "black",
+  "homeButton": true,
+  "usingComponents": {
+    "person-picker": "/components/person-picker/index",
+    "task-cancel-dialog": "/components/task-cancel-dialog/index"
+  }
+}

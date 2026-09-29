@@ -74,11 +74,12 @@ function finish(identity) {
   delete pending[identity.fingerprint];wx.setStorageSync(STORAGE_KEY,pending);
 }
 function supports(options) {
+  if(options.method==='POST' && /^\/customer-assets\/map\/refresh(?:\?.*)?$/.test(options.path)) return true;
   if(options.method==='DELETE' && /^\/demo-scenes\/[^/?]+$/.test(options.path)) return true;
   if(options.method==='PUT' && /^\/opportunities\/[^/?]+\/fde-members$/.test(options.path)) return true;
   return ['POST','PATCH'].includes(options.method) && (
     /^\/customers(?:\/[^/?]+(?:\/(?:assignments|claims|opportunities))?)?$/.test(options.path) ||
-    /^\/tasks(?:\/[^/?]+\/events)?$/.test(options.path) ||
+    /^\/tasks(?:\/batch|\/[^/?]+\/events)?$/.test(options.path) ||
     /^\/advice\/suggestions\/[^/?]+\/decision$/.test(options.path) ||
     /^\/visits(?:\/[^/?]+)?$/.test(options.path) ||
     /^\/customer-assets(?:\/[^/?]+\/void)?$/.test(options.path) ||

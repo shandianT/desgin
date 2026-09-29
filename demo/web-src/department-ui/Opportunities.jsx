@@ -9,7 +9,7 @@ export function supportsOpportunities(page, data = {}) {
 }
 const toneOf = t => ({ green: 'good', yellow: 'watch', red: 'bad', gray: 'pending' })[t] || 'pending';
 const TONE_LABEL = { good: '向好', watch: '需关注', bad: '转差', pending: '待评估' };
-const METRIC_HELP = <div className="ds-opp-help">已成单：当前已赢单，按实际成单日期归季。<br />总商机：在推与已赢单，排除已丢单，按预计关单日期归季。<br />活跃商机：所选期间有已确认跟进，每个商机只计一次。<br />新增商机：按创建日期归季。<br />统计年份和季度只筛上方总览；关单年份、预计关单等只筛下方列表。清除年份可查看全部历史；缺失日期不归入某一年。</div>;
+const METRIC_HELP = <div className="ds-opp-help">全部商机：授权范围内所有未删除商机，含在推、已赢单和已丢单；季度筛选不改变存量。<br />已成单：按实际成单日期归季。活跃商机：期间有正式跟进的商机去重，含已赢单，排除已丢单。<br />新增商机：按原始建单日期归季，历史导入不使用导入时间补算。<br />清除年份查看跨年全部时间；无日期记录保留在存量中，不归入特定季度。下方列表独立筛选预计关单时间。</div>;
 const money = v => (v == null || v === '' || v === '—' || v === '未登记') ? <span className="ds-muted">未登记</span> : v;
 
 export default function Opportunities({ page, data: d, invoke }) {
@@ -25,7 +25,7 @@ export default function Opportunities({ page, data: d, invoke }) {
     if (!Number.isInteger(year) || year < 1 || year > 9999) return;
     const options = [1, 2, 3, 4].map(value => ({ value, label: `Q${value}`, selected: quarters.includes(value) }));
     const quarterYearOptions = [...new Set([...(page.data.quarterYearOptions || []).map(o => o.value), year])].sort((a, b) => a - b).map(value => ({ value, label: `${value}年` }));
-    const selection = { year, quarters, options, label: !quarters.length ? '全部时间' : `${year}年 ${quarters.length === 4 ? '全年' : quarters.map(q => `Q${q}`).join(' + ')}` };
+    const selection = { year, quarters, options, label: !quarters.length ? '全部时间（跨年）' : `${year}年 ${quarters.length === 4 ? '全年' : quarters.map(q => `Q${q}`).join(' + ')}` };
     page.setData({
       [`${scope}Quarter`]: selection,
       quarterYearOptions,
@@ -71,7 +71,7 @@ export default function Opportunities({ page, data: d, invoke }) {
         onPeriodChange={pickQuarter}
         caliber={METRIC_HELP}
         items={[
-          { key: 'total', label: '总商机', value: board.total ?? null, missingText: '—' },
+          { key: 'total', label: '全部商机', value: board.total ?? null, missingText: '—' },
           { key: 'active', label: '活跃商机', value: board.active ?? null, missingText: '—' },
           { key: 'won', label: '已成单', value: board.won ?? null, missingText: '—' },
           { key: 'new', label: '新增商机', value: board.newCount ?? null, missingText: '—' },
@@ -81,8 +81,8 @@ export default function Opportunities({ page, data: d, invoke }) {
     <section className="ds-panel ds-opp-list" aria-label="商机列表">
       <div className="ds-opp-tools">
         <div className="ds-opp-search"><SbSearch value={d.opportunityQuery || ''} onChange={value => call('searchOpportunities', { detail: { value } })} onSearch={() => call('applyOpportunityFilters')} placeholder="搜索客户、商机或产品线" loading={d.opportunityListLoading} /></div>
-        {d.role === 'manager' && <SbLabeledSelect label="团队" value={d.executionTeamIndex > 0 ? d.executionTeamIndex : undefined} options={(d.executionTeamOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0)} onChange={i => call('changeExecutionTeam', { detail: { value: i ?? 0 } })} />}
-        {d.role !== 'sales' && <SbLabeledSelect label="负责人" value={d.opportunityOwnerIndex > 0 ? d.opportunityOwnerIndex : undefined} options={(d.opportunityOwnerOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0)} onChange={i => call('changeOpportunityFilter', { dataset: { key: 'Owner' }, detail: { value: i ?? 0 } })} />}
+        {d.canViewTeam && <SbLabeledSelect label="团队" value={d.executionTeamIndex > 0 ? d.executionTeamIndex : undefined} options={(d.executionTeamOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0)} onChange={i => call('changeExecutionTeam', { detail: { value: i ?? 0 } })} />}
+        {d.canViewTeam && <SbLabeledSelect label="负责人" value={d.opportunityOwnerIndex > 0 ? d.opportunityOwnerIndex : undefined} options={(d.opportunityOwnerOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0)} onChange={i => call('changeOpportunityFilter', { dataset: { key: 'Owner' }, detail: { value: i ?? 0 } })} />}
         <SbLabeledSelect label="阶段" mode="multiple" value={d.opportunitySelectedStages || []} options={(d.opportunityStageOptions || []).filter(o => o.value !== 'all').map(o => ({ value: o.value, label: o.label }))} onChange={changeStages} />
         {yearPicker('list', '关单年份')}
         <SbLabeledSelect label="预计关单" value={d.opportunityCloseIndex > 0 ? d.opportunityCloseIndex : lq.quarters?.length ? 'quarters' : undefined} options={[...(d.opportunityCloseOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0), ...(lq.quarters?.length ? [{ value: 'quarters', label: lq.label }] : [])]} onChange={i => call('selectOpportunityClosePeriod', { dataset: { index: i ?? 0 } })} />

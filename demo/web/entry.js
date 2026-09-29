@@ -10,7 +10,7 @@
     panel.append(heading, copy, link); document.body.append(panel);
   }
   if (location.protocol === 'file:') {
-    entryMessage('启动商汤销售小浣熊 Web', '请先双击交付目录中的「启动小浣熊SalesBuddy.command」，再进入工作空间。启动程序会构建页面并打开本地服务。', '进入本地工作空间 →', 'http://127.0.0.1:5186/');
+    entryMessage('启动商汤销售小浣熊 Web', '请先双击交付目录中的「启动小浣熊SalesBuddy.command」，再进入工作空间。启动程序会打开本地预览服务，无需安装 Node 或重新构建。', '进入本地工作空间 →', 'http://127.0.0.1:5186/');
     return;
   }
   try {
@@ -35,7 +35,7 @@
     sessionStorage.removeItem('sales-web:mode');
     url.searchParams.set('mode', window.SALES_MODE);
     history.replaceState(history.state, '', url.href);
-    for (const source of ['assets/vendor/flatpickr-4.6.13/flatpickr.min.js', 'assets/vendor/flatpickr-4.6.13/zh.js', 'date-picker.js', 'assets/vendor/tom-select-2.6.2/tom-select.complete.min.js', 'select-components.js', 'assets/vendor/echarts-6.1.0/echarts.min.js', 'dashboard-charts.js', 'task-workspace.js', 'home-activity.js', 'detail-workspace.js', 'bundle.js?v=8914bbd4ef63', 'preview-workflow.js?v=8914bbd4ef63', 'preview-api.js?v=8914bbd4ef63', 'crm-preview-ui.js', 'browser-platform.js', 'review-forms.js', 'review-pages.js', 'runtime.js', 'department-ui/app.js?v=8914bbd4ef63', 'review-lists.js', 'review-interactions.js', 'shell.js']) {
+    for (const source of ['assets/vendor/flatpickr-4.6.13/flatpickr.min.js', 'assets/vendor/flatpickr-4.6.13/zh.js', 'date-picker.js', 'assets/vendor/tom-select-2.6.2/tom-select.complete.min.js', 'select-components.js', 'assets/vendor/echarts-6.1.0/echarts.min.js', 'dashboard-charts.js', 'task-workspace.js', 'home-activity.js', 'detail-workspace.js?v=91e95af72231', 'bundle.js?v=91e95af72231', 'preview-workflow.js?v=91e95af72231', 'preview-api.js?v=91e95af72231', 'crm-preview-ui.js', 'browser-platform.js?v=91e95af72231', 'review-forms.js', 'review-pages.js', 'runtime.js?v=91e95af72231', 'department-ui/app.js?v=91e95af72231', 'review-lists.js', 'review-interactions.js', 'shell.js?v=91e95af72231']) {
       await new Promise((resolve, reject) => {
         const script = document.createElement('script'); script.src = source;
         script.onload = resolve; script.onerror = () => reject(new Error('业务文件加载失败'));

@@ -1,0 +1,80 @@
+<view class="login-page">
+  <view class="product-hero" style="{{heroTop ? 'padding-top:' + heroTop + 'px;' : ''}}">
+    <view class="brand-row">
+      <image class="brand-logo" src="/images/raccoon-salesbuddy-white.png" mode="widthFix" aria-label="Raccoon SalesBuddy" />
+    </view>
+    <view class="welcome-copy">
+      <view class="welcome-title"><view>记录每一次沟通，</view><view>让 AI 助力销售增长。</view></view>
+    </view>
+  </view>
+
+  <view class="login-content">
+    <view class="login-panel">
+      <view class="panel-title">登录工作空间</view>
+      <view class="form-area">
+        <view class="field-group">
+          <view class="field-row"><view class="field-label">当前公司</view><button wx:if="{{!mustChangePassword}}" class="company-link" size="mini" bindtap="editCompany" disabled="{{loading}}">切换公司</button></view>
+          <view class="company-card">
+            <view class="company-name">{{companyState === 'loading' ? '正在确认公司…' : companyName || (workspace ? '待确认公司' : '使用已有账号登录')}}</view>
+            <view wx:if="{{workspace}}" class="company-code">公司码：{{workspace}}</view>
+            <view wx:else class="company-code">原有唯一账号可直接登录；同名账号请先选择公司。</view>
+          </view>
+          <view wx:if="{{editingCompany}}" class="company-editor">
+            <view class="input-shell"><input value="{{workspace}}" disabled="{{loading || mustChangePassword}}" bindinput="inputWorkspace" maxlength="128" placeholder="填写公司码；原有唯一账号可留空" /></view>
+            <button size="mini" class="company-link" bindtap="confirmCompany" disabled="{{loading || companyState === 'loading'}}">确认公司</button>
+          </view>
+          <view wx:if="{{companyError}}" class="company-error">{{companyError}}<text wx:if="{{workspace}}" bindtap="loadCompany"> · 重试</text></view>
+          <view wx:if="{{companySwitchRequired}}" class="company-switch-note">
+            <view>你仍登录于{{currentCompanyLabel}}。进入其他公司需要确认切换并重新登录。</view>
+            <button size="mini" class="company-link" bindtap="confirmCompanySwitch" disabled="{{companyState !== 'ready'}}">切换并重新登录</button>
+            <button size="mini" class="company-link" bindtap="continueCurrentCompany">继续当前公司</button>
+          </view>
+        </view>
+        <block wx:if="{{!companySwitchRequired}}">
+        <view class="field-group">
+          <view class="field-row"><view class="field-label">账号</view><text class="scope-note">按账号自动识别身份</text></view>
+          <view class="input-shell">
+            <input disabled="{{mustChangePassword || loading}}" focus="{{accountFocused}}" value="{{account}}" placeholder="请输入账号名或手机号" placeholder-class="input-placeholder" bindinput="inputAccount" bindblur="blurAccount" />
+            <button wx:if="{{account || mustChangePassword}}" size="mini" class="switch-account" bindtap="switchAccount">切换账号</button>
+          </view>
+          <view wx:if="{{accountSuggestions.length && !loading && !mustChangePassword}}" class="account-suggestions">
+            <view class="suggestion-caption">本公司的已记住账号</view>
+            <scroll-view scroll-y style="height: {{accountSuggestions.length > 3 ? 240 : accountSuggestions.length * 80}}rpx;">
+              <button wx:for="{{accountSuggestions}}" wx:key="*this" size="mini" class="account-suggestion" data-account="{{item}}" catchtap="selectAccountSuggestion">
+                <text class="suggestion-account">{{item}}</text><text class="suggestion-action">填入</text>
+              </button>
+            </scroll-view>
+          </view>
+        </view>
+        <view class="field-group">
+          <view class="field-label">密码</view>
+          <view class="input-shell">
+            <input maxlength="128" disabled="{{loading}}" password="{{!passwordVisible}}" value="{{password}}" placeholder="请输入密码" placeholder-class="input-placeholder" bindinput="inputPassword" bindfocus="hideAccountSuggestions" />
+            <button size="mini" class="password-toggle" bindtap="togglePassword" aria-label="{{passwordVisible ? '隐藏密码' : '显示密码'}}"><view class="eye {{passwordVisible ? 'visible' : ''}}"><view></view></view></button>
+          </view>
+        </view>
+        <view wx:if="{{mustChangePassword}}" class="field-group">
+          <view class="field-label">设置新密码</view>
+          <view class="input-shell"><input disabled="{{loading}}" password value="{{newPassword}}" placeholder="请输入8–128位新密码" placeholder-class="input-placeholder" bindinput="inputNewPassword" maxlength="128" /></view>
+          <view class="password-hint">首次登录请先修改初始密码。</view>
+        </view>
+        </block>
+      </view>
+      <block wx:if="{{!companySwitchRequired}}">
+      <view class="remember-row" bindtap="toggleRememberAccount" role="checkbox" aria-checked="{{rememberAccount}}">
+        <view class="checkbox {{rememberAccount ? 'checked' : ''}}"><text wx:if="{{rememberAccount}}">✓</text></view>
+        <text class="remember-label">记住账号</text>
+        <text class="remember-note">不保存密码</text>
+      </view>
+      <view class="agreement" bindtap="toggleAgreement" role="checkbox" aria-checked="{{agreed}}">
+        <view class="checkbox {{agreed ? 'checked' : ''}}"><text wx:if="{{agreed}}">✓</text></view>
+        <view>我已阅读并同意<text catchtap="openPrivacy" role="link">隐私与数据使用说明</text></view>
+      </view>
+      <button size="mini" class="login-button" loading="{{loading}}" disabled="{{loading}}" bindtap="submitLogin">
+        <text>{{loading ? '正在处理' : mustChangePassword ? '修改密码并进入' : '进入工作空间'}}</text><view wx:if="{{!loading}}" class="button-arrow">→</view>
+      </button>
+      </block>
+    </view>
+    <view class="security-note">账号由运营开通；忘记密码请联系运营。</view>
+  </view>
+</view>

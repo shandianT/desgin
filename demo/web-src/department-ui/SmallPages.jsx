@@ -2,6 +2,8 @@ import React from 'react';
 import { Button, Input, Progress } from 'antd';
 import { SbAiBadge, SbBottomBar, SbField, SbLabeledSelect, SbSearch, SbSegmented, SbSheet, SbStatePanel, SbStatusTag, SbTable, SbTabs, SbTextarea } from '@shandiant/ui-react';
 import { Sparkline } from './Profile.jsx';
+import AdviceActions, {adviceActionEntries, adviceActionSelector} from './AdviceActions.jsx';
+import { ControlledPersonPicker } from './TaskDialogs.jsx';
 import './small-pages.css';
 
 // 第二批穿透页：都是原 Page 的数据与动作，这里只换展示层。
@@ -12,6 +14,8 @@ const use = (page, invoke) => (name, payload = {}) => invoke(name, payload);
 export function supportsAssignConfirm(page, data = {}) { return Boolean(page && page.route === 'pages/customer-assign-confirm/index' && Array.isArray(data.fields)); }
 export function AssignConfirm({ page, data: d, invoke }) {
   const call = use(page, invoke);
+  if (d.loading) return <SbStatePanel state="loading" title="正在读取客户建档资料…" />;
+  if (d.loadError) return <SbStatePanel state="error" title="客户建档资料加载失败" description={d.loadError} onRetry={() => call('onLoad')} />;
   const notice = d.draftRestored ? '已恢复上次保存的客户建档草稿。' : d.missingCount ? `还有 ${d.missingCount} 个关键字段待补充，完成后才能正式建档下发。` : d.saved ? '当前修改已经保存为草稿。' : '';
   return <section className="ds-sp ds-sp-fill" aria-label="客户建档与下发">
     <div className="ds-panel ds-sp-card ds-sp-col">
@@ -21,13 +25,13 @@ export function AssignConfirm({ page, data: d, invoke }) {
       <div className="ds-sp-ai"><SbAiBadge state="pending" text="AI 生成 · 待核对" /><span>核对客户名称、联系人角色和负责销售；确认后完成客户建档、负责人绑定和销售端提醒。</span></div>
       {notice && <p className="ds-sp-notice">{notice}</p>}
       <div className="ds-sp-fields">
-        {(d.fields || []).map((f, i) => <button key={f.key} type="button" className={`ds-sp-field ${f.missing ? 'is-missing' : ''} ${f.edited ? 'is-edited' : ''} ${f.readonly ? 'is-readonly' : ''}`} onClick={() => call('openEditor', { dataset: { index: i } })}>
+        {(d.fields || []).map((f, i) => <button key={f.key} type="button" disabled={d.submitting} className={`ds-sp-field ${f.missing ? 'is-missing' : ''} ${f.edited ? 'is-edited' : ''} ${f.readonly ? 'is-readonly' : ''}`} onClick={() => call('openEditor', { dataset: { index: i } })}>
           <span className="ds-sp-field-label">{f.label}<small>{f.required ? '必填' : f.system ? '系统生成' : '选填'}{f.edited ? ' · 已修改' : ''}</small></span>
           <span className={`ds-sp-field-value ${f.value ? '' : 'is-empty'}`}>{f.value || '待补充'}</span>
           <span className="ds-sp-field-action">{f.readonly ? '自动匹配' : f.missing ? '补充' : '编辑'}</span>
         </button>)}
       </div>
-      <div className="ds-sp-bar"><SbBottomBar reason="确认后写入正式客户数据并通知负责销售" secondary={{ label: '保存草稿', disabled: d.submitting, onClick: () => call('saveDraft') }} primary={{ label: '确认建档并下发', loading: d.submitting, disabled: Boolean(d.missingCount), disabledReason: d.missingCount ? `还有 ${d.missingCount} 个必填项` : '', onClick: () => call('confirmArchive') }} /></div>
+      <div className="ds-sp-bar"><SbBottomBar reason="确认后写入正式客户数据并通知负责销售" secondary={{ label: '保存草稿', disabled: d.submitting, onClick: () => call('saveDraft') }} primary={{ label: '确认建档并下发', loading: d.submitting, disabled: d.submitting || Boolean(d.missingCount), disabledReason: d.submitting ? '正在提交，请稍候' : d.missingCount ? `还有 ${d.missingCount} 个必填项` : '', onClick: () => call('confirmArchive') }} /></div>
     </div>
     <SbSheet open={Boolean(d.editorVisible)} title={d.editorTitle} onClose={() => call('closeEditor')} footer={<><Button onClick={() => call('closeEditor')}>取消</Button><Button type="primary" onClick={() => call('saveEditor')}>保存修改</Button></>}>
       {d.editorType === 'text' && <Input autoFocus value={d.editorValue || ''} placeholder={d.editorPlaceholder} onChange={e => call('inputEditor', { detail: { value: e.target.value } })} onPressEnter={() => call('saveEditor')} />}
@@ -43,8 +47,8 @@ export function supportsCustomerClaim(page) { return Boolean(page && page.route 
 export function CustomerClaim({ page, data: d, invoke }) {
   const call = use(page, invoke);
   const cols = [
-    { title: '', key: 'pick', width: 40, render: (_, r) => <span className={`ds-sp-radio ${d.selectedCustomerId === r.id ? 'is-on' : ''} ${r.claimed || r.claim_status === 'pending' ? 'is-off' : ''}`} aria-hidden="true" /> },
-    { title: '客户名称', key: 'name', render: (_, r) => <div className="ds-sp-two"><b>{r.name}</b><span className="ds-muted">{r.industry || '行业待补充'} · {r.team || '当前部门'}</span></div> },
+    { title: '', key: 'pick', width: 40, render: (_, r) => <span className={`ds-sp-radio ${d.selectedCustomerId === r.id ? 'is-on' : ''} ${!r.claimEligible ? 'is-off' : ''}`} aria-hidden="true" /> },
+    { title: '客户名称', key: 'name', render: (_, r) => <div className="ds-sp-two"><b>{r.name}</b><span className="ds-muted">{r.industry || r.industry_code || '行业待补充'} · {r.team || '当前部门'}</span></div> },
     { title: '等级', key: 'level', width: 90, render: (_, r) => r.level || <span className="ds-muted">未分级</span> },
     { title: '负责销售', key: 'owner', width: 140, render: (_, r) => r.owner || <span className="ds-muted">未分配</span> },
     { title: '认领状态', key: 'claim', width: 130, render: (_, r) => <SbStatusTag tone={r.claimed ? 'good' : r.claim_status === 'pending' ? 'watch' : 'pending'} label={r.claimLabel} /> },
@@ -53,16 +57,21 @@ export function CustomerClaim({ page, data: d, invoke }) {
   return <section className="ds-sp ds-sp-fill" aria-label="客户认领">
     <div className="ds-panel ds-sp-card ds-sp-col">
       <div className="ds-sp-tools">
-        <div className="ds-sp-search"><SbSearch value={d.query || ''} placeholder="搜索客户名称" loading={Boolean(d.loading)} onChange={value => call('inputQuery', { detail: { value } })} /></div>
+        <div className="ds-sp-search"><SbSearch value={d.query || ''} placeholder="客户名称、拼音或首字母" disabled={d.submitting} loading={Boolean(d.loading)} onChange={value => call('inputQuery', { detail: { value } })} /></div>
+        <SbLabeledSelect label="行业" value={d.industryIndex || 0} allowClear={false} options={(d.industryOptions || []).map((item, index) => ({value: index, label: item.label}))} disabled={d.optionsLoading || Boolean(d.optionsError) || d.submitting} onChange={value => call('changeIndustry', {detail: {value}})} />
+        <SbLabeledSelect label="认领状态" value={d.statusIndex || 0} allowClear={false} options={(d.statusOptions || []).map((item, index) => ({value: index, label: item.label}))} disabled={d.optionsLoading || Boolean(d.optionsError) || d.submitting} onChange={value => call('changeClaimStatus', {detail: {value}})} />
         <span className="ds-muted">{d.loading ? '加载中…' : d.total !== null && d.total !== undefined ? `已加载 ${(d.customers || []).length} / 共 ${d.total} 家` : '暂未加载'}</span>
-        <Button onClick={() => call('refreshCustomers')}>刷新名单</Button>
+        <Button disabled={d.submitting || d.loading} onClick={() => call('refreshCustomers')}>刷新名单</Button>
+        {d.hasFilters && <Button type="link" disabled={d.submitting} onClick={() => call('clearFilters')}>清除筛选</Button>}
       </div>
+      {d.optionsLoading && <p className="ds-muted">正在读取行业和认领状态选项…</p>}
+      {d.optionsError && <p className="ds-sp-error" role="alert">{d.optionsError}<Button type="link" size="small" disabled={d.submitting} onClick={() => call('retryFilterOptions')}>重试筛选选项</Button></p>}
       {d.resultMessage && <p className="ds-sp-notice">{d.resultMessage}</p>}
       <div className="ds-sp-body">
-        <SbTable rowKey="id" density="compact" columns={cols} rows={d.customers || []} state={state} emptyTitle={d.query ? '没有匹配的客户' : '公司客户名单暂为空'} emptyDescription={d.query ? '请尝试其他客户名称关键词' : '运营完成客户建档后，可在这里申请认领'} onRetry={() => call('refreshCustomers')} onRowClick={r => call('selectCustomer', { dataset: { id: r.id } })} />
+        <SbTable rowKey="id" density="compact" columns={cols} rows={d.customers || []} state={state} emptyTitle={state === 'error' ? '客户名单加载失败' : d.hasFilters ? '没有匹配的客户' : '公司客户名单暂为空'} emptyDescription={state === 'error' ? d.loadError : d.hasFilters ? '请调整搜索、行业或认领状态，也可清除筛选。' : '运营完成客户建档后，可在这里申请认领'} onRetry={() => call('refreshCustomers')} onClear={d.hasFilters ? () => call('clearFilters') : undefined} onRowClick={d.submitting ? undefined : r => call('selectCustomer', { dataset: { id: r.id } })} />
         {(d.customers || []).length > 0 && (d.hasMore ? <div className="ds-sp-more">{d.loadMoreError && <span className="ds-sp-error">{d.loadMoreError}</span>}<Button size="small" loading={d.loadingMore} disabled={d.loadingMore} onClick={() => call('retryMore')}>{d.refreshRequired ? '刷新名单' : d.loadMoreError ? '重试加载' : '加载更多客户'}</Button></div> : !d.loading && <p className="ds-muted ds-sp-end">已显示全部匹配客户</p>)}
       </div>
-      <div className="ds-sp-bar"><SbBottomBar reason="提交申请后由运营审批，通过后加入你的作战地图" primary={{ label: '提交认领申请', loading: d.submitting, disabled: !d.selectedCustomerId, disabledReason: d.selectedCustomerId ? '' : '先选一个可申请的客户', onClick: () => call('confirmClaim') }} /></div>
+      <div className="ds-sp-bar"><SbBottomBar reason="申请由运营审批；通过后纳入本人客户范围，本年有正式跟进的客户才进入活跃地图" primary={{ label: '提交认领申请', loading: d.submitting, disabled: d.submitting || d.loading || !d.selectedCustomerId, disabledReason: d.submitting ? '正在提交，请稍候' : d.selectedCustomerId ? '' : '先选一个可申请的客户', onClick: () => call('confirmClaim') }} /></div>
     </div>
   </section>;
 }
@@ -135,9 +144,10 @@ export function ReportDetail({ page, data: d, invoke }) {
 
 /* 拜访详情 pages/visit-detail */
 export function supportsVisitDetail(page, data = {}) { return Boolean(page && page.route === 'pages/visit-detail/index' && data.visit && !data.loading); }
-export function VisitDetail({ page, data: d, invoke }) {
+VisitDetail.subcomponents = (page, d) => adviceActionEntries('visitAdvice', d.visitAdvice?.id, d.visitAdvice?.rows, Boolean(d.visit && !d.loading && d.canSuggestVisitTasks !== false && d.visitAdvice?.status === 'ready'));
+export function VisitDetail({ page, data: d, invoke, invokeOn, select }) {
   const call = use(page, invoke); const v = d.visit; const a = d.visitAdvice || {};
-  const facts = [['客户类型', v.customerType], ['客户名称', v.customerName], ['商机名称', v.opportunityName], ['伙伴名称', v.partnerName], ['跟进日期', v.date], ['创建时间', v.createdAt], ['对接人', v.contactNames], ['跟进人', v.owner], ['协同人', v.collaborators], ['是否七天内', v.sevenDaysText], ['拜访方式', v.mode], ['拜访时长', v.duration], ['拜访地点', v.location], ['是否首次拜访', v.firstVisitText]];
+  const facts = [['客户类型', v.customerType], ['客户名称', v.customerName], ['商机名称', v.opportunityName], ['伙伴名称', v.partnerName], ['跟进日期', v.date], ['创建时间', v.createdAt], ['对接人', v.contactNames], ['跟进人', v.owner], ...(v.originalRecorderName ? [['原记录人', v.originalRecorderName]] : []), ...(v.managerName ? [['所属经理', v.managerName]] : []), ['协同人', v.collaborators], ['是否七天内', v.sevenDaysText], ['拜访方式', v.mode], ['拜访时长', v.duration], ['拜访地点', v.location], ['是否首次拜访', v.firstVisitText]];
   return <section className="ds-sp ds-sp-two-col" aria-label="拜访记录">
     <aside className="ds-panel ds-sp-side">
       <div className="ds-sp-tags"><SbStatusTag tone={toneOf(v.signal?.tone)} label={v.signal?.badgeText || v.signal?.label} reason={v.signal?.reason} /><span className="ds-sp-chip">只读</span></div>
@@ -145,18 +155,18 @@ export function VisitDetail({ page, data: d, invoke }) {
       <p className="ds-muted">{[v.date, v.mode, v.firstVisitText === '是' ? '首次拜访' : '客户跟进'].filter(Boolean).join(' · ')}</p>
       {v.fdeParticipantNames && <p className="ds-sp-notice">本次实际协助 FDE：{v.fdeParticipantNames}{v.isParticipant ? ' · 本人参与' : ''}</p>}
       <dl className="ds-sp-info">{facts.map(([k, val]) => <div key={k}><dt>{k}</dt><dd>{val}</dd></div>)}</dl>
-      {v.opportunityId && <Button onClick={() => call('openOpportunity')}>查看商机详情</Button>}
+      {(v.linkedOpportunities || []).map(link => <Button key={link.id} onClick={() => call('openOpportunity', {dataset:{id:link.id}})}>查看商机 · {link.name || '商机详情'}</Button>)}
     </aside>
     <section className="ds-panel ds-sp-main">
       {v.isFirstVisit && <section className="ds-sp-block"><h2>首次拜访信息</h2><dl className="ds-sp-rows">{[['客户主营业务', v.customerMainBusiness], ['客户需求', v.customerNeeds], ['客户预算', v.customerBudget], ['联系人角色', v.contactRole]].map(([k, val]) => <div key={k}><dt>{k}</dt><dd>{val}</dd></div>)}</dl></section>}
       <section className="ds-sp-block"><h2>拜访内容</h2><dl className="ds-sp-rows">{[['拜访目标', v.visitGoal], ['沟通内容', v.followUpRecord], ['达成结果', v.expectation]].map(([k, val]) => <div key={k}><dt>{k}</dt><dd className="ds-sp-pre">{val}</dd></div>)}</dl><div className="ds-sp-next"><b>下一步计划</b><p>{v.nextAction}</p></div></section>
-      <section className="ds-sp-block">
+      {d.canSuggestVisitTasks !== false && <section className="ds-sp-block">
         <div className="ds-sp-block-head"><SbAiBadge state={a.status === 'loading' ? 'generating' : 'pending'} text={a.status === 'loading' ? 'AI 生成中' : 'AI 生成 · 本次拜访建议'} />{a.status !== 'loading' && <Button type="link" size="small" onClick={() => call('loadVisitAdvice')}>{a.status === 'ready' ? '检查建议更新' : '生成建议'}</Button>}</div>
         {a.status === 'loading' && <p className="ds-muted">正在分析这次拜访…</p>}
         {a.status === 'error' && <p className="ds-sp-error">{a.error}</p>}
-        {a.status === 'ready' && <><p className="ds-sp-pre">{a.summary}</p><ol className="ds-sp-evidence">{(a.rows || []).map((row, i) => <li key={row.id || i}><b>{row.title}</b><span className="ds-muted">{row.detail}</span></li>)}</ol></>}
+        {a.status === 'ready' && <><p className="ds-sp-pre">{a.summary}</p><ol className="ds-sp-evidence">{(a.rows || []).map((row, i) => <li key={row.id || i}><b>{row.title}</b><span className="ds-muted">{row.detail}</span>{row.id && <AdviceActions actions={select(adviceActionSelector('visitAdvice', row))} invokeOn={invokeOn} />}</li>)}</ol></>}
         <p className="ds-muted ds-sp-help">已归档正文只读；建议由你确认后形成待办。</p>
-      </section>
+      </section>}
     </section>
   </section>;
 }
@@ -168,14 +178,14 @@ export function CustomerEdit({ page, data: d, invoke }) {
   // 客户类型在接口里是代码，选项是中文名；显示时按名字找下标，找不到才用页面的下标
   const TYPE_NAMES = { prospect: '潜在客户', opportunity: '商机客户', won: '已成单客户' };
   const typeIndex = (() => { const i = (d.customerTypeOptions || []).indexOf(TYPE_NAMES[f.customer_type] || f.customer_type); return i >= 0 ? i : d.customerTypeIndex; })();
-  const sel = (label, options, index, handler, width = 260) => <SbLabeledSelect label={label} allowClear={false} value={index} options={(options || []).map((o, i) => ({ value: i, label: o }))} onChange={i => call(handler, { detail: { value: i } })} width={width} />;
-  const input = (key, placeholder) => <Input value={f[key] || ''} placeholder={placeholder} onChange={e => call('inputField', { dataset: { key }, detail: { value: e.target.value } })} />;
+  const sel = (label, options, index, handler, width = 260) => <SbLabeledSelect label={label} disabled={d.saving} allowClear={false} value={index} options={(options || []).map((o, i) => ({ value: i, label: o }))} onChange={i => call(handler, { detail: { value: i } })} width={width} />;
+  const input = (key, placeholder) => <Input disabled={d.saving} value={f[key] || ''} placeholder={placeholder} onChange={e => call('inputField', { dataset: { key }, detail: { value: e.target.value } })} />;
   return <section className="ds-sp ds-sp-two-col" aria-label="维护客户信息">
     <aside className="ds-panel ds-sp-side">
       <div className="ds-sp-tags"><SbAiBadge state="confirmed" text="Agent 计算 · 只读" /></div>
       <h1>{f.name}</h1>
       <p className="ds-muted">保存后 Agent 会重新评估客户画像与作战地图位置</p>
-      <dl className="ds-sp-info"><div><dt>作战象限</dt><dd>{a.quadrant}</dd></div><div><dt>客户潜力</dt><dd>{a.potential}</dd></div><div><dt>关系深度</dt><dd>{a.relationship}</dd></div><div><dt>当前风险</dt><dd>{a.risk}</dd></div></dl>
+      <dl className="ds-sp-info"><div><dt>作战象限</dt><dd>{a.quadrant}</dd></div><div><dt>客户潜力</dt><dd>{a.potential ?? '待评估'}</dd></div><div><dt>关系深度</dt><dd>{a.relationship ?? '待评估'}</dd></div><div><dt>当前风险</dt><dd>{a.risk}</dd></div></dl>
     </aside>
     <section className="ds-panel ds-sp-main">
       <section className="ds-sp-block"><h2>人工维护字段 <small className="ds-muted">修改后成为 Agent 的新分析依据</small></h2>
@@ -247,8 +257,8 @@ export function OpportunityBoard({ page, data: d, invoke }) {
   return <section className="ds-sp ds-sp-fill" aria-label="全部商机">
     <div className="ds-panel ds-sp-card ds-sp-col">
       <div className="ds-sp-tools">
-        {d.role === 'manager' && <SbLabeledSelect label="团队" value={d.teamIndex > 0 ? d.teamIndex : undefined} options={(d.teamOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0)} onChange={i => call('changeTeam', { detail: { value: i ?? 0 } })} />}
-        {d.role !== 'sales' && <SbLabeledSelect label={d.role === 'supervisor' ? '直属成员' : '人员'} value={d.ownerIndex > 0 ? d.ownerIndex : undefined} options={(d.ownerOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0)} onChange={i => call('changeFilter', { dataset: { key: 'owner' }, detail: { value: i ?? 0 } })} />}
+        {d.canViewTeam && <SbLabeledSelect label="团队" value={d.teamIndex > 0 ? d.teamIndex : undefined} options={(d.teamOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0)} onChange={i => call('changeTeam', { detail: { value: i ?? 0 } })} />}
+        {d.canViewTeam && <Button disabled={d.loading || Boolean(d.loadError)} onClick={() => call('openOwnerPicker')}>{d.role === 'supervisor' ? '直属成员' : '人员'} · {d.legacyOwnerName || (d.ownerOptions || [])[d.ownerIndex]?.label || '全部负责人'}</Button>}
         <SbLabeledSelect label="阶段" mode="multiple" value={d.selectedStages || []} options={(d.stageOptions || []).map(o => ({ value: o.value, label: o.label }))} onChange={changeStages} />
         <SbLabeledSelect label="关单日期" value={d.closeIndex > 0 ? d.closeIndex : undefined} options={(d.closeOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0)} onChange={i => call('changeFilter', { dataset: { key: 'close' }, detail: { value: i ?? 0 } })} />
         <SbLabeledSelect label="等级" value={d.gradeIndex > 0 ? d.gradeIndex : undefined} options={(d.gradeOptions || []).map((o, i) => ({ value: i, label: o.label })).filter(o => o.value > 0)} onChange={i => call('changeFilter', { dataset: { key: 'grade' }, detail: { value: i ?? 0 } })} />
@@ -256,6 +266,7 @@ export function OpportunityBoard({ page, data: d, invoke }) {
         <span className="ds-muted ds-sp-count">共 {d.total ?? '—'} 条</span>
         {d.canCreate && <Button type="primary" className="ds-sp-right" onClick={() => call('createOpportunity')}>新增商机</Button>}
       </div>
+      <ControlledPersonPicker open={Boolean(d.ownerPickerOpen)} title="选择商机负责人" members={d.ownerPickerMembers || []} teams={d.ownerPickerTeams || []} defaultTeamId={d.ownerPickerDefaultTeamId} selectedIds={d.ownerPickerSelected || []} allowAll allLabel="全部负责人" loading={d.loading} error={d.loadError} onConfirm={detail => call('confirmOwnerPicker', { detail })} onClose={() => call('closeOwnerPicker')} onRetry={() => call('loadPage')} />
       <div className="ds-sp-body ds-sp-body-pad">
         {listState !== 'normal' ? <SbTable columns={cols} rows={[]} state={listState} emptyTitle={listState === 'error' ? '加载失败' : '当前筛选条件下没有商机'} emptyDescription={listState === 'error' ? d.loadError : undefined} onRetry={() => call('loadPage')} onClear={d.filterActive ? () => call('resetFilters') : undefined} />
           : groups.map((g, gi) => <div key={g.key} className="ds-sp-group"><h3>{g.label} <small>{g.items.length} 条</small></h3><SbTable rowKey="id" density="compact" columns={cols} rows={g.items} showHeader={gi === 0} scrollX={900} onRowClick={r => call('openCustomer', { dataset: { customerId: r.customer_id, opportunityId: r.id } })} /></div>)}
