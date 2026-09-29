@@ -15,7 +15,7 @@ const rawBundle = readFileSync(bundlePath, 'utf8');
 const prefix = 'window.SALES_BUNDLE=';
 if (!rawBundle.startsWith(prefix)) throw Error('Unexpected business bundle format');
 const bundle = JSON.parse(rawBundle.slice(prefix.length).trim().replace(/;$/, ''));
-for (const id of ['pages/bi/index', 'utils/publicRankings', 'utils/opportunity', 'utils/opportunityAmount', 'components/opportunity-form/index']) {
+for (const id of ['pages/bi/index', 'utils/publicRankings', 'utils/opportunity', 'utils/opportunityAmount', 'components/opportunity-form/index', 'utils/apiClient', 'utils/requestIdentity', 'utils/pageWriteContext', 'pages/opportunity-create/index', 'pages/visit-confirm/index']) {
   bundle.modules[id] = readFileSync(join(root, `demo/web-src/business/${id}.js`), 'utf8');
 }
 writeFileSync(bundlePath, prefix + JSON.stringify(bundle) + ';\n');
@@ -51,10 +51,10 @@ await build({
 });
 const hash = createHash('sha256');
 for (const ext of ['js', 'css']) hash.update(readFileSync(join(root, `demo/web/department-ui/app.${ext}`)));
-for (const name of ['bundle.js', 'preview-api.js']) hash.update(readFileSync(join(root, 'demo/web', name)));
+for (const name of ['bundle.js', 'preview-api.js', 'preview-workflow.js']) hash.update(readFileSync(join(root, 'demo/web', name)));
 const stamp = hash.digest('hex').slice(0, 12);
 for (const name of ['index.html', 'entry.js']) {
   const path = join(root, 'demo/web', name);
-  writeFileSync(path, readFileSync(path, 'utf8').replace(/(department-ui\/app\.(?:css|js)|bundle\.js|preview-api\.js)(\?v=[a-z0-9]+)?/g, (_, resource) => `${resource}?v=${stamp}`));
+  writeFileSync(path, readFileSync(path, 'utf8').replace(/(department-ui\/app\.(?:css|js)|bundle\.js|preview-api\.js|preview-workflow\.js)(\?v=[a-z0-9]+)?/g, (_, resource) => `${resource}?v=${stamp}`));
 }
 console.log(`WEB_DEMO_BUILD_OK ${stamp}`);

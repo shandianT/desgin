@@ -12,7 +12,7 @@
     {
       "id": "utils/opportunityAmount",
       "upstream_sha256": "42c8c023bba95e8b851b869d6bdd851cca391888dce4c4ad8923bfcdda0b562f",
-      "mode": "exact source; preview functions wired in this item",
+      "mode": "exact source: preview, current-company assessment and acknowledgment wired for AMT-01/02",
       "adapted_sha256": "42c8c023bba95e8b851b869d6bdd851cca391888dce4c4ad8923bfcdda0b562f"
     },
     {
@@ -20,8 +20,42 @@
       "upstream_sha256": "643c24015521ffda05629d29b7d7cf4de4a8ce5144594b8713ab047f850ad182",
       "mode": "partial port: amount conversion and preview only",
       "adapted_sha256": "d0745be7eeb1043838089191ce27833b98f7844b43c82fd3e88705a08f8c372f"
+    },
+    {
+      "id": "utils/apiClient",
+      "upstream_sha256": "b960c4722d3fad0f0f4ce575b08b7acbb057ac294855ee60e837730cb56bd417",
+      "mode": "partial: fresh company policy read; preserve Web transport",
+      "adapted_sha256": "dab80efaed5353e1ed2fb306f95bb609219e9a596734e8dcd5dddf2847774587"
+    },
+    {
+      "id": "utils/requestIdentity",
+      "upstream_sha256": "d359a82148f27b954786c5980c92f9ce583d53ac2e3d55f3480614a8ca5c676b",
+      "mode": "partial: exclude confirmation receipt from only two business intent fingerprints",
+      "adapted_sha256": "d4b70f8ad1ef371d5e75ffaae7445a3dac65a2fc8073eea8ee94ab44415f6d65"
+    },
+    {
+      "id": "utils/pageWriteContext",
+      "upstream_sha256": "7ca5416eaf11e329fafded5d70f44a99d75a05a1cbe5a965208a96d30ed176db",
+      "mode": "exact source: write identity and page lifecycle guards",
+      "adapted_sha256": "7ca5416eaf11e329fafded5d70f44a99d75a05a1cbe5a965208a96d30ed176db"
+    },
+    {
+      "id": "pages/opportunity-create/index",
+      "upstream_sha256": "a181ba23e7d90b9f16b4453981b76e94b243170f5a4288191e87328ff9d0f391",
+      "mode": "exact source: amount confirmation and write context",
+      "adapted_sha256": "a181ba23e7d90b9f16b4453981b76e94b243170f5a4288191e87328ff9d0f391"
+    },
+    {
+      "id": "pages/visit-confirm/index",
+      "upstream_sha256": "3544a4d8cd419a9245da369b58562239b3837f3e5262873102b9621fe46aecdf",
+      "mode": "partial: amount confirmation and necessary lifecycle; one-time confirmation ticket; retain Web AI and other behavior",
+      "adapted_sha256": "46e6d3a97114945d98d8de8006ab96a3bcd4b24a80d780d52d741c99ae83dd32"
     }
   ],
-  "review_status": "AMT-01 implemented locally; awaiting user review; remaining 1.1.0 migration pending",
-  "design_direction": "Preserve existing Web layout and interactions; port functionality and logic, using department rules for consistency."
+  "review_status": "AMT-01 user confirmed 2026-09-29; AMT-02 locally implemented, awaiting user review",
+  "design_direction": "Preserve existing Web layout and interactions; port functionality and logic, using department rules for consistency.",
+  "items": [
+    "AMT-01",
+    "AMT-02"
+  ]
 }

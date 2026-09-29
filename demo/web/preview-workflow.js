@@ -24,12 +24,18 @@
     for (const [key, label] of [['interaction_at', '跟进日期'], ['created_date', '创建时间'], ['contact_name', '对接人']]) if (!present(fields[key])) ctx.error(422, '请补充' + label);
     if (!strictDate(fields.interaction_at) || !strictDate(fields.created_date)) ctx.error(422, '请填写有效的 YYYY-MM-DD 日期');
   }
+  function cleanAmountReceipt(mutation) {
+    if (!mutation) return null;
+    const clean = {...mutation};
+    delete clean.amount_confirmed_value;
+    return clean;
+  }
   function archiveSnapshot(body) {
     const fields = body.fields || {};
     return {customer_id: body.customer_id, opportunity_id: fields.opportunity_id || null,
       fields: Object.fromEntries(FIELD_KEYS.map(key => [key, fields[key]])),
       collaborator_ids: fields.collaborator_ids || [], fde_participant_ids: body.fde_participant_ids || [],
-      source_import_id: fields.source_import_id || null, opportunity_mutation: fields._opportunity_mutation || null};
+      source_import_id: fields.source_import_id || null, opportunity_mutation: cleanAmountReceipt(fields._opportunity_mutation)};
   }
   function visitSnapshots(fields, actors, at) {
     const visitDate = clean(fields.interaction_at).slice(0, 10);
@@ -105,7 +111,7 @@
       const payload = run.review_payload;
       const expected = {customer_id: payload.customer_id, opportunity_id: payload.opportunity_id || null, fields: payload.fields,
         collaborator_ids: payload.collaborator_ids || [], fde_participant_ids: payload.fde_participant_ids || [],
-        source_import_id: payload.source_import_id || null, opportunity_mutation: payload.opportunity_mutation || null};
+        source_import_id: payload.source_import_id || null, opportunity_mutation: cleanAmountReceipt(payload.opportunity_mutation)};
       if (canonical(expected) !== canonical(archiveSnapshot(ctx.body))) ctx.error(409, '拜访字段、关联对象或参与人已修改，请重新执行字段校验');
       stageFields(fields && Object.fromEntries(FIELD_KEYS.map(key => [key, fields[key]])), ctx);
     }

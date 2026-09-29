@@ -223,6 +223,27 @@
     catch (_) {error(507, '浏览器空间不足，本次操作仅留在当前页面，刷新前请释放浏览器存储空间并重试');}
   }
   function reset() { state = seed(); save(); return {demo: true, source_label: LABEL}; }
+  // Synthetic company policy only; live saves always read the real endpoint.
+  const AMOUNT_POLICY = {schema_version: 1, warning_threshold_wan: 1000};
+  function amountIntent(path, method, body) {
+    const value = copy(body);
+    if (method === 'POST' && /^\/customers\/[^/?]+\/opportunities$/.test(path)) delete value.amount_confirmed_value;
+    if (method === 'POST' && path === '/visits' && value.fields?._opportunity_mutation) delete value.fields._opportunity_mutation.amount_confirmed_value;
+    return JSON.stringify(value);
+  }
+  function decimalAmount(value) {
+    const match = String(value == null ? '' : value).trim().match(/^(\d+)(?:\.(\d+))?$/);
+    if (!match) return '';
+    const whole = match[1].replace(/^0+(?=\d)/, ''), fraction = (match[2] || '').replace(/0+$/, '');
+    return whole + (fraction ? '.' + fraction : '');
+  }
+  function checkAmountConfirmation(body, existing) {
+    const amount = Number(body.amount), changed = !existing || !decimalAmount(existing.amount) || decimalAmount(existing.amount) !== decimalAmount(body.amount);
+    if (changed && amount >= AMOUNT_POLICY.warning_threshold_wan * 10000 &&
+        (typeof body.amount_confirmed_value !== 'number' || body.amount_confirmed_value !== amount)) {
+      error(422, '请重新核对本次商机金额并确认保存');
+    }
+  }
   function error(status, message) { throw Object.assign(new Error(message), {status}); }
   function requireCap(actor, cap) { if (!actor.capabilities[cap]) error(403, '当前身份未开放该操作'); }
   function session(options) {
@@ -534,9 +555,9 @@
     if (method !== 'GET') {
       const idem = options.header && options.header['Idempotency-Key'];
       const key = idem && [a.user_id, method, path, idem].join(':');
-      if (key && s.idempotency[key]) {if (s.idempotency[key].body !== JSON.stringify(body)) error(409, '提交标识已用于其他内容'); return s.idempotency[key].response;}
+      if (key && s.idempotency[key]) {if (s.idempotency[key].body !== amountIntent(path, method, body)) error(409, '提交标识已用于其他内容'); return s.idempotency[key].response;}
       const result = mutate(a, path, method, body, p);
-      if (key) s.idempotency[key] = {body: JSON.stringify(body), response: copy(result)};
+      if (key) s.idempotency[key] = {body: amountIntent(path, method, body), response: copy(result)};
       save(); return result;
     }
     if (path === '/assistant/home') {
@@ -544,6 +565,7 @@
       const records = s.visits.filter(v => customerIds.has(v.customer_id)).slice(0, 3).map(v => localDataset ? {...v, archived_at: null, completed_count: ['customer_name', 'customer_type', 'opportunity_name', 'recorder_name', 'visit_date', 'created_date', 'contact_name_snapshot', 'follow_up_record', 'next_action'].filter(key => v[key] != null && v[key] !== '').length, total_count: 9, score: null, grade: '未评分'} : {...v, archived_at: v.created_at, interaction_mode: '线上会议', completed_count: 8, total_count: 8, score: null, grade: '暂未评分'});
       return {archived_visits: records, display_policy: {definition: {message_order: 'desc'}}, team_summary: {overdue: tasks.filter(t => !['completed', 'cancelled'].includes(t.status) && t.due_at < now()).length, claim: tasks.filter(t => t.status === 'pending_confirm').length, handover: tasks.filter(t => t.handover_required).length}, message: LABEL};
     }
+    if (path === '/company-rules/presentation') return {opportunity_amount: {definition: copy(AMOUNT_POLICY)}, demo: true, source_label: '示例公司规则'};
     if (path === '/metadata/business-options') return copy(BUSINESS_OPTIONS);
     if (path === '/directory/teams') {if (p.get('purpose') && !['browse','dashboard','profile','fde','assignment'].includes(p.get('purpose'))) error(422, '团队目录用途无效'); return {data_source: 'database', teams: directoryTeams(a)};}
     if (path === '/directory/members' || path === '/directory/task-assignees' || path === '/directory/colleagues') return {items: directoryPeople(a).filter(person => path !== '/directory/colleagues' || !isFde(person)).map(member), teams: directoryTeams(a)};
@@ -776,6 +798,7 @@
       let row = body.opportunity_id ? opportunity(a, body.opportunity_id) : null;
       if (row && row.customer_id !== c.id) error(409, '商机不属于当前客户，不能转移归属');
       if (row && Number(body.version_no) !== row.version_no) error(409, '商机版本已变化，请刷新后重试');
+      checkAmountConfirmation(body, row);
       if (s.opportunities.some(o => o.customer_id === c.id && o.name === String(body.name).trim() && (!row || o.id !== row.id))) error(409, '当前客户下已存在同名商机');
       const stageIndex = body.status === 'lost' ? 6 : PROBABILITY.indexOf(Number(body.probability)), stage = STAGES[stageIndex];
       if (!stage || !['open', 'won', 'lost'].includes(body.status) || (body.status === 'won') !== (stage === 'won') || !/^\d{4}-\d{2}-\d{2}$/.test(body.expected_close_date || '') || !Number.isFinite(Date.parse(body.expected_close_date))) error(422, '请选择有效商机阶段及预计关单日期');

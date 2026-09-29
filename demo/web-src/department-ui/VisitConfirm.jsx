@@ -32,6 +32,7 @@ export default function VisitConfirm({ page, data: d, invoke, invokeOn, select }
     return <section className="ds-vconfirm" aria-label="拜访已保存">
       <div className="ds-panel ds-vc-done">
         <SbStatusTag tone="good" label="拜访记录录入成功" />
+        {d.archiveWarning && <p className="ds-vc-error" role="alert">{d.archiveWarning}</p>}
         <h1>{d.customerName}</h1>
         <SbMetricStrip columns={3} items={[{ key: 'count', label: '字段已归档', value: d.archivedCount }, { key: 'score', label: '质量评分', value: d.score == null ? null : `${d.score} 分`, missingText: '暂未评分' }, { key: 'grade', label: '质量等级', value: d.grade, missingText: '暂未评分' }]} />
         <div className="ds-vc-next"><b>下一步行动</b><p>{values.next_action || '未记录'}</p></div>
