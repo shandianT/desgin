@@ -4,7 +4,7 @@ const PKG = '@shandiant/ui-react';
 const TOKENS = '@shandiant/tokens/css';
 
 export const USAGE = {
-  Basics: `import { App, Button, Input, Select } from 'antd';
+  Basics: `import { App, Button, Drawer, Input, Select } from 'antd';
 import { SbProvider } from '${PKG}';
 import '${TOKENS}';
 
@@ -21,7 +21,14 @@ import '${TOKENS}';
 // message 与 notification 在 App 之内用 hook 取，才带主题。
 const { message, notification } = App.useApp();
 message.success('已归档');
-notification.open({ message: '任务已下发', description: '对方拒绝时需填意见。' });`,
+notification.open({ message: '任务已下发', description: '对方拒绝时需填意见。' });
+
+// 桌面端的完整榜单／长详情在同一页用右侧 Drawer，关闭后原筛选和位置仍在。
+<Drawer open={open} placement="right" width={Math.min(640, window.innerWidth)} rootClassName="ranking-drawer"
+  title="完整榜单" onClose={() => setOpen(false)} destroyOnHidden>
+  <RankingList />
+</Drawer>
+// CSS：.ranking-drawer .ant-drawer-content-wrapper { max-width: 100vw; }`,
 
   SbProvider: `import { SbProvider } from '${PKG}';
 import '${TOKENS}';

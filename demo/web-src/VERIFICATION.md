@@ -105,3 +105,9 @@ node tools/verify-preview-ranking-cohort.mjs
 ![桌面录音与文件拖拽入口](review/visit-desktop.png)
 
 窄屏：[390px](review/visit-390.png) · [1024px](review/visit-1024.png)。这两张图含标明的合成提取成功状态，不作为真实转写证据。
+
+## 2026-10-10：完整榜单改为右侧 Drawer
+
+Web 排名卡片原用 `SbSheet` 底部弹层查看完整榜单，长名单需要在狭窄的底部区域滚动。本轮在同一页面复用 Ant Design 右侧 `Drawer`：保留卡片和业务层返回的名次、并列顺序与选中对象；抽屉中可搜索成员、回到榜首、定位当前对象，关闭后保留原页面与筛选。窄屏时抽屉宽度跟随窗口。组件库目录同步说明：`SbSheet` 用于短操作或临时选择，桌面长列表与完整榜单直接用上游右侧 `Drawer`。没有改排名接口、指标口径、业务权限或正式设计变量。
+
+已验证（本地）：`node tools/check.mjs` 全部通过，Web 样式新增违规 0；`node tools/verify-ranking-drawer.mjs` 覆盖销售、主管、总经理、FDE、FDE 主管的右侧打开、同页关闭与焦点返回，以及 12 人合成榜单的搜索、定位、并列名次和 390px 宽度。旧 `verify-ranking-parity.mjs` 在当前 Web 1.1 基线的既有断言 `activeOpportunityCount === opportunityCount` 处失败（实际 `null !== 18`），与本轮抽屉改动无关；其余旧断言未据此宣称通过。真实接口、跨端读回和生产环境仍未验证。
