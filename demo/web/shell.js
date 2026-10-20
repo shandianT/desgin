@@ -3,7 +3,7 @@
   const $ = id => document.getElementById(id);
   function clearLoginError() { $('login-error').textContent = ''; $('login-error').hidden = true; }
   window.addEventListener('sales:toast', event => {
-    if (SalesRuntime.current?.route !== 'pages/login/index' || !event.detail?.message) return;
+    if (SalesRuntime.current?.route !== 'pages/login/index' || !event.detail?.message || event.detail.source === 'privacy') return;
     $('login-error').textContent = event.detail.message;
     $('login-error').hidden = false;
   });
@@ -24,23 +24,68 @@
   const tabs = SALES_BUNDLE.config.tabBar.list;
   // 外框（侧导航、顶栏）由部门组件画；这里只维护状态，改了就 paintFrame
   const frame = {groups: [], activeKey: '', title: '工作空间', crumbGroup: '销售管理', showBack: false, showCreate: false, status: 'checking', statusText: '', date: '', environment: '', workspaceName: '企业工作空间', workspaceScope: '客户经营与销售协作', accountName: '尚未登录', accountRole: '请登录工作空间', accountTeam: '', accountAvatar: '我', accountActive: false};
+  // 「成长与评估」沿用个人中心的销售画像数据。原 member-growth 页面只支持主管/经理查看指定成员，
+  // 一线销售进入后会被 guard 带回工作台；这里保留菜单语义，但把销售自己的入口切到 profile 的画像页。
+  let profileAlias = '';
   const paintFrame = () => globalThis.SalesDepartmentUI?.renderFrame?.(frame);
   const taskIcon = '<rect x="4" y="4" width="16" height="17" rx="3"/><path d="M9 3h6v4H9zM8 12l2 2 5-5M8 18h8"/>';
   const visitIcon = '<path d="M8 3h8l4 4v14H4V3h4zM15 3v5h5M8 12h8M8 16h5"/>';
-  const navigationGroups = [
-    {title: '', items: [{text: '总览', pagePath: 'pages/index/index', icon: icons[0]}]},
-    {title: '销售流程', items: [{text: '客户', pagePath: 'pages/customers/index', icon: icons[1]}, {text: '商机', pagePath: 'pages/workbench/index', icon: icons[2]}, {text: '拜访与跟进', pagePath: 'pages/visit-entry/index', icon: visitIcon, capability: 'visit.create'}, {text: '任务', pagePath: 'pages/tasks/index', icon: taskIcon}]},
-    {title: '经营复盘', items: [{text: '经营分析', pagePath: 'pages/bi/index', icon: icons[3]}]}
+  // PC 主导航（视觉 2.0）：一级模块 + 子菜单。key 用于选中态，path 是原页面或 PC 专属页面的路由（可带查询参数）。
+  // capability 只控制入口显隐；页面本身仍由原页面的 guardPage 与后端权限把关。
+  const navigationTree = [
+    {key: 'workspace', text: '工作台', icon: 'grid', path: 'pages/index/index'},
+    {key: 'customers', text: '客户', icon: 'customer', children: [
+      {key: 'customers.list', text: '客户经营', path: 'pages/customers/index'},
+      {key: 'customers.history', text: '申请与认领记录', path: 'pages/customer-history/index', capability: 'customer.read'},
+      {key: 'customers.claim', text: '客户认领', path: 'pages/customer-claim/index', capability: 'customer.claim'},
+      {key: 'customers.create', text: '客户建档', path: 'pages/customer-create/index', capability: ['customer.create', 'customer.create_request']} ]},
+    {key: 'opportunities', text: '商机', icon: 'opportunity', children: [
+      {key: 'opportunities.board', text: '商机看板', path: 'pages/opportunities/index'},
+      {key: 'opportunities.list', text: '商机经营', path: 'pages/workbench/index'},
+      {key: 'opportunities.create', text: '商机创建', path: 'pages/opportunity-history/index', capability: 'opportunity.read'}]},
+    {key: 'visits', text: '拜访与跟进', icon: 'visit', children: [
+      {key: 'visits.records', text: '跟进记录', path: 'pages/visit-records/index'},
+      {key: 'visits.entry', text: '记录拜访', path: 'pages/visit-entry/index', capability: 'visit.create'}]},
+    {key: 'tasks', text: '任务', icon: 'task', children: [
+      {key: 'tasks.list', text: '任务列表', path: 'pages/tasks/index'},
+      {key: 'tasks.create', text: '创建任务', path: 'pages/management-task-create/index', capability: 'task.create'}]},
+    {key: 'reports', text: '工作报告', icon: 'report', children: [
+      {key: 'reports.day', text: '日报 · 今日', path: 'pages/work-report/index?period=day'},
+      {key: 'reports.week', text: '周报 · 本周', path: 'pages/work-report/index?period=week'},
+      {key: 'reports.biweek', text: '双周报 · 上周＋本周', path: 'pages/work-report/index?period=biweek'},
+      {key: 'reports.month', text: '月报 · 本月', path: 'pages/work-report/index?period=month'},
+      {key: 'reports.quarter', text: '季度报 · 本季度', path: 'pages/work-report/index?period=quarter'}]},
+    {key: 'insights', text: '经营分析', icon: 'chart', children: [
+      {key: 'insights.bi', text: '经营看板', path: 'pages/bi/index'},
+      {key: 'insights.growth', text: '成长与评估', path: 'pages/member-growth/index'},
+      {key: 'insights.risks', text: '风险预警', path: 'pages/risks/index'}]},
+    {key: 'knowledge', text: '知识库', icon: 'book', children: [
+      {key: 'knowledge.catalog', text: '方案与定价', path: 'pages/knowledge/index?tab=catalog'},
+      {key: 'knowledge.playbook', text: '客户档案 Playbook', path: 'pages/knowledge/index?tab=playbook'},
+      {key: 'knowledge.proposal', text: '方案生成', path: 'pages/knowledge/index?tab=proposal'}]},
   ];
-  const moduleRoutes = {
-    'pages/customers/index': ['customers', 'customer-claim', 'customer-create', 'customer-assign-confirm', 'customer-detail', 'customer-edit', 'customer-assets'],
-    'pages/tasks/index': ['tasks', 'task-detail', 'management-task-create'],
-    'pages/workbench/index': ['workbench', 'opportunity-create', 'opportunities', 'demo-create'],
-    'pages/visit-entry/index': ['visit-entry', 'visit-confirm', 'visit-detail'],
-    'pages/bi/index': ['bi', 'report-detail', 'fde-records'],
-    'pages/profile/index': ['profile', 'member-growth'],
-    'pages/index/index': ['index', 'risks', 'risk-detail']
+  // 详情、表单等二级页面挂到所属的导航项上，用于选中态与面包屑。
+  const routeLeaf = {
+    index: 'workspace', risks: 'insights.risks', 'risk-detail': 'insights.risks',
+    customers: 'customers.list', 'customer-detail': 'customers.list', 'customer-edit': 'customers.list', 'customer-assign-confirm': 'customers.create', 'customer-assets': 'customers.list',
+    'customer-history': 'customers.history', 'customer-claim': 'customers.claim', 'customer-create': 'customers.create',
+    workbench: 'opportunities.list', opportunities: 'opportunities.board', 'opportunity-history': 'opportunities.create', 'opportunity-create': 'opportunities.create', 'demo-create': 'opportunities.list',
+    'visit-records': 'visits.records', 'visit-detail': 'visits.records', 'visit-entry': 'visits.entry', 'visit-confirm': 'visits.entry',
+    tasks: 'tasks.list', 'task-detail': 'tasks.list', 'management-task-create': 'tasks.create',
+    'work-report': 'reports.day', 'weekly-report': 'reports.week',
+    bi: 'insights.bi', 'report-detail': 'insights.bi', 'fde-records': 'insights.bi', 'member-growth': 'insights.growth',
+    knowledge: 'knowledge.catalog',
   };
+  const navLeaves = navigationTree.flatMap(group => group.children ? group.children.map(item => ({...item, group})) : [{...group, group: null}]);
+  function leafFor(path, query = {}, current = null) {
+    const name = path.split('/')[1] || '';
+    if (name === 'work-report') return ['day', 'week', 'biweek', 'month', 'quarter'].includes(query.period) ? 'reports.' + query.period : 'reports.day';
+    if (name === 'knowledge') return 'knowledge.' + (['catalog', 'playbook', 'proposal'].includes(query.tab) ? query.tab : 'catalog');
+    if (name === 'customer-assets' && current?.data?.opportunityId) return 'opportunities.list';
+    return routeLeaf[name] || '';
+  }
+  // 手机宽度仍用原底部五个入口（与小程序一致）；图标沿用原来的路径
+  const mobileIcons = {'pages/index/index': icons[0], 'pages/customers/index': icons[1], 'pages/workbench/index': icons[2], 'pages/bi/index': icons[3], 'pages/profile/index': icons[4]};
   function navButton(t, i, small = false) {
     const b = document.createElement('button');
     b.className = 'web-nav-item';
@@ -48,25 +93,40 @@
     b.querySelector('span').textContent = t.text;
     b.dataset.path = t.pagePath;
     if (t.capability) b.dataset.capability = t.capability;
-    b.onclick = () => { if (SalesPlatform.canOpenPage(SalesRuntime.app, t.pagePath)) SalesRuntime.userRoute('/' + t.pagePath, {tab: tabs.some(tab => tab.pagePath === t.pagePath)}); };
+    b.onclick = () => SalesRuntime.userRoute('/' + t.pagePath, {tab: tabs.some(tab => tab.pagePath === t.pagePath)});
     if (small) b.setAttribute('aria-label', t.text);
     return b;
   }
-  frame.groups = navigationGroups;
-  frame.onSelect = path => { if (SalesPlatform.canOpenPage(SalesRuntime.app, path)) SalesRuntime.userRoute('/' + path, {tab: tabs.some(tab => tab.pagePath === path)}); };
+  frame.groups = navigationTree;
+  // 侧栏是一级导航：进入新模块时收起原页面栈（原 tab 页保留缓存），返回按钮只在二级页面出现。
+  frame.onSelect = path => {
+    if (path === 'pages/member-growth/index') {
+      profileAlias = 'growth';
+      const page = SalesRuntime.userRoute('/pages/profile/index', {tab: true});
+      queueMicrotask(() => {
+        if (SalesRuntime.current === page && typeof page?.selectProfileTab === 'function') page.selectProfileTab({currentTarget: {dataset: {tab: 'profile'}}});
+      });
+      return page;
+    }
+    profileAlias = '';
+    return SalesRuntime.userRoute('/' + path, {tab: true});
+  };
+  frame.adminLink = window.SALES_SERVICE?.adminUrl || '';
+  const authAdminLink = $('auth-admin-link');
+  if (frame.adminLink) { authAdminLink.href = frame.adminLink; authAdminLink.hidden = false; }
   tabs.forEach((t, i) => {
-    const module = navigationGroups.flatMap(group => group.items).find(item => item.pagePath === t.pagePath);
-    $('mobile-nav').append(navButton(module || t, i, true));
+    $('mobile-nav').append(navButton({...t, icon: mobileIcons[t.pagePath] || icons[i]}, i, true));
   });
   const quick = [
-    {text: '记录客户拜访', path: 'pages/visit-entry/index', capability: 'visit.create', icon: '<path d="M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 10v2a7 7 0 0014 0v-2M12 19v3M8 22h8"/>'},
-    {text: '新增商机', path: 'pages/opportunity-create/index', capability: 'opportunity.create', icon: icons[2]},
-    {text: '创建任务', path: 'pages/management-task-create/index', capability: 'task.create', icon: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 12h8M12 8v8"/>'},
-    {text: '客户建档', path: 'pages/customer-create/index', capability: 'customer.create', icon: '<path d="M3 21V5h12v16M7 9h4M7 13h4M7 17h4M18 5v8M14 9h8"/>'},
-    {text: '建档并下发', path: 'pages/customer-assign-confirm/index', capability: 'customer.create', legacyRoles: ['supervisor', 'manager'], icon: '<path d="M3 21V5h12v16M7 9h4M7 13h4M16 14h6m-3-3l3 3-3 3"/>'}
+    {text: '记录客户拜访', path: 'pages/visit-entry/index', capability: 'visit.create', name: 'mic', icon: '<path d="M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3zM5 10v2a7 7 0 0014 0v-2M12 19v3M8 22h8"/>'},
+    {text: '新增商机', path: 'pages/opportunity-create/index', capability: 'opportunity.create', name: 'opportunity', icon: icons[2]},
+    {text: '创建任务', path: 'pages/management-task-create/index', capability: 'task.create', name: 'task', icon: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 12h8M12 8v8"/>'},
+    {text: '客户建档', path: 'pages/customer-create/index', capability: ['customer.create', 'customer.create_request'], name: 'building', icon: '<path d="M3 21V5h12v16M7 9h4M7 13h4M7 17h4M18 5v8M14 9h8"/>'},
+    {text: '建档并下发', path: 'pages/customer-assign-confirm/index', capability: 'customer.create', name: 'send', icon: '<path d="M3 21V5h12v16M7 9h4M7 13h4M16 14h6m-3-3l3 3-3 3"/>'}
   ];
   const availableQuickActions = () => {
-    return SalesPlatform.availableActions(SalesRuntime.app, quick);
+    const session = SalesRuntime.app?.globalData?.session;
+    return session && !session.mustChangePassword ? quick.filter(t => !t.capability || SalesRuntime.app.can(t.capability)) : [];
   };
   function renderQuickActions() {
     const actions = $('mobile-quick-actions'), available = availableQuickActions();
@@ -145,13 +205,10 @@
     if (open) focusEmptyLoginAccount();
   }
   function localLoginAvailable() {
-    return !preview && !SalesPlatform.hasCompanyLoginContext(SalesRuntime.current) && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && connection?.localQuickLogin?.available === true && connection.localQuickLogin.role === 'sales';
+    return !preview && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && connection?.localQuickLogin?.available === true && connection.localQuickLogin.role === 'sales';
   }
   function updateLocalLogin() {
     const page = SalesRuntime.current;
-    const companyEntry = SalesPlatform.hasCompanyLoginContext(page);
-    document.body.dataset.companyEntry = String(companyEntry);
-    $('preview-entry-choice').hidden = !preview || page?.route !== 'pages/login/index' || companyEntry;
     const available = localLoginAvailable() && page?.route === 'pages/login/index' && !page.data.mustChangePassword;
     const busy = localLoginBusy || loginTransportBusy > 0 || !!page?.data.loading;
     $('local-login-choice').hidden = !available;
@@ -208,7 +265,9 @@
   };
   function updateConnection() {
     const session = SalesRuntime.app?.globalData?.session;
-    const text = preview ? '服务已连接' : connection?.reachable ? ('服务已连接' + (!session ? ' · 请登录' : '')) : connection?.configured === false ? '服务尚未配置' : connection ? '服务暂不可用' : '正在检查服务';
+    // Public readiness describes the service, not this company's effective models.
+    // Company-owned text/ASR connections may work without a global model gateway.
+    const text = preview ? '合成数据演示' : connection?.reachable ? ('服务已连接' + (!session ? ' · 请登录' : '')) : connection?.configured === false ? '服务尚未配置' : connection ? '服务暂不可用' : '正在检查服务';
     frame.statusText = text; frame.status = preview ? 'preview' : connection?.reachable ? 'ready' : connection ? 'unavailable' : 'checking'; paintFrame();
     for (const id of ['login-connection-status']) {
       $(id).textContent = text; $(id).dataset.state = frame.status;
@@ -216,9 +275,31 @@
     }
     updateLocalLogin();
   }
+  // Production Web is served from /web/ by Nginx, where the local Node
+  // server's /connection-status route does not exist. Reuse the same-origin
+  // API readiness endpoint there so the status badge reflects the service
+  // that the page already uses for business requests.
+  function connectionCheckPath() {
+    return /^\/web(?:\/|$)/.test(location.pathname) ? '/api/v1/health/ready' : '/connection-status';
+  }
   async function checkConnection() {
     if (preview) return updateConnection();
-    try { const response = await fetch('/connection-status', {cache: 'no-store'}); if (!response.ok) throw new Error('Connection check failed'); connection = await response.json(); }
+    try {
+      const path = connectionCheckPath();
+      const response = await fetch(path, {cache: 'no-store'});
+      if (!response.ok) throw new Error('Connection check failed');
+      const payload = await response.json();
+      connection = path === '/connection-status' ? payload : {
+        configured: true,
+        reachable: payload?.status === 'ok',
+        status: response.status,
+        checks: payload?.checks || {},
+        label: 'SalesBuddy 业务服务',
+        environment: 'SalesBuddy 业务服务',
+        detail: payload?.status === 'ok' ? '业务服务已响应，登录后读取授权数据' : '业务服务暂时不可用',
+        checkedAt: new Date().toISOString()
+      };
+    }
     catch (_) { connection = {reachable: false}; }
     updateConnection();
   }
@@ -258,7 +339,7 @@
     $('account-switch').firstChild.textContent = '切换账号 ';
     $('account-logout').textContent = '退出登录';
     accountTrigger.setAttribute('aria-expanded', 'true'); accountDialog.showModal();
-    ($('account-profile').hidden ? $('account-switch') : $('account-profile')).focus();
+    $('account-profile').focus();
   }
   frame.onAccount = openAccount; $('mobile-account-button').onclick = openAccount;
   $('close-account').onclick = () => accountDialog.close();
@@ -275,7 +356,7 @@
     const index = buttons.indexOf(document.activeElement);
     event.preventDefault(); buttons[(index + (event.shiftKey ? -1 : 1) + buttons.length) % buttons.length].focus();
   });
-  $('account-profile').onclick = () => { if (!SalesPlatform.canOpenPage(SalesRuntime.app, 'pages/profile/index')) return; accountDialog.close(); SalesRuntime.userRoute('/pages/profile/index', {tab: true}); };
+  $('account-profile').onclick = () => { accountDialog.close(); profileAlias = ''; SalesRuntime.userRoute('/pages/profile/index', {tab: true}); };
   async function requestAccountExit(intent) {
     if (exitBusy || localLoginBusy || loginTransportBusy || SalesRuntime.current?.data.loading && SalesRuntime.current?.route === 'pages/login/index') return;
     if (accountDialog.open) accountDialog.close();
@@ -293,7 +374,8 @@
     } finally { exitBusy = false; exitIntent = ''; }
   }
   $('account-switch').onclick = () => {
-    if (preview) { accountFocusAfterClose = $('preview-role'); accountDialog.close(); SalesRuntime.wx.showToast({title: '请在页面顶部选择账号'}); }
+    // 桌面宽度的演示身份在顶栏（原提示条收起），关闭对话框后焦点落到顶栏的同一个切换入口
+    if (preview) { accountFocusAfterClose = (getComputedStyle($('preview-notice')).display === 'none' && document.querySelector('#frame-topbar .pc-topbar-role [role="combobox"]')) || $('preview-role'); accountDialog.close(); SalesRuntime.wx.showToast({title: '请在页面顶部选择账号'}); }
     else void requestAccountExit('switch');
   };
   $('account-logout').onclick = () => requestAccountExit('logout');
@@ -306,7 +388,7 @@
     sessionStorage.setItem(`sales-web:login-notice:${SALES_MODE}`, loginNotice);
     clearLoginError(); if (accountDialog.open) accountDialog.close();
   });
-  frame.onBack = () => SalesRuntime.back();
+  frame.onBack = () => SalesRuntime.back(1, frame.backPath);
   frame.onRefresh = () => { void checkConnection(); SalesRuntime.refresh(); };
   frame.onHelp = () => $('shortcut-help-button').click();
   const openQuickActions = () => {
@@ -316,6 +398,13 @@
   };
   $('mobile-actions').onclick = openQuickActions;
   frame.onCreate = openQuickActions;
+  frame.onCreateAction = path => { if (availableQuickActions().some(action => action.path === path)) SalesRuntime.userRoute('/' + path); };
+  // 演示身份并入顶栏：沿用原生选择框的切换流程（退出当前演示账号后按新身份进入）。
+  frame.onPreviewRole = value => {
+    const select = $('preview-role');
+    if (!preview || select.value === value || !roleLabels[value]) return;
+    select.value = value; select.onchange({target: select});
+  };
   $('close-quick').onclick = () => $('quick-dialog').close();
   $('preview-role').onchange = async e => {
     setPreviewRole(e.target.value);
@@ -335,17 +424,27 @@
     document.body.dataset.route = path.split('/')[1];
     $('preview-visit-guide').hidden = true;
     document.body.classList.toggle('web-login', path === 'pages/login/index');
-    $('preview-entry-choice').hidden = !preview || path !== 'pages/login/index';
-    frame.title = tabs.find(t => t.pagePath === path)?.text || detail.title || '工作空间';
-    const modulePath = path === 'pages/customer-assets/index' && current?.data.opportunityId
-      ? 'pages/workbench/index'
-      : Object.keys(moduleRoutes).find(key => moduleRoutes[key].includes(path.split('/')[1])) || path;
-    const nav = navigationGroups.flatMap(group => group.items.map(item => ({...item, group: group.title}))).find(item => item.pagePath === modulePath);
-    if (nav?.pagePath === path) frame.title = nav.text;
-    frame.crumbGroup = nav?.group || (modulePath === 'pages/profile/index' ? '个人中心' : '销售管理');
+    const companyFlow=preview && path==='pages/login/index' && Boolean(SalesRuntime.current?.data.workspace);
+    document.body.classList.toggle('web-company-entry',companyFlow);
+    $('preview-entry-choice').hidden = !preview || path !== 'pages/login/index' || companyFlow;
+    const query = Object.fromEntries(new URL((current?._url || '/' + path), 'https://sales.local/').searchParams);
+    const profileAliasActive = path === 'pages/profile/index' && profileAlias === 'growth';
+    if (path !== 'pages/profile/index') profileAlias = '';
+    const leafKey = profileAliasActive ? 'insights.growth' : leafFor(path, query, current);
+    const leaf = navLeaves.find(item => item.key === leafKey);
+    const leafParams = leaf?.path?.includes('?') ? [...new URLSearchParams(leaf.path.split('?')[1])] : [];
+    // 旧的 pages/weekly-report/index 书签等同「周报 · 本周」菜单项
+    const isLeafPage = profileAliasActive || (!!leaf && (path === 'pages/weekly-report/index' || leaf.path.split('?')[0] === path && leafParams.every(([name, value]) => query[name] === value)));
+    frame.title = isLeafPage ? leaf.text : detail.title || leaf?.text || '工作空间';
+    frame.crumbGroup = profileAliasActive ? '经营分析' : leaf?.group?.text || (path === 'pages/profile/index' ? '个人中心' : '');
+    frame.crumbs = profileAliasActive ? ['经营分析', '成长与评估'] : path === 'pages/profile/index' ? ['个人中心'] : [leaf?.group?.text, leaf && !isLeafPage ? leaf.text : null, frame.title].filter((value, index, list) => value && list.indexOf(value) === index);
+    frame.crumbItems = frame.crumbs.map((label, index) => ({label,
+      path: index < frame.crumbs.length - 1 ? (label === leaf?.text ? leaf.path : leaf?.group?.children?.find(item => !item.capability || SalesRuntime.app?.can(item.capability))?.path) : null}));
+    // 深链/刷新没有页面栈时回所属列表；正常进入保留原列表、筛选和翻页。
+    frame.backPath = leaf?.path || 'pages/index/index';
     frame.workspaceName = crmData ? (crmData.scope === 'full' ? 'CRM 全量工作空间' : 'CRM 样本工作空间') : preview ? '渠道销售工作区' : session?.companyName || session?.team || '企业工作空间';
     frame.workspaceScope = session?.scope || '客户经营与销售协作';
-    frame.showBack = !(tabs.find(t => t.pagePath === path) || path === 'pages/login/index');
+    frame.showBack = !(isLeafPage || tabs.find(t => t.pagePath === path) || path === 'pages/login/index');
     frame.accountName = session?.userName || '尚未登录';
     frame.accountRole = session ? (session.roleName || '') : '请使用企业账号';
     frame.accountTeam = session ? (session.team || session.scope || '') : '';
@@ -355,30 +454,32 @@
     const hasActions = !!session && path !== 'pages/login/index' && availableQuickActions().length > 0;
     $('mobile-actions').hidden = !hasActions;
     frame.showCreate = hasActions;
+    frame.createActions = hasActions ? availableQuickActions().map(action => ({text: action.text, path: action.path, icon: action.name})) : [];
+    const modulePath = {customers: 'pages/customers/index', opportunities: 'pages/workbench/index', insights: 'pages/bi/index'}[leaf?.group?.key] || (leafKey === 'workspace' ? 'pages/index/index' : path);
     const mobileModulePath = tabs.some(tab => tab.pagePath === modulePath) ? modulePath : 'pages/index/index';
-    frame.activeKey = modulePath;
+    frame.activeKey = leafKey;
+    frame.previewRoles = preview ? [...$('preview-role').options].map(option => ({value: option.value, label: option.textContent})) : [];
+    frame.previewRole = preview ? $('preview-role').value : '';
     document.querySelectorAll('#mobile-nav [data-path]').forEach(b => {
-      const allowed = SalesPlatform.canOpenPage(SalesRuntime.app, b.dataset.path);
-      b.hidden = !allowed; b.disabled = !allowed; b.style.display = allowed ? '' : 'none';
       const active = b.dataset.path === mobileModulePath;
       b.classList.toggle('active', active);
       if (active) b.setAttribute('aria-current', b.dataset.path === path ? 'page' : 'location'); else b.removeAttribute('aria-current');
     });
-    frame.accountActive = modulePath === 'pages/profile/index';
-    frame.groups = navigationGroups.map(group => ({...group, items: group.items.map(item => ({...item, hidden: !SalesPlatform.canOpenPage(SalesRuntime.app, item.pagePath)}))}));
-    $('account-profile').hidden = !SalesPlatform.canOpenPage(SalesRuntime.app, 'pages/profile/index');
-    frame.adminLink = SalesPlatform.adminLink(SalesRuntime.app, preview);
-    $('login-admin-link').hidden = !frame.adminLink;
-    if (frame.adminLink) $('login-admin-link').href = frame.adminLink.href;
+    frame.accountActive = path === 'pages/profile/index' && !profileAliasActive;
+    const hiddenFor = item => !session || (!!item.capability && !SalesRuntime.app?.can(item.capability));
+    frame.groups = navigationTree.map(group => group.children ? {...group, children: group.children.map(item => ({...item, hidden: hiddenFor(item)}))} : {...group, hidden: hiddenFor(group)});
     if ($('quick-dialog').open) {
       if (!hasActions) $('quick-dialog').close();
       else renderQuickActions();
     }
     updateConnection();
-    document.title = (frame.title || '工作空间') + ' · 商汤销售小浣熊';
+    document.title = (frame.title || '工作空间') + ' · ' + (innerWidth <= 600 ? 'SalesBuddy' : 'Raccoon SalesBuddy');
     paintFrame();
   }
   window.addEventListener('sales:navigation', e => navigation(e.detail));
+  matchMedia('(max-width: 600px)').addEventListener('change', () => {
+    document.title = (frame.title || '工作空间') + ' · ' + (innerWidth <= 600 ? 'SalesBuddy' : 'Raccoon SalesBuddy');
+  });
   // Source labels remain faithful in live mode; preview must never imply backend verification.
   if (preview) {
     let queued = false;
@@ -442,7 +543,7 @@
     if (preview) {
       const role = $('preview-role').value;
       const session = SalesRuntime.app.globalData.session;
-      if ((!session || session.role !== role) && !SalesPlatform.hasCompanyLoginContext(SalesRuntime.current) && !sessionStorage.getItem(`sales-web:signed-out:${SALES_MODE}`)) {
+      if ((!session || session.role !== role) && !sessionStorage.getItem(`sales-web:signed-out:${SALES_MODE}`)) {
         await SalesRuntime.app.loginWithApi(role, 'PREVIEW_' + role.toUpperCase(), 'preview');
         // switchTab lets the runtime restore a protected deep link captured before login.
         SalesRuntime.route('/pages/index/index', {tab: true});

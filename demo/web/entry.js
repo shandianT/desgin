@@ -8,20 +8,35 @@
     const copy = document.createElement('p'); copy.textContent = description;
     const link = document.createElement('a'); link.textContent = linkText; link.href = href;
     panel.append(heading, copy, link); document.body.append(panel);
+    return link;
   }
   if (location.protocol === 'file:') {
-    entryMessage('启动商汤销售小浣熊 Web', '请先双击交付目录中的「启动小浣熊SalesBuddy.command」，再进入工作空间。启动程序会打开本地预览服务，无需安装 Node 或重新构建。', '进入本地工作空间 →', 'http://127.0.0.1:5186/');
+    entryMessage('启动商汤销售小浣熊 Web', '请先双击交付目录中的「启动小浣熊SalesBuddy.command」，再进入工作空间。启动程序会构建页面并打开本地服务。', '进入本地工作空间 →', 'http://127.0.0.1:5186/');
     return;
   }
-  try {
-    // Older / static deployments have no capability endpoint and retain their normal modes.
-    // This local metadata request never probes the business backend.
-    let previewOnly = false;
+  function adminLinkFor(service, page) {
+    if (service.previewOnly) return '';
+    // Static production /web has no Node metadata endpoint; its API and admin
+    // are served on the same origin. Root Node entries require explicit metadata.
+    const value = /^\/web(?:\/|$)/.test(page.pathname) ? '/admin' : service.adminUrl;
+    if (!value) return '';
     try {
-      const response = await fetch('/web-capabilities', {cache: 'no-store', signal: AbortSignal.timeout(2000)});
-      if (response.ok && response.headers.get('content-type')?.includes('application/json')) previewOnly = (await response.json()).previewOnly === true;
-    } catch (_) {}
-    window.SALES_SERVICE = Object.freeze({previewOnly});
+      const url = new URL(value, page.origin);
+      return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password && !url.search && !url.hash ? url.href : '';
+    } catch (_) { return ''; }
+  }
+  try {
+    // Only the local Node entry exposes capabilities. Static /web deployments
+    // use the same-origin API and must not probe a nonexistent root endpoint.
+    let service = {};
+    if (!/^\/web(?:\/|$)/.test(location.pathname)) {
+      try {
+        const response = await fetch('/web-capabilities', {cache: 'no-store', signal: AbortSignal.timeout(2000)});
+        if (response.ok && response.headers.get('content-type')?.includes('application/json')) service = await response.json() || {};
+      } catch (_) {}
+    }
+    const previewOnly = service.previewOnly === true;
+    window.SALES_SERVICE = Object.freeze({previewOnly, adminUrl: adminLinkFor(service, location)});
     // The address is the single source of mode. A normal link always opens
     // enterprise mode, even after this tab previously visited the demo.
     const url = new URL(location.href);
@@ -35,14 +50,33 @@
     sessionStorage.removeItem('sales-web:mode');
     url.searchParams.set('mode', window.SALES_MODE);
     history.replaceState(history.state, '', url.href);
-    for (const source of ['assets/vendor/flatpickr-4.6.13/flatpickr.min.js', 'assets/vendor/flatpickr-4.6.13/zh.js', 'date-picker.js', 'assets/vendor/tom-select-2.6.2/tom-select.complete.min.js', 'select-components.js', 'assets/vendor/echarts-6.1.0/echarts.min.js', 'dashboard-charts.js', 'task-workspace.js', 'home-activity.js', 'detail-workspace.js?v=6e3c37a8e130', 'bundle.js?v=6e3c37a8e130', 'preview-workflow.js?v=6e3c37a8e130', 'preview-api.js?v=6e3c37a8e130', 'crm-preview-ui.js', 'browser-platform.js?v=6e3c37a8e130', 'review-forms.js', 'review-pages.js', 'runtime.js?v=6e3c37a8e130', 'department-ui/app.js?v=6e3c37a8e130', 'review-lists.js', 'review-interactions.js', 'shell.js?v=6e3c37a8e130']) {
+    const sources = ['assets/vendor/flatpickr-4.6.13/flatpickr.min.js', 'assets/vendor/flatpickr-4.6.13/zh.js', 'date-picker.js', 'assets/vendor/tom-select-2.6.2/tom-select.complete.min.js', 'select-components.js', 'assets/vendor/echarts-6.1.0/echarts.min.js', 'dashboard-charts.js', 'task-workspace.js', 'home-activity.js', 'detail-workspace.js', 'bundle.js', 'preview-workflow.js', 'preview-api.js', 'crm-preview-ui.js', 'browser-platform.js', 'review-forms.js', 'review-pages.js', 'runtime.js', 'department-ui/app.js?v=mvfj54xc', 'review-lists.js', 'review-interactions.js', 'shell.js'];
+    // Download concurrently, but keep dependency execution and fail-stop order.
+    // The URLs and credentials match the subsequent classic script requests.
+    for (const source of sources) {
+      const preload = document.createElement('link');
+      preload.rel = 'preload'; preload.as = 'script'; preload.href = source;
+      document.head.append(preload);
+    }
+    const deadline = Date.now() + 60000;
+    for (const source of sources) {
       await new Promise((resolve, reject) => {
         const script = document.createElement('script'); script.src = source;
-        script.onload = resolve; script.onerror = () => reject(new Error('业务文件加载失败'));
+        let settled = false;
+        const finish = error => {
+          if (settled) return;
+          settled = true; clearTimeout(timeout);
+          script.onload = script.onerror = null;
+          if (error) { script.remove(); reject(error); } else resolve();
+        };
+        const timeout = setTimeout(() => finish(new Error('业务文件加载超时')), Math.max(0, deadline - Date.now()));
+        script.onload = () => finish(); script.onerror = () => finish(new Error('业务文件加载失败'));
         document.body.append(script);
       });
     }
   } catch (_) {
-    entryMessage('工作空间暂时无法打开', '请检查本地服务是否已启动，或重新运行「启动小浣熊SalesBuddy.command」后重试。', '重新打开 →', location.href);
+    const retry = entryMessage('工作空间暂时无法打开', '页面文件未能完成加载，请检查网络后重新打开。', '重新打开 →', location.href);
+    // A link to the same hash route can stay in this failed document.
+    retry.onclick = event => { event.preventDefault(); location.reload(); };
   }
 })();

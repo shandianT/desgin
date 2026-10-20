@@ -34,6 +34,8 @@
   --ui-text-section: 16px;
   --ui-text-page: 24px;
   --ui-text-metric: 32px;
+  /* Projected report figures remain legible independently of compact PC cards. */
+  --ui-text-meeting-metric: 32px;
   --ui-space-1: 4px;
   --ui-space-2: 8px;
   --ui-space-3: 12px;

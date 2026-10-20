@@ -14,7 +14,7 @@ updated: 2026-09-20
 |---|---|
 | 看规范、看组件长什么样 | 规范站 https://shandiant.github.io/desgin/ ，能直接点。先看首页和「组件」章 |
 | 评审文案规范和图表规范 | 评审稿 https://shandiant.github.io/desgin/评审稿-文案与图表.html ，草稿，对完转正 |
-| 看接入后的真实页面 | Web 样板 https://shandiant.github.io/desgin/web/?mode=preview#/pages/index/index ，四页已换成组件库，示例数据，右上角切角色 |
+| 看接入后的真实页面 | [Web UI 1.2.2 展示](https://shandiant.github.io/desgin/web/?mode=preview#/pages/index/index)，使用合成数据，可切换角色；[来源与设计差异](demo/web-reference-src/README.md) |
 | 在自己的工程里用起来 | 把 [模板/同事装包-给AI的提示词.md](模板/同事装包-给AI的提示词.md) 贴给 AI，它会装好并验证 |
 
 ## 你是谁，从哪开始
@@ -60,7 +60,7 @@ updated: 2026-09-20
 | 组件库与 npm 包 | 已建成、已发布（2026-09-20）。小程序组件在官方模拟器里过了 46 个状态，真机没跑 |
 | 图标 | 已定：网页用 Ant Design 自带，小程序用 TDesign 自带 |
 | 文案规范、图表规范 | 第一版草稿，待评审 |
-| 产品接入 | Web 候选版四页已装包接入（2026-09-21 评审并修改），暴露的规范空白在 13 章；小程序未接入，清单在 07 章 |
+| 产品接入 | Web 展示页已更新为产品 Web UI 1.2.2（来源提交 c832847，合成预览）；它是产品实现参考，规范采纳范围及与公共变量的差异见[回流记录](demo/web-reference-src/README.md)。小程序接入状态仍见 07 章 |
 | 已决定 | 主色 #2863CD；这个仓库是共同入口；原生 App 暂不在范围；Web 引入 React，主库 Ant Design 6 加 Ant Design X；小程序主库 tdesign-miniprogram |
 
 ## 命令

@@ -2,12 +2,15 @@
 // Build UI and the explicitly owned business modules; preserve other upstream modules.
 import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+if (existsSync(join(root, 'demo/web-ui-1.2.2.json'))) {
+  throw Error('当前 /web/ 是 Web UI 1.2.2 原包快照；此脚本只构建 2026-09-24 旧源码，不能覆盖当前展示。');
+}
 const pkg = join(root, 'packages/ui-react');
 const require = createRequire(join(pkg, 'package.json'));
 const { build } = require('esbuild');

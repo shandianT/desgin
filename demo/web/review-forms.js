@@ -120,29 +120,36 @@
     if (page._webCustomerChoicesConfigured) return;
     page._webCustomerChoicesConfigured = true;
     page.webLoadInitialCustomers = function () {
-      if (!live(this) || this.data.customerId || this.data.query || this.data.webCustomerLoading) return;
-      const context = identity(), serial = this.searchSerial = (this.searchSerial || 0) + 1;
-      const current = () => live(this) && context === identity() && serial === this.searchSerial && !this.data.customerId && !this.data.query;
-      this.setData({webCustomerLoading: true, webCustomerError: ''});
-      return api.listCustomers({page: 1, pageSize: 5}).then(response => {
-        if (current()) this.setData({customers: Array.isArray(response.items) ? response.items : [], webCustomerLoading: false});
+      if (!live(this) || this.data.customerId || String(this.data.query || '').trim() || this.data.webCustomerLoading) return;
+      const context = api.customerSearchIdentity(), serial = this.searchSerial = (this.searchSerial || 0) + 1;
+      const current = () => live(this) && context === api.customerSearchIdentity() && serial === this.searchSerial && !this.data.customerId && !String(this.data.query || '').trim();
+      this.setData({webCustomerLoading: true, webCustomerError: '', webCustomerDone: false});
+      return api.listOpportunityCustomerReferences({pageSize: 5}).then(response => {
+        if (!current()) return;
+        if (!response || !Array.isArray(response.items)) throw new Error('客户列表暂不可用，请重试');
+        this.customerSearchIdentity = context;
+        this.setData({customers: response.items, webCustomerLoading: false, webCustomerDone: true});
       }).catch(error => {
         if (current()) this.setData({webCustomerLoading: false, webCustomerError: error.message || '客户列表加载失败'});
       });
     };
     const input = page.inputCustomer;
     page.inputCustomer = function (event) {
-      this.setData({webCustomerLoading: false, webCustomerError: ''});
+      this.setData({webCustomerLoading: false, webCustomerError: '', webCustomerDone: false});
       const result = input.call(this, event);
       if (!event.detail.value.trim()) this.webLoadInitialCustomers();
       return result;
+    };
+    page.webSearchCustomers = function (event) {
+      if (!live(this) || this.data.customerId) return;
+      return this.inputCustomer({detail: {value: event?.detail?.value ?? this.data.query ?? ''}});
     };
     // Render is reached while source onLoad may still run. Defer until it has applied route context.
     queueMicrotask(() => { if (live(page) && !page.data.customerId && !page.data.query) page.webLoadInitialCustomers(); });
   }
   function configure(page, api) {
     if (page.route === 'pages/customer-create/index') configureCustomer(page);
-    if (page.route === 'pages/opportunity-create/index' && api?.listCustomers) configureOpportunity(page, api);
+    if (page.route === 'pages/opportunity-create/index' && api?.listOpportunityCustomerReferences && api?.customerSearchIdentity) configureOpportunity(page, api);
   }
   global.SalesReviewForms = Object.freeze({configure});
 })(globalThis);

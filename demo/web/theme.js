@@ -6,7 +6,7 @@
   const normalize=value=>value==='dark'?'navy':value==='navy'||value==='light'?value:null;
   const url=new URL(location.href),requested=normalize(url.searchParams.get('theme'));
   let saved;try{saved=localStorage.getItem(key);}catch(_){/* Storage may be restricted. */}
-  let current='navy'; // 规范 V-01：导航固定深蓝，不提供浅色侧栏
+  let current='light'; // PC 视觉 2.0（2026-10-06）：侧栏改浅色、主色改浅；原规范 V-01 的深蓝侧栏停用
   const sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>';
   const moon='<path d="M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z"/>';
   function sync(){

@@ -1,11 +1,20 @@
 {
-  "version": "1.1.0-web",
-  "frontend_revision": "5f022c53432ace4f22958f12f3f61fbc7511fec7",
-  "web_revision": "v1.1.0-web-alignment",
-  "web_build": "91e95af72231",
-  "pages": 26,
-  "components": 16,
-  "business_modules": 96,
-  "owned_sources_verified": 63,
-  "verification_scope": "Local generated code and synthetic preview; real API and production business acceptance not verified."
+  "frontend_revision": "4d9491637dbb785c09b5c904b57ad509dcf6ea83",
+  "pages": 33,
+  "components": 58,
+  "source_files_verified": 522,
+  "web_build": {
+    "schemaVersion": 1,
+    "environment": "source",
+    "sourceRevision": "c832847eb0b9c50a8c3f28137e4cc2464fec3c55",
+    "webSourceRevision": "c832847eb0b9c50a8c3f28137e4cc2464fec3c55",
+    "webSourceDirty": false,
+    "sourceManifestSha256": "f3ffcead98d8dc423c6fff04b10b708cecb51feee72c1d8ebae93725b4812032"
+  },
+  "adaptations": {
+    "buildInfo.js": {
+      "description": "Generated Web build metadata; imported placeholder stays unchanged.",
+      "bundle_sha256": "c67312837bcc6ed73048a4ac59f3a66a8bc6fbb39f5fbd3b203b389415f6204c"
+    }
+  }
 }

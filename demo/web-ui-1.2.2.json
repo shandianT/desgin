@@ -1,0 +1,14 @@
+{
+  "title": "SalesBuddy Web UI 1.2.2 reference snapshot",
+  "source_package": "SalesBuddy-Web-UI-1.2.2-c832847-20261020.zip",
+  "source_package_sha256": "4f55ec49cb425dea32412ab39ce7e656e3f019cf218411913facaf49993186cd",
+  "source_revision": "c832847eb0b9c50a8c3f28137e4cc2464fec3c55",
+  "exported_at": "2026-10-20T01:31:14.343276",
+  "dist_file_count": 281,
+  "dist_tree_sha256": "3bea096010c2a4a385595a01c69287c4e26c221f6927ab15723e551b8f34501b",
+  "ui_source_file_count": 230,
+  "ui_source_tree_sha256": "143cb708f9d05e38846ba06e522cb57612a4cab79fb8e09a29cc030edaef5555",
+  "tree_hash_rule": "sort POSIX relative paths; sha256 each file; append path + NUL + lowercase sha256 + LF to SHA256 stream; exclude demo/web-reference-src/README.md",
+  "validation": "package CHECKSUMS.sha256 all 1158 members verified; copied files byte-identical",
+  "environment": "synthetic preview, no production API configuration"
+}
