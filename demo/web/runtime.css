@@ -35,4 +35,8 @@
 .wx-modal-buttons button{padding:16px;flex:1;font:600 15px -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;color:#1677ff;background:transparent;border:0;cursor:pointer}
 .wx-modal-buttons button+button{border-left:1px solid #e7edf3}
 .wx-modal-buttons button:hover{background:#f0f7ff}
+.wx-modal.wx-privacy-notice{max-width:720px;max-height:calc(100dvh - 56px);display:flex;flex-direction:column;text-align:left}
+.wx-privacy-notice .wx-modal-content{min-height:0;overflow:auto;overscroll-behavior:contain;color:#26344b;overflow-wrap:anywhere}
+.wx-privacy-notice .wx-modal-head,.wx-privacy-notice .wx-modal-buttons{flex-shrink:0}
+.wx-privacy-source{display:block;margin-top:16px;color:#1677ff}
 @media(prefers-reduced-motion:reduce){:where(#page-root) *,#wx-overlays *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}

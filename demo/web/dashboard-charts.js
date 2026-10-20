@@ -3,7 +3,7 @@
   'use strict';
   const instances=new Map();
   // Both navigation themes use a light content area.
-  const palette=()=>({bar:'#4d84dc',text:'#5d718c',label:'#456181',line:'#dce5ef',grid:'#edf1f7',track:'#f5f7fb',surface:'#fff'});
+  const palette=()=>({bar:'#4e83fd',text:'#646a73',label:'#3b4048',line:'#e3e5e8',grid:'#eef0f2',track:'#f5f6f8',surface:'#fff'}); // PC 视觉 2.0：图表随主色变浅
   const number=value=>value==null||value===''||!Number.isFinite(Number(value))?null:Number(value);
   const text=(value,key)=>({tag:'#text',key,text:String(value)});
   const node=(tag,key,cls,children=[])=>({tag,key,attrs:cls?{class:cls}:{},events:{},children});

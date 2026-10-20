@@ -5,70 +5,6 @@
   let activeRecorder = null;
   let localLoginScope = null;
 
-  // v110: combine ordinary links and hash routes without silently accepting
-  // duplicate or conflicting company selectors. companyEntry validates values.
-  function companyEntryOptions(href = global.location.href) {
-    const url = new URL(href), query = {};
-    const hash = new URL(url.hash.slice(1) || '/', url.origin);
-    for (const key of ['company', 'scene']) {
-      const values = [...url.searchParams.getAll(key), ...hash.searchParams.getAll(key)];
-      if (values.length) query[key] = values.length === 1 ? values[0] : values;
-    }
-    return Object.keys(query).length ? {query} : null;
-  }
-
-  function hasCompanyLoginContext(page) {
-    return page?.route === 'pages/login/index' && Boolean(page._entryExplicit || page.data?.workspace || page.data?.companySwitchRequired || page.data?.editingCompany);
-  }
-  function canOpenPage(app, path) {
-    const session = app?.globalData?.session;
-    if (!session || session.mustChangePassword || typeof app.pageAllowed !== 'function') return false;
-    const url = new URL(path, 'https://sales.local/');
-    return app.pageAllowed(url.pathname.replace(/^\/?pages\//, '').replace(/\/index$/, ''), Object.fromEntries(url.searchParams));
-  }
-  function availableActions(app, actions) {
-    const session = app?.globalData?.session;
-    return actions.filter(action => canOpenPage(app, action.path) && (!action.capability || app.can(action.capability)) &&
-      (session.permissions || !action.legacyRoles || action.legacyRoles.includes(session.role)));
-  }
-  function adminLink(app, preview) {
-    const session = app?.globalData?.session;
-    if (preview || !session || session.mustChangePassword || !app.can('console.access')) return null;
-    const url = new URL('/admin', global.location.href);
-    if (session.companyCode) url.searchParams.set('company', session.companyCode);
-    return {label: '运营管理后台', href: url.href};
-  }
-
-  function migrateLoginLabels() {
-    const scopes = new Map();
-    for (const key of Object.keys(localStorage)) {
-      const match = /^(sales-web:(?:live|preview):v1:)(remembered-login|account-history):(.*)$/.exec(key);
-      if (!match) continue;
-      const destination = `${match[1]}account-history:${match[3]}`;
-      const group = scopes.get(destination) || {legacy: [], current: []};
-      let value;
-      try { value = JSON.parse(localStorage.getItem(key)); } catch (_) {}
-      // Remove legacy credentials before any migration write can fail.
-      localStorage.removeItem(key);
-      const entries = value?.version === 1 ? [value] : Array.isArray(value?.entries) ? value.entries : [];
-      group[match[2] === 'remembered-login' ? 'legacy' : 'current'].push(...entries);
-      scopes.set(destination, group);
-    }
-    for (const [key, group] of scopes) {
-      const entries = [];
-      for (const item of [...group.legacy, ...group.current]) {
-        if (!item || typeof item.baseUrl !== 'string' || !item.baseUrl || typeof item.account !== 'string') continue;
-        const account = item.account.trim().toUpperCase();
-        if (!account || account.length > 128) continue;
-        const workspace = typeof item.workspace === 'string' ? item.workspace.trim().toLowerCase() : '';
-        const duplicate = entries.findIndex(entry => entry.baseUrl === item.baseUrl && entry.workspace === workspace && entry.account === account);
-        if (duplicate >= 0) entries.splice(duplicate, 1);
-        entries.push({baseUrl: item.baseUrl, workspace, account});
-      }
-      if (entries.length) localStorage.setItem(key, JSON.stringify({version: 3, entries: entries.slice(-20)}));
-    }
-  }
-
   function withLocalLogin(callback) {
     const host = new URL(global.location.href).hostname;
     if (global.SALES_MODE === 'preview' || !['localhost', '127.0.0.1', '[::1]'].includes(host)) throw new Error('一键登录仅可在本机企业工作区使用');
@@ -91,15 +27,108 @@
   function install(wx, hooks = {}) {
     const mode = global.SALES_MODE === 'preview' ? 'preview' : 'live';
     const prefix = `sales-web:${mode}:v1:`;
-    // Only the shared login page's explicit opt-in record persists between browser sessions.
-    // Tokens, session identity and drafts keep the existing sessionStorage boundary.
-    const endpoint = encodeURIComponent(new URL('/api/v1', global.location.href).href);
-    const loginStorageKeys = {salesRememberedLoginV1: `${prefix}remembered-login:${endpoint}`,
-      salesAccountHistoryV3: `${prefix}account-history:${endpoint}`};
-    const storageFor = key => Object.hasOwn(loginStorageKeys, key) ? localStorage : sessionStorage;
-    const storageKey = key => loginStorageKeys[key] || prefix + key;
-    try { migrateLoginLabels(); }
-    catch (_) { hooks.toast?.('旧凭据清理未完成，请清除此网站的本地数据后重新登录'); }
+    // Persist only explicit remembered accounts and actor-scoped visit drafts.
+    // Credentials and all other application state remain tab-local.
+    const rememberedLoginKey = 'salesRememberedLoginV1';
+    const rememberedLoginStorageKey = `${prefix}remembered-login:${encodeURIComponent(new URL('/api/v1', global.location.href).href)}`;
+    const accountHistoryKey='salesAccountHistoryV3';
+    const accountHistoryStorageKey=`${prefix}account-history:${encodeURIComponent(new URL('/api/v1', global.location.href).href)}`;
+    const storageFor = key => [rememberedLoginKey,accountHistoryKey].includes(key) ? localStorage : sessionStorage;
+    const storageKey = key => key === rememberedLoginKey ? rememberedLoginStorageKey : key===accountHistoryKey ? accountHistoryStorageKey : prefix + key;
+    const visitDraftKey = key => /^(visitEntryV2|visitConfirmV2|visitStructuredV2|visitStructureRun|visitSupplementV1):/.test(key);
+    const draftLocks = new Map(), draftReads = new Map();
+    let draftReleaseBarrier = null;
+    const draftError = (code, message) => Object.assign(new Error(message), {code});
+    const draftEvent = () => global.dispatchEvent?.(new global.CustomEvent('sales:visit-draft-storage'));
+    const draftActor = () => {
+      try { const actor = JSON.parse(sessionStorage.getItem(prefix + 'salesSession') || '{}');
+        if (!actor.workspaceId || !actor.userId) return '';
+        const role = ['fde', 'fde_lead'].includes(actor.role) ? `:${actor.role}:${actor.permissionVersion || 'unverified'}` : '';
+        return `${actor.workspaceId}:${actor.userId}${role}:service:${encodeURIComponent('/api/v1')}`;
+      } catch (_) { return ''; }
+    };
+    function checkDraftScope(key) {
+      const actor = draftActor(), suffix = key.slice(key.indexOf(':') + 1);
+      if (!actor || !(suffix === actor || suffix.startsWith(actor + ':'))) throw draftError('DRAFT_STORAGE_SCOPE', '账号已变化，请重新打开跟进记录');
+      return (key.startsWith('visitSupplementV1:') ? 'edit:' : 'entry:') + suffix;
+    }
+    function observeDraft(key) {
+      checkDraftScope(key);
+      if (!draftReads.has(key)) {
+        try { draftReads.set(key, {raw: localStorage.getItem(storageKey(key)), legacy: sessionStorage.getItem(storageKey(key))}); }
+        catch (_) { throw draftError('DRAFT_STORAGE_UNAVAILABLE', '浏览器无法保存本机草稿，请允许本站存储或先复制内容'); }
+      }
+      return draftReads.get(key);
+    }
+    function acquireDraft(key) {
+      const group = checkDraftScope(key);
+      let record = draftLocks.get(group);
+      if (record) return record;
+      record = {state: 'pending'}; draftLocks.set(group, record);
+      if (!navigator.locks?.request) {record.state = 'unsupported'; return record;}
+      // Web Locks serializes whole draft writes across tabs; a get/set pair in
+      // localStorage alone is not an atomic compare-and-swap.
+      // A same-tab route change releases asynchronously. Wait for our own old
+      // requests to finish before asking ifAvailable, or they look like another tab.
+      const requestLock = () => {
+        if (draftLocks.get(group) !== record) return;
+        return navigator.locks.request(prefix + 'visit-draft-lock:' + group, {ifAvailable: true}, async lock => {
+          if (draftLocks.get(group) !== record) return;
+          if (!lock) {record.state = 'blocked'; draftEvent(); return;}
+          record.state = 'held';
+          const released = new Promise(resolve => {record.release = resolve;});
+          draftEvent();
+          await released;
+        });
+      };
+      record.finished = (draftReleaseBarrier ? draftReleaseBarrier.then(requestLock) : requestLock())
+        .catch(() => {if (draftLocks.get(group) === record) {record.state = 'unsupported'; draftEvent();}});
+      return record;
+    }
+    function writableDraft(key) {
+      const observed = observeDraft(key), lock = acquireDraft(key);
+      if (lock.state === 'pending') throw draftError('DRAFT_STORAGE_PENDING', '正在连接本机草稿存储…');
+      if (lock.state === 'blocked') throw draftError('DRAFT_STORAGE_CONFLICT', '另一标签页正在编辑此草稿。本页修改尚未保存，请关闭另一页面后重试保存');
+      if (lock.state !== 'held') throw draftError('DRAFT_STORAGE_UNAVAILABLE', '浏览器无法保护本机草稿，请使用最新版 Chrome 或先复制内容');
+      const content = raw => {if (raw === null) return null;const value = JSON.parse(raw);delete value.savedAt;return JSON.stringify(value);};
+      if (content(localStorage.getItem(storageKey(key))) !== content(observed.raw)) throw draftError('DRAFT_STORAGE_CONFLICT', '另一页面已更新此草稿。本页内容仍保留，请先复制需要保留的内容，再重新打开');
+      return observed;
+    }
+    function saveVisitDraft(key, value, remove = false) {
+      try {
+        const observed = writableDraft(key), raw = remove ? null : JSON.stringify(value);
+        if (remove) localStorage.removeItem(storageKey(key)); else localStorage.setItem(storageKey(key), raw);
+        observed.raw = raw; observed.legacy = null;
+        sessionStorage.removeItem(storageKey(key));
+      } catch (error) {
+        if (error.code?.startsWith('DRAFT_STORAGE_')) throw error;
+        throw draftError('DRAFT_STORAGE_UNAVAILABLE', '本机草稿未保存，浏览器存储不可用或已满。请先复制内容再处理');
+      }
+    }
+    function releaseDraftLocks() {
+      const pending = [...draftLocks.values()].map(record => record.finished);
+      for (const record of draftLocks.values()) record.release?.();
+      draftLocks.clear();
+      if (pending.length) {
+        const barrier = Promise.allSettled([draftReleaseBarrier, ...pending]);
+        draftReleaseBarrier = barrier;
+        barrier.then(() => {if (draftReleaseBarrier === barrier) draftReleaseBarrier = null;});
+      }
+    }
+    wx.__webVisitDrafts = {
+      beginPage() {releaseDraftLocks(); draftReads.clear();},
+      release: releaseDraftLocks,
+      retry() {
+        for (const [group, record] of draftLocks) if (record.state !== 'held') draftLocks.delete(group);
+        for (const key of draftReads.keys()) acquireDraft(key);
+      },
+    };
+    wx.readLegacyVisitDraftSync = key => {
+      const actor = draftActor().split(':service:')[0];
+      if (!actor || !['visitEntryV2:', 'visitConfirmV2:'].some(p => key === p + actor)) throw draftError('DRAFT_STORAGE_SCOPE', '旧稿不属于当前账号');
+      const raw = sessionStorage.getItem(storageKey(key));
+      try {return raw === null ? '' : JSON.parse(raw);} catch (_) {return '';}
+    };
     let savedFilesDatabase;
     const savedScope = () => {
       const session = wx.getStorageSync('salesSession');
@@ -125,6 +154,8 @@
       });
     }
     async function localFile(path) {
+      // Browser file inputs hand us File/Blob directly; native/shared callers use paths.
+      if (path instanceof Blob) return {file:path, recorded:false};
       if (!String(path || '').startsWith('browser-saved:')) return files.get(path);
       const scope = savedScope();
       if (!path.startsWith('browser-saved:' + scope)) throw new Error('文件不属于当前账号');
@@ -201,12 +232,18 @@
             if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
           }
           const response = await fetch(url, { method, headers, body, signal: controller.signal, credentials: useLocalLogin ? 'omit' : 'same-origin', redirect: 'error' });
-          const text = await response.text();
-          let data = text;
-          if (!upload && options.dataType !== 'text') { try { data = text ? JSON.parse(text) : null; } catch (_) {} }
+          let data;
+          if (!upload && options.responseType === 'arraybuffer' && response.ok) {
+            data = await response.arrayBuffer();
+          } else {
+            const text = await response.text();
+            data = text;
+            // Error JSON stays readable for auth refresh and normal business errors.
+            if (!upload && options.dataType !== 'text') { try { data = text ? JSON.parse(text) : null; } catch (_) {} }
+          }
           result = { data, statusCode: response.status, header: Object.fromEntries(response.headers.entries()), errMsg: `${upload ? 'uploadFile' : 'request'}:ok` };
           // Fetch has no upload-byte progress events; only report completion once it actually finishes.
-          if (upload) progressListeners.forEach(callback => call(callback, { progress: 100, totalBytesSent: files.get(options.filePath)?.file.size || 0, totalBytesExpectedToSend: files.get(options.filePath)?.file.size || 0 }));
+          if (upload) progressListeners.forEach(callback => call(callback, { progress: 100, totalBytesSent: (options.filePath instanceof Blob ? options.filePath.size : files.get(options.filePath)?.file.size) || 0, totalBytesExpectedToSend: (options.filePath instanceof Blob ? options.filePath.size : files.get(options.filePath)?.file.size) || 0 }));
         } catch (cause) {
           error = timedOut ? '请求超时，请稍后重试' : controller.signal.aborted ? '请求已取消' : cause.message || '网络连接失败';
         } finally { clearTimeout(timer); }
@@ -219,19 +256,59 @@
 
     wx.getStorageSync = key => {
       if (key === 'salesApiBaseUrl') return '/api/v1';
+      if (visitDraftKey(key)) {
+        // An explicit shared-controller recovery action may inspect the same
+        // actor's old tab-local text. Never migrate remote IDs or write old keys.
+        const observed = observeDraft(key); acquireDraft(key);
+        const raw = localStorage.getItem(storageKey(key)) ?? observed.legacy;
+        if (raw === null) return '';
+        try {return JSON.parse(raw);} catch (_) {throw draftError('DRAFT_STORAGE_UNAVAILABLE', '本机草稿无法读取，请先保留当前内容');}
+      }
       const value = storageFor(key).getItem(storageKey(key));
       if (value === null) return '';
       try { return JSON.parse(value); } catch (_) { return ''; }
     };
-    wx.setStorageSync = (key, value) => { if (key !== 'salesApiBaseUrl') storageFor(key).setItem(storageKey(key), JSON.stringify(value)); };
-    wx.removeStorageSync = key => storageFor(key).removeItem(storageKey(key));
-    wx.clearStorageSync = () => { Object.keys(sessionStorage).filter(key => key.startsWith(prefix)).forEach(key => sessionStorage.removeItem(key)); Object.values(loginStorageKeys).forEach(key => localStorage.removeItem(key)); };
+    wx.setStorageSync = (key, value) => {
+      if (visitDraftKey(key)) return saveVisitDraft(key, value);
+      const previousActor = key === 'salesSession' ? draftActor() : null;
+      if (key !== 'salesApiBaseUrl') storageFor(key).setItem(storageKey(key), JSON.stringify(value));
+      if (key === 'salesSession' && previousActor !== draftActor()) releaseDraftLocks();
+    };
+    wx.removeStorageSync = key => {if (visitDraftKey(key)) return saveVisitDraft(key, null, true); if (key === 'salesSession') releaseDraftLocks(); storageFor(key).removeItem(storageKey(key));};
+    // Logging out retains scoped local drafts for the same account's next login.
+    wx.clearStorageSync = () => {releaseDraftLocks(); Object.keys(sessionStorage).filter(key => key.startsWith(prefix)).forEach(key => sessionStorage.removeItem(key)); localStorage.removeItem(rememberedLoginStorageKey); localStorage.removeItem(accountHistoryStorageKey);};
     wx.request = options => transport(options, false);
     wx.uploadFile = options => transport(options, true);
     wx.env = { USER_DATA_PATH: `browser-files:${mode}` };
     wx.nextTick = callback => requestAnimationFrame(callback);
+    wx.openPrivacyContract = (options = {}) => {
+      const notice = global.SALES_BUNDLE?.privacyNotice;
+      const unavailable = () => {
+        const reportUnavailable = () => fail(options, 'openPrivacyContract:fail 隐私指引暂不可用，请联系运营');
+        return hooks.withToastSource ? hooks.withToastSource('privacy', reportUnavailable) : reportUnavailable();
+      };
+      if (!notice || notice.schemaVersion !== 1 || typeof notice.revision !== 'string' || !notice.revision.trim()) return unavailable();
+      const text = typeof notice.text === 'string' ? notice.text.trim() : '';
+      let url = '';
+      if (notice.url) {
+        try {
+          const parsed = new URL(notice.url, global.location.href);
+          if (parsed.username || parsed.password || !(parsed.protocol === 'https:' || parsed.protocol === 'http:' && parsed.origin === global.location.origin)) return unavailable();
+          url = parsed.href;
+        } catch (_) { return unavailable(); }
+      }
+      if (!text && !url) return unavailable();
+      try {
+        return wx.showModal({
+          title: typeof notice.title === 'string' && notice.title.trim() || '隐私与数据使用说明',
+          content: text, showCancel: false, confirmText: '关闭', webPrivacyNotice: true, webPrivacyUrl: url,
+          success: () => success(options, {errMsg: 'openPrivacyContract:ok'}),
+          fail: unavailable,
+        });
+      } catch (_) { return unavailable(); }
+    };
     wx.vibrateShort = options => { navigator.vibrate?.(15); success(options || {}, {}); };
-    const systemInfo = () => ({ platform: 'web', system: navigator.platform || 'Web', windowWidth: global.innerWidth, windowHeight: global.innerHeight, screenWidth: screen.width, screenHeight: screen.height, pixelRatio: global.devicePixelRatio || 1, safeArea: { top: 0, left: 0, right: global.innerWidth, bottom: global.innerHeight, width: global.innerWidth, height: global.innerHeight }, ...hooks.windowInfo?.() });
+    const systemInfo = () => ({ platform: 'web', system: navigator.platform || 'Web', SDKVersion: '3.0.0', windowWidth: global.innerWidth, windowHeight: global.innerHeight, screenWidth: screen.width, screenHeight: screen.height, pixelRatio: global.devicePixelRatio || 1, safeArea: { top: 0, left: 0, right: global.innerWidth, bottom: global.innerHeight, width: global.innerWidth, height: global.innerHeight }, ...hooks.windowInfo?.() });
     wx.getSystemInfoSync = systemInfo;
     wx.getWindowInfo = systemInfo;
     wx.getSystemInfo = options => success(options, systemInfo());
@@ -352,5 +429,5 @@
     };
     return wx;
   }
-  global.SalesPlatform = { install, registerLocalFile, withLocalLogin, companyEntryOptions, hasCompanyLoginContext, canOpenPage, availableActions, adminLink };
+  global.SalesPlatform = { install, registerLocalFile, withLocalLogin };
 })(window);

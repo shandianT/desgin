@@ -1,5 +1,7 @@
 # GitHub Pages Web 样板的可编辑展示源码
 
+> 历史源码：本目录对应 2026-09-24 展示版本。当前 `/web/` 已改为 Web UI 1.2.2 的原包快照，来源和当前可复用 UI 源码见 [../web-reference-src/README.md](../web-reference-src/README.md)。`tools/build-web-demo.mjs` 已阻止旧源码覆盖当前展示。
+
 ## 当前发布：SalesBuddy-Web-20260924（2026-09-27 上传）
 
 用户指定该运行包更新现有 `/web/` 地址。`demo/web/` 的 70 个运行文件与 ZIP 逐字节一致，来源及 SHA-256 见 [package-20260924.json](package-20260924.json)。Pages 直接发布已提交的 Web 运行文件；规范站仍按既有流程构建。后续修改 Web 时先在本地构建并提交运行文件，再发布。

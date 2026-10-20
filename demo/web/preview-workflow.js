@@ -24,18 +24,12 @@
     for (const [key, label] of [['interaction_at', '跟进日期'], ['created_date', '创建时间'], ['contact_name', '对接人']]) if (!present(fields[key])) ctx.error(422, '请补充' + label);
     if (!strictDate(fields.interaction_at) || !strictDate(fields.created_date)) ctx.error(422, '请填写有效的 YYYY-MM-DD 日期');
   }
-  function cleanAmountReceipt(mutation) {
-    if (!mutation) return null;
-    const clean = {...mutation};
-    delete clean.amount_confirmed_value;
-    return clean;
-  }
   function archiveSnapshot(body) {
     const fields = body.fields || {};
     return {customer_id: body.customer_id, opportunity_id: fields.opportunity_id || null,
       fields: Object.fromEntries(FIELD_KEYS.map(key => [key, fields[key]])),
       collaborator_ids: fields.collaborator_ids || [], fde_participant_ids: body.fde_participant_ids || [],
-      source_import_id: fields.source_import_id || null, opportunity_mutation: cleanAmountReceipt(fields._opportunity_mutation)};
+      source_import_id: fields.source_import_id || null, opportunity_mutation: fields._opportunity_mutation || null};
   }
   function visitSnapshots(fields, actors, at) {
     const visitDate = clean(fields.interaction_at).slice(0, 10);
@@ -100,7 +94,14 @@
   }
   function assertFdeTarget(ctx, customerId, opportunityId) {
     if (!isFde(ctx.actor)) return;
-    if (!opportunityId) ctx.error(422, 'FDE 须选择本人参与的商机');
+    if (!opportunityId) {
+      ctx.customer(customerId);
+      // Synthetic default assigned grant only; production authorization stays in the API.
+      const assigned = ctx.state.opportunities.some(row => row.customer_id === customerId
+        && ((row.fde_member_ids || []).includes(ctx.actor.user_id) || [row.owner_id, row.owner_user_ref_id].includes(ctx.actor.user_id)));
+      if (!assigned) ctx.error(403, '当前客户不在本人可录入范围内');
+      return;
+    }
     const row = ctx.opportunity(opportunityId);
     if (row.customer_id !== customerId || !(row.fde_member_ids || []).includes(ctx.actor.user_id)) ctx.error(403, '该商机不属于当前客户或本人未参与，不能录入');
   }
@@ -111,11 +112,11 @@
       const payload = run.review_payload;
       const expected = {customer_id: payload.customer_id, opportunity_id: payload.opportunity_id || null, fields: payload.fields,
         collaborator_ids: payload.collaborator_ids || [], fde_participant_ids: payload.fde_participant_ids || [],
-        source_import_id: payload.source_import_id || null, opportunity_mutation: cleanAmountReceipt(payload.opportunity_mutation)};
+        source_import_id: payload.source_import_id || null, opportunity_mutation: payload.opportunity_mutation || null};
       if (canonical(expected) !== canonical(archiveSnapshot(ctx.body))) ctx.error(409, '拜访字段、关联对象或参与人已修改，请重新执行字段校验');
       stageFields(fields && Object.fromEntries(FIELD_KEYS.map(key => [key, fields[key]])), ctx);
     }
-    if (run.customer_id !== ctx.body.customer_id || isFde(ctx.actor) && run.opportunity_id !== fields.opportunity_id) ctx.error(409, '关联对象已变化，请重新执行字段校验');
+    if (run.customer_id !== ctx.body.customer_id || isFde(ctx.actor) && (run.opportunity_id || null) !== (fields.opportunity_id || null)) ctx.error(409, '关联对象已变化，请重新执行字段校验');
     if (run.review_text !== reviewContent(fields)) ctx.error(409, '拜访正文已修改，请重新执行字段校验');
     const quality = checkFields(fields);
     if (quality.follow_up_score !== 100 || !quality.next_action.passed) ctx.error(422, '字段校验未通过，请补齐正文和带日期的下一步行动');
@@ -148,7 +149,7 @@
       ctx.requireCap(actor, 'visit.create'); ctx.customer(body.customer_id); assertFdeTarget(ctx, body.customer_id, body.opportunity_id);
       const source = state.runs[body.source_run_id];
       if (!source || source.mode !== 'visit_structure' || source.actor_id !== actor.user_id || source.customer_id !== body.customer_id || source.status !== 'succeeded') ctx.error(422, '请先整理当前身份、当前客户的拜访原文');
-      if (body.source_import_id || isFde(actor) && source.opportunity_id !== body.opportunity_id) ctx.error(409, '原文来源或 FDE 关联商机已变化，请重新整理');
+      if ((body.source_import_id || null) !== (source.source_import_id || null)) ctx.error(409, '原文来源已变化，请重新整理');
       stageFields(body.fields, ctx);
       if (typeof body.summary !== 'string' || body.summary.length > 5000) ctx.error(422, '质检摘要格式不正确');
       if (body.opportunity_id && ctx.opportunity(body.opportunity_id).customer_id !== body.customer_id) ctx.error(422, '商机不属于当前客户');
@@ -214,11 +215,7 @@
         fde_participant_ids: participantIds, fde_participants: actors.filter(person => participantIds.includes(person.user_id)).map(person => ({id: person.user_id, name: person.display_name})),
         collaborator_ids: fields.collaborator_ids || [], quality_review: quality, follow_up_score: quality.follow_up_score, quality_score: quality.follow_up_score,
         completed_count: Object.values(fields).filter(present).length, source_label: LABEL, demo: true, data_kind: 'demo'};
-      if (opportunity && participantIds.length) {
-        const saved = state.opportunities.find(item => item.id === opportunity.id);
-        saved.fde_member_ids = [...new Set([...(saved.fde_member_ids || []), ...participantIds])];
-        saved.fde_members = actors.filter(person => saved.fde_member_ids.includes(person.user_id)).map(person => ({id: person.user_id, name: person.display_name, role: person.role}));
-      }
+      // Attendance belongs to this visit; it grants no lasting opportunity access.
       state.visits.unshift(row); run.archived_visit_id = id;
       return done(row);
     }

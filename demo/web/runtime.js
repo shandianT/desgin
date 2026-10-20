@@ -59,12 +59,17 @@
   const booleanAttribute = (raw, scope) => raw === '' || truth(value(raw, scope));
   const cssRpx = value => String(value || '').replace(/(-?\d*\.?\d+)rpx/g, 'calc(var(--rpx) * $1)');
 
+  let toastSource = '';
+  function withToastSource(source, callback) {
+    const previous = toastSource; toastSource = source;
+    try { return callback(); } finally { toastSource = previous; }
+  }
   function toast(message, duration = 2500) {
     overlays.querySelectorAll('.wx-toast:not([data-loading])').forEach(el => el.remove());
     const el = document.createElement('div');
     el.className = 'wx-toast'; el.role = 'status'; el.textContent = message;
     overlays.append(el);
-    window.dispatchEvent(new CustomEvent('sales:toast', {detail: {message: String(message || '')}}));
+    window.dispatchEvent(new CustomEvent('sales:toast', {detail: {message: String(message || ''), source: toastSource}}));
     setTimeout(() => el.remove(), duration); return el;
   }
   function report(error) {
@@ -81,14 +86,24 @@
     for (const part of parts) { if (part === '..') output.pop(); else if (part && part !== '.') output.push(part); }
     return output.join('/').replace(/\.(js|json)$/, '');
   }
-  function requireModule(path, from = '') {
+  function requireModule(path, from = '', scope = null) {
     let id = resolve(path, from);
     if (!(id in bundle.modules) && id + '/index' in bundle.modules) id += '/index';
-    if (cache[id]) return cache[id].exports;
+    // TDesign's native decorators capture the Component callback from the
+    // execution that loaded their shared helpers.  A cached helper therefore
+    // registers a later component on the wrong owner (or in the global
+    // registry), which leaves the current instance without a definition.
+    // The material-form helper also captures this instance's injected timer.
+    // Reusing it after detach would silently discard a reopened form's preview.
+    // Re-evaluate these scoped helpers; page, application and API modules keep
+    // their existing cache/state semantics.
+    const scopedDependency = Boolean(scope) && (id.startsWith('ui/') || id === 'utils/opportunityMaterialForm');
+    if (cache[id] && !scopedDependency) return cache[id].exports;
     const code = bundle.modules[id];
     if (code === undefined) throw new Error('交付包中缺少模块：' + id);
-    const module = cache[id] = {exports: {}};
-    executeModule(id, module);
+    const module = {exports: {}};
+    if (!scopedDependency) cache[id] = module;
+    executeModule(id, module, scope);
     return module.exports;
   }
   function scopedWx(scope) {
@@ -126,24 +141,30 @@
   function executeModule(id, module, scope) {
     const code = bundle.modules[id];
     if (code === undefined) throw new Error('交付包中缺少模块：' + id);
-    new Function('require', 'module', 'exports', 'wx', 'App', 'Page', 'Component', 'getApp', 'getCurrentPages',
+    new Function('require', 'module', 'exports', 'wx', 'App', 'Page', 'Component', 'Behavior', 'getApp', 'getCurrentPages',
       'setTimeout', 'setInterval',
       code + '\n//# sourceURL=sales-source/' + id + '.js')(
       path => {
-        const exports = requireModule(path, id);
+        const exports = requireModule(path, id, scope);
         if (!scope || resolve(path, id) !== 'utils/apiClient') return exports;
         scope.apiProxy ||= new Proxy(exports, {get(target, key) {
           const fn = target[key];
           if (typeof fn !== 'function' || ['getAuth', 'getBaseUrl', 'isEnabled', 'saveAuth', 'updateActor'].includes(key)) return fn;
           return (...args) => {
-            if (scope.owner && (scope.owner._destroyed || scope.epoch !== navigationEpoch)) return Promise.reject(Object.assign(new Error('页面或账号已切换，请在当前页面重试'), {code: 'SESSION_CHANGED'}));
+            // The login page switches accounts in place. Its fresh authentication
+            // calls belong to the current form, while business calls retain the
+            // old epoch fence. apiClient still rejects pre-logout responses.
+            const activeLoginCall = scope.owner === current && current?.route === 'pages/login/index'
+              && ['getCompanyEntry', 'changePassword', 'cancelPendingLogin'].includes(key);
+            if (scope.owner && (scope.owner._destroyed || scope.epoch !== navigationEpoch && !activeLoginCall)) return Promise.reject(Object.assign(new Error('页面或账号已切换，请在当前页面重试'), {code: 'SESSION_CHANGED'}));
             return fn(...args);
           };
         }});
         return scope.apiProxy;
       }, module, module.exports, scope ? scopedWx(scope) : wx,
       definition => { app = definition; }, definition => { if (scope) scope.definition = definition; else definitions[id] = definition; },
-      definition => { if (scope) scope.definition = definition; else componentDefinitions[id] = definition; }, () => app, () => stack.slice(),
+      definition => { if (scope) scope.definition = definition; else componentDefinitions[id] = definition; },
+      definition => definition, () => app, () => stack.slice(),
       scope ? scopedTimer(scope, false) : window.setTimeout.bind(window), scope ? scopedTimer(scope, true) : window.setInterval.bind(window));
   }
   function instanceDefinition(id) {
@@ -249,12 +270,45 @@
       (selector.startsWith('#') ? instance._attributes.id === selector.slice(1) : selector.startsWith('.') ? String(instance._attributes.class || '').split(/\s+/).includes(selector.slice(1)) : instance._tag === selector));
     return all ? list : list[0] || null;
   }
+  function relationNodes(owner, path) {
+    const relation = owner._definition?.relations?.[path];
+    if (!relation || owner._destroyed) return [];
+    const id = resolve(path, owner._module), nodes = [];
+    if (relation.type === 'parent' || relation.type === 'ancestor') {
+      for (let parent = owner._owner; parent; parent = relation.type === 'ancestor' ? parent._owner : null) {
+        if (!parent._destroyed && parent._module === id) nodes.push(parent);
+      }
+    } else if (relation.type === 'child' || relation.type === 'descendant') {
+      const visit = parent => {
+        for (const child of parent._components.values()) {
+          if (child._destroyed) continue;
+          if (child._module === id) nodes.push(child);
+          if (relation.type === 'descendant') visit(child);
+        }
+      };
+      visit(owner);
+    }
+    return nodes;
+  }
+  function attachComponentRelations(instance) {
+    // TDesign installs these live relation getters through a created Behavior.
+    // This host does not compose arbitrary native Behaviors: supply only that
+    // relation contract, before observers, from the actual component tree.
+    if (!instance._module.startsWith('ui/tdesign/')) return;
+    for (const [path, relation] of Object.entries(instance._definition.relations || {})) {
+      const parent = ['parent', 'ancestor'].includes(relation.type);
+      if (!parent && !['child', 'descendant'].includes(relation.type)) continue;
+      Object.defineProperty(instance, parent ? '$parent' : '$children', {configurable: true,
+        get() { const nodes = this.getRelationNodes(path); return parent ? nodes[0] : nodes; }});
+    }
+  }
   function attachMethods(owner) {
     owner.setData = setData;
     owner._components = new Map(); owner._callbacks = [];
     owner.createSelectorQuery = () => selectorQuery(owner);
     owner.selectComponent = selector => selectComponent(owner, selector);
     owner.selectAllComponents = selector => selectComponent(owner, selector, true);
+    owner.getRelationNodes = path => relationNodes(owner, path);
   }
   function propertyDefaults(definition) {
     const result = {};
@@ -288,7 +342,7 @@
       instance = Object.assign({}, definition.methods || {}, {data: {...clone(definition.data || {}), ...properties}, properties,
         _definition: definition, _module: id, _owner: owner, _page: owner._page || owner, _id: ++serial,
         _key: key, _tag: node.t, _attributes: attributes, _destroyed: false, _attached: false});
-      attachMethods(instance); owner._components.set(key, instance);
+      attachMethods(instance); attachComponentRelations(instance); owner._components.set(key, instance);
       instanceScope.owner = instance;
       instance.triggerEvent = (name, detail = {}, options = {}) => {
         if (instance._destroyed) return;
@@ -324,6 +378,9 @@
     return output;
   }
   function buildNode(node, scope, owner, key, conditionHandled = false) {
+    // WXS declares Mini Program helpers, never visible page/component content.
+    // Keep it out of the fallback tree while the desktop renderer is loading.
+    if (node.t === 'wxs') return [];
     const attributes = node.a || {};
     if ('wx:for' in attributes) {
       const list = value(attributes['wx:for'], scope) || [];
@@ -404,12 +461,31 @@
       vnode.events.click = action;
       if (tag !== 'button') vnode.events.keydown = event => { if (event.target === event.currentTarget && ['Enter', ' '].includes(event.key)) { event.preventDefault(); action(event); } };
     }
+    const imeText = ['input', 'textarea'].includes(tag) && !['checkbox', 'radio', 'number', 'date', 'time'].includes(vnode.attrs.type);
+    if (imeText) {
+      vnode.events.compositionstart = event => { event.currentTarget._wxComposing = true; event.currentTarget._wxCompositionCommit = null; };
+      vnode.events.compositionend = event => {
+        const el = event.currentTarget;
+        if (!el._wxComposing) return;
+        el._wxComposing = false;
+        const handler = el._wxEvents.input || el._wxEvents.change;
+        if (handler) handler({currentTarget: el, target: el, type: 'input'});
+        el._wxCompositionCommit = el.value;
+      };
+    }
     for (const kind of ['input', 'change', 'confirm', 'focus', 'blur']) {
       const name = attributes['bind' + kind] || attributes['bind:' + kind];
       if (!name || tag === 'picker') continue;
       vnode.events[kind === 'confirm' ? 'keydown' : kind] = event => {
-        if (kind === 'confirm' && (event.key !== 'Enter' || event.isComposing || event.keyCode === 229)) return;
+        if (kind === 'confirm' && (event.key !== 'Enter' || event.isComposing || event.keyCode === 229 || event.currentTarget._wxComposing)) return;
         const el = event.currentTarget;
+        if (imeText && kind === 'blur' && el._wxComposing) el._wxEvents.compositionend(event);
+        if (imeText && ['input', 'change'].includes(kind)) {
+          if (el._wxComposing || event.isComposing) return;
+          const duplicate = el._wxCompositionCommit === el.value;
+          el._wxCompositionCommit = null;
+          if (duplicate) return;
+        }
         const inputValue = tag === 'checkbox-group' ? [...el.querySelectorAll('input[type=checkbox]:checked')].map(box => box.value) : el.value;
         invoke(owner, value(name, scope), data, event, {value: inputValue, cursor: el.selectionStart}, kind);
       };
@@ -522,7 +598,7 @@
     if (vnode.chart) globalThis.SalesDashboard?.update(el, vnode.chart);
     else patchChildren(el, vnode.children || []);
     if (vnode.portal && !el.open) el.showModal();
-    if (vnode.value !== undefined && el.value !== String(vnode.value)) {
+    if (vnode.value !== undefined && !el._wxComposing && el.value !== String(vnode.value)) {
       const focused = document.activeElement === el, start = el.selectionStart, end = el.selectionEnd;
       el.value = vnode.value;
       if (focused && start !== null) try { el.setSelectionRange(Math.min(start, el.value.length), Math.min(end, el.value.length)); } catch (_) {}
@@ -564,11 +640,13 @@
     try {
       walkComponents(page, instance => { instance._seen = false; });
       globalThis.SalesDetailWorkspace?.configure(page);
-      globalThis.SalesReviewForms?.configure(page, {listCustomers: async options => {
+      globalThis.SalesReviewForms?.configure(page, {
+        customerSearchIdentity: () => requireModule('utils/access').identity(app.globalData.session),
+        listOpportunityCustomerReferences: async options => {
         const epoch = navigationEpoch;
         const check = () => { if (current !== page || page._destroyed || navigationEpoch !== epoch) throw new Error('页面或账号已切换，请在当前页面重试'); };
         check();
-        const result = await requireModule('utils/apiClient').listCustomers(options);
+        const result = await requireModule('utils/apiClient').listOpportunityCustomerReferences(options);
         check();
         return result;
       }});
@@ -679,7 +757,10 @@
   }
   function pageComponentsLifecycle(page, name) { walkComponents(page, instance => call(instance, instance._definition.pageLifetimes && instance._definition.pageLifetimes[name])); }
   function hidePage(page) {
-    if (!page) return; globalThis.SalesDatePicker?.close({restoreFocus: false}); lifecycle(page, 'onHide'); pageComponentsLifecycle(page, 'hide');
+    if (!page) return;
+    flushVisitDraft(page);
+    globalThis.SalesDatePicker?.close({restoreFocus: false}); lifecycle(page, 'onHide'); pageComponentsLifecycle(page, 'hide');
+    if (visitDraftPage(page)) wx.__webVisitDrafts?.release();
     for (const record of [...activeModals]) if ((record.owner?._page || record.owner) === page) record.finish(false, false, true);
     page._scrollY = page._scrollRestore?.top ?? pageScrollMetrics().top;
     globalThis.SalesDepartmentUI?.unmount();
@@ -738,14 +819,6 @@
     const url = new URL(String(path).replace(/^#/, ''), 'https://sales.local/');
     const id = url.pathname.replace(/^\//, '');
     if (!bundle.pages[id]) { const error = new Error('交付包中没有此页面：' + id); toast(error.message); throw error; }
-    // v110 company-entry bridge: preserve duplicates for validation and keep the
-    // current identity until the login page's explicit company-switch dialog.
-    const entryOptions = window.SalesPlatform.companyEntryOptions(url.href);
-    if (entryOptions) {
-      app._pendingCompanyEntry = requireModule('utils/companyEntry').parse(entryOptions);
-      pendingDeepLink = ''; sessionStorage.removeItem(sessionKey('pending-path'));
-      if (id !== 'pages/login/index') return route('/pages/login/index', {reset: true});
-    }
     const hasSession = authenticated();
     if (hasSession) sessionStorage.removeItem(sessionKey('signed-out'));
     if (pendingDeepLink && hasSession && id === bundle.config.tabBar?.list?.[0]?.pagePath) {
@@ -781,6 +854,7 @@
     if (bundle.config.tabBar?.list?.some(tab => tab.pagePath === id)) tabPages.set(id, page);
     root.replaceChildren(); style.textContent = pageCss(id);
     if (!options.history) updateHash(page, options.reset || options.replace);
+    if (visitDraftPage(page)) wx.__webVisitDrafts?.beginPage();
     notifyNavigation(); scrollPageTo(0); lifecycle(page, 'onLoad', page.options);
     if (current !== page) return page;
     render(); lifecycle(page, 'onShow');
@@ -821,11 +895,18 @@
     };
   }
   function userNavigation(action) {
+    if (current?.route === 'pages/visit-confirm/index') {
+      flushVisitDraft();
+      if (current.data.draftSaveError && !current.data.archived) {
+        wx.showModal({title: '本页草稿尚未保存', content: '请先复制需要保留的内容，或重试保存草稿后再离开。', showCancel: false});
+        return;
+      }
+    }
     return current?._requestWebExit ? current._requestWebExit(action) : action();
   }
-  function back(delta = 1) {
+  function back(delta = 1, fallbackPath) {
     if (!authenticated()) return route('/pages/login/index', {reset: true});
-    if (stack.length < 2) return route(bundle.config.tabBar.list[0].pagePath, {tab: true});
+    if (stack.length < 2) return route(fallbackPath || bundle.config.tabBar.list[0].pagePath, {tab: true});
     hidePage(current); const count = Math.min(Math.max(1, delta), stack.length - 1);
     for (let index = 0; index < count; index++) unload(stack.pop());
     showStoredPage(stack[stack.length - 1]);
@@ -850,7 +931,27 @@
   }
   window.addEventListener('hashchange', hashNavigation);
   window.addEventListener('popstate', hashNavigation);
-  window.addEventListener('pagehide', () => { if (current?.route === 'pages/visit-entry/index') lifecycle(current, 'onHide'); });
+  function visitDraftPage(page) {return ['pages/visit-entry/index', 'pages/visit-confirm/index'].includes(page?.route);}
+  function flushVisitDraft(page = current) {
+    if (!visitDraftPage(page) || page._destroyed) return;
+    window.dispatchEvent(new CustomEvent('sales:flush-draft-inputs'));
+    lifecycle(page, 'persist');
+  }
+  window.addEventListener('sales:visit-draft-storage', () => flushVisitDraft());
+  window.addEventListener('sales:retry-visit-draft', () => {wx.__webVisitDrafts?.retry(); flushVisitDraft();});
+  if (document?.addEventListener) document.addEventListener('visibilitychange', () => {if (document.visibilityState === 'hidden') flushVisitDraft();});
+  window.addEventListener('beforeunload', event => {
+    if (!visitDraftPage(current)) return;
+    flushVisitDraft();
+    if (current.data.draftSaveError && !current.data.archived) {event.preventDefault(); event.returnValue = '';}
+  });
+  window.addEventListener('pagehide', () => {
+    if (!visitDraftPage(current)) return;
+    flushVisitDraft(); lifecycle(current, 'onHide'); wx.__webVisitDrafts?.release();
+  });
+  window.addEventListener('pageshow', event => {
+    if (event.persisted && visitDraftPage(current)) {lifecycle(current, 'onShow'); wx.__webVisitDrafts?.retry(); flushVisitDraft();}
+  });
 
   function modal(options = {}, owner = current) {
     return new Promise(resolvePromise => {
@@ -859,6 +960,14 @@
       box.className = 'wx-modal';
       const heading = document.createElement('div'); heading.className = 'wx-modal-head'; heading.textContent = options.title || '提示';
       const content = document.createElement('div'); content.className = 'wx-modal-content'; content.textContent = options.content || '';
+      if (options.webPrivacyNotice === true) {
+        box.classList.add('wx-privacy-notice'); mask.setAttribute('aria-label', heading.textContent); content.tabIndex = 0;
+        if (options.webPrivacyUrl) {
+          const link = document.createElement('a'); link.className = 'wx-privacy-source';
+          link.href = options.webPrivacyUrl; link.target = '_blank'; link.rel = 'noopener noreferrer';
+          link.textContent = '在新窗口阅读完整说明 ↗'; content.append(link);
+        }
+      }
       const buttons = document.createElement('div'); buttons.className = 'wx-modal-buttons';
       const previousFocus = document.activeElement;
       let finished = false;
@@ -867,7 +976,6 @@
       const finish = (confirm, restoreFocus = true, dismissed = false) => {
         if (finished) return; finished = true;
         activeModals.delete(record); document.removeEventListener('keydown', trapKeys, true); document.removeEventListener('focusin', trapFocus, true); mask.remove();
-        window.dispatchEvent(new CustomEvent('sales-native-modal-change'));
         const result = {confirm: !dismissed && confirm, cancel: !dismissed && !confirm, content: input ? input.value : '', ...(dismissed ? {errMsg: 'showModal:fail page changed'} : {})};
         try { if (dismissed) options.fail?.(result); else options.success?.(result); options.complete?.(result); } catch (error) { report(error); }
         resolvePromise(result);
@@ -875,18 +983,11 @@
       };
       const record = {owner, finish};
       const isTop = () => [...activeModals].at(-1) === record;
-      const controls = () => [...box.querySelectorAll('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex="0"]')];
-      let restoringNativeFocus = false;
-      const trapFocus = event => {
-        if (!restoringNativeFocus && isTop() && !mask.contains(event.target)) {
-          restoringNativeFocus = true;
-          try { controls()[0]?.focus({preventScroll: true}); }
-          finally { restoringNativeFocus = false; }
-        }
-      };
+      const controls = () => [...box.querySelectorAll('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]')];
+      const trapFocus = event => { if (isTop() && !mask.contains(event.target)) controls()[0]?.focus({preventScroll: true}); };
       const trapKeys = event => {
         if (!isTop()) return;
-        if (event.key === 'Escape' && options.showCancel !== false) { event.preventDefault(); event.stopPropagation(); finish(false); }
+        if (event.key === 'Escape' && (options.showCancel !== false || options.webPrivacyNotice === true)) { event.preventDefault(); event.stopPropagation(); finish(false); }
         else if (event.key === 'Tab') {
           const available = controls(), index = available.indexOf(document.activeElement);
           if (event.shiftKey && index <= 0 || !event.shiftKey && (index < 0 || index === available.length - 1)) {
@@ -897,9 +998,7 @@
       const add = (label, confirm) => { const button = document.createElement('button'); button.textContent = label; button.onclick = () => finish(confirm); buttons.append(button); };
       if (options.showCancel !== false) add(options.cancelText || '取消', false); add(options.confirmText || '确定', true);
       box.append(heading, content, buttons); mask.append(box); overlays.append(mask);
-      activeModals.add(record);
-      window.dispatchEvent(new CustomEvent('sales-native-modal-change'));
-      document.addEventListener('keydown', trapKeys, true); document.addEventListener('focusin', trapFocus, true);
+      activeModals.add(record); document.addEventListener('keydown', trapKeys, true); document.addEventListener('focusin', trapFocus, true);
       requestAnimationFrame(() => (input || buttons.lastChild).focus());
     });
   }
@@ -967,19 +1066,26 @@
     bundle = window.SALES_BUNDLE; bundle.components ||= {}; bundle.images ||= {};
     if (current) hidePage(current); [...new Set([...stack, ...tabPages.values()])].forEach(unload); stack = []; tabPages.clear(); current = null; cache = {}; definitions = {}; componentDefinitions = {};
     if (!window.SalesPlatform || typeof window.SalesPlatform.install !== 'function') throw new Error('未加载 Web 平台适配器');
-    window.SalesPlatform.install(wx, {toast, report, windowInfo: runtimeWindowInfo});
+    window.SalesPlatform.install(wx, {toast, report, withToastSource, windowInfo: runtimeWindowInfo});
     // A browser reload creates a new page instance; replay only its source greeting.
     if (!documentBooted) { wx.removeStorageSync('homeGreetingShownLogin'); documentBooted = true; }
     requireModule('app'); installSessionBoundary(); await lifecycle(app, 'onLaunch'); resize();
-    // v110: browser ?company/scene and hash-route parameters survive ensureLogin.
-    const entryOptions = window.SalesPlatform.companyEntryOptions();
-    lifecycle(app, 'onShow', entryOptions || {});
+    const search = new URLSearchParams(location.search), hashQuery = new URL(location.hash.slice(1) || '/', 'https://sales.local/').searchParams;
+    const company = hashQuery.has('company') ? hashQuery.get('company') : search.get('company');
     const desired = location.hash.slice(1), first = '/' + (bundle.config.pages && bundle.config.pages[0] || bundle.config.tabBar.list[0].pagePath);
-    pendingDeepLink = sessionStorage.getItem('sales-web:pending-path:' + (window.SALES_MODE || 'live')) || '';
-    if (entryOptions) {
-      pendingDeepLink = ''; sessionStorage.removeItem(sessionKey('pending-path'));
-      return route('/pages/login/index', {reset: true});
+    lifecycle(app, 'onShow', company !== null ? {query:{company}} : {});
+    if (company !== null) {
+      // Keep the same company's reload destination while the normal login page
+      // validates the entry. A different/invalid company cannot inherit it;
+      // logout or account switching still clears pending navigation below.
+      const entry = requireModule('utils/companyEntry').parse({query:{company}});
+      pendingDeepLink = entry?.code && entry.code === app.globalData.session?.companyCode &&
+        desired && !desired.startsWith('/pages/login/') && bundle.pages[desired.split('?')[0].replace(/^\//, '')] ? desired : '';
+      if (pendingDeepLink) sessionStorage.setItem(sessionKey('pending-path'), pendingDeepLink);
+      else sessionStorage.removeItem(sessionKey('pending-path'));
+      return route('/pages/login/index?company=' + encodeURIComponent(company), {reset:true});
     }
+    pendingDeepLink = sessionStorage.getItem('sales-web:pending-path:' + (window.SALES_MODE || 'live')) || '';
     if (!app.globalData.session && !sessionStorage.getItem(sessionKey('signed-out')) && desired && !desired.startsWith('/pages/login/') && bundle.pages[desired.split('?')[0].replace(/^\//, '')]) {
       pendingDeepLink = desired;
       sessionStorage.setItem('sales-web:pending-path:' + (window.SALES_MODE || 'live'), desired);
@@ -987,9 +1093,11 @@
     if (typeof app.ensureLogin === 'function' && !app.ensureLogin()) return current;
     return route(desired && bundle.pages[desired.split('?')[0].replace(/^\//, '')] ? desired : first, {reset: true});
   }
-  window.SalesRuntime = {boot, route, replacePageQuery, userRoute(path, options) { return userNavigation(() => route(path, options)); }, back(delta) { return userNavigation(() => back(delta)); }, signOut() { app.logout(); return route('/pages/login/index', {reset: true}); }, refresh() { const path = current?._url; return path && userNavigation(() => route(path, {replace: true})); },
+  window.SalesRuntime = {boot, route, replacePageQuery, userRoute(path, options) { return userNavigation(() => route(path, options)); }, back(delta, fallbackPath) { return userNavigation(() => back(delta, fallbackPath)); }, signOut() { app.logout(); return route('/pages/login/index', {reset: true}); }, refresh() { const path = current?._url; return path && userNavigation(() => route(path, {replace: true})); },
     businessOptions() { return requireModule('utils/businessOptions'); },
-    get app() { return app; }, get current() { return current; }, get wx() { return wx; }, get errors() { return errors.slice(); }, get nativeModalOpen() { return activeModals.size > 0; }};
+    // PC 工作台、跟进记录、工作报告、知识库的只读取数入口：复用同一份 utils/apiClient 与登录态，不新增后端接口。
+    require(path) { return requireModule(path); },
+    get app() { return app; }, get current() { return current; }, get wx() { return wx; }, get errors() { return errors.slice(); }};
   window.addEventListener('resize', () => { resize(); const {windowWidth, windowHeight} = wx.getSystemInfoSync(); lifecycle(current, 'onResize', {size: {windowWidth, windowHeight}}); });
   if (window.ResizeObserver) new ResizeObserver(resize).observe(root);
   function onPageScroll(event) {

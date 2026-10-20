@@ -53,7 +53,6 @@
   const quietComponentText = {
     'fde-dashboard': ['项目进展与工作记录', '当前参与项目', '所选周期 · 协助项目', '所选周期 · 场景登记', '当前参与商机 · 按数量', '周一至周日 · 仅统计所选周期内记录', '所选周期内的已归档记录会显示在这里'],
     'fde-profile': ['本人接收的日常工作任务与客户任务', '本人填写并确认归档，新老客户均计入'],
-    'opportunity-form': ['预测金额 = 填写金额 × 商机阶段百分比'],
   };
   const passive = node => {
     let result = true;
