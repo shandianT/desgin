@@ -1,0 +1,18 @@
+{
+  "title": "SalesBuddy Web UI 1.2.4 candidate reference snapshot",
+  "source_package": "SalesBuddy-Web-UI-1.2.4-b9a32ef2-20261021.zip",
+  "source_revision": "b9a32ef20bc76d15d1436440f442beff3e259360",
+  "source_prs": [184, 185],
+  "exported_at": "2026-10-22",
+  "dist_file_count": 0,
+  "dist_tree_sha256": null,
+  "ui_source_file_count": 0,
+  "ui_source_tree_sha256": null,
+  "source_status": "fixed product source; package export pending",
+  "validation": "Compared against merged PRs and fixed candidate commit; no fabricated package checksum",
+  "environment": "synthetic preview, no production API configuration",
+  "notes": [
+    "This manifest records the reproducible source and intentionally leaves package hashes null until the b9a32ef2 export is supplied.",
+    "The design repository cannot build the complete product independently."
+  ]
+}
