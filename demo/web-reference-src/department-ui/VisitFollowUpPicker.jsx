@@ -1,10 +1,11 @@
 import React from 'react';
 import {Alert,Button} from 'antd';
-import {SbSheet,SbListRow,SbStatePanel} from '@shandiant/ui-react';
+import {SbListRow,SbStatePanel} from '@shandiant/ui-react';
+import {WorkflowDialog} from './WorkflowOverlays.jsx';
 import {SbSearch} from './ImeInput.jsx';
 export default function VisitFollowUpPicker({data:d,invoke}){
  const busy=Boolean(d.isProcessing||d.isRecording||d.followUpChecking);
- return <SbSheet open={Boolean(d.followUpPickerOpen)} title="选择跟进商机" height="85vh" onClose={busy?undefined:()=>invoke('closeFollowUpDiscovery')} footer={<Button disabled={busy} onClick={()=>invoke('closeFollowUpDiscovery')}>关闭</Button>}>
+ return <WorkflowDialog width={760} open={Boolean(d.followUpPickerOpen)} title="选择跟进商机" onClose={busy?undefined:()=>invoke('closeFollowUpDiscovery')} footer={<Button disabled={busy} onClick={()=>invoke('closeFollowUpDiscovery')}>关闭</Button>}>
   <div className="ds-followup-picker"><p className="ds-muted">仅显示当前有权跟进的商机，包含你参与协作的商机。选择后会再次核对权限。</p>
    <SbSearch aria-label="搜索可跟进商机" value={d.followUpQuery||''} placeholder="搜索商机或客户名称" disabled={busy} loading={Boolean(d.followUpLoading)} onChange={value=>invoke('inputFollowUpQuery',{detail:{value}})} onSearch={()=>invoke('searchFollowUp')}/>
    {d.followUpError&&<Alert type="warning" showIcon message={d.followUpError} action={<Button disabled={busy} onClick={()=>invoke('searchFollowUp')}>重新读取</Button>}/>}
@@ -15,5 +16,5 @@ export default function VisitFollowUpPicker({data:d,invoke}){
    {d.followUpMore&&<Button disabled={busy} loading={d.followUpLoading} onClick={()=>invoke('searchFollowUp',{dataset:{more:true}})}>加载更多商机</Button>}
    {d.followUpOnly&&d.opportunityResolveError&&<Alert type="warning" showIcon message={d.opportunityResolveError} description="原文和草稿已保留，可重新选择有权跟进的商机。"/>}
   </div>
- </SbSheet>;
+ </WorkflowDialog>;
 }
