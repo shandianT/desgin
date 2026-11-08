@@ -1,0 +1,1 @@
+<sb-pagination current="{{current}}" total="{{total}}" page-size="{{pageSize}}" mode="{{mode}}" loading="{{loading}}" end="{{end}}" summary="{{summary}}" plain="{{plain}}" error="{{error}}" bind:change="onChange" bind:more="onMore" bind:retry="onRetry"></sb-pagination>
