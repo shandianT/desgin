@@ -1,0 +1,1 @@
+{ "component": true, "usingComponents": { "sb-pagination": "../sb-pagination/index" } }
