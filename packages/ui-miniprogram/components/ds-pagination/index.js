@@ -12,8 +12,8 @@ Component({
     error: { type: Boolean }
   },
   methods: {
-    onChange(event) { this.triggerEvent('change', event.detail); }
-    onMore(event) { this.triggerEvent('more', event.detail); }
+    onChange(event) { this.triggerEvent('change', event.detail); },
+    onMore(event) { this.triggerEvent('more', event.detail); },
     onRetry(event) { this.triggerEvent('retry', event.detail); }
   }
 });
