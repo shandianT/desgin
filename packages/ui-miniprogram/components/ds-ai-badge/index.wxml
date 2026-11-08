@@ -1,0 +1,1 @@
+<sb-ai-badge state="{{state}}" confirmed-by="{{confirmedBy}}" text="{{text}}"></sb-ai-badge>
