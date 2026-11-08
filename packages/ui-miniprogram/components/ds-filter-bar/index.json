@@ -1,0 +1,1 @@
+{ "component": true, "usingComponents": { "sb-filter-bar": "../sb-filter-bar/index" } }
