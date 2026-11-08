@@ -1,0 +1,1 @@
+<sb-search value="{{value}}" placeholder="{{placeholder}}" clearable="{{clearable}}" loading="{{loading}}" disabled="{{disabled}}" maxlength="{{maxlength}}" plain="{{plain}}" bind:change="onChange" bind:search="onSearch" bind:clear="onClear"></sb-search>
