@@ -33,5 +33,6 @@
     "type": "git",
     "url": "git+https://github.com/shandianT/desgin.git",
     "directory": "packages/ui-miniprogram"
-  }
+  },
+  "publishContext": "department-generic-20261108"
 }
