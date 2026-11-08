@@ -1,0 +1,1 @@
+<sb-state-panel state="{{state}}" title="{{title}}" description="{{description}}" skeleton="{{skeleton}}" retry-label="{{retryLabel}}" clear-label="{{clearLabel}}" show-clear="{{showClear}}" retry-note="{{retryNote}}" size="{{size}}" bind:retry="onRetry" bind:clear="onClear"></sb-state-panel>
