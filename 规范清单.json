@@ -30,5 +30,16 @@
     }
   ],
   "projectConfigSchema": "specs/通用化设计系统/project.config.schema.json",
-  "projectsDir": "projects"
+  "projectsDir": "projects",
+  "shared": {
+    "id": "department",
+    "name": "部门通用设计系统",
+    "dir": "specs/department",
+    "status": "公共规则迁移基线；规则与 Token 仍按兼容阶段逐步抽离",
+    "packages": [
+      "packages/ui-react",
+      "packages/ui-miniprogram"
+    ],
+    "projectsDir": "projects"
+  }
 }
