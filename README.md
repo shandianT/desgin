@@ -17,6 +17,13 @@ updated: 2026-09-20
 | 看接入后的真实页面 | [Web UI 1.2.2 展示](https://shandiant.github.io/desgin/web/?mode=preview#/pages/index/index)，使用合成数据，可切换角色；[来源与设计差异](demo/web-reference-src/README.md) |
 | 在自己的工程里用起来 | 把 [模板/同事装包-给AI的提示词.md](模板/同事装包-给AI的提示词.md) 贴给 AI，它会装好并验证 |
 
+
+## 多项目通用化（新增）
+
+仓库现在按“公共设计层 → 项目配置层 → 业务适配层”组织。通用化方案见 [设计系统通用化技术方案](docs/设计系统通用化技术方案-20261108.md)，配置契约见 [project.config.schema.json](specs/通用化设计系统/project.config.schema.json)，SalesBuddy 示例见 [projects/salesbuddy/project.config.json](projects/salesbuddy/project.config.json)。
+
+项目配置只放产品名称、主题、导航、文案、功能开关和演示数据模式，不放数据库连接、密码、Token 或真实业务数据。真实 PostgreSQL、权限、状态和接口仍由产品工程维护；开发库与生产库必须隔离。
+
 ## 你是谁，从哪开始
 
 | 你是 | 做什么 |
