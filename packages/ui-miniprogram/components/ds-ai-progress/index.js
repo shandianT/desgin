@@ -7,7 +7,7 @@ Component({
     detail: { type: String }
   },
   methods: {
-    onCancel(event) { this.triggerEvent('cancel', event.detail); }
+    onCancel(event) { this.triggerEvent('cancel', event.detail); },
     onRetry(event) { this.triggerEvent('retry', event.detail); }
   }
 });
