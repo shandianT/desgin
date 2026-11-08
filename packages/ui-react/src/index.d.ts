@@ -729,3 +729,43 @@ export interface SbAvatarProps {
 export declare function SbAvatar(props: SbAvatarProps): JSX.Element;
 /** 头像取字：王小明 → 小明，李雷 → 李雷，zhang → ZH，空 → 我 */
 export declare function avatarInitials(name?: string): string;
+
+/** 通用设计系统命名。Sb* 继续保留为兼容入口。 */
+export declare const DsProvider: typeof SbProvider;
+export declare const DsStatusTag: typeof SbStatusTag;
+export declare const DsStatePanel: typeof SbStatePanel;
+export declare const DsFilterBar: typeof SbFilterBar;
+export declare const DsSearch: typeof SbSearch;
+export declare const DsListRow: typeof SbListRow;
+export declare const DsBottomBar: typeof SbBottomBar;
+export declare const DsField: typeof SbField;
+export declare const DsSheet: typeof SbSheet;
+export declare const DsMetricTile: typeof SbMetricTile;
+export declare const DsPageHeader: typeof SbPageHeader;
+export declare const DsDetailLayout: typeof SbDetailLayout;
+export declare const DsLabeledSelect: typeof SbLabeledSelect;
+export declare const DsMetricStrip: typeof SbMetricStrip;
+export declare const DsTabs: typeof SbTabs;
+export declare const DsTable: typeof SbTable;
+export declare const DsIcon: typeof SbIcon;
+export declare const DsAiBadge: typeof SbAiBadge;
+export declare const DsAiField: typeof SbAiField;
+export declare const DsAiSources: typeof SbAiSources;
+export declare const DsAiProgress: typeof SbAiProgress;
+export declare const DsPagination: typeof SbPagination;
+export declare const DsChartCard: typeof SbChartCard;
+export declare const DsKpiCard: typeof SbKpiCard;
+export declare const DsBarChart: typeof SbBarChart;
+export declare const DsLineChart: typeof SbLineChart;
+export declare const DsSideNav: typeof SbSideNav;
+export declare const DsTopBar: typeof SbTopBar;
+export declare const DsDatePicker: typeof SbDatePicker;
+export declare const DsSelect: typeof SbSelect;
+export declare const DsSearchSelect: typeof SbSearchSelect;
+export declare const DsAmountInput: typeof SbAmountInput;
+export declare const DsTextarea: typeof SbTextarea;
+export declare const DsSegmented: typeof SbSegmented;
+export declare const DsTimeline: typeof SbTimeline;
+export declare const DsUpload: typeof SbUpload;
+export declare const DsResult: typeof SbResult;
+export declare const DsAvatar: typeof SbAvatar;
