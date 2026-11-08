@@ -10,8 +10,8 @@ Component({
     plain: { type: Boolean }
   },
   methods: {
-    onChange(event) { this.triggerEvent('change', event.detail); }
-    onSearch(event) { this.triggerEvent('search', event.detail); }
+    onChange(event) { this.triggerEvent('change', event.detail); },
+    onSearch(event) { this.triggerEvent('search', event.detail); },
     onClear(event) { this.triggerEvent('clear', event.detail); }
   }
 });
