@@ -39,9 +39,9 @@ updated: 2026-09-20
 
 | 东西 | 在哪 | 说明 |
 |---|---|---|
-| 规则 | `specs/salesbuddy/` 各章，`规则索引.md` 一张表看全 | 26 条正式规则，每条有白话、例子、原文、怎么检查；22 条候选原则 |
+| 规则 | 公共规则逐步迁移到 `specs/department/`；SalesBuddy 业务规则仍在 `specs/salesbuddy/` | 新项目只复用公共规则，不复制 SalesBuddy 业务规则 |
 | 设计变量 | `specs/salesbuddy/02-设计变量与同步链路/` | `tokens.json` 一份源，生成 css、wxss、json 和给 Ant Design、TDesign 的桥接文件。改一处，三端一起变 |
-| 组件库 | `packages/ui-react/`（网页 17 个）、`packages/ui-miniprogram/`（小程序 15 个） | 基础控件用 Ant Design 6 和 tdesign-miniprogram，部门只做组合件和 AI 件 |
+| 组件库 | `packages/ui-react/`、`packages/ui-miniprogram/` | 新 Web 项目优先使用 `Ds*` 通用命名；`Sb*` 仅为 SalesBuddy 兼容入口；基础控件用 Ant Design 6 和 tdesign-miniprogram |
 | npm 包 | `release/` 里的 .tgz，也发在仓库右侧 Packages | GitHub Packages 与 release/：tokens 1.5.0-draft.1、ui-react 0.7.0、ui-miniprogram 0.11.0 |
 | 图标、文案、图表 | `specs/salesbuddy/10、11、12 章` | 图标已定；文案与图表是草稿 |
 | 模板 | `模板/`、`specs/salesbuddy/1.0.0-使用包快照/模板/` | 任务单、变更单、验收单、采用登记表、装包提示词、产品仓库 AI 说明 |
