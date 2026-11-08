@@ -730,6 +730,15 @@ export declare function SbAvatar(props: SbAvatarProps): JSX.Element;
 /** 头像取字：王小明 → 小明，李雷 → 李雷，zhang → ZH，空 → 我 */
 export declare function avatarInitials(name?: string): string;
 
+
+/** 通用设计系统语义类型。Sb* 类型继续保留为兼容入口。 */
+export type DsTone = SbTone;
+export type DsPanelState = SbPanelState;
+export type DsAiState = SbAiState;
+export type DsAiFieldState = SbAiFieldState;
+export type DsAiProgressStatus = SbAiProgressStatus;
+export type DsLayoutTier = SbLayoutTier;
+
 /** 通用设计系统命名。Sb* 继续保留为兼容入口。 */
 export declare const DsProvider: typeof SbProvider;
 export declare const DsStatusTag: typeof SbStatusTag;
