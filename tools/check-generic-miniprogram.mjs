@@ -24,7 +24,7 @@ for (const name of readdirSync(components).filter((entry) => entry.startsWith('d
     const metadata = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'));
     const child = Object.keys(metadata.usingComponents || {})[0];
     const childPath = metadata.usingComponents?.[child];
-    const childFile = childPath ? join(dir, childPath, 'index.json') : '';
+    const childFile = childPath ? join(dir, childPath.endsWith('/index') ? childPath + '.json' : join(childPath, 'index.json')) : '';
     const script = readFileSync(join(dir, 'index.js'), 'utf8');
     const template = readFileSync(join(dir, 'index.wxml'), 'utf8');
     if (!child || !childPath || !existsSync(childFile) || !script.includes('Component({') || !template.includes('<' + child)) {
