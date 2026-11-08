@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shandiant.github.io/desgin/project.config.schema.json",
+  "title": "Department Design Project Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "version", "theme", "navigation", "copy", "features", "routes", "dataMode"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,40}$"
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "version": { "type": "string", "minLength": 1 },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inherit", "primary"],
+      "properties": {
+        "inherit": { "type": "string", "const": "department" },
+        "primary": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        "source": { "type": "string" }
+      }
+    },
+    "navigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["desktop", "mobile"],
+      "properties": {
+        "desktop": { "type": "array", "items": { "type": "string" } },
+        "mobile": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "copy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["productShortName", "emptyStateAction", "retry", "permissionDenied"],
+      "properties": {
+        "productShortName": { "type": "string", "minLength": 1 },
+        "emptyStateAction": { "type": "string", "minLength": 1 },
+        "retry": { "type": "string", "minLength": 1 },
+        "permissionDenied": { "type": "string", "minLength": 1 }
+      }
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["web", "mobileWeb", "miniprogram", "nativeApp"],
+      "properties": {
+        "web": { "type": "boolean" },
+        "mobileWeb": { "type": "boolean" },
+        "miniprogram": { "type": "boolean" },
+        "nativeApp": { "type": "boolean" }
+      }
+    },
+    "routes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "home": { "type": "string" },
+        "customers": { "type": "string" },
+        "business": { "type": "string" },
+        "analytics": { "type": "string" }
+      }
+    },
+    "dataMode": {
+      "type": "string",
+      "enum": ["synthetic", "external"]
+    }
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["password"] },
+      { "required": ["token"] },
+      { "required": ["secret"] },
+      { "required": ["connectionString"] }
+    ]
+  }
+}
