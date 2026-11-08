@@ -1,0 +1,1 @@
+<sb-tabs items="{{items}}" active-key="{{activeKey}}" size="{{size}}" plain="{{plain}}" fit="{{fit}}" bind:change="onChange"></sb-tabs>

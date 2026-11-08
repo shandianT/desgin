@@ -14,8 +14,16 @@ updated: 2026-09-20
 |---|---|
 | 看规范、看组件长什么样 | 规范站 https://shandiant.github.io/desgin/ ，能直接点。先看首页和「组件」章 |
 | 评审文案规范和图表规范 | 评审稿 https://shandiant.github.io/desgin/评审稿-文案与图表.html ，草稿，对完转正 |
+| 体验项目配置切换 | Web 演示右上角「当前项目」下拉框，或在地址后加 `?project=projectbuddy` |
 | 看接入后的真实页面 | [Web UI 1.2.2 展示](https://shandiant.github.io/desgin/web/?mode=preview#/pages/index/index)，使用合成数据，可切换角色；[来源与设计差异](demo/web-reference-src/README.md) |
 | 在自己的工程里用起来 | 把 [模板/同事装包-给AI的提示词.md](模板/同事装包-给AI的提示词.md) 贴给 AI，它会装好并验证 |
+
+
+## 多项目通用化（新增）
+
+仓库现在按“公共设计层 → 项目配置层 → 业务适配层”组织。通用化方案见 [设计系统通用化技术方案](docs/设计系统通用化技术方案-20261108.md)，配置契约见 [project.config.schema.json](specs/通用化设计系统/project.config.schema.json)，SalesBuddy 示例见 [projects/salesbuddy/project.config.json](projects/salesbuddy/project.config.json)。
+
+项目配置只放产品名称、主题、导航、文案、功能开关和演示数据模式，不放数据库连接、密码、Token 或真实业务数据。真实 PostgreSQL、权限、状态和接口仍由产品工程维护；开发库与生产库必须隔离。
 
 ## 你是谁，从哪开始
 
@@ -31,10 +39,10 @@ updated: 2026-09-20
 
 | 东西 | 在哪 | 说明 |
 |---|---|---|
-| 规则 | `specs/salesbuddy/` 各章，`规则索引.md` 一张表看全 | 26 条正式规则，每条有白话、例子、原文、怎么检查；22 条候选原则 |
+| 规则 | 公共规则逐步迁移到 `specs/department/`；SalesBuddy 业务规则仍在 `specs/salesbuddy/` | 新项目只复用公共规则，不复制 SalesBuddy 业务规则 |
 | 设计变量 | `specs/salesbuddy/02-设计变量与同步链路/` | `tokens.json` 一份源，生成 css、wxss、json 和给 Ant Design、TDesign 的桥接文件。改一处，三端一起变 |
-| 组件库 | `packages/ui-react/`（网页 17 个）、`packages/ui-miniprogram/`（小程序 15 个） | 基础控件用 Ant Design 6 和 tdesign-miniprogram，部门只做组合件和 AI 件 |
-| npm 包 | `release/` 里的 .tgz，也发在仓库右侧 Packages | GitHub Packages 与 release/：tokens 1.5.0-draft.1、ui-react 0.7.0、ui-miniprogram 0.11.0 |
+| 组件库 | `packages/ui-react/`、`packages/ui-miniprogram/` | 新 Web 项目优先使用 `Ds*` 通用命名；`Sb*` 仅为 SalesBuddy 兼容入口；基础控件用 Ant Design 6 和 tdesign-miniprogram |
+| npm 包 | `release/` 里的 .tgz，也发在仓库右侧 Packages | GitHub Packages 与 release/：tokens 1.5.0-draft.1、ui-react 0.8.0、ui-miniprogram 0.12.0 |
 | 图标、文案、图表 | `specs/salesbuddy/10、11、12 章` | 图标已定；文案与图表是草稿 |
 | 模板 | `模板/`、`specs/salesbuddy/1.0.0-使用包快照/模板/` | 任务单、变更单、验收单、采用登记表、装包提示词、产品仓库 AI 说明 |
 | AI 说明 | `AGENTS.md`、`CLAUDE.md`、`.claude/skills/design-spec/` | Claude Code、Codex、Copilot、Cursor 打开仓库自动按规范做 |

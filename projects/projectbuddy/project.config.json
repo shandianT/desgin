@@ -1,0 +1,34 @@
+{
+  "$schema": "../../specs/通用化设计系统/project.config.schema.json",
+  "id": "projectbuddy",
+  "name": "ProjectBuddy 项目小浣熊",
+  "version": "0.1.0",
+  "theme": {
+    "inherit": "department",
+    "primary": "#7C3AED",
+    "source": "department-demo"
+  },
+  "navigation": {
+    "desktop": ["工作台", "项目", "行动", "知识库", "分析"],
+    "mobile": ["工作台", "项目", "行动", "知识库"]
+  },
+  "copy": {
+    "productShortName": "ProjectBuddy",
+    "emptyStateAction": "新建项目",
+    "retry": "重新加载",
+    "permissionDenied": "暂无项目权限"
+  },
+  "features": {
+    "web": true,
+    "mobileWeb": true,
+    "miniprogram": false,
+    "nativeApp": false
+  },
+  "routes": {
+    "home": "/pages/index/index",
+    "customers": "/pages/projects/index",
+    "business": "/pages/actions/index",
+    "analytics": "/pages/analytics/index"
+  },
+  "dataMode": "synthetic"
+}

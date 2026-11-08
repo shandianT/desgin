@@ -1,3 +1,9 @@
+
+## 0.12.0 - 2026-11-08
+
+- 新增 `ds-status-tag`、`ds-state-panel`、`ds-filter-bar`、`ds-search`、`ds-list-row`、`ds-tabs`、`ds-pagination`、`ds-ai-badge`、`ds-ai-progress` 通用入口。
+- `sb-*` 目录继续保留，通用入口只做属性与事件转发，不新增业务逻辑。
+
 # @shandiant/ui-miniprogram 更新记录
 
 版本号规则与 ui-react 一致。每条写「改了什么、对使用方有什么影响」。

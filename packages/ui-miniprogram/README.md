@@ -8,6 +8,29 @@ app.wxss 头两行：
 @import "./bridge-tdesign.wxss";     同上
 ```
 
+
+## 通用命名入口（0.12.0）
+
+新项目优先使用 `ds-*` 入口。它们是对现有 `sb-*` 组件的属性和事件转发，不包含 SalesBuddy 业务判断：
+
+- `ds-status-tag`
+- `ds-state-panel`
+- `ds-filter-bar`
+- `ds-search`
+- `ds-list-row`
+- `ds-tabs`
+- `ds-pagination`
+- `ds-ai-badge`
+- `ds-ai-progress`
+
+例如页面 JSON 使用：
+
+```json
+{ "usingComponents": { "ds-state-panel": "@shandiant/ui-miniprogram/ds-state-panel/index" } }
+```
+
+旧的 `sb-*` 路径继续支持 SalesBuddy。通用项目不要依赖 `sb-battle-map`、销售排名等产品专属组件。
+
 ## 组件
 
 | 组件 | 做什么 | 属性与事件 | 规则 |

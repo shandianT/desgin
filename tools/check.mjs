@@ -24,6 +24,8 @@ function run(label, cmd, cmdArgs, cwd) {
   if (r.status !== 0) { console.error(`✗ ${label} 失败（退出码 ${r.status}）`); failed++; } else console.log(`✓ ${label}`);
   return r.status === 0;
 }
+run('项目配置校验', 'node', [join(root, 'tools', 'check-project-config.mjs')], root);
+run('通用小程序入口校验', 'node', [join(root, 'tools', 'check-generic-miniprogram.mjs')], root);
 if (only && !manifest.specs.some((s) => s.id === only)) { console.error(`未知规范 id「${only}」，规范清单.json 里有：${manifest.specs.map((s) => s.id).join('、')}`); process.exit(2); }
 for (const spec of manifest.specs) {
   if (only && spec.id !== only) continue;
@@ -64,7 +66,11 @@ if (existsSync(join(root, 'demo/web-ui-1.2.2.json'))) {
 {
   const idx = join(uiReact, 'src', 'index.js'), dts = join(uiReact, 'src', 'index.d.ts');
   if (existsSync(idx) && existsSync(dts)) {
-    const js = [...readFileSync(idx, 'utf8').matchAll(/export \{ (\w+) \}/g)].map((m) => m[1]);
+    const jsSource = readFileSync(idx, 'utf8');
+    const js = [
+      ...jsSource.matchAll(/export \{ (\w+) \}/g),
+      ...jsSource.matchAll(/export \{ \w+ as (\w+) \}/g)
+    ].map((m) => m[1]).filter((name, i, all) => all.indexOf(name) === i);
     const ts = [...readFileSync(dts, 'utf8').matchAll(/export declare (?:function|const) (\w+)/g)].map((m) => m[1]);
     const miss = js.filter((n) => !ts.includes(n)), extra = ts.filter((n) => !js.includes(n));
     if (miss.length || extra.length) { console.error(`✗ 类型声明与导出不一致：缺 ${miss.join(', ') || '无'}；多 ${extra.join(', ') || '无'}`); failed++; } else console.log(`✓ 类型声明覆盖 ${js.length} 个导出`);

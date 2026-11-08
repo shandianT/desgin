@@ -2,6 +2,10 @@
 
 部门 Web 组件库。基础控件直接用 Ant Design 6，这里只放规范要求的组合件与 AI 件，17 个，主题只来自设计变量的桥接文件。
 
+## 通用命名
+
+新项目使用 `Ds*` 命名：`DsProvider`、`DsStatePanel`、`DsStatusTag`、`DsFilterBar`、`DsTable` 等。现有 `Sb*` 导出仍保留，作为 SalesBuddy 兼容入口；新代码不要继续扩散 `Sb*` 命名。`SbBattleMap` 等产品业务组件暂不进入通用别名。
+
 ## 安装
 
 ```
@@ -15,14 +19,14 @@ npm i @shandiant/tokens @shandiant/ui-react   # 或 npm i ./shandiant-tokens-<�
 ```jsx
 import '@shandiant/tokens/css';          // 设计变量 --ui-*
 import '@shandiant/ui-react/style.css';  // 组件样式
-import { SbProvider, SbStatePanel, SbStatusTag } from '@shandiant/ui-react';
+import { DsProvider, DsStatePanel, DsStatusTag } from '@shandiant/ui-react';
 
 export default function App() {
   return (
-    <SbProvider>
+    <DsProvider>
       <SbStatePanel state="empty" title="没有匹配的客户" description="换一个条件试试。" />
       <SbStatusTag tone="watch" reason="一周无跟进" showReason />
-    </SbProvider>
+    </DsProvider>
   );
 }
 ```

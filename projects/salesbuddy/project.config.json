@@ -1,0 +1,34 @@
+{
+  "$schema": "../../specs/通用化设计系统/project.config.schema.json",
+  "id": "salesbuddy",
+  "name": "SalesBuddy 销售管理",
+  "version": "1.2.2",
+  "theme": {
+    "inherit": "department",
+    "primary": "#2863CD",
+    "source": "specs/salesbuddy/02-设计变量与同步链路/tokens.json"
+  },
+  "navigation": {
+    "desktop": ["工作台", "客户", "商机", "拜访与跟进", "任务", "经营分析"],
+    "mobile": ["工作台", "客户", "商机", "任务"]
+  },
+  "copy": {
+    "productShortName": "SalesBuddy",
+    "emptyStateAction": "新建",
+    "retry": "重试",
+    "permissionDenied": "暂无权限查看"
+  },
+  "features": {
+    "web": true,
+    "mobileWeb": true,
+    "miniprogram": true,
+    "nativeApp": false
+  },
+  "routes": {
+    "home": "/pages/index/index",
+    "customers": "/pages/customers/index",
+    "business": "/pages/business/index",
+    "analytics": "/pages/bi/index"
+  },
+  "dataMode": "synthetic"
+}
