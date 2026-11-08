@@ -65,7 +65,11 @@ if (existsSync(join(root, 'demo/web-ui-1.2.2.json'))) {
 {
   const idx = join(uiReact, 'src', 'index.js'), dts = join(uiReact, 'src', 'index.d.ts');
   if (existsSync(idx) && existsSync(dts)) {
-    const js = [...readFileSync(idx, 'utf8').matchAll(/export \{ (\w+) \}/g)].map((m) => m[1]);
+    const jsSource = readFileSync(idx, 'utf8');
+    const js = [
+      ...jsSource.matchAll(/export \{ (\w+) \}/g),
+      ...jsSource.matchAll(/export \{ \w+ as (\w+) \}/g)
+    ].map((m) => m[1]).filter((name, i, all) => all.indexOf(name) === i);
     const ts = [...readFileSync(dts, 'utf8').matchAll(/export declare (?:function|const) (\w+)/g)].map((m) => m[1]);
     const miss = js.filter((n) => !ts.includes(n)), extra = ts.filter((n) => !js.includes(n));
     if (miss.length || extra.length) { console.error(`✗ 类型声明与导出不一致：缺 ${miss.join(', ') || '无'}；多 ${extra.join(', ') || '无'}`); failed++; } else console.log(`✓ 类型声明覆盖 ${js.length} 个导出`);
