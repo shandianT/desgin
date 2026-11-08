@@ -1,5 +1,5 @@
 {
-  "$note": "部门设计规范清单：每套规范一个目录，自包含规则、变量、样板、模板与验收；tools/ 与 .claude/ 为共享。新增规范加一行即可被 check.mjs 与 AI 技能识别",
+  "$note": "部门设计规范清单：每套规范一个目录，自包含规则、变量、样板、模板与验收；tools/ 与 .claude/ 为共享。项目展示配置统一放 projects/<id>/project.config.json；新增规范加一行即可被 check.mjs 与 AI 技能识别",
   "entry": "README.md",
   "specs": [
     {
@@ -28,5 +28,7 @@
       ],
       "siteDir": "站点"
     }
-  ]
+  ],
+  "projectConfigSchema": "specs/通用化设计系统/project.config.schema.json",
+  "projectsDir": "projects"
 }
