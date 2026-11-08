@@ -1,0 +1,1 @@
+<sb-status-tag tone="{{tone}}" label="{{label}}" reason="{{reason}}" show-reason="{{showReason}}"></sb-status-tag>
