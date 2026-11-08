@@ -1,6 +1,6 @@
 {
   "name": "@shandiant/ui-react",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "部门 Web 通用组件库：Ant Design 6 与 Ant Design X 之上的组合件、AI 件和图表件；新项目使用 Ds* 语义命名，主题来自设计变量",
   "license": "UNLICENSED",
   "type": "module",
