@@ -1,0 +1,1 @@
+<sb-list-row name="{{name}}" summary="{{summary}}" tone="{{tone}}" status-label="{{statusLabel}}" reason="{{reason}}" time="{{time}}" selected="{{selected}}" disabled="{{disabled}}" disabled-reason="{{disabledReason}}" bind:tap="onTap"></sb-list-row>
