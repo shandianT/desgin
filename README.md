@@ -14,6 +14,7 @@ updated: 2026-09-20
 |---|---|
 | 看规范、看组件长什么样 | 规范站 https://shandiant.github.io/desgin/ ，能直接点。先看首页和「组件」章 |
 | 评审文案规范和图表规范 | 评审稿 https://shandiant.github.io/desgin/评审稿-文案与图表.html ，草稿，对完转正 |
+| 体验项目配置切换 | Web 演示右上角「当前项目」下拉框，或在地址后加 `?project=projectbuddy` |
 | 看接入后的真实页面 | [Web UI 1.2.2 展示](https://shandiant.github.io/desgin/web/?mode=preview#/pages/index/index)，使用合成数据，可切换角色；[来源与设计差异](demo/web-reference-src/README.md) |
 | 在自己的工程里用起来 | 把 [模板/同事装包-给AI的提示词.md](模板/同事装包-给AI的提示词.md) 贴给 AI，它会装好并验证 |
 
