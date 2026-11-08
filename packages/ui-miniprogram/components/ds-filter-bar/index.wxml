@@ -1,0 +1,1 @@
+<sb-filter-bar title="{{title}}" scope="{{scope}}" options="{{options}}" value="{{value}}" result-count="{{resultCount}}" result-label="{{resultLabel}}" disabled="{{disabled}}" bind:change="onChange"></sb-filter-bar>
