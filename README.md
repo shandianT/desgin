@@ -42,7 +42,7 @@ updated: 2026-09-20
 | 规则 | 公共规则逐步迁移到 `specs/department/`；SalesBuddy 业务规则仍在 `specs/salesbuddy/` | 新项目只复用公共规则，不复制 SalesBuddy 业务规则 |
 | 设计变量 | `specs/salesbuddy/02-设计变量与同步链路/` | `tokens.json` 一份源，生成 css、wxss、json 和给 Ant Design、TDesign 的桥接文件。改一处，三端一起变 |
 | 组件库 | `packages/ui-react/`、`packages/ui-miniprogram/` | 新 Web 项目优先使用 `Ds*` 通用命名；`Sb*` 仅为 SalesBuddy 兼容入口；基础控件用 Ant Design 6 和 tdesign-miniprogram |
-| npm 包 | `release/` 里的 .tgz，也发在仓库右侧 Packages | GitHub Packages 与 release/：tokens 1.5.0-draft.1、ui-react 0.7.0、ui-miniprogram 0.11.0 |
+| npm 包 | `release/` 里的 .tgz，也发在仓库右侧 Packages | GitHub Packages 与 release/：tokens 1.5.0-draft.1、ui-react 0.8.0、ui-miniprogram 0.11.0 |
 | 图标、文案、图表 | `specs/salesbuddy/10、11、12 章` | 图标已定；文案与图表是草稿 |
 | 模板 | `模板/`、`specs/salesbuddy/1.0.0-使用包快照/模板/` | 任务单、变更单、验收单、采用登记表、装包提示词、产品仓库 AI 说明 |
 | AI 说明 | `AGENTS.md`、`CLAUDE.md`、`.claude/skills/design-spec/` | Claude Code、Codex、Copilot、Cursor 打开仓库自动按规范做 |
