@@ -25,6 +25,7 @@ function run(label, cmd, cmdArgs, cwd) {
   return r.status === 0;
 }
 run('项目配置校验', 'node', [join(root, 'tools', 'check-project-config.mjs')], root);
+run('通用小程序入口校验', 'node', [join(root, 'tools', 'check-generic-miniprogram.mjs')], root);
 if (only && !manifest.specs.some((s) => s.id === only)) { console.error(`未知规范 id「${only}」，规范清单.json 里有：${manifest.specs.map((s) => s.id).join('、')}`); process.exit(2); }
 for (const spec of manifest.specs) {
   if (only && spec.id !== only) continue;
