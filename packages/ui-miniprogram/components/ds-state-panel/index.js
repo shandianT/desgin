@@ -12,7 +12,7 @@ Component({
     size: { type: String }
   },
   methods: {
-    onRetry(event) { this.triggerEvent('retry', event.detail); }
+    onRetry(event) { this.triggerEvent('retry', event.detail); },
     onClear(event) { this.triggerEvent('clear', event.detail); }
   }
 });
