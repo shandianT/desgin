@@ -58,5 +58,6 @@
     "url": "git+https://github.com/shandianT/desgin.git",
     "directory": "packages/ui-react"
   },
-  "types": "./dist/index.d.ts"
+  "types": "./dist/index.d.ts",
+  "publishContext": "department-generic-20261108"
 }
