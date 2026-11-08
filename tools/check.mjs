@@ -24,7 +24,7 @@ function run(label, cmd, cmdArgs, cwd) {
   if (r.status !== 0) { console.error(`✗ ${label} 失败（退出码 ${r.status}）`); failed++; } else console.log(`✓ ${label}`);
   return r.status === 0;
 }
-if (only && !manifest.specs.some((s) => s.id === only)) { console.error(`未知规范 id「${only}」，规范清单.json 里有：${manifest.specs.map((s) => s.id).join('、')}`); process.exit(2); }
+run('项目配置校验', 'node', [join(root, 'tools', 'check-project-config.mjs')], root);\nif (only && !manifest.specs.some((s) => s.id === only)) { console.error(`未知规范 id「${only}」，规范清单.json 里有：${manifest.specs.map((s) => s.id).join('、')}`); process.exit(2); }
 for (const spec of manifest.specs) {
   if (only && spec.id !== only) continue;
   const dir = join(root, spec.dir);
